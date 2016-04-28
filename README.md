@@ -3,7 +3,7 @@
 Diablo 2 Interface for Streamers
 
 The tool reads memory that is used by Diablo 2 executable and finds information 
-that can be useful to show to viewers of the stream (because the information is not visible ingame at all times).
+that can be useful to viewers of the stream (because the information is not visible ingame at all times).
 
 The information that is currently shown in the tool are as follows:
  - Player name
