@@ -27,3 +27,4 @@ Let me know if something is broken or if you need a different build.
 ## Troubleshooting
 
 1. The tool must be run as administrator, otherwise it cannot read the memory from another process.
+2. Because of the nature of how the tool works, there might be a warning from your Antivirus/Windows Smartscreen in precompiled exe. You can ignore the warning or compile the sources youself.
