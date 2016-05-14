@@ -7,10 +7,12 @@ using System.Threading;
 using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
+using DiabloInterface.Properties;
+using DiabloInterface.AutoSplit;
 
 namespace DiabloInterface
 {
-    public partial class Form1 : Form
+    public partial class MainWindow : Form
     {
         const int PROCESS_WM_READ = 0x0010;
 
@@ -21,6 +23,8 @@ namespace DiabloInterface
         public static extern bool ReadProcessMemory(int hProcess, int lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesRead);
 
         string fileFolder = "txt";
+
+        public SettingsHolder settings;
 
         const int MODE_DEATH = 0;
         const int MODE_NEUTRAL = 1;
@@ -117,6 +121,7 @@ namespace DiabloInterface
         const int UNKNOWN34_IDX = 201;
         const int UNKNOWN35_IDX = 204;
 
+
         #region patch 1.14a adresses
         // const int ADDRESS_MODE = 0x44C658;
         // int[] OFFSETS_MODE = new int[] { 0x40, 0x210 };
@@ -131,10 +136,15 @@ namespace DiabloInterface
         const int ADDRESS_MODE = 0x0039DEFC;
         int[] OFFSETS_MODE = new int[] { 0x10 };
         const int ADDRESS_CHARACTER = 0x0039DEFC;
-        int[] OFFSETS_CHARACTER = new int[] { 0x5c, 0x48, 0x00};
+        int[] OFFSETS_PLAYER_STATS = new int[] { 0x5c, 0x48, 0x00};
+        int[] OFFSETS_INVENTORY = new int[] { 0x60 };
         
+        const int ADDRESS_QUESTS = 0x003B8E54;
+        int[] OFFSETS_QUESTS = new int[] { 0x264, 0x450, 0x20, 0x00 };
+
         const int ADDRESS_DIFFICULTY = 0x00398694;
         const int ADDRESS_NAME = 0x0039864C;
+        const int ADDRESS_AREA = 0x0039B1C8;
         #endregion
 
 
@@ -144,6 +154,9 @@ namespace DiabloInterface
         int currentPenalty;
         bool dead;
         int deaths;
+        int levelBefore = 0;
+
+        int area;
 
         int bytesRead = 0;
         
@@ -156,26 +169,71 @@ namespace DiabloInterface
         Process D2Process;
         IntPtr D2ProcessHandle;
         IntPtr D2ProcessEntryAddress;
-
-        IntAttribute idx;
-        IntAttribute val;
+        
         int indexVal;
         int valOffset;
         int valBytes;
 
-        public Form1()
+
+        SettingsWindow settingsWindow;
+        DebugWindow debugWindow;
+
+        public MainWindow()
         {
             InitializeComponent();
         }
 
+        public List<AutoSplit.AutoSplit> getAutosplits()
+        {
+            return this.settings.autosplits;
+        }
+        public void addAutosplit(AutoSplit.AutoSplit autosplit)
+        {
+            this.settings.autosplits.Add(autosplit);
+        }
+
+        private byte reverseBits(byte b)
+        {
+            return (byte)(((b * 0x80200802ul) & 0x0884422110ul) * 0x0101010101ul >> 32);
+        }
+        private bool isNthBitSet(short c, int n)
+        {
+            int[] mask = { 128, 64, 32, 16, 8, 4, 2, 1 };
+            if (n >= 8)
+            {
+                c = (short)((int)c >> 8);
+                n -= 8;
+            }
+            return ((c & mask[n]) != 0);
+        }
+
+        public void updateAutosplits()
+        {
+            int y = 0;
+            panel1.Controls.Clear();
+            foreach (AutoSplit.AutoSplit autosplit in settings.autosplits)
+            {
+                Label lbl = new Label();
+                lbl.SetBounds(0, y, panel1.Bounds.Width, 16);
+                panel1.Controls.Add(lbl);
+                autosplit.bindControl(lbl);
+                y += 16;
+            }
+        }
+
         private void initialize()
         {
+            settings = new SettingsHolder();
+            settings.load();
             processRunning = false;
             enc = Encoding.GetEncoding("UTF-8");
             nameBytes = new byte[15];
             dead = false;
             deaths = 0;
             dataDict = new Dictionary<int, int>();
+
+            // debugWindow = new DebugWindow();
+            // debugWindow.Show();
             try
             {
                 Process[] processes = Process.GetProcessesByName("game");
@@ -200,17 +258,18 @@ namespace DiabloInterface
             {
                 MessageBox.Show("Unable to initialize. Run with admin rights + make sure diablo 2 is running.");
             }
+            
+            applySettings();
+            updateAutosplits();
         }
         private void Form1_Load(object sender, EventArgs e)
         {
 
             initialize();
-
             robto = new Thread(readGamedataThreadFunc);
             robto.Start();
 
         }
-
         public void readGamedataThreadFunc()
         {
             while (1 == 1)
@@ -221,19 +280,25 @@ namespace DiabloInterface
 
                 dataDict.Clear();
 
+                // quests
+                byte[] questBuffer = getBuffer(96, ADDRESS_QUESTS, OFFSETS_QUESTS, true);
+                if (debugWindow != null)
+                {
+                    this.debugWindow.setQuestData(questBuffer);
+                }
+
                 try {
                     indexVal = 0;
                     // Start of player stuff (70 is just arbitrary number that is high enough to hold all the player info... )
-                    for (var i = 0; i < 70; i++)
+                    for (int i = 0; i < 70; i++)
                     {
-                        OFFSETS_CHARACTER[OFFSETS_CHARACTER.Length - 1] = 0x2 + i * 8;
-                        idx = new IntAttribute(ADDRESS_CHARACTER, OFFSETS_CHARACTER, 1, true);
+                        OFFSETS_PLAYER_STATS[OFFSETS_PLAYER_STATS.Length - 1] = 0x2 + i * 8;
                         if (i == 0)
                         {
-                            indexVal = getValueByIntAttribute(idx);
+                            indexVal = getByte(ADDRESS_CHARACTER, OFFSETS_PLAYER_STATS, true);
                         } else
                         {
-                            int tmpVal = getValueByIntAttribute(idx);
+                            int tmpVal = getByte(ADDRESS_CHARACTER, OFFSETS_PLAYER_STATS, true);
                             if ( indexVal > tmpVal )
                             {
                                 break;
@@ -244,8 +309,6 @@ namespace DiabloInterface
                         }
                         valOffset = 0;
                         valBytes = 0;
-
-
 
                         switch (indexVal)
                         {
@@ -284,12 +347,11 @@ namespace DiabloInterface
                         }
                         if (valOffset > 0 && valBytes > 0)
                         {
-                            OFFSETS_CHARACTER[OFFSETS_CHARACTER.Length - 1] = 0x2 + valOffset + i * 8;
-
-                            val = new IntAttribute(ADDRESS_CHARACTER, OFFSETS_CHARACTER, valBytes, true);
+                            OFFSETS_PLAYER_STATS[OFFSETS_PLAYER_STATS.Length - 1] = 0x2 + valOffset + i * 8;
+                            
                             if (!dataDict.ContainsKey(indexVal))
                             {
-                                dataDict.Add(indexVal, getValueByIntAttribute(val));
+                                dataDict.Add(indexVal, getInt(ADDRESS_CHARACTER, OFFSETS_PLAYER_STATS, true));
                             }
                         }
                         //Console.WriteLine(indexVal + ": " + getValueByIntAttribute(new IntAttribute(ADDRESS_CHARACTER, POINTERS_CHARACTER, 4, true)));
@@ -324,15 +386,29 @@ namespace DiabloInterface
 
                     ReadProcessMemory((int)D2ProcessHandle, D2ProcessEntryAddress.ToInt32() + ADDRESS_NAME, nameBytes, nameBytes.Length, ref bytesRead);
                     string tmpName = enc.GetString(nameBytes);
-                    if (tmpName != name)
+                    if (tmpName != name && dataDict[LVL_IDX] == 1)
                     {
                         name = tmpName;
                         deaths = 0; // reset the deaths if name changed
+                        foreach (AutoSplit.AutoSplit autosplit in this.settings.autosplits)
+                        {
+                            autosplit.reached = false;
+                            switch (autosplit.type)
+                            {
+                                case AutoSplit.AutoSplit.TYPE_SPECIAL:
+                                    if (autosplit.value == (int)AutoSplit.AutoSplit.Special.GAMESTART)
+                                    {
+                                        autosplit.reached = true;
+                                        triggerAutosplit();
+                                    }
+                                    break;
+                            }
+                        }
                     }
-
-                    var mode = new IntAttribute(ADDRESS_MODE, OFFSETS_MODE, 4, true);
-                    var modeVal = getValueByIntAttribute(mode);
-                    if (dataDict[LVL_IDX] > 0 && (modeVal == MODE_DEAD || modeVal == MODE_DEATH) ) {
+                    
+                    var mode = getInt(ADDRESS_MODE, OFFSETS_MODE, true);
+                    levelBefore = dataDict[LVL_IDX];
+                    if (dataDict[LVL_IDX] > 0 && (mode == MODE_DEAD || mode == MODE_DEATH) ) {
                         if (!dead) {
                             dead = true;
                             deaths++;
@@ -341,8 +417,9 @@ namespace DiabloInterface
                         dead = false;
                     }
 
-                    var dfc = new IntAttribute(ADDRESS_DIFFICULTY, new int[] { }, 1, true);
-                    difficulty = getValueByIntAttribute(dfc);
+
+                    area = getByte(ADDRESS_AREA, null, true);
+                    difficulty = getByte(ADDRESS_DIFFICULTY, null, true);
                     switch (difficulty)
                     {
                         case 0: currentPenalty = PENALTY_NORMAL; break;
@@ -374,7 +451,7 @@ namespace DiabloInterface
                     goldLabel.Invoke(new Action(delegate () { goldLabel.Text = "GOLD: " + (dataDict[GOLD_BODY_IDX] + dataDict[GOLD_STASH_IDX]); }));
                     deathsLabel.Invoke(new Action(delegate () { deathsLabel.Text = "DEATHS: " + deaths; }));
 
-                    if (createFilesCheckbox.Checked)
+                    if (this.settings.createFiles)
                     {
                         if (!Directory.Exists(fileFolder))
                         {
@@ -395,45 +472,222 @@ namespace DiabloInterface
                         File.WriteAllText(fileFolder + "/deaths.txt", deaths.ToString());
                     }
 
+                    bool haveCharLevelCheckpoints = false;
+                    bool haveEnterLevelCheckpoints = false;
+                    bool haveItemCheckpoints = false;
+                    bool haveQuestCheckpoints = false;
+
+
+                    foreach (AutoSplit.AutoSplit autosplit in this.settings.autosplits)
+                    {
+                        if (autosplit.reached)
+                        {
+                            continue;
+                        }
+                        switch (autosplit.type)
+                        {
+                            case AutoSplit.AutoSplit.TYPE_CHAR_LEVEL:
+                                haveCharLevelCheckpoints = true;
+                                break;
+                            case AutoSplit.AutoSplit.TYPE_AREA:
+                                haveEnterLevelCheckpoints = true;
+                                break;
+                            case AutoSplit.AutoSplit.TYPE_ITEM:
+                                haveItemCheckpoints = true;
+                                break;
+                            case AutoSplit.AutoSplit.TYPE_QUEST:
+                                haveQuestCheckpoints = true;
+                                break;
+                        }
+                    }
+                    
+                    List<int> itemsIds = new List<int>();
+                    if (haveItemCheckpoints)
+                    {
+
+                        int inventoryAddr = getInt(ADDRESS_CHARACTER, OFFSETS_INVENTORY, true);
+                        int itemType;
+                        int itemAddress;
+                        int unitDataAddress;
+
+                        // cursor item
+                        itemAddress = getInt(inventoryAddr + 0x20); //BitConverter.ToInt32(new byte[4] { inventory[0x20], inventory[0x21], inventory[0x22], inventory[0x23] }, 0);
+                        if (itemAddress > 0)
+                        {
+                            itemType = getInt(itemAddress + 0x04);
+                            itemsIds.Add(itemType);
+                            Console.WriteLine("type cursor: " + itemType);
+                        }
+
+                        // all the other items
+                        itemAddress = getInt(inventoryAddr + 0x10);// BitConverter.ToInt32(new byte[4] { inventory[0x10], inventory[0x11], inventory[0x12], inventory[0x13] }, 0);
+                        if (itemAddress > 0)
+                        {
+                            itemType = getInt(itemAddress + 0x04);
+                            itemsIds.Add(itemType);
+                            Console.WriteLine("type last: " + itemType);
+
+                            while (itemAddress > 0)
+                            {
+                                unitDataAddress = getInt(itemAddress + 0x14);
+                                itemAddress = getInt(unitDataAddress + 0x60);
+                                if (itemAddress > 0)
+                                {
+
+                                    itemType = getInt(itemAddress + 0x04);
+                                    itemsIds.Add(itemType);
+                                    Console.WriteLine("prev item type: " + itemType);
+
+                                }
+                            }
+                        }
+                        
+                    }
+
+                    foreach (AutoSplit.AutoSplit autosplit in this.settings.autosplits)
+                    {
+                        if (autosplit.reached)
+                        {
+                            continue;
+                        }
+
+                        switch (autosplit.type)
+                        {
+                            case AutoSplit.AutoSplit.TYPE_CHAR_LEVEL:
+                                if (autosplit.value <= dataDict[LVL_IDX])
+                                {
+                                    autosplit.reached = true;
+                                    triggerAutosplit();
+                                }
+                                break;
+                            case AutoSplit.AutoSplit.TYPE_AREA:
+                                if (autosplit.value == area)
+                                {
+                                    autosplit.reached = true;
+                                    triggerAutosplit();
+                                }
+                                break;
+                            case AutoSplit.AutoSplit.TYPE_ITEM:
+                                if (itemsIds.Contains(autosplit.value))
+                                {
+                                    autosplit.reached = true;
+                                    triggerAutosplit();
+                                }
+                                break;
+                            case AutoSplit.AutoSplit.TYPE_QUEST:
+                                short value = BitConverter.ToInt16(new byte[2] { reverseBits(questBuffer[autosplit.value]), reverseBits(questBuffer[autosplit.value + 1]), }, 0);
+                                if (isNthBitSet(value, 0) || isNthBitSet(value, 1))
+                                {
+                                    // quest finished 
+                                    autosplit.reached = true;
+                                    triggerAutosplit();
+                                }
+                                break;
+                        }
+                    }
+
                 } catch ( Exception ex )
                 {
                     processRunning = false;
                 }
             }
         }
-        
-        public int getValueByIntAttribute(IntAttribute intAttr)
+
+        private void triggerAutosplit ()
         {
+            if (settings.doAutosplit && settings.triggerKeys != "")
+            {
+                Console.WriteLine("{" + settings.triggerKeys + "}");
+                SendKeys.SendWait("{"+ settings.triggerKeys + "}");
+            }
+        }
 
+        public short getByte(int address, int[] offsets = null, bool relative = false)
+        {
+            byte[] bufferValue = getBuffer(0x01, address, offsets, relative);
+            try
+            {
+                return bufferValue[0];
+
+            }
+            catch (Exception e)
+            {
+                return -1;
+            }
+        }
+
+        public short getShort(int address, int[] offsets = null, bool relative = false )
+        {
+            byte[] bufferValue = getBuffer(0x02, address, offsets, relative);
+            try
+            {
+                return BitConverter.ToInt16(bufferValue, 0);
+
+            }
+            catch (Exception e)
+            {
+                return -1;
+            }
+        }
+        public int getInt(int address, int[] offsets = null, bool relative = false)
+        {
+            byte[] bufferValue = getBuffer(0x04, address, offsets, relative);
+            try
+            {
+                return BitConverter.ToInt32(bufferValue, 0);
+
+            }
+            catch (Exception e)
+            {
+                return -1;
+            }
+        }
+        public byte[] getBuffer(int length, int address, int[] offsets = null, bool relative = false)
+        {
             byte[] bufferAddress = new byte[4];
-            byte[] bufferValue = new byte[intAttr.bytes];
-            int pointer = intAttr.pointer;
+            byte[] bufferValue = new byte[length];
+            int pointer = address;
 
-            if (intAttr.pointerRelative)
+            if (relative)
             {
                 pointer = D2ProcessEntryAddress.ToInt32() + pointer;
             }
-            //
-            for ( int i = 0; i < intAttr.offsets.Length; i++ )
+            if (offsets != null)
             {
-                ReadProcessMemory((int)D2ProcessHandle, pointer, bufferAddress, bufferAddress.Length, ref bytesRead);
-                pointer = BitConverter.ToInt32(bufferAddress, 0) + intAttr.offsets[i];
+                for (int i = 0; i < offsets.Length; i++)
+                {
+                    ReadProcessMemory((int)D2ProcessHandle, pointer, bufferAddress, bufferAddress.Length, ref bytesRead);
+                    pointer = BitConverter.ToInt32(bufferAddress, 0) + offsets[i];
+                }
+
             }
 
             ReadProcessMemory((int)D2ProcessHandle, pointer, bufferValue, bufferValue.Length, ref bytesRead);
-            if (bufferValue.Length > 1) {
-                try
-                {
-                intAttr.value = BitConverter.ToInt32(bufferValue, 0);
+            return bufferValue;
+        }
 
-                } catch ( Exception e )
-                {
-                    intAttr.value = -1;
-                }
-            } else {
-                intAttr.value = bufferValue[0];
-            }
-            return intAttr.value;
+        private void setFonts(string fontName, int size = 10, int sizeTitle = 18)
+        {
+            Font fBig = new Font(fontName, sizeTitle);
+            Font fSmall = new Font(fontName, size);
+
+            nameLabel.Font = fBig;
+            lvlLabel.Font = fSmall;
+            strengthLabel.Font = fSmall;
+            dexterityLabel.Font = fSmall;
+            vitalityLabel.Font = fSmall;
+            energyLabel.Font = fSmall;
+            fireResLabel.Font = fSmall;
+            coldResLabel.Font = fSmall;
+            lightningResLabel.Font = fSmall;
+            poisonResLabel.Font = fSmall;
+            goldLabel.Font = fSmall;
+            deathsLabel.Font = fSmall;
+        }
+
+        public void applySettings()
+        {
+            setFonts(this.settings.fontName, this.settings.fontSize, this.settings.titleFontSize);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -457,28 +711,14 @@ namespace DiabloInterface
             robto.Abort();
             Application.Exit();
         }
-
         private void button3_Click(object sender, EventArgs e)
         {
-            FontDialog fontDialog1 = new FontDialog();
-            // Show the dialog.
-            DialogResult result = fontDialog1.ShowDialog();
-            // See if OK was pressed.
-            if (result == DialogResult.OK)
-            {
-                nameLabel.Font = new Font (fontDialog1.Font.Name,18);
-                lvlLabel.Font = new Font(fontDialog1.Font.Name, 10);
-                strengthLabel.Font = new Font(fontDialog1.Font.Name, 10);
-                dexterityLabel.Font = new Font(fontDialog1.Font.Name, 10);
-                vitalityLabel.Font = new Font(fontDialog1.Font.Name, 10);
-                energyLabel.Font = new Font(fontDialog1.Font.Name, 10);
-                fireResLabel.Font = new Font(fontDialog1.Font.Name, 10);
-                coldResLabel.Font = new Font(fontDialog1.Font.Name, 10);
-                lightningResLabel.Font = new Font(fontDialog1.Font.Name, 10);
-                poisonResLabel.Font = new Font(fontDialog1.Font.Name, 10);
-                goldLabel.Font = new Font(fontDialog1.Font.Name, 10);
-                deathsLabel.Font = new Font(fontDialog1.Font.Name, 10);
+            if (settingsWindow == null || settingsWindow.IsDisposed) {
+                settingsWindow = new SettingsWindow(this);
             }
+            settingsWindow.Show();
+            settingsWindow.Focus();
         }
+
     }
 }
