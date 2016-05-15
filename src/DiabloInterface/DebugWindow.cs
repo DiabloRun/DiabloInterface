@@ -38,89 +38,89 @@ namespace DiabloInterface
                 value = BitConverter.ToInt16(new byte[2] { reverseBits(questBuffer[i]), reverseBits(questBuffer[i + 1]), }, 0);
                 switch (i)
                 {
-                    case Quest.QUEST_A1Q1:
+                    case D2Data.QUEST_A1Q1:
                         act = 1;quest = 1;
                         break;
-                    case Quest.QUEST_A1Q2:
+                    case D2Data.QUEST_A1Q2:
                         act = 1; quest = 2;
                         break;
-                    case Quest.QUEST_A1Q3:
+                    case D2Data.QUEST_A1Q3:
                         act = 1; quest = 3;
                         break;
-                    case Quest.QUEST_A1Q4:
+                    case D2Data.QUEST_A1Q4:
                         act = 1; quest = 4;
                         break;
-                    case Quest.QUEST_A1Q5:
+                    case D2Data.QUEST_A1Q5:
                         act = 1; quest = 5;
                         break;
-                    case Quest.QUEST_A1Q6:
+                    case D2Data.QUEST_A1Q6:
                         act = 1; quest = 6;
                         break;
 
-                    case Quest.QUEST_A2Q1:
+                    case D2Data.QUEST_A2Q1:
                         act = 2; quest = 1;
                         break;
-                    case Quest.QUEST_A2Q2:
+                    case D2Data.QUEST_A2Q2:
                         act = 2; quest = 2;
                         break;
-                    case Quest.QUEST_A2Q3:
+                    case D2Data.QUEST_A2Q3:
                         act = 2; quest = 3;
                         break;
-                    case Quest.QUEST_A2Q4:
+                    case D2Data.QUEST_A2Q4:
                         act = 2; quest = 4;
                         break;
-                    case Quest.QUEST_A2Q5:
+                    case D2Data.QUEST_A2Q5:
                         act = 2; quest = 5;
                         break;
-                    case Quest.QUEST_A2Q6:
+                    case D2Data.QUEST_A2Q6:
                         act = 2; quest = 6;
                         break;
 
-                    case Quest.QUEST_A3Q1:
+                    case D2Data.QUEST_A3Q1:
                         act = 3; quest = 1;
                         break;
-                    case Quest.QUEST_A3Q2:
+                    case D2Data.QUEST_A3Q2:
                         act = 3; quest = 2;
                         break;
-                    case Quest.QUEST_A3Q3:
+                    case D2Data.QUEST_A3Q3:
                         act = 3; quest = 3;
                         break;
-                    case Quest.QUEST_A3Q4:
+                    case D2Data.QUEST_A3Q4:
                         act = 3; quest = 4;
                         break;
-                    case Quest.QUEST_A3Q5:
+                    case D2Data.QUEST_A3Q5:
                         act = 3; quest = 5;
                         break;
-                    case Quest.QUEST_A3Q6:
+                    case D2Data.QUEST_A3Q6:
                         act = 3; quest = 6;
                         break;
 
-                    case Quest.QUEST_A4Q1:
+                    case D2Data.QUEST_A4Q1:
                         act = 4; quest = 1;
                         break;
-                    case Quest.QUEST_A4Q2:
+                    case D2Data.QUEST_A4Q2:
                         act = 4; quest = 2;
                         break;
-                    case Quest.QUEST_A4Q3:
+                    case D2Data.QUEST_A4Q3:
                         act = 4; quest = 3;
                         break;
 
-                    case Quest.QUEST_A5Q1:
+                    case D2Data.QUEST_A5Q1:
                         act = 5; quest = 1;
                         break;
-                    case Quest.QUEST_A5Q2:
+                    case D2Data.QUEST_A5Q2:
                         act = 5; quest = 2;
                         break;
-                    case Quest.QUEST_A5Q3:
+                    case D2Data.QUEST_A5Q3:
                         act = 5; quest = 3;
                         break;
-                    case Quest.QUEST_A5Q4:
+                    case D2Data.QUEST_A5Q4:
                         act = 5; quest = 4;
                         break;
-                    case Quest.QUEST_A5Q5:
+                    case D2Data.QUEST_A5Q5:
                         act = 5; quest = 5;
                         break;
-                    case Quest.QUEST_A5Q6:
+                    case D2Data.QUEST_A5Q6:
                         act = 5; quest = 6;
                         break;
 

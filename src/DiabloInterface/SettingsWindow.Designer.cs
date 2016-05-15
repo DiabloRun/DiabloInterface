@@ -68,13 +68,13 @@
             // 
             // btnFont
             // 
-            this.btnFont.Location = new System.Drawing.Point(197, 19);
+            this.btnFont.Location = new System.Drawing.Point(189, 19);
             this.btnFont.Name = "btnFont";
             this.btnFont.Size = new System.Drawing.Size(76, 23);
             this.btnFont.TabIndex = 1;
             this.btnFont.Text = "Change";
             this.btnFont.UseVisualStyleBackColor = true;
-            this.btnFont.Click += new System.EventHandler(this.btnFont_Click);
+            this.btnFont.Click += new System.EventHandler(this.btnFont_Click_1);
             // 
             // lblSelectedFont
             // 
@@ -286,7 +286,7 @@
             this.Controls.Add(this.groupBox2);
             this.Name = "SettingsWindow";
             this.Text = "SettingsWindow";
-            this.Load += new System.EventHandler(this.SettingsWindow_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SettingsWindow_FormClosing);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using DiabloInterface.Properties;
 using System.Collections.Generic;
 
 namespace DiabloInterface
@@ -10,13 +9,25 @@ namespace DiabloInterface
     {
 
         private MainWindow main;
-        
-        private bool awaitingInput = false;
 
         public SettingsWindow( MainWindow main )
         {
             this.main = main;
             InitializeComponent();
+
+            this.lblFontExample.Text = main.settings.fontName;
+            this.txtFontSize.Text = main.settings.fontSize.ToString();
+            this.txtTitleFontSize.Text = main.settings.titleFontSize.ToString();
+            this.chkCreateFiles.Checked = main.settings.createFiles;
+            this.chkAutosplit.Checked = main.settings.doAutosplit;
+            this.txtAutoSplitHotkey.Text = main.settings.triggerKeys;
+
+            int x = 0;
+            foreach (AutoSplit a in main.settings.autosplits)
+            {
+                addAutosplit(a, x, false);
+                x++;
+            }
         }
 
         private void resetSettings()
@@ -26,14 +37,15 @@ namespace DiabloInterface
 
         private void saveSettings()
         {
-            List<AutoSplit.AutoSplit> asList = new List<AutoSplit.AutoSplit>();
-            foreach (AutoSplit.AutoSplit a in main.settings.autosplits) {
+            List<AutoSplit> asList = new List<AutoSplit>();
+            foreach (AutoSplit a in main.settings.autosplits) {
                 if (!a.deleted)
                 {
                     asList.Add(a);
                 }
             }
             main.settings.autosplits = asList;
+            main.settings.createFiles = chkCreateFiles.Checked;
             main.settings.doAutosplit = chkAutosplit.Checked;
             main.settings.triggerKeys = txtAutoSplitHotkey.Text;
             main.settings.fontSize = Int32.Parse(txtFontSize.Text);
@@ -47,36 +59,13 @@ namespace DiabloInterface
 
         private void btnFont_Click(object sender, EventArgs e)
         {
-            FontDialog fontDialog1 = new FontDialog();
-            fontDialog1.Font = new Font(Settings.Default["Font"].ToString(), 8);
-            DialogResult result = fontDialog1.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                lblFontExample.Text = fontDialog1.Font.Name;
-            }
+
         }
 
-        private void SettingsWindow_Load(object sender, EventArgs e)
-        {
-            this.lblFontExample.Text = main.settings.fontName;
-            this.txtFontSize.Text = main.settings.fontSize.ToString();
-            this.txtTitleFontSize.Text = main.settings.titleFontSize.ToString();
-            this.chkCreateFiles.Checked = main.settings.createFiles;
-            this.chkAutosplit.Checked = main.settings.doAutosplit;
-            this.txtAutoSplitHotkey.Text = main.settings.triggerKeys;
-
-            int x = 0;
-            foreach (AutoSplit.AutoSplit a in main.settings.autosplits)
-            {
-                addAutosplit(a, x, false);
-                x++;
-            }
-        }
-        
         private void btnSave_Click(object sender, EventArgs e)
         {
             this.saveSettings();
-            this.Close();
+            this.Hide();
         }
         private void btnApply_Click(object sender, EventArgs e)
         {
@@ -86,16 +75,16 @@ namespace DiabloInterface
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.resetSettings();
-            this.Close();
+            this.Hide();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            AutoSplit.AutoSplit autosplit = new AutoSplit.AutoSplit();
+            AutoSplit autosplit = new AutoSplit();
             this.addAutosplit(autosplit, main.settings.autosplits.Count);
         }
 
-        private void addAutosplit(AutoSplit.AutoSplit autosplit, int idx, bool addToMain = true)
+        private void addAutosplit(AutoSplit autosplit, int idx, bool addToMain = true)
         {
             TextBox txtName = new TextBox();
             ComboBox cmbType = new ComboBox();
@@ -157,7 +146,7 @@ namespace DiabloInterface
         private void BtnRemove_Click(object sender, EventArgs e)
         {
             Button b = (Button)sender;
-            AutoSplit.AutoSplit a = (AutoSplit.AutoSplit)b.Tag;
+            AutoSplit a = (AutoSplit)b.Tag;
             a.deleted = true;
         }
         
@@ -199,6 +188,27 @@ namespace DiabloInterface
         private void txtAutoSplitHotkey_KeyPress(object sender, KeyPressEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void SettingsWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if ( e.CloseReason == CloseReason.UserClosing )
+            {
+                e.Cancel = true;
+                Hide();
+            }
+        }
+
+        private void btnFont_Click_1(object sender, EventArgs e)
+        {
+            FontDialog fontDialog1 = new FontDialog();
+            fontDialog1.Font = new Font(lblFontExample.Text, 8);
+            DialogResult result = fontDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                lblFontExample.Text = fontDialog1.Font.Name;
+            }
+
         }
     }
 

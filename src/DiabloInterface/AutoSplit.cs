@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace DiabloInterface.AutoSplit
+namespace DiabloInterface
 {
     public class AutoSplit
     {
@@ -104,24 +104,26 @@ namespace DiabloInterface.AutoSplit
 
         public void updateControl()
         {
-            if (this.control != null)
+            if (this.control == null)
             {
-                this.control.Text = this.name;
-                
-                if (this._reached)
-                {
-                    this.control.ForeColor = Color.Lime;
-                }
-                else
-                {
-                    this.control.ForeColor = Color.Red;
-                }
+                return;
+            }
 
-                if (this._deleted)
-                {
-                    this.control.Parent.Controls.Remove(this.control);
-                    this.control = null;
-                }
+            this.control.Text = this.name;
+                
+            if (this._reached)
+            {
+                this.control.ForeColor = Color.Lime;
+            }
+            else
+            {
+                this.control.ForeColor = Color.Red;
+            }
+
+            if (this._deleted)
+            {
+                this.control.Parent.Controls.Remove(this.control);
+                this.control = null;
             }
         }
         public void bindControl(Control control)
@@ -201,13 +203,13 @@ namespace DiabloInterface.AutoSplit
                 }
             }
 
-            cmbValueQuest.Items.Add(new Item("Den of Evil", (int)Quest.QUEST_A1Q1));
-            cmbValueQuest.Items.Add(new Item("Andariel", (int)Quest.QUEST_A1Q6));
-            cmbValueQuest.Items.Add(new Item("Duriel", (int)Quest.QUEST_A2Q6));
-            cmbValueQuest.Items.Add(new Item("Mephisto", (int)Quest.QUEST_A3Q6));
-            cmbValueQuest.Items.Add(new Item("Diablo", (int)Quest.QUEST_A4Q2));
-            cmbValueQuest.Items.Add(new Item("Ancients", (int)Quest.QUEST_A5Q5));
-            cmbValueQuest.Items.Add(new Item("Baal", (int)Quest.QUEST_A5Q6));
+            cmbValueQuest.Items.Add(new Item("Den of Evil", (int)D2Data.QUEST_A1Q1));
+            cmbValueQuest.Items.Add(new Item("Andariel", (int)D2Data.QUEST_A1Q6));
+            cmbValueQuest.Items.Add(new Item("Duriel", (int)D2Data.QUEST_A2Q6));
+            cmbValueQuest.Items.Add(new Item("Mephisto", (int)D2Data.QUEST_A3Q6));
+            cmbValueQuest.Items.Add(new Item("Diablo", (int)D2Data.QUEST_A4Q2));
+            cmbValueQuest.Items.Add(new Item("Ancients", (int)D2Data.QUEST_A5Q5));
+            cmbValueQuest.Items.Add(new Item("Baal", (int)D2Data.QUEST_A5Q6));
 
             i = 0;
             foreach (Item item in cmbType.Items)
