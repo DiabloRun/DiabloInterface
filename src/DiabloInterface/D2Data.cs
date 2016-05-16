@@ -6,70 +6,77 @@ using System.Threading.Tasks;
 
 namespace DiabloInterface
 {
-    class D2Data
+    public class D2Data
     {
 
+        
+        public enum Quest
+        {
+            // WARRIF = 0,
+            A1Q1 = 2, // Den of Evil
+            A1Q2 = 4, // Sisters' Burial Grounds
+            A1Q3 = 6, // Tools of the Trade
+            A1Q4 = 8, // The Search for Cain
+            A1Q5 = 10, // The Forgotten Tower
+            A1Q6 = 12, // Sisters to the Slaughter
 
-        //public const int QUEST_WARRIF = 0;
+            A2Q1 = 18, // Radament's Lair
+            A2Q2 = 20, // The Horadric Staff
+            A2Q3 = 22, // Tainted Sun
+            A2Q4 = 24, // Arcane Sanctuary
+            A2Q5 = 26, // The Summoner
+            A2Q6 = 28, // The Seven Tombs
 
-        public const int QUEST_A1Q1 = 2; // Den of Evil
-        public const int QUEST_A1Q2 = 4; // Sisters' Burial Grounds
-        public const int QUEST_A1Q3 = 6; // Tools of the Trade
-        public const int QUEST_A1Q4 = 8; // The Search for Cain
-        public const int QUEST_A1Q5 = 10; // The Forgotten Tower
-        public const int QUEST_A1Q6 = 12; // Sisters to the Slaughter
+            A3Q1 = 34, // Lam Esen's Tome
+            A3Q2 = 36, // Khalim's Will
+            A3Q3 = 38, // Blade of the Old Religion
+            A3Q4 = 40, // The Golden Bird
+            A3Q5 = 42, // The Blackened Temple
+            A3Q6 = 44, // The Guardian
 
-        public const int QUEST_A2Q1 = 18; // Radament's Lair
-        public const int QUEST_A2Q2 = 20; // The Horadric Staff
-        public const int QUEST_A2Q3 = 22; // Tainted Sun
-        public const int QUEST_A2Q4 = 24; // Arcane Sanctuary
-        public const int QUEST_A2Q5 = 26; // The Summoner
-        public const int QUEST_A2Q6 = 28; // The Seven Tombs
+            A4Q1 = 50, // The Fallen Angel
+            A4Q2 = 52, // Terror's End
+            A4Q3 = 54, // Hell's Forge
 
-        public const int QUEST_A3Q1 = 34; // Lam Esen's Tome
-        public const int QUEST_A3Q2 = 36; // Khalim's Will
-        public const int QUEST_A3Q3 = 38; // Blade of the Old Religion
-        public const int QUEST_A3Q4 = 40; // The Golden Bird
-        public const int QUEST_A3Q5 = 42; // The Blackened Temple
-        public const int QUEST_A3Q6 = 44; // The Guardian
-
-        public const int QUEST_A4Q1 = 50; // The Fallen Angel
-        public const int QUEST_A4Q2 = 52; // Terror's End
-        public const int QUEST_A4Q3 = 54; // Hell's Forge
-
-        public const int QUEST_A5Q1 = 70; // Siege on Harrogath
-        public const int QUEST_A5Q2 = 72; // Rescue on Mount Arreat
-        public const int QUEST_A5Q3 = 74; // Prison of Ice
-        public const int QUEST_A5Q4 = 76; // Betrayal of Harrogath
-        public const int QUEST_A5Q5 = 78; // Rite of Passage
-        public const int QUEST_A5Q6 = 80; // Eve of Destruction
-
-
-        public const int MODE_DEATH = 0;
-        public const int MODE_NEUTRAL = 1;
-        public const int MODE_WALK = 2;
-        public const int MODE_RUN = 3;
-        public const int MODE_GET_HIT = 4;
-        public const int MODE_TOWN_NEUTRAL = 5;
-        public const int MODE_TOWN_WALK = 6;
-        public const int MODE_ATTACK_1 = 7;
-        public const int MODE_ATTACK_2 = 8;
-        public const int MODE_BLOCK = 9;
-        public const int MODE_CAST = 10;
-        public const int MODE_THROW = 11;
-        public const int MODE_KICK = 12;
-        public const int MODE_SKILL_1 = 13;
-        public const int MODE_SKILL_2 = 14;
-        public const int MODE_SKILL_3 = 15;
-        public const int MODE_SKILL_4 = 16;
-        public const int MODE_DEAD = 17;
-        public const int MODE_SEQUENCE = 18;
-        public const int MODE_KNOCK_BACK = 19;
+            A5Q1 = 70, // Siege on Harrogath
+            A5Q2 = 72, // Rescue on Mount Arreat
+            A5Q3 = 74, // Prison of Ice
+            A5Q4 = 76, // Betrayal of Harrogath
+            A5Q5 = 78, // Rite of Passage
+            A5Q6 = 80, // Eve of Destruction
+        }
 
 
-        public const int PENALTY_NORMAL = 0;
-        public const int PENALTY_NIGHTMARE = -40;
-        public const int PENALTY_HELL = -100;
+        public enum Mode
+        {
+            DEATH = 0,
+            NEUTRAL,
+            WALK,
+            RUN,
+            GET_HIT,
+            TOWN_NEUTRAL,
+            TOWN_WALK,
+            ATTACK_1,
+            ATTACK_2,
+            BLOCK,
+            CAST,
+            THROW,
+            KICK,
+            SKILL_1,
+            SKILL_2,
+            SKILL_3,
+            SKILL_4,
+            DEAD,
+            SEQUENCE,
+            KNOCK_BACK,
+        };
+
+        public enum Penalty
+        {
+            NORMAL = 0,
+            NIGHTMARE = -40,
+            HELL = -100,
+        }
 
 
         public const int CHAR_STR_IDX = 0;
@@ -141,5 +148,30 @@ namespace DiabloInterface
         public const int CHAR_UNKNOWN33_IDX = 194;
         public const int CHAR_UNKNOWN34_IDX = 201;
         public const int CHAR_UNKNOWN35_IDX = 204;
+
+
+        public enum ItemId
+        {
+            GIBDINN = 87,
+            WIRTS_LEG = 88,
+            HORADRIC_MALUS = 89,
+            HELLFORGE_HAMMER = 90,
+            HORADRIC_CUBE = 549,
+            HORADRIC_SHAFT = 92,
+            HORADRIC_STAFF = 91,
+            HORADRIC_AMULET = 521,
+            KHALIM_EYE = 553,
+            KHALIM_HEART = 554,
+            KHALIM_BRAIN = 555,
+            KHALIM_FLAIL = 173,
+            KHALIM_WILL = 174,
+            INIFUSS_SCROLL = 524,
+            POTION_OF_LIFE = 545,
+            JADE_FIGURINE = 546,
+            GOLDEN_BIRD = 547,
+            LAM_ESEN_TOME = 548,
+            MEPHISTOS_SOULSTONE = 551,
+            BOOK_OF_SKILL = 552,
+        }
     }
 }

@@ -10,7 +10,8 @@ namespace DiabloInterface
     {
         public string name;
 
-        public short mode;
+        public D2Data.Mode mode;
+
         public bool isDead = false;
 
         public bool newlyStarted = false; // if true, the char has been created since tool is running. (eligable for autosplits)
@@ -61,7 +62,7 @@ namespace DiabloInterface
         /// </summary>
         /// <param name="dict"></param>
         /// <param name="resistancPenalty"></param>
-        public void fill(Dictionary<int, int> dict, int resistancPenalty)
+        public void fill(Dictionary<int, int> dict, D2Data.Penalty resistancPenalty)
         {
             lvl = (short)(dict.ContainsKey(D2Data.CHAR_LVL_IDX) ? dict[D2Data.CHAR_LVL_IDX] : 0);
             
@@ -84,10 +85,10 @@ namespace DiabloInterface
             lightningResAdditional = (short)(dict.ContainsKey(D2Data.CHAR_LIGHTNING_RES_ADD_IDX) ? dict[D2Data.CHAR_LIGHTNING_RES_ADD_IDX] : 0);
             poisonResAdditional = (short)(dict.ContainsKey(D2Data.CHAR_POISON_RES_ADD_IDX) ? dict[D2Data.CHAR_POISON_RES_ADD_IDX] : 0);
 
-            calculatedFireRes = (short)Math.Min(fireRes + resistancPenalty, 75 + fireResAdditional);
-            calculatedColdRes = (short)Math.Min(coldRes + resistancPenalty, 75 + coldResAdditional);
-            calculatedLightningRes = (short)Math.Min(lightningRes + resistancPenalty, 75 + lightningResAdditional);
-            calculatedPoisonRes = (short)Math.Min(poisonRes + resistancPenalty, 75 + poisonResAdditional);
+            calculatedFireRes = (short)Math.Min(fireRes + (short)resistancPenalty, 75 + fireResAdditional);
+            calculatedColdRes = (short)Math.Min(coldRes + (short)resistancPenalty, 75 + coldResAdditional);
+            calculatedLightningRes = (short)Math.Min(lightningRes + (short)resistancPenalty, 75 + lightningResAdditional);
+            calculatedPoisonRes = (short)Math.Min(poisonRes + (short)resistancPenalty, 75 + poisonResAdditional);
 
             goldBody = (dict.ContainsKey(D2Data.CHAR_GOLD_BODY_IDX) ? dict[D2Data.CHAR_GOLD_BODY_IDX] : 0);
             goldStash = (dict.ContainsKey(D2Data.CHAR_GOLD_STASH_IDX) ? dict[D2Data.CHAR_GOLD_STASH_IDX] : 0);
@@ -98,7 +99,7 @@ namespace DiabloInterface
         /// </summary>
         public void handleDeath()
         {
-            if (lvl > 0 && (mode == D2Data.MODE_DEAD || mode == D2Data.MODE_DEATH))
+            if (lvl > 0 && (mode == D2Data.Mode.DEAD || mode == D2Data.Mode.DEATH))
             {
                 if (!isDead)
                 {

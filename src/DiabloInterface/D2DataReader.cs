@@ -37,7 +37,7 @@ namespace DiabloInterface
 
         Encoding enc;
         short difficulty;
-        short currentPenalty;
+        D2Data.Penalty currentPenalty;
         bool haveReset;
         string tmpName;
 
@@ -103,7 +103,7 @@ namespace DiabloInterface
                 return processRunning;
 
             }
-            catch (Exception ex)
+            catch
             {
                 processRunning = false;
                 return processRunning;
@@ -140,7 +140,7 @@ namespace DiabloInterface
                 {
                     readData();
                 }
-                catch (Exception ex)
+                catch
                 {
                     processRunning = false;
                 }
@@ -173,10 +173,10 @@ namespace DiabloInterface
             }
             switch (difficulty)
             {
-                case 2: currentPenalty = D2Data.PENALTY_HELL; break;
-                case 1: currentPenalty = D2Data.PENALTY_NIGHTMARE; break;
+                case 2: currentPenalty = D2Data.Penalty.HELL; break;
+                case 1: currentPenalty = D2Data.Penalty.NIGHTMARE; break;
                 case 0:
-                default: currentPenalty = D2Data.PENALTY_NORMAL; break;
+                default: currentPenalty = D2Data.Penalty.NORMAL; break;
             }
 
             // debug window - quests
@@ -191,7 +191,7 @@ namespace DiabloInterface
             }
 
             player.fill(readDataDict(), currentPenalty);
-            player.mode = readShort(ADDRESS_MODE, OFFSETS_MODE, true);
+            player.mode = (D2Data.Mode)readShort(ADDRESS_MODE, OFFSETS_MODE, true);
             player.handleDeath();
             if (haveReset)
             {
@@ -434,7 +434,7 @@ namespace DiabloInterface
             {
                 return readBuffer(0x01, address, offsets, relative)[0];
             }
-            catch (Exception e)
+            catch
             {
                 return -1;
             }
@@ -446,7 +446,7 @@ namespace DiabloInterface
             {
                 return BitConverter.ToInt16(readBuffer(0x02, address, offsets, relative), 0);
             }
-            catch (Exception e)
+            catch
             {
                 return -1;
             }
@@ -458,7 +458,7 @@ namespace DiabloInterface
             {
                 return BitConverter.ToInt32(readBuffer(0x04, address, offsets, relative), 0);
             }
-            catch (Exception e)
+            catch
             {
                 return -1;
             }

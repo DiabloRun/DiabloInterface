@@ -63,7 +63,7 @@ namespace DiabloInterface
                                 fontSize = 10;
                             }
                         }
-                        catch (Exception e) { fontSize = 10; }
+                        catch { fontSize = 10; }
                         break;
                     case "FontSizeTitle":
                         try
@@ -74,7 +74,7 @@ namespace DiabloInterface
                                 titleFontSize = 10;
                             }
                         }
-                        catch (Exception e) { titleFontSize = 10; }
+                        catch { titleFontSize = 10; }
                         break;
                     case "ShowDebug":
                         showDebug = (parts[1] == "1");
