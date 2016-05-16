@@ -24,6 +24,13 @@ If you just want to use the tool and not mess with source code, use any of the b
 
 [DiabloInterface_Autosplits_v0.1_.NET4.5.2.exe](https://github.com/Zutatensuppe/DiabloInterface/raw/master/builds/1.14B/DiabloInterface_Autosplits_v0.1_.NET4.5.2.exe) (compiled for .NET 4.5.2)
 
+### Example Config Files
+Put them into same folder as the exe file and rename to settings.conf.
+
+[settings-simple.conf](https://github.com/Zutatensuppe/DiabloInterface/raw/master/builds/1.14B/settings-simple.conf) (basic splits: only game start + bosses)
+
+[settings-extended.conf](https://github.com/Zutatensuppe/DiabloInterface/raw/master/builds/1.14B/settings-extended.conf) (lots of autosplits using Slimoleqs splits)
+
 Let me know if something is broken or if you need a different build.
 
 ## Troubleshooting
