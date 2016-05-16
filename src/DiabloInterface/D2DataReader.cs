@@ -193,9 +193,11 @@ namespace DiabloInterface
             player.fill(readDataDict(), currentPenalty);
             player.mode = readShort(ADDRESS_MODE, OFFSETS_MODE, true);
             player.handleDeath();
-            player.newlyStarted = (haveReset && player.xp == 0 && player.lvl == 1);
-
-            haveReset = false;
+            if (haveReset)
+            {
+                player.newlyStarted = (player.xp == 0 && player.lvl == 1);
+                haveReset = false;
+            }
 
             main.updateLabels(player);
             main.writeFiles(player);
@@ -287,7 +289,7 @@ namespace DiabloInterface
 
             foreach (AutoSplit autosplit in main.settings.autosplits)
             {
-                if (autosplit.type == AutoSplit.TYPE_SPECIAL && autosplit.value == (int)AutoSplit.Special.GAMESTART)
+                if (!autosplit.reached && autosplit.type == AutoSplit.TYPE_SPECIAL && autosplit.value == (int)AutoSplit.Special.GAMESTART)
                 {
                     autosplit.reached = true;
                     main.triggerAutosplit(player);
@@ -407,7 +409,7 @@ namespace DiabloInterface
                         break;
                     case AutoSplit.TYPE_QUEST:
                         short value = BitConverter.ToInt16(new byte[2] { reverseBits(questBuffer[autosplit.value]), reverseBits(questBuffer[autosplit.value + 1]), }, 0);
-                        if (isNthBitSet(value, 0) || isNthBitSet(value, 1))
+                        if (isNthBitSet(value, 1) || isNthBitSet(value, 0))
                         {
                             // quest finished 
                             autosplit.reached = true;
