@@ -22,6 +22,8 @@ If you just want to use the tool and not mess with source code, use any of the b
 ### D2 Patch 1.14B
 [DiabloInterface_.NET4.5.2.exe](https://github.com/Zutatensuppe/DiabloInterface/raw/master/builds/1.14B/DiabloInterface_.NET4.5.2.exe) (compiled for .NET 4.5.2)
 
+[DiabloInterface_Autosplits_v0.1_.NET4.5.2](https://github.com/Zutatensuppe/DiabloInterface/raw/master/builds/1.14B/DiabloInterface_Autosplits_v0.1_.NET4.5.2) (compiled for .NET 4.5.2)
+
 Let me know if something is broken or if you need a different build.
 
 ## Troubleshooting
