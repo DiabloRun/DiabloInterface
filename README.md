@@ -23,7 +23,7 @@ If you just want to use the tool and not mess with source code, use any of the b
 
 
 ### Current Version:
-Current version allows automatic splits in connection with a split tool like Livesplit. You need to setup the same splits and hotkeys (hotkey in DiabloInterface = Start/Split hotkey in split tool) as in your split tool. There is no timer integrated directly into this tool (yet). Please note that automatic splits will only work if you start a new character while the tool is running.
+Current version allows automatic splits in connection with a split tool like Livesplit. You need to setup the same splits and hotkeys as in your split tool (hotkey in DiabloInterface = Start/Split hotkey in split tool). There is no timer integrated directly into this tool (yet). Please note that automatic splits will only work if you start a new character while the tool is running.
 
 [DiabloInterface_Autosplits_v0.1_.NET4.5.2.exe](https://github.com/Zutatensuppe/DiabloInterface/raw/master/builds/1.14B/DiabloInterface_Autosplits_v0.1_.NET4.5.2.exe) (D2 Patch 1.14B, compiled for .NET 4.5.2)
 
