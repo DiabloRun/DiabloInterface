@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsWindow));
             this.btnSave = new System.Windows.Forms.Button();
             this.btnFont = new System.Windows.Forms.Button();
             this.lblSelectedFont = new System.Windows.Forms.Label();
@@ -50,6 +51,14 @@
             this.button1 = new System.Windows.Forms.Button();
             this.txtAutoSplitHotkey = new System.Windows.Forms.TextBox();
             this.lblAutoSplitHotkey = new System.Windows.Forms.Label();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.richTextBox3 = new System.Windows.Forms.RichTextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.richTextBox4 = new System.Windows.Forms.RichTextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -198,9 +207,9 @@
             this.chkAutosplit.AutoSize = true;
             this.chkAutosplit.Location = new System.Drawing.Point(6, 252);
             this.chkAutosplit.Name = "chkAutosplit";
-            this.chkAutosplit.Size = new System.Drawing.Size(68, 17);
+            this.chkAutosplit.Size = new System.Drawing.Size(107, 17);
             this.chkAutosplit.TabIndex = 1;
-            this.chkAutosplit.Text = "AutoSplit";
+            this.chkAutosplit.Text = "Enable Auto-Split";
             this.chkAutosplit.UseVisualStyleBackColor = true;
             // 
             // panel1
@@ -270,11 +279,111 @@
             this.lblAutoSplitHotkey.TabIndex = 13;
             this.lblAutoSplitHotkey.Text = "Auto-Split Hotkey:";
             // 
+            // richTextBox1
+            // 
+            this.richTextBox1.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox1.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.richTextBox1.Location = new System.Drawing.Point(110, 396);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(386, 35);
+            this.richTextBox1.TabIndex = 14;
+            this.richTextBox1.Text = "These keys are triggered when a split is reached and Auto-Split is enabled. Enter" +
+    " the same Hotkey that your split tool (e.g. Livesplit) listens to for Start/Spli" +
+    "t.";
+            // 
+            // richTextBox2
+            // 
+            this.richTextBox2.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.richTextBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox2.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.richTextBox2.Location = new System.Drawing.Point(110, 362);
+            this.richTextBox2.Name = "richTextBox2";
+            this.richTextBox2.ReadOnly = true;
+            this.richTextBox2.Size = new System.Drawing.Size(414, 28);
+            this.richTextBox2.TabIndex = 14;
+            this.richTextBox2.Text = "Add a new split that should be triggered. After setting up all your splits, they " +
+    "should match the splits in your split tool (e.g. Livesplit).";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.label4.Location = new System.Drawing.Point(12, 338);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(91, 13);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Enable Auto-Split:";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.label5.Location = new System.Drawing.Point(12, 362);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(77, 13);
+            this.label5.TabIndex = 15;
+            this.label5.Text = "Add Auto-Split:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.label6.Location = new System.Drawing.Point(12, 396);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(92, 13);
+            this.label6.TabIndex = 15;
+            this.label6.Text = "Auto-Split Hotkey:";
+            // 
+            // richTextBox3
+            // 
+            this.richTextBox3.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.richTextBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox3.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.richTextBox3.Location = new System.Drawing.Point(110, 338);
+            this.richTextBox3.Name = "richTextBox3";
+            this.richTextBox3.ReadOnly = true;
+            this.richTextBox3.Size = new System.Drawing.Size(414, 18);
+            this.richTextBox3.TabIndex = 14;
+            this.richTextBox3.Text = "This option enables automatic splitting.";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.label7.Location = new System.Drawing.Point(12, 437);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(65, 13);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "Create Files:";
+            // 
+            // richTextBox4
+            // 
+            this.richTextBox4.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.richTextBox4.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox4.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.richTextBox4.Location = new System.Drawing.Point(110, 437);
+            this.richTextBox4.Name = "richTextBox4";
+            this.richTextBox4.ReadOnly = true;
+            this.richTextBox4.Size = new System.Drawing.Size(399, 35);
+            this.richTextBox4.TabIndex = 14;
+            this.richTextBox4.Text = "Enabling this causes the tool to create txt files in exe-folder/txt/... that can " +
+    "be read by your streaming software.";
+            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(670, 328);
+            this.ClientSize = new System.Drawing.Size(670, 474);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.richTextBox3);
+            this.Controls.Add(this.richTextBox2);
+            this.Controls.Add(this.richTextBox4);
+            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.lblAutoSplitHotkey);
             this.Controls.Add(this.txtAutoSplitHotkey);
             this.Controls.Add(this.button1);
@@ -284,8 +393,9 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.groupBox2);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SettingsWindow";
-            this.Text = "SettingsWindow";
+            this.Text = "Settings";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SettingsWindow_FormClosing);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -324,5 +434,13 @@
         private System.Windows.Forms.CheckBox chkAutosplit;
         private System.Windows.Forms.TextBox txtAutoSplitHotkey;
         private System.Windows.Forms.Label lblAutoSplitHotkey;
+        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox richTextBox2;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.RichTextBox richTextBox3;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.RichTextBox richTextBox4;
     }
 }
