@@ -57,14 +57,19 @@ namespace DiabloInterface
         public const int TYPE_SPECIAL = 4;
 
         private string _name = "";
-        private int _type = TYPE_NONE;
-        private int _value = -1;
+        private short _type = TYPE_NONE;
+        private short _value = -1;
+        private short _difficulty = 0;
 
-        public int type
+        public short difficulty
+        {
+            get { return this._difficulty; }
+        }
+        public short type
         {
             get { return this._type; }
         }
-        public int value
+        public short value
         {
             get { return _value; }
         }
@@ -86,6 +91,7 @@ namespace DiabloInterface
                 updateControl();
             }
         }
+
         public bool deleted
         {
             get { return this._deleted; }
@@ -98,9 +104,9 @@ namespace DiabloInterface
                 cmbValueArea.Enabled = false;
                 cmbValueItem.Enabled = false;
                 cmbValueQuest.Enabled = false;
+                cmbDifficulty.Enabled = false;
             }
         }
-
 
         public void updateControl()
         {
@@ -113,7 +119,7 @@ namespace DiabloInterface
                 
             if (this._reached)
             {
-                this.control.ForeColor = Color.Lime;
+                this.control.ForeColor = Color.Green;
             }
             else
             {
@@ -140,17 +146,19 @@ namespace DiabloInterface
         private ComboBox cmbValueItem;
         private ComboBox cmbValueQuest;
         private ComboBox cmbValueSpecial;
+        private ComboBox cmbDifficulty;
         #endregion
 
         public AutoSplit()
         {
 
         }
-        public AutoSplit(string name, int type, int value)
+        public AutoSplit(string name, short type, short value, short difficulty)
         {
             this._name = name;
             this._type = type;
             this._value = value;
+            this._difficulty = difficulty;
         }
 
         public void setSettingControls(
@@ -160,7 +168,8 @@ namespace DiabloInterface
             ComboBox cmbValueArea,
             ComboBox cmbValueItem,
             ComboBox cmbValueQuest,
-            ComboBox cmbValueSpecial)
+            ComboBox cmbValueSpecial,
+            ComboBox cmbDifficulty)
         {
             this.txtName = txtName;
             this.cmbType = cmbType;
@@ -169,6 +178,7 @@ namespace DiabloInterface
             this.cmbValueItem = cmbValueItem;
             this.cmbValueQuest = cmbValueQuest;
             this.cmbValueSpecial = cmbValueSpecial;
+            this.cmbDifficulty = cmbDifficulty;
 
             txtName.TextChanged += TxtName_TextChanged;
 
@@ -210,6 +220,11 @@ namespace DiabloInterface
             cmbValueQuest.Items.Add(new Item("Diablo", (int)D2Data.QUEST_A4Q2));
             cmbValueQuest.Items.Add(new Item("Ancients", (int)D2Data.QUEST_A5Q5));
             cmbValueQuest.Items.Add(new Item("Baal", (int)D2Data.QUEST_A5Q6));
+
+            cmbDifficulty.Items.Add(new Item("Normal", 0));
+            cmbDifficulty.Items.Add(new Item("Nightmare", 1));
+            cmbDifficulty.Items.Add(new Item("Hell", 2));
+            cmbDifficulty.SelectedIndex = _difficulty;
 
             i = 0;
             foreach (Item item in cmbType.Items)
@@ -299,6 +314,7 @@ namespace DiabloInterface
             cmbValueItem.SelectedIndexChanged += new System.EventHandler(cmbValue_SelectedIndexChanged);
             cmbValueQuest.SelectedIndexChanged += new System.EventHandler(cmbValue_SelectedIndexChanged);
             cmbValueSpecial.SelectedIndexChanged += new System.EventHandler(cmbValue_SelectedIndexChanged);
+            cmbDifficulty.SelectedIndexChanged += new System.EventHandler(cmbDifficulty_SelectedIndexChanged);
 
         }
 
@@ -307,12 +323,18 @@ namespace DiabloInterface
             TextBox txtBox = (TextBox)sender;
             _name = txtBox.Text;
         }
+        private void cmbDifficulty_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            ComboBox comboBox = (ComboBox)sender;
+            Item selectedItem = (Item)comboBox.SelectedItem;
+            _difficulty = (short)selectedItem.Value;
+        }
 
         private void cmbValue_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
             Item selectedItem = (Item)comboBox.SelectedItem;
-            _value = selectedItem.Value;
+            _value = (short)selectedItem.Value;
             if (_name == "")
             {
                 txtName.Text = selectedItem.Name;
@@ -323,7 +345,7 @@ namespace DiabloInterface
             ComboBox comboBox = (ComboBox)sender;
             Item selectedItem = (Item)comboBox.SelectedItem;
             Item selectedValueItem = null;
-            _type = selectedItem.Value;
+            _type = (short)selectedItem.Value;
 
             this.cmbValueCharLevel.Hide();
             this.cmbValueArea.Hide();
@@ -351,7 +373,7 @@ namespace DiabloInterface
             }
             if (selectedValueItem != null)
             {
-                _value = selectedValueItem.Value;
+                _value = (short)selectedValueItem.Value;
             }
             else
             {

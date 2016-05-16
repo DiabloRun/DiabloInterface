@@ -21,6 +21,7 @@ namespace DiabloInterface
             this.chkCreateFiles.Checked = main.settings.createFiles;
             this.chkAutosplit.Checked = main.settings.doAutosplit;
             this.txtAutoSplitHotkey.Text = main.settings.triggerKeys;
+            this.chkShowDebug.Checked = main.settings.showDebug;
 
             int x = 0;
             foreach (AutoSplit a in main.settings.autosplits)
@@ -51,6 +52,7 @@ namespace DiabloInterface
             main.settings.fontSize = Int32.Parse(txtFontSize.Text);
             main.settings.titleFontSize = Int32.Parse(txtTitleFontSize.Text);
             main.settings.fontName = lblFontExample.Text;
+            main.settings.showDebug = chkShowDebug.Checked;
 
             main.settings.save();
             main.applySettings();
@@ -93,6 +95,7 @@ namespace DiabloInterface
             ComboBox cmbValueItem = new ComboBox();
             ComboBox cmbValueQuest = new ComboBox();
             ComboBox cmbValueSpecial = new ComboBox();
+            ComboBox cmbDifficulty = new ComboBox();
 
             cmbType.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbValueCharLevel.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -100,15 +103,18 @@ namespace DiabloInterface
             cmbValueItem.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbValueQuest.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbValueSpecial.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbDifficulty.DropDownStyle = ComboBoxStyle.DropDownList;
+
             Button btnRemove = new Button();
             txtName.SetBounds(0, 24 + idx * 24, 80, 16);
             cmbType.SetBounds(90, 24 + idx * 24, 50, 16);
-            cmbValueCharLevel.SetBounds(150, 24 + idx * 24, 150, 16);
-            cmbValueArea.SetBounds(150, 24 + idx * 24, 150, 16);
-            cmbValueItem.SetBounds(150, 24 + idx * 24, 150, 16);
-            cmbValueQuest.SetBounds(150, 24 + idx * 24, 150, 16);
-            cmbValueSpecial.SetBounds(150, 24 + idx * 24, 150, 16);
-            btnRemove.SetBounds(300, 24 + idx * 24, 20, 20);
+            cmbValueCharLevel.SetBounds(150, 24 + idx * 24, 140, 16);
+            cmbValueArea.SetBounds(150, 24 + idx * 24, 140, 16);
+            cmbValueItem.SetBounds(150, 24 + idx * 24, 140, 16);
+            cmbValueQuest.SetBounds(150, 24 + idx * 24, 140, 16);
+            cmbValueSpecial.SetBounds(150, 24 + idx * 24, 140, 16);
+            cmbDifficulty.SetBounds(300, 24 + idx * 24, 60, 16);
+            btnRemove.SetBounds(370, 24 + idx * 24, 20, 20);
             btnRemove.Text = "X";
 
             cmbValueCharLevel.Hide();
@@ -123,7 +129,8 @@ namespace DiabloInterface
                 cmbValueArea, 
                 cmbValueItem, 
                 cmbValueQuest,
-                cmbValueSpecial
+                cmbValueSpecial,
+                cmbDifficulty
             );
 
             this.panel1.Controls.Add(txtName);
@@ -133,6 +140,7 @@ namespace DiabloInterface
             this.panel1.Controls.Add(cmbValueItem);
             this.panel1.Controls.Add(cmbValueQuest);
             this.panel1.Controls.Add(cmbValueSpecial);
+            this.panel1.Controls.Add(cmbDifficulty);
             this.panel1.Controls.Add(btnRemove);
             btnRemove.Click += BtnRemove_Click;
             btnRemove.Tag = autosplit;

@@ -59,10 +59,14 @@
             this.richTextBox3 = new System.Windows.Forms.RichTextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.richTextBox4 = new System.Windows.Forms.RichTextBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.chkShowDebug = new System.Windows.Forms.CheckBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnSave
@@ -77,9 +81,9 @@
             // 
             // btnFont
             // 
-            this.btnFont.Location = new System.Drawing.Point(189, 19);
+            this.btnFont.Location = new System.Drawing.Point(153, 19);
             this.btnFont.Name = "btnFont";
-            this.btnFont.Size = new System.Drawing.Size(76, 23);
+            this.btnFont.Size = new System.Drawing.Size(55, 23);
             this.btnFont.TabIndex = 1;
             this.btnFont.Text = "Change";
             this.btnFont.UseVisualStyleBackColor = true;
@@ -107,7 +111,7 @@
             // 
             this.txtTitleFontSize.Location = new System.Drawing.Point(91, 86);
             this.txtTitleFontSize.Name = "txtTitleFontSize";
-            this.txtTitleFontSize.Size = new System.Drawing.Size(75, 20);
+            this.txtTitleFontSize.Size = new System.Drawing.Size(49, 20);
             this.txtTitleFontSize.TabIndex = 4;
             // 
             // groupBox1
@@ -119,9 +123,9 @@
             this.groupBox1.Controls.Add(this.txtTitleFontSize);
             this.groupBox1.Controls.Add(this.lblSelectedFont);
             this.groupBox1.Controls.Add(this.lblFontExample);
-            this.groupBox1.Location = new System.Drawing.Point(387, 12);
+            this.groupBox1.Location = new System.Drawing.Point(444, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(271, 122);
+            this.groupBox1.Size = new System.Drawing.Size(214, 122);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Font";
@@ -130,7 +134,7 @@
             // 
             this.txtFontSize.Location = new System.Drawing.Point(91, 52);
             this.txtFontSize.Name = "txtFontSize";
-            this.txtFontSize.Size = new System.Drawing.Size(75, 20);
+            this.txtFontSize.Size = new System.Drawing.Size(49, 20);
             this.txtFontSize.TabIndex = 8;
             // 
             // lblFontSize
@@ -184,9 +188,9 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.chkCreateFiles);
-            this.groupBox2.Location = new System.Drawing.Point(387, 140);
+            this.groupBox2.Location = new System.Drawing.Point(444, 140);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(271, 45);
+            this.groupBox2.Size = new System.Drawing.Size(214, 45);
             this.groupBox2.TabIndex = 9;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Data";
@@ -197,7 +201,7 @@
             this.groupBox3.Controls.Add(this.panel1);
             this.groupBox3.Location = new System.Drawing.Point(12, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(369, 275);
+            this.groupBox3.Size = new System.Drawing.Size(426, 275);
             this.groupBox3.TabIndex = 10;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Auto-Split";
@@ -215,18 +219,19 @@
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Location = new System.Drawing.Point(6, 19);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(357, 227);
+            this.panel1.Size = new System.Drawing.Size(414, 227);
             this.panel1.TabIndex = 0;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(170, 0);
+            this.label3.Location = new System.Drawing.Point(154, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(34, 13);
             this.label3.TabIndex = 0;
@@ -235,7 +240,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(110, 0);
+            this.label2.Location = new System.Drawing.Point(89, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(31, 13);
             this.label2.TabIndex = 0;
@@ -371,11 +376,41 @@
             this.richTextBox4.Text = "Enabling this causes the tool to create txt files in exe-folder/txt/... that can " +
     "be read by your streaming software.";
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.chkShowDebug);
+            this.groupBox4.Location = new System.Drawing.Point(444, 191);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(214, 45);
+            this.groupBox4.TabIndex = 16;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Debug";
+            // 
+            // chkShowDebug
+            // 
+            this.chkShowDebug.AutoSize = true;
+            this.chkShowDebug.Location = new System.Drawing.Point(10, 20);
+            this.chkShowDebug.Name = "chkShowDebug";
+            this.chkShowDebug.Size = new System.Drawing.Size(130, 17);
+            this.chkShowDebug.TabIndex = 0;
+            this.chkShowDebug.Text = "Show Debug Window";
+            this.chkShowDebug.UseVisualStyleBackColor = true;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(301, 0);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(47, 13);
+            this.label8.TabIndex = 0;
+            this.label8.Text = "Difficulty";
+            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(670, 474);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -405,6 +440,8 @@
             this.groupBox3.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -442,5 +479,8 @@
         private System.Windows.Forms.RichTextBox richTextBox3;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.RichTextBox richTextBox4;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.CheckBox chkShowDebug;
+        private System.Windows.Forms.Label label8;
     }
 }

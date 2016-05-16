@@ -12,12 +12,16 @@ The information that is currently shown in the tool are as follows:
  - Base stats (strength, dexterity, vitality, energy)
  - Resistances
 
+**Main window**  
 ![Main tool window](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/mainWindow.png)
 
-You can see the tool in action here:    
-[Slimoleq @ Twitch](https://www.twitch.tv/slimoleq)
+**Settings window**  
+![Settings tool window](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/settingsWindow.png)
 
-Screenshot:
+**Debug window**  
+![Settings tool window](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/debugWindow.png)
+
+**Tool in action ([Slimoleq @ Twitch](https://www.twitch.tv/slimoleq))**  
 ![Slimoleq Stream](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/slimoScreen.png)
 
 ## Downloads/Builds

@@ -76,15 +76,9 @@ namespace DiabloInterface
 
         public void updateAutosplits()
         {
-            int y = 0;
-            panel1.Controls.Clear();
-            foreach (AutoSplit autosplit in settings.autosplits)
+            if (debugWindow != null)
             {
-                Label lbl = new Label();
-                lbl.SetBounds(0, y, panel1.Bounds.Width, 16);
-                panel1.Controls.Add(lbl);
-                autosplit.bindControl(lbl);
-                y += 16;
+                debugWindow.updateAutosplits(settings.autosplits);
             }
         }
 
@@ -159,6 +153,21 @@ namespace DiabloInterface
             poisonResLabel.Font = fSmall;
             goldLabel.Font = fSmall;
             deathsLabel.Font = fSmall;
+
+            if ( settings.showDebug )
+            {
+                if (debugWindow == null || debugWindow.IsDisposed)
+                {
+                    debugWindow = new DebugWindow();
+                }
+                debugWindow.Show();
+            } else
+            {
+                if (debugWindow != null && !debugWindow.IsDisposed)
+                {
+                    debugWindow.Hide();
+                }
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)

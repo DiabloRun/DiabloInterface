@@ -22,6 +22,9 @@ namespace DiabloInterface
         const string d2ProcessName = "game";
         const string d2ModuleName = "Game.exe";
 
+        const int QUEST_BUFFER_DIFFICULTY_OFFSET = 128;
+        const int QUEST_BUFFER_LENGTH = 96;
+
         bool processRunning;
         Process D2Process;
         IntPtr D2ProcessHandle;
@@ -33,8 +36,8 @@ namespace DiabloInterface
         int bytesRead = 0;
 
         Encoding enc;
-        int difficulty;
-        int currentPenalty;
+        short difficulty;
+        short currentPenalty;
         bool haveReset;
         string tmpName;
 
@@ -164,6 +167,10 @@ namespace DiabloInterface
 
             // todo: only read difficulty when it could possibly have changed
             difficulty = readByte(ADDRESS_DIFFICULTY, null, true);
+            if (difficulty < 0 || difficulty > 2 )
+            {
+                difficulty = 0;
+            }
             switch (difficulty)
             {
                 case 2: currentPenalty = D2Data.PENALTY_HELL; break;
@@ -175,7 +182,12 @@ namespace DiabloInterface
             // debug window - quests
             if (main.getDebugWindow() != null)
             {
-                main.getDebugWindow().setQuestData(readBuffer(96, ADDRESS_QUESTS, OFFSETS_QUESTS, true));
+                OFFSETS_QUESTS[OFFSETS_QUESTS.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 0;
+                main.getDebugWindow().setQuestDataNormal(readBuffer(QUEST_BUFFER_LENGTH, ADDRESS_QUESTS, OFFSETS_QUESTS, true));
+                OFFSETS_QUESTS[OFFSETS_QUESTS.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 1;
+                main.getDebugWindow().setQuestDataNightmare(readBuffer(QUEST_BUFFER_LENGTH, ADDRESS_QUESTS, OFFSETS_QUESTS, true));
+                OFFSETS_QUESTS[OFFSETS_QUESTS.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 2;
+                main.getDebugWindow().setQuestDataHell(readBuffer(QUEST_BUFFER_LENGTH, ADDRESS_QUESTS, OFFSETS_QUESTS, true));
             }
 
             player.fill(readDataDict(), currentPenalty);
@@ -289,7 +301,7 @@ namespace DiabloInterface
 
             foreach (AutoSplit autosplit in main.settings.autosplits)
             {
-                if (autosplit.reached)
+                if (autosplit.reached || autosplit.difficulty != difficulty)
                 {
                     continue;
                 }
@@ -359,12 +371,13 @@ namespace DiabloInterface
 
             if (haveUnreachedQuestSplits)
             {
-                questBuffer = readBuffer(96, ADDRESS_QUESTS, OFFSETS_QUESTS, true);
+                OFFSETS_QUESTS[OFFSETS_QUESTS.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * difficulty;
+                questBuffer = readBuffer(QUEST_BUFFER_LENGTH, ADDRESS_QUESTS, OFFSETS_QUESTS, true);
             }
 
             foreach (AutoSplit autosplit in main.settings.autosplits)
             {
-                if (autosplit.reached)
+                if (autosplit.reached || autosplit.difficulty != difficulty)
                 {
                     continue;
                 }

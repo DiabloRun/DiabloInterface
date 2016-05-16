@@ -12,6 +12,7 @@ namespace DiabloInterface
         public int titleFontSize = 18;
         public bool createFiles = false;
         public bool doAutosplit = false;
+        public bool showDebug = false;
         public string triggerKeys = "";
         public List<AutoSplit> autosplits = new List<AutoSplit>();
 
@@ -25,10 +26,11 @@ namespace DiabloInterface
             confString += "FontSizeTitle: " + titleFontSize + "\n";
             confString += "CreateFiles: " + (createFiles ? "1" : "0") + "\n";
             confString += "DoAutosplit: " + (doAutosplit ? "1" : "0") + "\n";
+            confString += "ShowDebug: " + (showDebug ? "1" : "0") + "\n";
             confString += "TriggerKeys: " + triggerKeys + "\n";
             foreach (AutoSplit autosplit in autosplits)
             {
-                confString += "AutoSplit: " + autosplit.name.Replace('|', ' ') + "|"+ autosplit.type + "|" + autosplit.value + "\n";
+                confString += "AutoSplit: " + autosplit.name.Replace('|', ' ') + "|"+ autosplit.type + "|" + autosplit.value + "|" + autosplit.difficulty + "\n";
             }
             
             File.WriteAllText("settings.conf", confString);
@@ -74,6 +76,9 @@ namespace DiabloInterface
                         }
                         catch (Exception e) { titleFontSize = 10; }
                         break;
+                    case "ShowDebug":
+                        showDebug = (parts[1] == "1");
+                        break;
                     case "CreateFiles":
                         createFiles = (parts[1] == "1");
                         break;
@@ -84,50 +89,31 @@ namespace DiabloInterface
                         doAutosplit = (parts[1] == "1");
                         break;
                     case "AutoSplit":
-                        parts2 = parts[1].Split(new string[] { "|" }, 3, StringSplitOptions.None);
-                        AutoSplit autosplit = new AutoSplit(
-                            parts2[0],
-                            Convert.ToInt16(parts2[1]),
-                            Convert.ToInt16(parts2[2])
-                        );
-                        autosplitsNew.Add(autosplit);
+                        parts2 = parts[1].Split(new string[] { "|" }, 4, StringSplitOptions.None);
+                        if (parts2.Length == 3)
+                        {
+                            AutoSplit autosplit = new AutoSplit(
+                                parts2[0],
+                                Convert.ToInt16(parts2[1]),
+                                Convert.ToInt16(parts2[2]),
+                                (short)0
+                            );
+                            autosplitsNew.Add(autosplit);
+                        }
+                        else if (parts2.Length == 4)
+                        {
+                            AutoSplit autosplit = new AutoSplit(
+                                parts2[0],
+                                Convert.ToInt16(parts2[1]),
+                                Convert.ToInt16(parts2[2]),
+                                Convert.ToInt16(parts2[3])
+                            );
+                            autosplitsNew.Add(autosplit);
+                        }
                         break;
                 }
             }
             autosplits = autosplitsNew;
-        }
-
-        private List<AutoSplit> getAutosplitsByString(string autosplitString)
-        {
-            List<AutoSplit> autosplits = new List<AutoSplit>();
-            if (autosplitString == "")
-            {
-                return autosplits;
-            }
-            string[] strArray = autosplitString.Split(new char[] { ';' });
-            string[] typeVal;
-            foreach (string str in strArray)
-            {
-                typeVal = str.Split(new char[] { ',' });
-
-                if (typeVal.Length != 3)
-                {
-                    continue;
-                }
-                AutoSplit autosplit = new AutoSplit(typeVal[0], Int32.Parse(typeVal[1]), Int32.Parse(typeVal[2]));
-                autosplits.Add(autosplit);
-            }
-            return autosplits;
-        }
-
-        public string getAutosplitSettingsString(List<AutoSplit> autosplits)
-        {
-            String settings = "";
-            foreach (AutoSplit autosplit in autosplits)
-            {
-                settings += autosplit.name + "," + autosplit.type + "," + autosplit.value + ";";
-            }
-            return settings;
         }
     }
 
