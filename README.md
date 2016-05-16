@@ -7,7 +7,7 @@ that can be useful to viewers of the stream (because the information is not visi
 
 The information that is currently shown in the tool are as follows:
  - Player name
- - Deathcount
+ - Deathcount (is reset after DiabloInterface is restarted)
  - Gold
  - Base stats (strength, dexterity, vitality, energy)
  - Resistances
