@@ -41,9 +41,9 @@ Current version allows automatic splits in connection with a split tool like Liv
 #### Example config files
 Put them into same folder as the exe file and rename to settings.conf.
 
-[settings-simple.conf](https://github.com/Zutatensuppe/DiabloInterface/raw/master/builds/1.14B/settings-simple.conf) (basic splits: only game start + bosses)
+[settings-simple.conf](https://github.com/Zutatensuppe/DiabloInterface/releases/download/v0.2.3/settings-simple.conf) (basic splits: only game start + bosses)
 
-[settings-extended.conf](https://github.com/Zutatensuppe/DiabloInterface/raw/master/builds/1.14B/settings-extended.conf) (lots of autosplits using Slimoleqs splits)
+[settings-extended.conf](https://github.com/Zutatensuppe/DiabloInterface/releases/download/v0.2.3/settings-extended.conf) (lots of autosplits based on Slimoleqs splits)
 
 ### Older versions
 
