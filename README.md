@@ -15,19 +15,6 @@ The information that is currently shown in the tool are as follows:
 
 The tool is also able to do automatic splits in connection with a split tool like Livesplit. You need to setup the same splits and hotkeys as in your split tool (hotkey in DiabloInterface = Start/Split hotkey in split tool). There is no timer integrated directly into this tool (yet). Please note that automatic splits will only work if you start a new character while the tool is running.
 
-**Main window**  
-![Main tool window](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/mainWindow.png)
-![Main tool window, v0.2.1](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/mainWindow-v0.2.1.png)
-
-**Settings window**  
-![Settings tool window](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/settingsWindow.png)
-
-**Debug window**  
-![Settings tool window](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/debugWindow.png)
-
-**Tool in action ([Slimoleq @ Twitch](https://www.twitch.tv/slimoleq))**  
-![Slimoleq Stream](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/slimoScreen.png)
-
 ## Downloads/Builds
 
 (Let me know if something is broken or if you need a different build.)    
@@ -46,3 +33,18 @@ Put them into same folder as the exe file and rename to settings.conf.
 
 1. The tool must be run as administrator, otherwise it cannot read the memory from another process.
 2. Because of the nature of how the tool works, there might be a warning from your Antivirus/Windows Smartscreen in precompiled exe. You can ignore the warning or compile the sources youself.
+
+## Screenshots
+
+**Main window**  
+![Main tool window](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/mainWindow.png)
+![Main tool window, v0.2.1](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/mainWindow-v0.2.1.png)
+
+**Settings window**  
+![Settings tool window](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/settingsWindow.png)
+
+**Debug window**  
+![Settings tool window](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/debugWindow.png)
+
+**Tool in action ([Slimoleq @ Twitch](https://www.twitch.tv/slimoleq))**  
+![Slimoleq Stream](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/slimoScreen.png)
