@@ -168,6 +168,8 @@ namespace DiabloInterface
                     debugWindow.Hide();
                 }
             }
+
+            dataReader.setD2Version(settings.d2Version);
         }
 
         private void button1_Click(object sender, EventArgs e)

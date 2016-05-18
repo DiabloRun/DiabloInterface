@@ -40,11 +40,23 @@ namespace DiabloInterface
         D2Data.Penalty currentPenalty;
         bool haveReset;
         string tmpName;
-
+        
 
         int[] mask8BitSet = { 128, 64, 32, 16, 8, 4, 2, 1 };
 
         private D2Player player;
+
+        int ADDRESS_CHARACTER;
+        int[] OFFSETS_MODE;
+        int[] OFFSETS_PLAYER_STATS;
+        int[] OFFSETS_INVENTORY;
+        int[] OFFSETS_NAME;
+
+        int ADDRESS_QUESTS;
+        int[] OFFSETS_QUESTS;
+
+        int ADDRESS_DIFFICULTY;
+        int ADDRESS_AREA;
 
         #region patch 1.14a adresses
         // const int ADDRESS_MODE = 0x44C658;
@@ -57,18 +69,31 @@ namespace DiabloInterface
         #endregion
 
         #region patch 1.14b adresses
-        const int ADDRESS_MODE = 0x0039DEFC;
-        int[] OFFSETS_MODE = new int[] { 0x10 };
-        const int ADDRESS_CHARACTER = 0x0039DEFC;
-        int[] OFFSETS_PLAYER_STATS = new int[] { 0x5c, 0x48, 0x00 };
-        int[] OFFSETS_INVENTORY = new int[] { 0x60 };
+        //int ADDRESS_CHARACTER = 0x0039DEFC;
+        //int[] OFFSETS_MODE = new int[] { 0x10 };
+        //int[] OFFSETS_PLAYER_STATS = new int[] { 0x5c, 0x48, 0x00 };
+        //int[] OFFSETS_INVENTORY = new int[] { 0x60 };
+        //int[] OFFSETS_NAME = new int[] { 0x14, 0x00 };
 
-        const int ADDRESS_QUESTS = 0x003B8E54;
-        int[] OFFSETS_QUESTS = new int[] { 0x264, 0x450, 0x20, 0x00 };
+        //int ADDRESS_QUESTS = 0x003B8E54;
+        //int[] OFFSETS_QUESTS = new int[] { 0x264, 0x450, 0x20, 0x00 };
 
-        const int ADDRESS_DIFFICULTY = 0x00398694;
-        const int ADDRESS_NAME = 0x0039864C;
-        const int ADDRESS_AREA = 0x0039B1C8;
+        //int ADDRESS_DIFFICULTY = 0x00398694;
+        //int ADDRESS_AREA = 0x0039B1C8;
+        #endregion
+
+        #region patch 1.14c adresses
+        //int ADDRESS_CHARACTER = 0x0039CEFC;
+        //int[] OFFSETS_MODE = new int[] { 0x10 };
+        //int[] OFFSETS_PLAYER_STATS = new int[] { 0x5c, 0x48, 0x00 };
+        //int[] OFFSETS_INVENTORY = new int[] { 0x60 };
+        //int[] OFFSETS_NAME = new int[] { 0x14, 0x00 };
+
+        //int ADDRESS_QUESTS = 0x003B7E54;
+        //int[] OFFSETS_QUESTS = new int[] { 0x264, 0x450, 0x20, 0x00 };
+
+        //int ADDRESS_DIFFICULTY = 0x00397694;
+        //int ADDRESS_AREA = 0x0039A1C8;
         #endregion
 
         public D2DataReader (MainWindow main)
@@ -76,8 +101,42 @@ namespace DiabloInterface
             this.main = main;
             enc = Encoding.GetEncoding("UTF-8");
             player = new D2Player();
+            setD2Version();
         }
 
+        public void setD2Version ( string version = "1.14c" )
+        {
+            switch (version)
+            {
+                case "1.14b":
+                    ADDRESS_CHARACTER = 0x0039DEFC;
+                    OFFSETS_MODE = new int[] { 0x10 };
+                    OFFSETS_PLAYER_STATS = new int[] { 0x5c, 0x48, 0x00 };
+                    OFFSETS_INVENTORY = new int[] { 0x60 };
+                    OFFSETS_NAME = new int[] { 0x14, 0x00 };
+
+                    ADDRESS_QUESTS = 0x003B8E54;
+                    OFFSETS_QUESTS = new int[] { 0x264, 0x450, 0x20, 0x00 };
+
+                    ADDRESS_DIFFICULTY = 0x00398694;
+                    ADDRESS_AREA = 0x0039B1C8;
+                    break;
+                case "1.14c":
+                default:
+                    ADDRESS_CHARACTER = 0x0039CEFC;
+                    OFFSETS_MODE = new int[] { 0x10 };
+                    OFFSETS_PLAYER_STATS = new int[] { 0x5c, 0x48, 0x00 };
+                    OFFSETS_INVENTORY = new int[] { 0x60 };
+                    OFFSETS_NAME = new int[] { 0x14, 0x00 };
+
+                    ADDRESS_QUESTS = 0x003B7E54;
+                    OFFSETS_QUESTS = new int[] { 0x264, 0x450, 0x20, 0x00 };
+
+                    ADDRESS_DIFFICULTY = 0x00397694;
+                    ADDRESS_AREA = 0x0039A1C8;
+                    break;
+            }
+        }
         public bool checkIfD2Running()
         {
             try
@@ -151,8 +210,8 @@ namespace DiabloInterface
         {
 
             // get name 
-            tmpName = readString(15, ADDRESS_NAME, null, true);
-            if (tmpName != player.name)
+            tmpName = readString(15, ADDRESS_CHARACTER, OFFSETS_NAME, true);
+            if (tmpName != "" && tmpName != player.name)
             {
                 player.name = tmpName;
                 player.deaths = 0; // reset the deaths if name changed
@@ -191,7 +250,7 @@ namespace DiabloInterface
             }
 
             player.fill(readDataDict(), currentPenalty);
-            player.mode = (D2Data.Mode)readShort(ADDRESS_MODE, OFFSETS_MODE, true);
+            player.mode = (D2Data.Mode)readShort(ADDRESS_CHARACTER, OFFSETS_MODE, true);
             player.handleDeath();
             if (haveReset)
             {

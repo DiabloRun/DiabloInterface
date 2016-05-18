@@ -8,6 +8,7 @@ namespace DiabloInterface
     {
         public string fileFolder = "txt";
         public string fontName = "Courier New";
+        public string d2Version = "";
         public int fontSize = 10;
         public int titleFontSize = 18;
         public bool createFiles = false;
@@ -28,6 +29,7 @@ namespace DiabloInterface
             confString += "DoAutosplit: " + (doAutosplit ? "1" : "0") + "\n";
             confString += "ShowDebug: " + (showDebug ? "1" : "0") + "\n";
             confString += "TriggerKeys: " + triggerKeys + "\n";
+            confString += "D2Version:" + d2Version + "\n";
             foreach (AutoSplit autosplit in autosplits)
             {
                 confString += "AutoSplit: " + autosplit.name.Replace('|', ' ') + "|"+ autosplit.type + "|" + autosplit.value + "|" + autosplit.difficulty + "\n";
@@ -81,6 +83,9 @@ namespace DiabloInterface
                         break;
                     case "CreateFiles":
                         createFiles = (parts[1] == "1");
+                        break;
+                    case "D2Version":
+                        d2Version = parts[1];
                         break;
                     case "TriggerKeys":
                         triggerKeys = parts[1];

@@ -22,6 +22,7 @@ namespace DiabloInterface
             this.chkAutosplit.Checked = main.settings.doAutosplit;
             this.txtAutoSplitHotkey.Text = main.settings.triggerKeys;
             this.chkShowDebug.Checked = main.settings.showDebug;
+            this.cmbVersion.SelectedIndex = 0;
 
             int x = 0;
             foreach (AutoSplit a in main.settings.autosplits)
@@ -53,6 +54,7 @@ namespace DiabloInterface
             main.settings.titleFontSize = Int32.Parse(txtTitleFontSize.Text);
             main.settings.fontName = lblFontExample.Text;
             main.settings.showDebug = chkShowDebug.Checked;
+            main.settings.d2Version = (string)cmbVersion.SelectedItem;
 
             main.settings.save();
             main.applySettings();

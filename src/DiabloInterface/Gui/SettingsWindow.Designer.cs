@@ -45,6 +45,7 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.chkAutosplit = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label8 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -61,12 +62,15 @@
             this.richTextBox4 = new System.Windows.Forms.RichTextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.chkShowDebug = new System.Windows.Forms.CheckBox();
-            this.label8 = new System.Windows.Forms.Label();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.cmbVersion = new System.Windows.Forms.ComboBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnSave
@@ -227,6 +231,15 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(414, 227);
             this.panel1.TabIndex = 0;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(301, 0);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(47, 13);
+            this.label8.TabIndex = 0;
+            this.label8.Text = "Difficulty";
             // 
             // label3
             // 
@@ -396,20 +409,44 @@
             this.chkShowDebug.Text = "Show Debug Window";
             this.chkShowDebug.UseVisualStyleBackColor = true;
             // 
-            // label8
+            // groupBox5
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(301, 0);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(47, 13);
-            this.label8.TabIndex = 0;
-            this.label8.Text = "Difficulty";
+            this.groupBox5.Controls.Add(this.label9);
+            this.groupBox5.Controls.Add(this.cmbVersion);
+            this.groupBox5.Location = new System.Drawing.Point(445, 243);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(213, 44);
+            this.groupBox5.TabIndex = 17;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Diablo 2";
+            // 
+            // cmbVersion
+            // 
+            this.cmbVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbVersion.FormattingEnabled = true;
+            this.cmbVersion.Items.AddRange(new object[] {
+            "1.14c",
+            "1.14b"});
+            this.cmbVersion.Location = new System.Drawing.Point(90, 17);
+            this.cmbVersion.Name = "cmbVersion";
+            this.cmbVersion.Size = new System.Drawing.Size(53, 21);
+            this.cmbVersion.TabIndex = 0;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 20);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(45, 13);
+            this.label9.TabIndex = 1;
+            this.label9.Text = "Version:";
             // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(670, 474);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
@@ -442,6 +479,8 @@
             this.panel1.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -482,5 +521,8 @@
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.CheckBox chkShowDebug;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ComboBox cmbVersion;
     }
 }
