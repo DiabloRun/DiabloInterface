@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
-using DiabloInterface.Properties;
 
 namespace DiabloInterface
 {
@@ -102,8 +99,7 @@ namespace DiabloInterface
         {
             if (player.newlyStarted && settings.doAutosplit && settings.triggerKeys != "")
             {
-                Console.WriteLine("{" + settings.triggerKeys + "}");
-                SendKeys.SendWait("{" + settings.triggerKeys + "}");
+                KeyManager.sendKeys(settings.triggerKeys);
             }
         }
 

@@ -235,7 +235,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MainWindow";
-            this.Text = "DiabloInterface v0.2.4";
+            this.Text = "DiabloInterface v0.2.5";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.contextMenu.ResumeLayout(false);
             this.ResumeLayout(false);

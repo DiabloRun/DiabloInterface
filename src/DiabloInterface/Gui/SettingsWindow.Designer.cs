@@ -63,8 +63,9 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.chkShowDebug = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.cmbVersion = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.cmbVersion = new System.Windows.Forms.ComboBox();
+            this.btnTestHotkey = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -75,9 +76,9 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(583, 293);
+            this.btnSave.Location = new System.Drawing.Point(597, 293);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.Size = new System.Drawing.Size(61, 23);
             this.btnSave.TabIndex = 0;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -161,9 +162,9 @@
             // 
             // btnApply
             // 
-            this.btnApply.Location = new System.Drawing.Point(502, 293);
+            this.btnApply.Location = new System.Drawing.Point(525, 293);
             this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(75, 23);
+            this.btnApply.Size = new System.Drawing.Size(58, 23);
             this.btnApply.TabIndex = 6;
             this.btnApply.Text = "Apply";
             this.btnApply.UseVisualStyleBackColor = true;
@@ -171,9 +172,9 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(421, 293);
+            this.btnCancel.Location = new System.Drawing.Point(444, 293);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.Size = new System.Drawing.Size(65, 23);
             this.btnCancel.TabIndex = 7;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -280,9 +281,9 @@
             // 
             // txtAutoSplitHotkey
             // 
-            this.txtAutoSplitHotkey.Location = new System.Drawing.Point(249, 295);
+            this.txtAutoSplitHotkey.Location = new System.Drawing.Point(234, 295);
             this.txtAutoSplitHotkey.Name = "txtAutoSplitHotkey";
-            this.txtAutoSplitHotkey.Size = new System.Drawing.Size(100, 20);
+            this.txtAutoSplitHotkey.Size = new System.Drawing.Size(82, 20);
             this.txtAutoSplitHotkey.TabIndex = 12;
             this.txtAutoSplitHotkey.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtAutoSplitHotkey_KeyDown);
             this.txtAutoSplitHotkey.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtAutoSplitHotkey_KeyPress);
@@ -291,7 +292,7 @@
             // lblAutoSplitHotkey
             // 
             this.lblAutoSplitHotkey.AutoSize = true;
-            this.lblAutoSplitHotkey.Location = new System.Drawing.Point(154, 298);
+            this.lblAutoSplitHotkey.Location = new System.Drawing.Point(136, 298);
             this.lblAutoSplitHotkey.Name = "lblAutoSplitHotkey";
             this.lblAutoSplitHotkey.Size = new System.Drawing.Size(92, 13);
             this.lblAutoSplitHotkey.TabIndex = 13;
@@ -420,6 +421,15 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Diablo 2";
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 20);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(45, 13);
+            this.label9.TabIndex = 1;
+            this.label9.Text = "Version:";
+            // 
             // cmbVersion
             // 
             this.cmbVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -432,20 +442,22 @@
             this.cmbVersion.Size = new System.Drawing.Size(53, 21);
             this.cmbVersion.TabIndex = 0;
             // 
-            // label9
+            // btnTestHotkey
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 20);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(45, 13);
-            this.label9.TabIndex = 1;
-            this.label9.Text = "Version:";
+            this.btnTestHotkey.Location = new System.Drawing.Point(322, 293);
+            this.btnTestHotkey.Name = "btnTestHotkey";
+            this.btnTestHotkey.Size = new System.Drawing.Size(75, 23);
+            this.btnTestHotkey.TabIndex = 18;
+            this.btnTestHotkey.Text = "Test Hotkey";
+            this.btnTestHotkey.UseVisualStyleBackColor = true;
+            this.btnTestHotkey.Click += new System.EventHandler(this.btnTestHotkey_Click);
             // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(670, 474);
+            this.Controls.Add(this.btnTestHotkey);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.label7);
@@ -524,5 +536,6 @@
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox cmbVersion;
+        private System.Windows.Forms.Button btnTestHotkey;
     }
 }

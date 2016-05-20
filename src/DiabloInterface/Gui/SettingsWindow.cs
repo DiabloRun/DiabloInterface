@@ -108,39 +108,23 @@ namespace DiabloInterface
             a.deleted = true;
         }
         
-        private List<Keys> downKeys = new List<Keys>();
-        private List<Keys> upKeys = new List<Keys>();
         private void txtAutoSplitHotkey_KeyDown(object sender, KeyEventArgs e)
         {
-            if (!downKeys.Contains(e.KeyCode))
-            {
-                downKeys.Add(e.KeyCode);
-            }
             e.Handled = true;
         }
-
         private void txtAutoSplitHotkey_KeyUp(object sender, KeyEventArgs e)
         {
-            if (!upKeys.Contains(e.KeyCode))
-            {
-                upKeys.Add(e.KeyCode);
-            }
 
-            if (downKeys.Contains(e.KeyCode))
+            if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9
+                || e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z
+                || e.KeyCode >= Keys.F1 && e.KeyCode <= Keys.F12)
             {
-                downKeys.Remove(e.KeyCode);
-                if (downKeys.Count == 0)
-                {
-                    String str = "";
-                    foreach (Keys k in upKeys)
-                    {
-                        str += (str == "" ? "" : "+") + k.ToString();
-                    }
-                    upKeys.Clear();
-                    txtAutoSplitHotkey.Text = str;
-                    e.Handled = true;
-                }
+                txtAutoSplitHotkey.Text = KeyManager.KeyEventArgsToKeyString(e);
+            } else if (e.KeyCode == Keys.Escape)
+            {
+                txtAutoSplitHotkey.Text = "";
             }
+            e.Handled = true;
         }
 
         private void txtAutoSplitHotkey_KeyPress(object sender, KeyPressEventArgs e)
@@ -167,6 +151,14 @@ namespace DiabloInterface
                 lblFontExample.Text = fontDialog1.Font.Name;
             }
 
+        }
+
+        private void btnTestHotkey_Click(object sender, EventArgs e)
+        {
+            if (txtAutoSplitHotkey.Text != "")
+            {
+                KeyManager.sendKeys(txtAutoSplitHotkey.Text);
+            }
         }
     }
 
