@@ -4,6 +4,20 @@ namespace DiabloInterface
     public class D2Data
     {
 
+        public enum BodyLoc
+        {
+            None = 0,
+            Head,
+            Neck,
+            Torso,
+            RightArm,
+            LeftArm,
+            RightRing,
+            LeftRing,
+            Belt,
+            Feet,
+            Gloves,
+        };
         
         public enum Quest
         {

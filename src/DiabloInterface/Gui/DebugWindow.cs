@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DiabloInterface.D2.Struct;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -312,83 +313,112 @@ namespace DiabloInterface
 
         }
 
-        public void setLastItemStats(byte[] statsBuffer)
+        public void updateItemStats(D2DataReader r, D2Unit pl)
         {
-            List<D2ItemStatCost> statsList = D2ItemStatCost.getAll();
+            D2Inventory inventory = r.ReadStructByAddress<D2Inventory>(pl.pInventory);
 
-            Dictionary<int, int> dataDict = new Dictionary<int, int>();
-            int off;
-            int indexVal;
-            int valOffset;
-            for ( int i = 0; i < statsBuffer.Length/8; i++ )
+
+            // all the other items
+            // 0x10: last item in inventory
+            if (inventory.pLastItem > 0)
             {
-                off = 2 + i * 8;
-                indexVal = statsBuffer[off];
-
-                if (dataDict.ContainsKey(indexVal))
+                int itemAddress = inventory.pLastItem;
+                D2Unit item;
+                D2ItemData itemData;
+                D2StatListEx itemStatListEx;
+                do
                 {
-                    continue;
-                }
-
-                valOffset = 0;
-
-                switch (indexVal)
-                {
-                    case D2Data.CHAR_CURRENT_MANA_IDX:
-                    case D2Data.CHAR_MAX_MANA_IDX:
-                    case D2Data.CHAR_CURRENT_STAMINA_IDX:
-                    case D2Data.CHAR_MAX_STAMINA_IDX:
-                    case D2Data.CHAR_CURRENT_LIFE_IDX:
-                    case D2Data.CHAR_MAX_LIFE_IDX:
-                        // at offset 2 is a comma value. for us it is enough to know the int val
-                        valOffset = 3;
-                        break;
-                    case D2Data.CHAR_STR_IDX:
-                    case D2Data.CHAR_ENE_IDX:
-                    case D2Data.CHAR_DEX_IDX:
-                    case D2Data.CHAR_VIT_IDX:
-                    case D2Data.CHAR_LVL_IDX:
-                    case D2Data.CHAR_XP_IDX:
-                    case D2Data.CHAR_GOLD_BODY_IDX:
-                    case D2Data.CHAR_GOLD_STASH_IDX:
-                    case D2Data.CHAR_DEF_IDX:
-                    case D2Data.CHAR_FIRE_RES_IDX:
-                    case D2Data.CHAR_FIRE_RES_ADD_IDX:
-                    case D2Data.CHAR_LIGHTNING_RES_IDX:
-                    case D2Data.CHAR_LIGHTNING_RES_ADD_IDX:
-                    case D2Data.CHAR_COLD_RES_IDX:
-                    case D2Data.CHAR_COLD_RES_ADD_IDX:
-                    case D2Data.CHAR_POISON_RES_IDX:
-                    case D2Data.CHAR_POISON_RES_ADD_IDX:
-                    default:
-                        valOffset = 2;
-                        break;
-                }
-                if (valOffset > 0)
-                {
-                    dataDict.Add(indexVal, BitConverter.ToInt32(new byte[] {
-                        statsBuffer[off + valOffset],
-                        statsBuffer[off + valOffset + 1],
-                        statsBuffer[off + valOffset + 2],
-                        statsBuffer[off + valOffset + 3]
-                    }, 0));
-                }
-            }
-
-
-            string str = "";
-            foreach (KeyValuePair<int, int> pair in dataDict )
-            {
-                foreach (D2ItemStatCost c in statsList )
-                {
-                    if (c.id == pair.Key)
+                    item = r.ReadStructByAddress<D2Unit>(itemAddress);
+                    itemData = r.ReadStructByAddress<D2ItemData>(item.pUnitData);
+                    itemStatListEx = r.ReadStructByAddress<D2StatListEx>(item.pStatListEx);
+                    if (itemData.BodyLoc > (int)D2Data.BodyLoc.None && itemData.BodyLoc <= (int)D2Data.BodyLoc.Gloves)
                     {
-                        str += c.name +":"+pair.Value+"\n";
-                    }
-                }
-            }
-            txtLastItem.Invoke(new Action(delegate () { txtLastItem.Text = str; }));
+                        byte[] statsBuffer = r.readBuffer(itemStatListEx.FullStatsCount * 8, itemStatListEx.FullStats);
+                        List<D2ItemStatCost> statsList = D2ItemStatCost.getAll();
 
+                        Dictionary<int, int> dataDict = new Dictionary<int, int>();
+                        int off;
+                        int indexVal;
+                        int valOffset;
+                        for (int i = 0; i < statsBuffer.Length / 8; i++)
+                        {
+                            off = 2 + i * 8;
+                            indexVal = statsBuffer[off];
+
+                            if (dataDict.ContainsKey(indexVal))
+                            {
+                                continue;
+                            }
+
+                            valOffset = 0;
+
+                            switch (indexVal)
+                            {
+                                case D2Data.CHAR_CURRENT_MANA_IDX:
+                                case D2Data.CHAR_MAX_MANA_IDX:
+                                case D2Data.CHAR_CURRENT_STAMINA_IDX:
+                                case D2Data.CHAR_MAX_STAMINA_IDX:
+                                case D2Data.CHAR_CURRENT_LIFE_IDX:
+                                case D2Data.CHAR_MAX_LIFE_IDX:
+                                    // at offset 2 is a comma value. for us it is enough to know the int val
+                                    valOffset = 3;
+                                    break;
+                                default:
+                                    valOffset = 2;
+                                    break;
+                            }
+                            if (valOffset > 0)
+                            {
+                                dataDict.Add(indexVal, BitConverter.ToInt32(new byte[] {
+                            statsBuffer[off + valOffset],
+                            statsBuffer[off + valOffset + 1],
+                            statsBuffer[off + valOffset + 2],
+                            statsBuffer[off + valOffset + 3]
+                        }, 0));
+                            }
+                        }
+
+
+                        string str = "";
+                        foreach (KeyValuePair<int, int> pair in dataDict)
+                        {
+                            foreach (D2ItemStatCost st in statsList)
+                            {
+                                if (st.id == pair.Key)
+                                {
+                                    str += st.name + ":" + pair.Value + "\n";
+                                }
+                            }
+                        }
+                        Control c = null;
+                        switch ((D2Data.BodyLoc)itemData.BodyLoc)
+                        {
+                            case D2Data.BodyLoc.Head: c = tabPageHead; break;
+                            case D2Data.BodyLoc.Neck: c = tabPageAmulet; break;
+                            case D2Data.BodyLoc.Torso: c = tabPageBody; break;
+                            case D2Data.BodyLoc.RightArm: c = tabPageWeaponRight; break;
+                            case D2Data.BodyLoc.LeftArm: c = tabPageWeaponLeft; break;
+                            case D2Data.BodyLoc.RightRing: c = tabPageRingRight; break;
+                            case D2Data.BodyLoc.LeftRing: c = tabPageRingLeft; break;
+                            case D2Data.BodyLoc.Belt: c = tabPageBelt; break;
+                            case D2Data.BodyLoc.Feet: c = tabPageFeet; break;
+                            case D2Data.BodyLoc.Gloves: c = tabPageHand; break;
+                        }
+                        if (c != null)
+                        {
+                            if (c.Controls.Count == 0)
+                            {
+                                c.Invoke(new Action(delegate () {
+                                    c.Controls.Add(new RichTextBox());
+                                    c.Controls[0].Dock = DockStyle.Fill;
+                                }));
+                            }
+                            c.Controls[0].Invoke(new Action(delegate () { c.Controls[0].Text = str; }));
+                        }
+                    }
+                    itemAddress = itemData.pPrevItem;
+                } while (itemAddress > 0);
+            }
         }
     }
 }

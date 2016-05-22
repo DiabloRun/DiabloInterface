@@ -91,7 +91,7 @@ namespace DiabloInterface
         //int ADDRESS_AREA = 0x0039A1C8;
         #endregion
         
-        T ReadStructByAddress<T>(int address) where T : struct
+        public T ReadStructByAddress<T>(int address) where T : struct
         {
             return ByteArrayToStructure<T>(readBuffer(Marshal.SizeOf(typeof(T)), address));
         }
@@ -251,11 +251,7 @@ namespace DiabloInterface
                 OFFSETS_QUESTS[OFFSETS_QUESTS.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 2;
                 main.getDebugWindow().setQuestDataHell(readBuffer(QUEST_BUFFER_LENGTH, ADDRESS_QUESTS, OFFSETS_QUESTS, true));
 
-                D2Inventory inventory = ReadStructByAddress<D2Inventory>(pl.pInventory);
-                D2Unit lastItem = ReadStructByAddress<D2Unit>(inventory.pLastItem);
-                D2StatListEx itemStatListEx = ReadStructByAddress<D2StatListEx>(lastItem.pStatListEx);
-                byte[] itemStatsBuffer = readBuffer(itemStatListEx.FullStatsCount * 8, itemStatListEx.FullStats);
-                main.getDebugWindow().setLastItemStats(itemStatsBuffer);
+                main.getDebugWindow().updateItemStats(this, pl);
             }
 
             plStats = ReadStructByAddress<D2StatListEx>(pl.pStatListEx);
@@ -547,7 +543,7 @@ namespace DiabloInterface
             return pointer;
         }
 
-        private byte[] readBuffer(int length, int pointer, int[] offsets = null, bool relative = false)
+        public byte[] readBuffer(int length, int pointer, int[] offsets = null, bool relative = false)
         {
             pointer = finalAddress(pointer, offsets, relative);
             buffer = new byte[length];

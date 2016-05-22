@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
 namespace DiabloInterface.D2.Struct
 {
     [StructLayout(LayoutKind.Sequential)]
-    struct D2Unit
+    public struct D2Unit
     {
         #region structure (sizeof = 0xF4)
         public int eType;           // 0x00
@@ -52,17 +47,17 @@ namespace DiabloInterface.D2.Struct
         public int bSparkyChest;    // 0x78
         public int pTimerArgs;      // 0x7C
         // clientside
-        public int dwSoundSync;         // 0x80
+        public int dwSoundSync;         // 0x80 used by summons and ambient stuff
         // end clientside
         public int __unknown5;      // 0x84
         public int __unknown6;      // 0x8C
-        public int pEvent;          // 0x90
-        public int eOwnerType;      // 0x94
-        public int OwnerGUID;       // 0x98 is this a 12length string??
+        public int pEvent;          // 0x90 this is a queue of events to execute (chance to cast skills for example)
+        public int eOwnerType;      // 0x94 unit type of missile or minion owner (also used by portals)
+        public int OwnerGUID;       // 0x98 is this a 12length string?? global unique identifier of minion or missile owner (also used by portals)
         public int __unknown7;      // 0x9C
         public int __unknown8;      // 0xA0
-        public int pHoverText;      // 0xA4
-        public int pSkills;         // 0xA8
+        public int pHoverText;      // 0xA4 hovering text controller (such as the shrine message)
+        public int pSkills;         // 0xA8 controller holding a list of all skills the unit has (pointers to pSkill)
         public int pCombat;         // 0xAC
         public int dwHitClass;      // 0xB0
         public int __unknown9;      // 0xB4
