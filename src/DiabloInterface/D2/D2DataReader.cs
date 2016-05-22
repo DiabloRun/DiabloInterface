@@ -1,47 +1,32 @@
 ﻿using DiabloInterface.D2.Struct;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
 namespace DiabloInterface
 {
-    public class D2DataReader
+    public class D2DataReader : IDisposable
     {
-        const int PROCESS_WM_READ = 0x0010;
-
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
-
-        [DllImport("kernel32.dll")]
-        public static extern bool ReadProcessMemory(int hProcess, int lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesRead);
-
         MainWindow main;
 
-        const string d2ProcessName = "game";
-        const string d2ModuleName = "Game.exe";
+        bool disposed = false;
+
+        const string DIABLO_PROCESS_NAME = "game";
+        const string DIABLO_MODULE_NAME = "Game.exe";
 
         const int QUEST_BUFFER_DIFFICULTY_OFFSET = 128;
         const int QUEST_BUFFER_LENGTH = 96;
 
-        bool processRunning;
-        Process D2Process;
-        IntPtr D2ProcessHandle;
-        IntPtr D2ProcessEntryAddress;
+        ProcessMemoryReader reader;
+        D2MemoryTable memory;
+        D2MemoryTable nextMemoryTable;
 
-        // buffer read stuff
-        byte[] buffer;
-        int nullIndex;
-        int bytesRead = 0;
-
-        Encoding enc;
         short difficulty;
         D2Data.Penalty currentPenalty;
         bool haveReset;
         string tmpName;
-        
+
 
         int[] mask8BitSet = { 128, 64, 32, 16, 8, 4, 2, 1 };
 
@@ -51,121 +36,72 @@ namespace DiabloInterface
         private D2PlayerData plUnitData;
         private D2StatListEx plStats;
 
-        int ADDRESS_CHARACTER;
-
-        int ADDRESS_QUESTS;
-        int[] OFFSETS_QUESTS;
-
-        int ADDRESS_DIFFICULTY;
-        int ADDRESS_AREA;
-
-        #region patch 1.14a adresses
-        // const int ADDRESS_MODE = 0x44C658;
-        // int[] OFFSETS_MODE = new int[] { 0x40, 0x210 };
-        // const int ADDRESS_CHARACTER = 0x00498288;
-        // int[] OFFSETS_CHARACTER = new int[] { 0x174, 0x5c, 0x48, 0x00 };
-
-        // const int ADDRESS_DIFFICULTY = 0x42E1AC;
-        // const int ADDRESS_NAME = 0x82E164;
-        #endregion
-
-        #region patch 1.14b adresses
-        //int ADDRESS_CHARACTER = 0x0039DEFC;
-        //int[] OFFSETS_INVENTORY = new int[] { 0x60 };
-
-        //int ADDRESS_QUESTS = 0x003B8E54;
-        //int[] OFFSETS_QUESTS = new int[] { 0x264, 0x450, 0x20, 0x00 };
-
-        //int ADDRESS_DIFFICULTY = 0x00398694;
-        //int ADDRESS_AREA = 0x0039B1C8;
-        #endregion
-
-        #region patch 1.14c adresses
-        //int ADDRESS_CHARACTER = 0x0039CEFC;
-        //int[] OFFSETS_INVENTORY = new int[] { 0x60 };
-
-        //int ADDRESS_QUESTS = 0x003B7E54;
-        //int[] OFFSETS_QUESTS = new int[] { 0x264, 0x450, 0x20, 0x00 };
-
-        //int ADDRESS_DIFFICULTY = 0x00397694;
-        //int ADDRESS_AREA = 0x0039A1C8;
-        #endregion
-        
-        public T ReadStructByAddress<T>(int address) where T : struct
-        {
-            return ByteArrayToStructure<T>(readBuffer(Marshal.SizeOf(typeof(T)), address));
-        }
-
-        T ByteArrayToStructure<T>(byte[] bytes) where T : struct
-        {
-            GCHandle handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
-            T stuff = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
-            handle.Free();
-            return stuff;
-        }
-
-        public D2DataReader (MainWindow main)
+        public D2DataReader(MainWindow main, D2MemoryTable memory)
         {
             this.main = main;
-            enc = Encoding.GetEncoding("UTF-8");
+            this.memory = memory;
+
             player = new D2Player();
-            setD2Version();
         }
 
-        public void setD2Version ( string version = "1.14c" )
+        #region Disposable
+
+        ~D2DataReader()
         {
-            switch (version)
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                case "1.14b":
-                    ADDRESS_CHARACTER = 0x0039DEFC;
+                this.disposed = true;
 
-                    ADDRESS_QUESTS = 0x003B8E54;
-                    OFFSETS_QUESTS = new int[] { 0x264, 0x450, 0x20, 0x00 };
-
-                    ADDRESS_DIFFICULTY = 0x00398694;
-                    ADDRESS_AREA = 0x0039B1C8;
-                    break;
-                case "1.14c":
-                default:
-                    ADDRESS_CHARACTER = 0x0039CEFC;
-
-                    ADDRESS_QUESTS = 0x003B7E54;
-                    OFFSETS_QUESTS = new int[] { 0x264, 0x450, 0x20, 0x00 };
-
-                    ADDRESS_DIFFICULTY = 0x00397694;
-                    ADDRESS_AREA = 0x0039A1C8;
-                    break;
+                if (reader != null)
+                {
+                    reader.Dispose();
+                    reader = null;
+                }
             }
         }
+
+        #endregion
+
+        public void SetNextMemoryTable(D2MemoryTable table)
+        {
+            nextMemoryTable = table;
+        }
+
         public bool checkIfD2Running()
         {
+            // If a reader already exists but the process is closed, dispose of the reader.
+            if (reader != null && !reader.IsValid)
+            {
+                reader.Dispose();
+                reader = null;
+            }
+
+            // A reader exists already.
+            if (reader != null)
+                return true;
+
             try
             {
-                Process[] processes = Process.GetProcessesByName(d2ProcessName);
-                if (processes.Length == 0)
-                {
-                    processRunning = false;
-                    return processRunning;
-                }
+                reader = new ProcessMemoryReader(DIABLO_PROCESS_NAME, DIABLO_MODULE_NAME);
 
-                D2Process = processes[0];
-                D2ProcessHandle = OpenProcess(PROCESS_WM_READ, false, D2Process.Id);
-                for (int i = 0; i < D2Process.Modules.Count; i++)
-                {
-                    if (D2Process.Modules[i].ModuleName == d2ModuleName)
-                    {
-                        D2ProcessEntryAddress = D2Process.Modules[i].BaseAddress;
-                        processRunning = true;
-                        break;
-                    }
-                }
-                return processRunning;
-
+                // Process opened successfully.
+                return true;
             }
-            catch
+            catch (ProcessNotFoundException)
             {
-                processRunning = false;
-                return processRunning;
+                // Failed to open process.
+                return false;
             }
         }
 
@@ -186,33 +122,42 @@ namespace DiabloInterface
 
         public void readDataThreadFunc()
         {
-            while (1 == 1)
+            while (!disposed)
             {
                 Thread.Sleep(500);
 
-                if (!processRunning) {
-                    checkIfD2Running();
+                // Block here until we have a valid reader.
+                if (!checkIfD2Running())
                     continue;
+
+                // Memory table change.
+                if (nextMemoryTable != null)
+                {
+                    memory = nextMemoryTable;
+                    nextMemoryTable = null;
                 }
 
                 try
                 {
                     readData();
                 }
-                catch
+                catch (Exception e)
                 {
-                    processRunning = false;
+#if DEBUG
+                    // Print errors to console in debug builds.
+                    Console.WriteLine("Exception: {0}", e);
+#endif
                 }
             }
         }
 
         public void readData()
         {
+            IntPtr characterUnitAddress = reader.ReadAddress32(memory.Address.Character, AddressingMode.Relative);
+            pl = reader.Read<D2Unit>(characterUnitAddress);
+            plUnitData = reader.Read<D2PlayerData>(new IntPtr(pl.pUnitData));
 
-            pl = ReadStructByAddress<D2Unit>(finalAddress(ADDRESS_CHARACTER, new[] { 0x00 }, true));
-            plUnitData = ReadStructByAddress<D2PlayerData>(pl.pUnitData);
-            
-            // get name 
+            // get name
             tmpName = plUnitData.szPlayerName;
             if (tmpName != "" && tmpName != player.name)
             {
@@ -228,7 +173,7 @@ namespace DiabloInterface
             }
 
             // todo: only read difficulty when it could possibly have changed
-            difficulty = readByte(ADDRESS_DIFFICULTY, null, true);
+            difficulty = reader.ReadByte(memory.Address.Difficulty, AddressingMode.Relative);
             if (difficulty < 0 || difficulty > 2 )
             {
                 difficulty = 0;
@@ -244,19 +189,25 @@ namespace DiabloInterface
             // debug window - quests
             if (main.getDebugWindow() != null)
             {
-                OFFSETS_QUESTS[OFFSETS_QUESTS.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 0;
-                main.getDebugWindow().setQuestDataNormal(readBuffer(QUEST_BUFFER_LENGTH, ADDRESS_QUESTS, OFFSETS_QUESTS, true));
-                OFFSETS_QUESTS[OFFSETS_QUESTS.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 1;
-                main.getDebugWindow().setQuestDataNightmare(readBuffer(QUEST_BUFFER_LENGTH, ADDRESS_QUESTS, OFFSETS_QUESTS, true));
-                OFFSETS_QUESTS[OFFSETS_QUESTS.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 2;
-                main.getDebugWindow().setQuestDataHell(readBuffer(QUEST_BUFFER_LENGTH, ADDRESS_QUESTS, OFFSETS_QUESTS, true));
+                IntPtr questDataAddress = IntPtr.Zero;
 
-                main.getDebugWindow().updateItemStats(this, pl);
+                // Well this is becoming a mess to clean up...
+                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 0;
+                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                main.getDebugWindow().setQuestDataNormal(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 1;
+                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                main.getDebugWindow().setQuestDataNightmare(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 2;
+                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                main.getDebugWindow().setQuestDataHell(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+
+                main.getDebugWindow().updateItemStats(reader, pl);
             }
 
-            plStats = ReadStructByAddress<D2StatListEx>(pl.pStatListEx);
+            plStats = reader.Read<D2StatListEx>(new IntPtr(pl.pStatListEx));
 
-            byte[] statsBuffer = readBuffer(plStats.FullStatsCount * 8, plStats.FullStats);
+            byte[] statsBuffer = reader.Read(new IntPtr(plStats.FullStats), plStats.FullStatsCount * 8);
 
             player.fill(readDataDict(statsBuffer), currentPenalty);
             player.mode = (D2Data.Mode)pl.eMode;
@@ -396,15 +347,15 @@ namespace DiabloInterface
 
             if (haveUnreachedItemSplits)
             {
-                D2Inventory inventory = ReadStructByAddress<D2Inventory>(pl.pInventory);
+                D2Inventory inventory = reader.Read<D2Inventory>(new IntPtr(pl.pInventory));
                 // int inventoryAddr = readInt(ADDRESS_CHARACTER, OFFSETS_INVENTORY, true);
-                
+
 
                 // cursor item (item that is "floating" below cursor when dragging or picking up with open inventory)
                 //itemAddress = inventory.pInvOwnerItem; // readInt(inventoryAddr + 0x20); //BitConverter.ToInt32(new byte[4] { inventory[0x20], inventory[0x21], inventory[0x22], inventory[0x23] }, 0);
                 if (inventory.pInvOwnerItem > 0)
                 {
-                    itemsIds.Add(readInt(inventory.pInvOwnerItem + 0x04));
+                    itemsIds.Add(reader.ReadInt32(new IntPtr(inventory.pInvOwnerItem + 0x04)));
                     //Console.WriteLine("type cursor: " + itemType);
                 }
 
@@ -417,9 +368,9 @@ namespace DiabloInterface
                     D2ItemData itemData;
                     do
                     {
-                        item = ReadStructByAddress<D2Unit>(itemAddress);
+                        item = reader.Read<D2Unit>(new IntPtr(itemAddress));
                         itemsIds.Add(item.eClass);
-                        itemData = ReadStructByAddress<D2ItemData>(item.pUnitData);
+                        itemData = reader.Read<D2ItemData>(new IntPtr(item.pUnitData));
                         itemAddress = itemData.pPrevItem;
                     } while (itemAddress > 0);
                 }
@@ -428,13 +379,15 @@ namespace DiabloInterface
 
             if (haveUnreachedAreaSplits)
             {
-                area = readByte(ADDRESS_AREA, null, true);
+                area = reader.ReadByte(memory.Address.Area, AddressingMode.Relative);
             }
 
             if (haveUnreachedQuestSplits)
             {
-                OFFSETS_QUESTS[OFFSETS_QUESTS.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * difficulty;
-                questBuffer = readBuffer(QUEST_BUFFER_LENGTH, ADDRESS_QUESTS, OFFSETS_QUESTS, true);
+                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * difficulty;
+
+                var questBufferAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                questBuffer = reader.Read(questBufferAddress, QUEST_BUFFER_LENGTH);
             }
 
             foreach (AutoSplit autosplit in main.settings.autosplits)
@@ -471,7 +424,7 @@ namespace DiabloInterface
                         short value = BitConverter.ToInt16(new byte[2] { reverseBits(questBuffer[autosplit.value]), reverseBits(questBuffer[autosplit.value + 1]), }, 0);
                         if (isNthBitSet(value, 1) || isNthBitSet(value, 0))
                         {
-                            // quest finished 
+                            // quest finished
                             autosplit.reached = true;
                             main.triggerAutosplit(player);
                         }
@@ -479,76 +432,6 @@ namespace DiabloInterface
                 }
             }
 
-        }
-
-        private string readString(int length, int address, int[] offsets = null, bool relative = false)
-        {
-            buffer = readBuffer(length, address, offsets, relative);
-            nullIndex = Array.IndexOf(buffer, (byte)0);
-            return enc.GetString(buffer, 0, (nullIndex == -1) ? buffer.Length : nullIndex);
-        }
-
-        private short readByte(int address, int[] offsets = null, bool relative = false)
-        {
-            try
-            {
-                return readBuffer(0x01, address, offsets, relative)[0];
-            }
-            catch
-            {
-                return -1;
-            }
-        }
-
-        private short readShort(int address, int[] offsets = null, bool relative = false)
-        {
-            try
-            {
-                return BitConverter.ToInt16(readBuffer(0x02, address, offsets, relative), 0);
-            }
-            catch
-            {
-                return -1;
-            }
-        }
-
-        private int readInt(int address, int[] offsets = null, bool relative = false)
-        {
-            try
-            {
-                return BitConverter.ToInt32(readBuffer(0x04, address, offsets, relative), 0);
-            }
-            catch
-            {
-                return -1;
-            }
-        }
-
-        private int finalAddress(int pointer, int[] offsets = null, bool relative = false)
-        {
-            if (relative)
-            {
-                pointer = D2ProcessEntryAddress.ToInt32() + pointer;
-            }
-            if (offsets != null)
-            {
-                buffer = new byte[4];
-                for (int i = 0; i < offsets.Length; i++)
-                {
-                    ReadProcessMemory((int)D2ProcessHandle, pointer, buffer, buffer.Length, ref bytesRead);
-                    pointer = BitConverter.ToInt32(buffer, 0) + offsets[i];
-                }
-
-            }
-            return pointer;
-        }
-
-        public byte[] readBuffer(int length, int pointer, int[] offsets = null, bool relative = false)
-        {
-            pointer = finalAddress(pointer, offsets, relative);
-            buffer = new byte[length];
-            ReadProcessMemory((int)D2ProcessHandle, pointer, buffer, buffer.Length, ref bytesRead);
-            return buffer;
         }
     }
 }

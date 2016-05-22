@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.IO;
 using System.Collections.Generic;
@@ -10,14 +9,6 @@ namespace DiabloInterface
 {
     public partial class MainWindow : Form
     {
-        const int PROCESS_WM_READ = 0x0010;
-
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
-
-        [DllImport("kernel32.dll")]
-        public static extern bool ReadProcessMemory(int hProcess, int lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesRead);
-        
         public SettingsHolder settings;
 
         Thread dataReaderThread;
@@ -29,9 +20,22 @@ namespace DiabloInterface
 
         public MainWindow()
         {
+            // We want to dispose our handles once the window is disposed.
+            Disposed += OnWindowDisposed;
+
             InitializeComponent();
-            
+
             initialize();
+        }
+
+        private void OnWindowDisposed(object sender, EventArgs e)
+        {
+            // Make sure the process handles close correctly.
+            if (dataReader != null)
+            {
+                dataReader.Dispose();
+                dataReader = null;
+            }
         }
 
         public DebugWindow getDebugWindow()
@@ -48,6 +52,33 @@ namespace DiabloInterface
             this.settings.autosplits.Add(autosplit);
         }
 
+        private D2MemoryTable GetVersionMemoryTable(string version)
+        {
+            D2MemoryTable memoryTable = new D2MemoryTable();
+
+            // Offsets are the same for both versions so far.
+            memoryTable.Offset.Quests = new int[] { 0x264, 0x450, 0x20, 0x00 };
+
+            switch (version)
+            {
+                case "1.14b":
+                    memoryTable.Address.Character   = new IntPtr(0x0039DEFC);
+                    memoryTable.Address.Quests      = new IntPtr(0x003B8E54);
+                    memoryTable.Address.Difficulty  = new IntPtr(0x00398694);
+                    memoryTable.Address.Area        = new IntPtr(0x0039B1C8);
+                    break;
+                case "1.14c":
+                default:
+                    memoryTable.Address.Character   = new IntPtr(0x0039CEFC);
+                    memoryTable.Address.Quests      = new IntPtr(0x003B7E54);
+                    memoryTable.Address.Difficulty  = new IntPtr(0x00397694);
+                    memoryTable.Address.Area        = new IntPtr(0x0039A1C8);
+                    break;
+            }
+
+            return memoryTable;
+        }
+
         private void initialize()
         {
             settings = new SettingsHolder();
@@ -55,7 +86,8 @@ namespace DiabloInterface
 
             if (dataReader == null)
             {
-                dataReader = new D2DataReader(this);
+                var memoryTable = GetVersionMemoryTable(settings.d2Version);
+                dataReader = new D2DataReader(this, memoryTable);
             }
             if (!dataReader.checkIfD2Running())
             {
@@ -94,7 +126,7 @@ namespace DiabloInterface
             goldLabel.Invoke(new Action(delegate () { goldLabel.Text = "GOLD: " + (player.goldBody + player.goldStash); }));
             deathsLabel.Invoke(new Action(delegate () { deathsLabel.Text = "DEATHS: " + player.deaths; }));
         }
-        
+
         public void triggerAutosplit(D2Player player)
         {
             if (player.newlyStarted && settings.doAutosplit && settings.triggerKeys != "")
@@ -129,7 +161,7 @@ namespace DiabloInterface
             File.WriteAllText(settings.fileFolder + "/poison_res.txt", player.calculatedPoisonRes.ToString());
             File.WriteAllText(settings.fileFolder + "/gold.txt", (player.goldBody + player.goldStash).ToString());
             File.WriteAllText(settings.fileFolder + "/deaths.txt", player.deaths.ToString());
-            
+
         }
 
         public void applySettings()
@@ -165,7 +197,8 @@ namespace DiabloInterface
                 }
             }
 
-            dataReader.setD2Version(settings.d2Version);
+            var memoryTable = GetVersionMemoryTable(settings.d2Version);
+            dataReader.SetNextMemoryTable(memoryTable);
         }
 
         private void button1_Click(object sender, EventArgs e)
