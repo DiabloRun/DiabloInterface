@@ -5,34 +5,33 @@ using System.Reflection;
 
 namespace DiabloInterface
 {
-    // from d2exp.mpq/data/excel/Levels.txt
-    class D2Level
+    class D2ItemStatCost
     {
-        public int id;
         public string name;
-        private static List<D2Level> levels;
+        public int id;
+        private static List<D2ItemStatCost> suffixes;
 
-        public D2Level(int id, string name)
+        public D2ItemStatCost(string[] lineArray)
         {
-            this.id = id;
-            this.name = name;
+            name = lineArray[0];
+            id = Int32.Parse(lineArray[1]);
         }
 
-        public static List<D2Level> getAll ()
+        public static List<D2ItemStatCost> getAll()
         {
-            if (levels == null)
+            if (suffixes == null)
             {
-                levels = readAll();
+                suffixes = readAll();
             }
-            return levels;
+            return suffixes;
         }
 
-        public static List<D2Level> readAll ()
+        public static List<D2ItemStatCost> readAll()
         {
 
-            List<D2Level> list = new List<D2Level>();
+            List<D2ItemStatCost> list = new List<D2ItemStatCost>();
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "DiabloInterface.Resources.Levels.txt";
+            var resourceName = "DiabloInterface.Resources.ItemStatCost.txt";
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream))
             {
@@ -46,6 +45,10 @@ namespace DiabloInterface
                         first = false;
                         continue;
                     }
+                    if (line.Trim() == "")
+                    {
+                        continue;
+                    }
                     lineArray = line.Split('\t');
                     if (lineArray[0] == "Expansion")
                     {
@@ -53,12 +56,10 @@ namespace DiabloInterface
                     }
                     try
                     {
-
-                        list.Add(new D2Level(Int32.Parse(lineArray[1]), lineArray[152]));
+                        list.Add(new D2ItemStatCost(lineArray));
                         //Console.Write(lineArray[1] + ":" + lineArray[0] + "\n") ;
-
                     }
-                    catch (System.FormatException e )
+                    catch (FormatException e)
                     {
                         Console.Write(e);
                         break;
@@ -67,5 +68,6 @@ namespace DiabloInterface
             }
             return list;
         }
+
     }
 }

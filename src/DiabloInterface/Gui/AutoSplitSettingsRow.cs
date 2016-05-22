@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DiabloInterface.D2;
+using System;
 using System.Windows.Forms;
 
 namespace DiabloInterface

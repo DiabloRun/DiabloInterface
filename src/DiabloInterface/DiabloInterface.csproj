@@ -69,6 +69,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoSplit.cs" />
+    <Compile Include="ByteReader.cs" />
+    <Compile Include="D2ItemStatCost.cs" />
+    <Compile Include="D2\D2Inventory.cs" />
+    <Compile Include="D2\D2ItemData.cs" />
+    <Compile Include="D2MagicSuffix.cs" />
+    <Compile Include="D2\D2PlayerData.cs" />
+    <Compile Include="D2\D2StatList.cs" />
+    <Compile Include="D2\D2StatListEx.cs" />
+    <Compile Include="D2\D2Unit.cs" />
     <Compile Include="Gui\AutoSplitSettingsRow.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -138,6 +147,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Diablo II_101.ico" />
+    <EmbeddedResource Include="Resources\ItemStatCost.txt" />
+    <Content Include="Resources\MagicSuffix.txt" />
     <EmbeddedResource Include="Resources\Levels.txt" />
   </ItemGroup>
   <ItemGroup>

@@ -306,5 +306,89 @@ namespace DiabloInterface
             }
 
         }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        public void setLastItemStats(byte[] statsBuffer)
+        {
+            List<D2ItemStatCost> statsList = D2ItemStatCost.getAll();
+
+            Dictionary<int, int> dataDict = new Dictionary<int, int>();
+            int off;
+            int indexVal;
+            int valOffset;
+            for ( int i = 0; i < statsBuffer.Length/8; i++ )
+            {
+                off = 2 + i * 8;
+                indexVal = statsBuffer[off];
+
+                if (dataDict.ContainsKey(indexVal))
+                {
+                    continue;
+                }
+
+                valOffset = 0;
+
+                switch (indexVal)
+                {
+                    case D2Data.CHAR_CURRENT_MANA_IDX:
+                    case D2Data.CHAR_MAX_MANA_IDX:
+                    case D2Data.CHAR_CURRENT_STAMINA_IDX:
+                    case D2Data.CHAR_MAX_STAMINA_IDX:
+                    case D2Data.CHAR_CURRENT_LIFE_IDX:
+                    case D2Data.CHAR_MAX_LIFE_IDX:
+                        // at offset 2 is a comma value. for us it is enough to know the int val
+                        valOffset = 3;
+                        break;
+                    case D2Data.CHAR_STR_IDX:
+                    case D2Data.CHAR_ENE_IDX:
+                    case D2Data.CHAR_DEX_IDX:
+                    case D2Data.CHAR_VIT_IDX:
+                    case D2Data.CHAR_LVL_IDX:
+                    case D2Data.CHAR_XP_IDX:
+                    case D2Data.CHAR_GOLD_BODY_IDX:
+                    case D2Data.CHAR_GOLD_STASH_IDX:
+                    case D2Data.CHAR_DEF_IDX:
+                    case D2Data.CHAR_FIRE_RES_IDX:
+                    case D2Data.CHAR_FIRE_RES_ADD_IDX:
+                    case D2Data.CHAR_LIGHTNING_RES_IDX:
+                    case D2Data.CHAR_LIGHTNING_RES_ADD_IDX:
+                    case D2Data.CHAR_COLD_RES_IDX:
+                    case D2Data.CHAR_COLD_RES_ADD_IDX:
+                    case D2Data.CHAR_POISON_RES_IDX:
+                    case D2Data.CHAR_POISON_RES_ADD_IDX:
+                    default:
+                        valOffset = 2;
+                        break;
+                }
+                if (valOffset > 0)
+                {
+                    dataDict.Add(indexVal, BitConverter.ToInt32(new byte[] {
+                        statsBuffer[off + valOffset],
+                        statsBuffer[off + valOffset + 1],
+                        statsBuffer[off + valOffset + 2],
+                        statsBuffer[off + valOffset + 3]
+                    }, 0));
+                }
+            }
+
+
+            string str = "";
+            foreach (KeyValuePair<int, int> pair in dataDict )
+            {
+                foreach (D2ItemStatCost c in statsList )
+                {
+                    if (c.id == pair.Key)
+                    {
+                        str += c.name +":"+pair.Value+"\n";
+                    }
+                }
+            }
+            txtLastItem.Invoke(new Action(delegate () { txtLastItem.Text = str; }));
+
+        }
     }
 }

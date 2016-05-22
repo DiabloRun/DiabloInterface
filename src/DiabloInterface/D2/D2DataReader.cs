@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DiabloInterface.D2;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -46,11 +47,11 @@ namespace DiabloInterface
 
         private D2Player player;
 
+        private D2Unit pl;
+        private D2PlayerData plUnitData;
+        private D2StatListEx plStats;
+
         int ADDRESS_CHARACTER;
-        int[] OFFSETS_MODE;
-        int[] OFFSETS_PLAYER_STATS;
-        int[] OFFSETS_INVENTORY;
-        int[] OFFSETS_NAME;
 
         int ADDRESS_QUESTS;
         int[] OFFSETS_QUESTS;
@@ -70,10 +71,7 @@ namespace DiabloInterface
 
         #region patch 1.14b adresses
         //int ADDRESS_CHARACTER = 0x0039DEFC;
-        //int[] OFFSETS_MODE = new int[] { 0x10 };
-        //int[] OFFSETS_PLAYER_STATS = new int[] { 0x5c, 0x48, 0x00 };
         //int[] OFFSETS_INVENTORY = new int[] { 0x60 };
-        //int[] OFFSETS_NAME = new int[] { 0x14, 0x00 };
 
         //int ADDRESS_QUESTS = 0x003B8E54;
         //int[] OFFSETS_QUESTS = new int[] { 0x264, 0x450, 0x20, 0x00 };
@@ -84,10 +82,7 @@ namespace DiabloInterface
 
         #region patch 1.14c adresses
         //int ADDRESS_CHARACTER = 0x0039CEFC;
-        //int[] OFFSETS_MODE = new int[] { 0x10 };
-        //int[] OFFSETS_PLAYER_STATS = new int[] { 0x5c, 0x48, 0x00 };
         //int[] OFFSETS_INVENTORY = new int[] { 0x60 };
-        //int[] OFFSETS_NAME = new int[] { 0x14, 0x00 };
 
         //int ADDRESS_QUESTS = 0x003B7E54;
         //int[] OFFSETS_QUESTS = new int[] { 0x264, 0x450, 0x20, 0x00 };
@@ -95,6 +90,19 @@ namespace DiabloInterface
         //int ADDRESS_DIFFICULTY = 0x00397694;
         //int ADDRESS_AREA = 0x0039A1C8;
         #endregion
+        
+        T ReadStructByAddress<T>(int address) where T : struct
+        {
+            return ByteArrayToStructure<T>(readBuffer(Marshal.SizeOf(typeof(T)), address));
+        }
+
+        T ByteArrayToStructure<T>(byte[] bytes) where T : struct
+        {
+            GCHandle handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+            T stuff = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
+            handle.Free();
+            return stuff;
+        }
 
         public D2DataReader (MainWindow main)
         {
@@ -110,10 +118,6 @@ namespace DiabloInterface
             {
                 case "1.14b":
                     ADDRESS_CHARACTER = 0x0039DEFC;
-                    OFFSETS_MODE = new int[] { 0x10 };
-                    OFFSETS_PLAYER_STATS = new int[] { 0x5c, 0x48, 0x00 };
-                    OFFSETS_INVENTORY = new int[] { 0x60 };
-                    OFFSETS_NAME = new int[] { 0x14, 0x00 };
 
                     ADDRESS_QUESTS = 0x003B8E54;
                     OFFSETS_QUESTS = new int[] { 0x264, 0x450, 0x20, 0x00 };
@@ -124,10 +128,6 @@ namespace DiabloInterface
                 case "1.14c":
                 default:
                     ADDRESS_CHARACTER = 0x0039CEFC;
-                    OFFSETS_MODE = new int[] { 0x10 };
-                    OFFSETS_PLAYER_STATS = new int[] { 0x5c, 0x48, 0x00 };
-                    OFFSETS_INVENTORY = new int[] { 0x60 };
-                    OFFSETS_NAME = new int[] { 0x14, 0x00 };
 
                     ADDRESS_QUESTS = 0x003B7E54;
                     OFFSETS_QUESTS = new int[] { 0x264, 0x450, 0x20, 0x00 };
@@ -209,8 +209,11 @@ namespace DiabloInterface
         public void readData()
         {
 
+            pl = ReadStructByAddress<D2Unit>(finalAddress(ADDRESS_CHARACTER, new[] { 0x00 }, true));
+            plUnitData = ReadStructByAddress<D2PlayerData>(pl.pUnitData);
+            
             // get name 
-            tmpName = readString(15, ADDRESS_CHARACTER, OFFSETS_NAME, true);
+            tmpName = plUnitData.szPlayerName;
             if (tmpName != "" && tmpName != player.name)
             {
                 player.name = tmpName;
@@ -247,10 +250,20 @@ namespace DiabloInterface
                 main.getDebugWindow().setQuestDataNightmare(readBuffer(QUEST_BUFFER_LENGTH, ADDRESS_QUESTS, OFFSETS_QUESTS, true));
                 OFFSETS_QUESTS[OFFSETS_QUESTS.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 2;
                 main.getDebugWindow().setQuestDataHell(readBuffer(QUEST_BUFFER_LENGTH, ADDRESS_QUESTS, OFFSETS_QUESTS, true));
+
+                D2Inventory inventory = ReadStructByAddress<D2Inventory>(pl.pInventory);
+                D2Unit lastItem = ReadStructByAddress<D2Unit>(inventory.pLastItem);
+                D2StatListEx itemStatListEx = ReadStructByAddress<D2StatListEx>(lastItem.pStatListEx);
+                byte[] itemStatsBuffer = readBuffer(itemStatListEx.FullStatsCount * 8, itemStatListEx.FullStats);
+                main.getDebugWindow().setLastItemStats(itemStatsBuffer);
             }
 
-            player.fill(readDataDict(), currentPenalty);
-            player.mode = (D2Data.Mode)readShort(ADDRESS_CHARACTER, OFFSETS_MODE, true);
+            plStats = ReadStructByAddress<D2StatListEx>(pl.pStatListEx);
+
+            byte[] statsBuffer = readBuffer(plStats.FullStatsCount * 8, plStats.FullStats);
+
+            player.fill(readDataDict(statsBuffer), currentPenalty);
+            player.mode = (D2Data.Mode)pl.eMode;
             player.handleDeath();
             if (haveReset)
             {
@@ -268,29 +281,21 @@ namespace DiabloInterface
             }
         }
 
-        private Dictionary<int, int> readDataDict()
+        private Dictionary<int, int> readDataDict(byte[] statsBuffer)
         {
 
             // 70/71 = arbitrary number to get all the player data, could probably be set to lower number.
 
             // stats
             Dictionary<int, int> dataDict = new Dictionary<int, int>();
-            byte[] statsBuffer = readBuffer(71 * 8, ADDRESS_CHARACTER, OFFSETS_PLAYER_STATS, true);
             int indexVal = 0;
             int valOffset;
             int off;
 
-            for (int i = 0; i < 70; i++)
+            for (int i = 0; i < statsBuffer.Length/8; i++)
             {
                 off = 2 + i * 8;
-                if (i == 0 || indexVal <= statsBuffer[off])
-                {
-                    indexVal = statsBuffer[off];
-                }
-                else
-                {
-                    break;
-                }
+                indexVal = statsBuffer[off];
 
                 if (dataDict.ContainsKey(indexVal))
                 {
@@ -395,32 +400,32 @@ namespace DiabloInterface
 
             if (haveUnreachedItemSplits)
             {
-
-                int inventoryAddr = readInt(ADDRESS_CHARACTER, OFFSETS_INVENTORY, true);
-                int itemAddress;
-                int unitDataAddress;
+                D2Inventory inventory = ReadStructByAddress<D2Inventory>(pl.pInventory);
+                // int inventoryAddr = readInt(ADDRESS_CHARACTER, OFFSETS_INVENTORY, true);
+                
 
                 // cursor item (item that is "floating" below cursor when dragging or picking up with open inventory)
-                itemAddress = readInt(inventoryAddr + 0x20); //BitConverter.ToInt32(new byte[4] { inventory[0x20], inventory[0x21], inventory[0x22], inventory[0x23] }, 0);
-                if (itemAddress > 0)
+                //itemAddress = inventory.pInvOwnerItem; // readInt(inventoryAddr + 0x20); //BitConverter.ToInt32(new byte[4] { inventory[0x20], inventory[0x21], inventory[0x22], inventory[0x23] }, 0);
+                if (inventory.pInvOwnerItem > 0)
                 {
-                    itemsIds.Add(readInt(itemAddress + 0x04));
+                    itemsIds.Add(readInt(inventory.pInvOwnerItem + 0x04));
                     //Console.WriteLine("type cursor: " + itemType);
                 }
 
                 // all the other items
                 // 0x10: last item in inventory
-                itemAddress = readInt(inventoryAddr + 0x10);// BitConverter.ToInt32(new byte[4] { inventory[0x10], inventory[0x11], inventory[0x12], inventory[0x13] }, 0);
-                while (itemAddress > 0)
+                if (inventory.pLastItem > 0)
                 {
-                    itemsIds.Add(readInt(itemAddress + 0x04));
-
-                    // 0x14: unit data of prev item
-                    unitDataAddress = readInt(itemAddress + 0x14);
-
-                    // 0x60: pointer to prev item in inventory
-                    itemAddress = readInt(unitDataAddress + 0x60);
-
+                    int itemAddress = inventory.pLastItem;
+                    D2Unit item;
+                    D2ItemData itemData;
+                    do
+                    {
+                        item = ReadStructByAddress<D2Unit>(itemAddress);
+                        itemsIds.Add(item.eClass);
+                        itemData = ReadStructByAddress<D2ItemData>(item.pUnitData);
+                        itemAddress = itemData.pPrevItem;
+                    } while (itemAddress > 0);
                 }
 
             }
@@ -523,7 +528,7 @@ namespace DiabloInterface
             }
         }
 
-        private byte[] readBuffer(int length, int pointer, int[] offsets = null, bool relative = false)
+        private int finalAddress(int pointer, int[] offsets = null, bool relative = false)
         {
             if (relative)
             {
@@ -539,7 +544,12 @@ namespace DiabloInterface
                 }
 
             }
+            return pointer;
+        }
 
+        private byte[] readBuffer(int length, int pointer, int[] offsets = null, bool relative = false)
+        {
+            pointer = finalAddress(pointer, offsets, relative);
             buffer = new byte[length];
             ReadProcessMemory((int)D2ProcessHandle, pointer, buffer, buffer.Length, ref bytesRead);
             return buffer;
