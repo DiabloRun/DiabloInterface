@@ -30,7 +30,7 @@ namespace DiabloInterface
                 return myCp;
             }
         }
-        
+
         public DebugWindow()
         {
             InitializeComponent();
@@ -313,9 +313,9 @@ namespace DiabloInterface
 
         }
 
-        public void updateItemStats(D2DataReader r, D2Unit pl)
+        public void updateItemStats(ProcessMemoryReader r, D2Unit pl)
         {
-            D2Inventory inventory = r.ReadStructByAddress<D2Inventory>(pl.pInventory);
+            D2Inventory inventory = r.Read<D2Inventory>(new IntPtr(pl.pInventory));
 
 
             // all the other items
@@ -328,12 +328,12 @@ namespace DiabloInterface
                 D2StatListEx itemStatListEx;
                 do
                 {
-                    item = r.ReadStructByAddress<D2Unit>(itemAddress);
-                    itemData = r.ReadStructByAddress<D2ItemData>(item.pUnitData);
-                    itemStatListEx = r.ReadStructByAddress<D2StatListEx>(item.pStatListEx);
+                    item = r.Read<D2Unit>(new IntPtr(itemAddress));
+                    itemData = r.Read<D2ItemData>(new IntPtr(item.pUnitData));
+                    itemStatListEx = r.Read<D2StatListEx>(new IntPtr(item.pStatListEx));
                     if (itemData.BodyLoc > (int)D2Data.BodyLoc.None && itemData.BodyLoc <= (int)D2Data.BodyLoc.Gloves)
                     {
-                        byte[] statsBuffer = r.readBuffer(itemStatListEx.FullStatsCount * 8, itemStatListEx.FullStats);
+                        byte[] statsBuffer = r.Read(new IntPtr(itemStatListEx.FullStats), itemStatListEx.FullStatsCount * 8);
                         List<D2ItemStatCost> statsList = D2ItemStatCost.getAll();
 
                         Dictionary<int, int> dataDict = new Dictionary<int, int>();
