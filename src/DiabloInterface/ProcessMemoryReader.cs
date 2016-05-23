@@ -212,17 +212,61 @@ namespace DiabloInterface
             return new IntPtr(ReadUInt32(address, addressingMode));
         }
 
-        public string ReadNullTerminatedString(IntPtr address, int size, Encoding encoding, AddressingMode addressing = AddressingMode.Absolute)
+        public string ReadStringRaw(IntPtr address, int size, Encoding encoding, AddressingMode addressing = AddressingMode.Absolute)
         {
             byte[] buffer = Read(address, size, addressing);
+            return encoding.GetString(buffer);
+        }
 
+        /// <summary>
+        /// Reads a string from memory and chops it off at the null terminator.
+        /// If there is no null terminator it's just returned with the size specified, this
+        /// might chop up a word if the string is too long.
+        /// </summary>
+        /// <param name="address">What address to read from.</param>
+        /// <param name="size">Size of buffer to read string into.</param>
+        /// <param name="encoding">String encoding type.</param>
+        /// <param name="addressing">Module addressing mode.</param>
+        /// <returns></returns>
+        public string ReadNullTerminatedString(IntPtr address, int size, Encoding encoding, AddressingMode addressing = AddressingMode.Absolute)
+        {
             // Get entire string buffer as string.
-            string value = encoding.GetString(buffer);
+            string value = ReadStringRaw(address, size, encoding, addressing);
 
             // Find the null terminator and chop the string there.
             int nullTerminatorIndex = value.IndexOf('\0');
             if (nullTerminatorIndex >= 0)
                 value = value.Remove(nullTerminatorIndex);
+            return value;
+        }
+
+        /// <summary>
+        /// Reads a string from memory and chops it off at the null terminator.
+        /// This version of the method attempts to gradually grow the buffer size until the
+        /// null terminator is found.
+        /// An upper bound for the buffer is set at <paramref name="maximumSize"/>.
+        /// </summary>
+        /// <param name="address">What address to read from.</param>
+        /// <param name="size">Initial buffer size.</param>
+        /// <param name="maximumSize">Maximum allowed buffer size before giving up.</param>
+        /// <param name="encoding">String encoding type.</param>
+        /// <param name="addressing">Module addressing mode.</param>
+        /// <returns></returns>
+        public string GetNullTerminatedString(IntPtr address, int size, int maximumSize, Encoding encoding, AddressingMode addressing = AddressingMode.Absolute)
+        {
+            string value = null;
+            for (int bufferSize = size; bufferSize <= maximumSize; bufferSize *= 2)
+            {
+                value = ReadStringRaw(address, bufferSize, encoding, addressing);
+                int nullTerminatorIndex = value.IndexOf('\0');
+                if (nullTerminatorIndex >= 0)
+                {
+                    // Found end of null terminated string, return it.
+                    value = value.Remove(nullTerminatorIndex);
+                    return value;
+                }
+            }
+
             return value;
         }
 

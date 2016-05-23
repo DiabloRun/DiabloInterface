@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
 namespace DiabloInterface.D2.Struct
 {
-    struct D2Inventory
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    class D2Inventory
     {
         #region structure (sizeof = 0x40)
         public int dwInvStamp;      // 0x00  always 0x1020304
         public int pMemPool;        // 0x04
         public int pOwnerUnit;      // 0x08
-        public int pFirstItem;      // 0x0C
-        public int pLastItem;       // 0x10
+        public DataPointer pFirstItem;      // 0x0C
+        public DataPointer pLastItem;       // 0x10
         public int pInvInfo;        // 0x14
         public int nInvInfo;        // 0x18
         public int WeaponGUID;      // 0x1C

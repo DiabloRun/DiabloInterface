@@ -1,7 +1,7 @@
-﻿using DiabloInterface.D2.Struct;
+﻿using DiabloInterface.D2;
+using DiabloInterface.D2.Struct;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace DiabloInterface
@@ -35,6 +35,10 @@ namespace DiabloInterface
         private D2Unit pl;
         private D2PlayerData plUnitData;
         private D2StatListEx plStats;
+
+#if DEBUG
+        bool didPrintInventory = false;
+#endif
 
         public D2DataReader(MainWindow main, D2MemoryTable memory)
         {
@@ -140,6 +144,14 @@ namespace DiabloInterface
                 try
                 {
                     readData();
+
+#if DEBUG
+                    if (!didPrintInventory && memory.SupportsItemReading)
+                    {
+                        didPrintInventory = true;
+                        PrintInventoryItems();
+                    }
+#endif
                 }
                 catch (Exception e)
                 {
@@ -155,7 +167,7 @@ namespace DiabloInterface
         {
             IntPtr characterUnitAddress = reader.ReadAddress32(memory.Address.Character, AddressingMode.Relative);
             pl = reader.Read<D2Unit>(characterUnitAddress);
-            plUnitData = reader.Read<D2PlayerData>(new IntPtr(pl.pUnitData));
+            plUnitData = reader.Read<D2PlayerData>(pl.pUnitData.Address);
 
             // get name
             tmpName = plUnitData.szPlayerName;
@@ -295,6 +307,61 @@ namespace DiabloInterface
             return dataDict;
         }
 
+        void PrintInventoryItems()
+        {
+            var playerAddress = reader.ReadAddress32(memory.Address.Character, AddressingMode.Relative);
+            var playerUnit = reader.Read<D2Unit>(playerAddress);
+            var inventory = reader.Read<D2Inventory>(playerUnit.pInventory.Address);
+
+            var decoder = new D2ItemReader(reader, memory.Address);
+            var item = decoder.GetUnit(inventory.pLastItem);
+
+            // Print all items not in stash.
+            //	Note: What if cube is in stash?
+            for (; item != null; item = decoder.GetPreviousItem(item))
+            {
+                var itemData = decoder.GetItemData(item);
+                if (itemData.InvPage != InventoryPage.Stash)
+                    PrintItemName(decoder, item);
+            }
+        }
+
+        void PrintItemName(D2ItemReader decoder, D2Unit item)
+        {
+            if (!decoder.IsValidItem(item)) return;
+            if (!decoder.ItemHasFlag(item, ItemFlag.Identified))
+                return;
+
+            if (decoder.IsItemOfQuality(item, ItemQuality.Magic))
+            {
+                var name = decoder.GetItemMagicName(item);
+                Console.WriteLine("Name: {0}", name);
+                return;
+            }
+
+            if (decoder.IsItemOfQuality(item, ItemQuality.Rare))
+            {
+                var name = decoder.GetItemRareName(item);
+                Console.WriteLine("Name: {0}", name);
+                return;
+            }
+
+            string fullName = decoder.GetItemName(item);
+            string quality = decoder.GetItemQualityString(item);
+            if (quality != null)
+            {
+                fullName = string.Format("{0} {1}", quality, fullName);
+            }
+
+            string runeword = decoder.GetRunewordName(item);
+            if (runeword != null)
+            {
+                fullName += ": " + runeword;
+            }
+
+            Console.WriteLine("Name: {0}", fullName);
+        }
+
         private void doAutoSplits()
         {
 
@@ -347,7 +414,7 @@ namespace DiabloInterface
 
             if (haveUnreachedItemSplits)
             {
-                D2Inventory inventory = reader.Read<D2Inventory>(new IntPtr(pl.pInventory));
+                D2Inventory inventory = reader.Read<D2Inventory>(pl.pInventory.Address);
                 // int inventoryAddr = readInt(ADDRESS_CHARACTER, OFFSETS_INVENTORY, true);
 
 
@@ -361,18 +428,18 @@ namespace DiabloInterface
 
                 // all the other items
                 // 0x10: last item in inventory
-                if (inventory.pLastItem > 0)
+                if (!inventory.pLastItem.IsNull)
                 {
-                    int itemAddress = inventory.pLastItem;
+                    IntPtr itemAddress = inventory.pLastItem.Address;
                     D2Unit item;
                     D2ItemData itemData;
                     do
                     {
-                        item = reader.Read<D2Unit>(new IntPtr(itemAddress));
+                        item = reader.Read<D2Unit>(itemAddress);
                         itemsIds.Add(item.eClass);
-                        itemData = reader.Read<D2ItemData>(new IntPtr(item.pUnitData));
-                        itemAddress = itemData.pPrevItem;
-                    } while (itemAddress > 0);
+                        itemData = reader.Read<D2ItemData>(item.pUnitData.Address);
+                        itemAddress = itemData.PreviousItem.Address;
+                    } while (itemAddress != IntPtr.Zero);
                 }
 
             }

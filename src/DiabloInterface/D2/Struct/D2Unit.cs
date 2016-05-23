@@ -2,16 +2,26 @@
 
 namespace DiabloInterface.D2.Struct
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public struct D2Unit
+    public enum D2UnitType : uint
+    {
+        Player,
+        Monster,
+        Object,
+        Missile,
+        Item,
+        VisTile
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public class D2Unit
     {
         #region structure (sizeof = 0xF4)
-        public int eType;           // 0x00
+        public D2UnitType eType;    // 0x00
         public int eClass;          // 0x04
         public int pMempool;        // 0x08
         public int GUID;            // 0x0C
         public int eMode;           // 0x10
-        public int pUnitData;       // 0x14
+        public DataPointer pUnitData; // 0x14
         public byte actNo;          // 0x18
         public byte __unknown1;     // 0x19
         public byte __unknown2;     // 0x1A
@@ -35,7 +45,7 @@ namespace DiabloInterface.D2.Struct
         public int pGfxData;        // 0x54
         public int pGfxData2;       // 0x58 another copy of pGfxData
         public int pStatListEx;     // 0x5C
-        public int pInventory;      // 0x60
+        public DataPointer pInventory; // 0x60
         // clientside
         public int pLightMap;           // 0x64
         public int dwStartLightRadius;  // 0x68

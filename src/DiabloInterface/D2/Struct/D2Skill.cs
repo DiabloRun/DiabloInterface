@@ -1,13 +1,15 @@
-﻿
+﻿using System.Runtime.InteropServices;
+
 namespace DiabloInterface.D2.Struct
 {
-    struct D2Skill
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    class D2Skill
     {
         #region struct sizeof = 0x40
         public int pSkillData;          // 0x00 pointer skill data
         public int pNextSkill;          // 0x04 pointer to next skill
         public int __unknown1;          // 0x08 some number
-        public int __unknown2;          // 0x0C 
+        public int __unknown2;          // 0x0C
         public int __unknown3;          // 0x10
         public int __unknown4;          // 0x14
         public int __unknown5;          // 0x18

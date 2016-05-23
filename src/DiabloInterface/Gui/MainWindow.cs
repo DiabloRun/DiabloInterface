@@ -55,6 +55,7 @@ namespace DiabloInterface
         private D2MemoryTable GetVersionMemoryTable(string version)
         {
             D2MemoryTable memoryTable = new D2MemoryTable();
+            memoryTable.SupportsItemReading = false;
 
             // Offsets are the same for both versions so far.
             memoryTable.Offset.Quests = new int[] { 0x264, 0x450, 0x20, 0x00 };
@@ -73,6 +74,17 @@ namespace DiabloInterface
                     memoryTable.Address.Quests      = new IntPtr(0x003B7E54);
                     memoryTable.Address.Difficulty  = new IntPtr(0x00397694);
                     memoryTable.Address.Area        = new IntPtr(0x0039A1C8);
+
+                    memoryTable.SupportsItemReading = true;
+                    memoryTable.Address.ItemDescriptions            = new IntPtr(0x5639E0);
+                    memoryTable.Address.MagicModifierTable          = new IntPtr(0x563A04);
+                    memoryTable.Address.RareModifierTable           = new IntPtr(0x563A28);
+                    memoryTable.Address.StringIndexerTable          = new IntPtr(0x479A3C);
+                    memoryTable.Address.StringAddressTable          = new IntPtr(0x479A40);
+                    memoryTable.Address.PatchStringIndexerTable     = new IntPtr(0x479A58);
+                    memoryTable.Address.PatchStringAddressTable     = new IntPtr(0x479A44);
+                    memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(0x479A5C);
+                    memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x479A48);
                     break;
             }
 

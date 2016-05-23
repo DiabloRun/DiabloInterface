@@ -2,6 +2,7 @@
 
 namespace DiabloInterface.D2.Struct
 {
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct D2SkillData
     {
         #region structure ( sizeof = 0x023C most likely)

@@ -75,17 +75,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoSplit.cs" />
+    <Compile Include="D2\Struct\D2ItemModifier.cs" />
     <Compile Include="D2\D2MemoryTable.cs" />
     <Compile Include="D2\D2ItemStatCost.cs" />
+    <Compile Include="D2\D2ItemReader.cs" />
     <Compile Include="D2\Struct\D2Inventory.cs" />
     <Compile Include="D2\Struct\D2ItemData.cs" />
     <Compile Include="D2\D2MagicSuffix.cs" />
+    <Compile Include="D2\Struct\D2ItemDescription.cs" />
     <Compile Include="D2\Struct\D2PlayerData.cs" />
     <Compile Include="D2\Struct\D2Skill.cs" />
     <Compile Include="D2\Struct\D2SkillData.cs" />
     <Compile Include="D2\Struct\D2StatList.cs" />
     <Compile Include="D2\Struct\D2StatListEx.cs" />
+    <Compile Include="D2\Struct\D2StringTableInfo.cs" />
     <Compile Include="D2\Struct\D2Unit.cs" />
+    <Compile Include="D2\Struct\DataPointer.cs" />
     <Compile Include="Gui\AutoSplitSettingsRow.cs">
       <SubType>UserControl</SubType>
     </Compile>

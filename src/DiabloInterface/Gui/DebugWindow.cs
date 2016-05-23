@@ -315,23 +315,23 @@ namespace DiabloInterface
 
         public void updateItemStats(ProcessMemoryReader r, D2Unit pl)
         {
-            D2Inventory inventory = r.Read<D2Inventory>(new IntPtr(pl.pInventory));
+            D2Inventory inventory = r.Read<D2Inventory>(pl.pInventory.Address);
 
 
             // all the other items
             // 0x10: last item in inventory
-            if (inventory.pLastItem > 0)
+            if (!inventory.pLastItem.IsNull)
             {
-                int itemAddress = inventory.pLastItem;
+                IntPtr itemAddress = inventory.pLastItem.Address;
                 D2Unit item;
                 D2ItemData itemData;
                 D2StatListEx itemStatListEx;
                 do
                 {
-                    item = r.Read<D2Unit>(new IntPtr(itemAddress));
-                    itemData = r.Read<D2ItemData>(new IntPtr(item.pUnitData));
+                    item = r.Read<D2Unit>(itemAddress);
+                    itemData = r.Read<D2ItemData>(item.pUnitData.Address);
                     itemStatListEx = r.Read<D2StatListEx>(new IntPtr(item.pStatListEx));
-                    if (itemData.BodyLoc > (int)D2Data.BodyLoc.None && itemData.BodyLoc <= (int)D2Data.BodyLoc.Gloves)
+                    if (itemData.BodyLoc > (int)D2Data.BodyLoc.None && (int)itemData.BodyLoc <= (int)D2Data.BodyLoc.Gloves)
                     {
                         byte[] statsBuffer = r.Read(new IntPtr(itemStatListEx.FullStats), itemStatListEx.FullStatsCount * 8);
                         List<D2ItemStatCost> statsList = D2ItemStatCost.getAll();
@@ -416,8 +416,8 @@ namespace DiabloInterface
                             c.Controls[0].Invoke(new Action(delegate () { c.Controls[0].Text = str; }));
                         }
                     }
-                    itemAddress = itemData.pPrevItem;
-                } while (itemAddress > 0);
+                    itemAddress = itemData.PreviousItem.Address;
+                } while (itemAddress != IntPtr.Zero);
             }
         }
     }
