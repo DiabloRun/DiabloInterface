@@ -76,6 +76,8 @@ namespace DiabloInterface
                     memoryTable.Address.Area        = new IntPtr(0x0039A1C8);
 
                     memoryTable.SupportsItemReading = true;
+                    memoryTable.Address.GlobalData                  = new IntPtr(0x33FD78);
+                    memoryTable.Address.LowQualityItems             = new IntPtr(0x563BE0);
                     memoryTable.Address.ItemDescriptions            = new IntPtr(0x5639E0);
                     memoryTable.Address.MagicModifierTable          = new IntPtr(0x563A04);
                     memoryTable.Address.RareModifierTable           = new IntPtr(0x563A28);

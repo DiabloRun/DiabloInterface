@@ -321,45 +321,17 @@ namespace DiabloInterface
             for (; item != null; item = decoder.GetPreviousItem(item))
             {
                 var itemData = decoder.GetItemData(item);
-                if (itemData.InvPage != InventoryPage.Stash)
-                    PrintItemName(decoder, item);
+
+                // Ignore items in stash.
+                if (itemData.InvPage == InventoryPage.Stash)
+                    continue;
+                // Ignore unidentified items.
+                if (!itemData.ItemFlags.HasFlag(ItemFlag.Identified))
+                    continue;
+
+                string itemName = decoder.GetFullItemName(item);
+                Console.WriteLine("Name: {0}", itemName);
             }
-        }
-
-        void PrintItemName(D2ItemReader decoder, D2Unit item)
-        {
-            if (!decoder.IsValidItem(item)) return;
-            if (!decoder.ItemHasFlag(item, ItemFlag.Identified))
-                return;
-
-            if (decoder.IsItemOfQuality(item, ItemQuality.Magic))
-            {
-                var name = decoder.GetItemMagicName(item);
-                Console.WriteLine("Name: {0}", name);
-                return;
-            }
-
-            if (decoder.IsItemOfQuality(item, ItemQuality.Rare))
-            {
-                var name = decoder.GetItemRareName(item);
-                Console.WriteLine("Name: {0}", name);
-                return;
-            }
-
-            string fullName = decoder.GetItemName(item);
-            string quality = decoder.GetItemQualityString(item);
-            if (quality != null)
-            {
-                fullName = string.Format("{0} {1}", quality, fullName);
-            }
-
-            string runeword = decoder.GetRunewordName(item);
-            if (runeword != null)
-            {
-                fullName += ": " + runeword;
-            }
-
-            Console.WriteLine("Name: {0}", fullName);
         }
 
         private void doAutoSplits()

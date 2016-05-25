@@ -14,7 +14,7 @@ namespace DiabloInterface.D2.Struct
         Rare,       // 6
         Unique,     // 7
         Crafted,    // 8
-        Tampered    // 9
+        Tempered    // 9
     }
 
     [Flags]

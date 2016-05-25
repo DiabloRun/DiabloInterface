@@ -27,4 +27,13 @@ namespace DiabloInterface.D2.Struct
         public int __unknown3;          // 0x08
         public ushort ModifierNameHash; // 0x0C
     }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct D2ItemModifier
+    {
+        public uint Property;
+        public int Parameter;
+        public int MinimumValue;
+        public int MaximumValue;
+    }
 }

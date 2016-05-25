@@ -3,7 +3,7 @@
 namespace DiabloInterface.D2.Struct
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    class D2ItemDescriptionVector
+    class D2SafeArray
     {
         public uint Length;
         public DataPointer Memory;

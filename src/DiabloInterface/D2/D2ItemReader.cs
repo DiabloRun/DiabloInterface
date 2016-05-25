@@ -13,6 +13,9 @@ namespace DiabloInterface.D2
 
         Dictionary<int, D2ItemDescription> cachedDescriptions;
 
+        D2GlobalData globals;
+        D2SafeArray descriptionTable;
+        D2SafeArray lowQualityTable;
         ModifierTable magicModifiers;
         ModifierTable rareModifiers;
 
@@ -23,6 +26,9 @@ namespace DiabloInterface.D2
 
             cachedDescriptions = new Dictionary<int, D2ItemDescription>();
 
+            globals = reader.Read<D2GlobalData>(reader.ReadAddress32(memory.GlobalData, AddressingMode.Relative));
+            lowQualityTable = reader.Read<D2SafeArray>(memory.LowQualityItems, AddressingMode.Relative);
+            descriptionTable = reader.Read<D2SafeArray>(memory.ItemDescriptions, AddressingMode.Relative);
             magicModifiers = reader.Read<ModifierTable>(memory.MagicModifierTable, AddressingMode.Relative);
             rareModifiers = reader.Read<ModifierTable>(memory.RareModifierTable, AddressingMode.Relative);
         }
@@ -30,6 +36,16 @@ namespace DiabloInterface.D2
         public void ResetCache()
         {
             cachedDescriptions.Clear();
+        }
+
+        private T IndexIntoArray<T>(DataPointer array, int index, uint length) where T : class
+        {
+            // Index out of range.
+            if (index >= length) return null;
+
+            // Indexing is just taking the size of each element added to the base.
+            int offset = index * Marshal.SizeOf<T>();
+            return reader.Read<T>(array.Address + offset);
         }
 
         private string LookupStringIdentifierTable(ushort identifier, IntPtr indexerTable, IntPtr addressTable)
@@ -138,19 +154,12 @@ namespace DiabloInterface.D2
 
         private T LookupModifierTable<T>(ModifierTable table, ushort index) where T : class
         {
-            // Handle invalid table data.
-            if (table == null || table.Memory.IsNull)
-                return null;
-            // Handle index out of range.
-            if (index == 0 || index > table.Length)
+            // Handle invalid table data, an index of zero is also invalid.
+            if (table == null || table.Memory.IsNull || index == 0)
                 return null;
 
-            // Byte offset into array.
-            int offset = (index - 1) * Marshal.SizeOf<T>();
-            IntPtr modifierAddress = table.Memory.Address + offset;
-
-            // Read modifier.
-            return reader.Read<T>(modifierAddress, AddressingMode.Absolute);
+            // Read modifier with a zero based index.
+            return IndexIntoArray<T>(table.Memory, index - 1, table.Length);
         }
 
         public MagicModifier LookupMagicModifier(ushort index)
@@ -268,7 +277,10 @@ namespace DiabloInterface.D2
 
         public string GetItemRareName(D2Unit item)
         {
-            if (!IsItemOfQuality(item, ItemQuality.Rare))
+            var quality = GetItemQuality(item);
+            if (quality != ItemQuality.Rare &&
+                quality != ItemQuality.Crafted &&
+                quality != ItemQuality.Tempered)
                 return null;
 
             var itemName = GetItemName(item);
@@ -288,6 +300,22 @@ namespace DiabloInterface.D2
             }
             nameBuilder.Append(itemName);
             return nameBuilder.ToString();
+        }
+
+        public string GetItemUniqueName(D2Unit item)
+        {
+            var description = GetUniqueItemDescription(item);
+            if (description == null) return null;
+
+            return LookupStringIdentifier(description.StringIdentifier);
+        }
+
+        public string GetItemSetName(D2Unit item)
+        {
+            var description = GetSetItemDescription(item);
+            if (description == null) return null;
+
+            return LookupStringIdentifier(description.StringIdentifier);
         }
 
         public bool ItemHasFlag(D2Unit item, ItemFlag flag)
@@ -312,18 +340,81 @@ namespace DiabloInterface.D2
             return LookupStringIdentifier(runewordHash);
         }
 
-        public string GetItemQualityString(D2Unit item)
+        public ItemQuality GetItemQuality(D2Unit item)
+        {
+            var itemData = GetItemData(item);
+            if (itemData == null) return ItemQuality.Invalid;
+
+            return itemData.Quality;
+        }
+
+        public string GetSuperiorItemName(D2Unit item)
+        {
+            if (!IsItemOfQuality(item, ItemQuality.Superior))
+                return null;
+
+            return LookupStringIdentifier(0x06BF);
+        }
+
+        public string GetLowQualityItemName(D2Unit item)
+        {
+            var description = GetLowQualityItemDescription(item);
+            if (description == null) return null;
+
+            return LookupStringIdentifier(description.StringIdentifier);
+        }
+
+        public string GetFullItemName(D2Unit item)
         {
             if (!IsValidItem(item)) return null;
-            var itemData = GetItemData(item);
-            if (itemData == null) return null;
 
-            switch (itemData.Quality)
+            string name = null;
+            switch (GetItemQuality(item))
             {
+                case ItemQuality.Low:
+                    name = GetLowQualityItemName(item);
+                    name += " " + GetItemName(item);
+                    break;
+                case ItemQuality.Normal:
+                    name = GetItemName(item);
+                    break;
                 case ItemQuality.Superior:
-                    return LookupStringIdentifier(0x06BF);
+                    name = GetSuperiorItemName(item);
+                    name += GetItemName(item);
+                    break;
+                case ItemQuality.Magic:
+                    name = GetItemMagicName(item);
+                    break;
+                case ItemQuality.Set:
+                    name = GetItemSetName(item);
+                    name += " " + GetItemName(item);
+                    break;
+                case ItemQuality.Rare:
+                case ItemQuality.Crafted:
+                case ItemQuality.Tempered:
+                    name = GetItemRareName(item);
+                    break;
+                case ItemQuality.Unique:
+                    name = GetItemUniqueName(item);
+                    name += " " + GetItemName(item);
+                    break;
                 default: return null;
             }
+
+            // Runeword item name.
+            string runeword = GetRunewordName(item);
+            if (runeword != null)
+            {
+                name += ": " + runeword;
+            }
+
+            // Ethereal item name.
+            if (ItemHasFlag(item, ItemFlag.Ethereal))
+            {
+                name = "Ethereal " + name;
+            }
+
+            return name;
         }
 
         public D2ItemDescription GetItemDescription(D2Unit item)
@@ -336,22 +427,51 @@ namespace DiabloInterface.D2
             if (cachedDescriptions.ContainsKey(itemIndex))
                 return cachedDescriptions[itemIndex];
 
-            var descriptionTable = reader.Read<D2ItemDescriptionVector>(memory.ItemDescriptions, AddressingMode.Relative);
+            // Read item description from the description table.
+            var description = IndexIntoArray<D2ItemDescription>(descriptionTable.Memory, item.eClass, descriptionTable.Length);
 
-            // Must be in range of table.
-            if (itemIndex >= descriptionTable.Length)
-                return null;
-
-            // Get offset into table.
-            int offset = itemIndex * Marshal.SizeOf<D2ItemDescription>();
-
-            // Get description address.
-            IntPtr descriptionAddress = descriptionTable.Memory.Address + offset;
-
-            // Read, cache and return.
-            var description = reader.Read<D2ItemDescription>(descriptionAddress, AddressingMode.Absolute);
+            // Cache the value to reduce reads.
             cachedDescriptions[itemIndex] = description;
             return description;
+        }
+
+        public D2LowQualityItemDescription GetLowQualityItemDescription(D2Unit item)
+        {
+            var itemData = GetItemData(item);
+            if (itemData == null) return null;
+            if (itemData.Quality != ItemQuality.Low) return null;
+
+            // Read low quality item from array.
+            var array = lowQualityTable.Memory;
+            var index = itemData.FileIndex;
+            var count = lowQualityTable.Length;
+            return IndexIntoArray<D2LowQualityItemDescription>(array, index, count);
+        }
+
+        public D2UniqueItemDescription GetUniqueItemDescription(D2Unit item)
+        {
+            var itemData = GetItemData(item);
+            if (itemData == null) return null;
+            if (itemData.Quality != ItemQuality.Unique) return null;
+
+            // Get unique item description from the unique description table.
+            var array = globals.UniqueItemDescriptions;
+            var index = itemData.FileIndex;
+            var count = globals.UniqueItemDescriptionCount;
+            return IndexIntoArray<D2UniqueItemDescription>(array, index, count);
+        }
+
+        public D2SetItemDescription GetSetItemDescription(D2Unit item)
+        {
+            var itemData = GetItemData(item);
+            if (itemData == null) return null;
+            if (itemData.Quality != ItemQuality.Set) return null;
+
+            // Get set item description from the set description table.
+            var array = globals.SetItemDescriptions;
+            var index = itemData.FileIndex;
+            var count = globals.SetItemDescriptionCount;
+            return IndexIntoArray<D2SetItemDescription>(array, index, count);
         }
 
         public D2ItemData GetItemData(D2Unit item)
