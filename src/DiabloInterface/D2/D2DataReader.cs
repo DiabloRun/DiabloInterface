@@ -2,6 +2,7 @@
 using DiabloInterface.D2.Struct;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace DiabloInterface
@@ -27,14 +28,9 @@ namespace DiabloInterface
         bool haveReset;
         string tmpName;
 
-
         int[] mask8BitSet = { 128, 64, 32, 16, 8, 4, 2, 1 };
 
         private D2Player player;
-
-        private D2Unit pl;
-        private D2PlayerData plUnitData;
-        private D2StatListEx plStats;
 
 #if DEBUG
         bool didPrintInventory = false;
@@ -166,11 +162,11 @@ namespace DiabloInterface
         public void readData()
         {
             IntPtr characterUnitAddress = reader.ReadAddress32(memory.Address.Character, AddressingMode.Relative);
-            pl = reader.Read<D2Unit>(characterUnitAddress);
-            plUnitData = reader.Read<D2PlayerData>(pl.pUnitData.Address);
+            var playerUnit = reader.Read<D2Unit>(characterUnitAddress);
+            var playerData = reader.Read<D2PlayerData>(playerUnit.pUnitData.Address);
 
             // get name
-            tmpName = plUnitData.szPlayerName;
+            tmpName = playerData.szPlayerName;
             if (tmpName != "" && tmpName != player.name)
             {
                 player.name = tmpName;
@@ -214,15 +210,15 @@ namespace DiabloInterface
                 questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
                 main.getDebugWindow().setQuestDataHell(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
 
-                main.getDebugWindow().updateItemStats(reader, pl);
+                main.getDebugWindow().updateItemStats(reader, playerUnit);
             }
 
-            plStats = reader.Read<D2StatListEx>(new IntPtr(pl.pStatListEx));
+            var playerStats = reader.Read<D2StatListEx>(new IntPtr(playerUnit.pStatListEx));
 
-            byte[] statsBuffer = reader.Read(new IntPtr(plStats.FullStats), plStats.FullStatsCount * 8);
+            byte[] statsBuffer = reader.Read(new IntPtr(playerStats.FullStats), playerStats.FullStatsCount * 8);
 
             player.fill(readDataDict(statsBuffer), currentPenalty);
-            player.mode = (D2Data.Mode)pl.eMode;
+            player.mode = (D2Data.Mode)playerUnit.eMode;
             player.handleDeath();
             if (haveReset)
             {
@@ -307,31 +303,33 @@ namespace DiabloInterface
             return dataDict;
         }
 
+        /// <summary>
+        /// Example usage of the inventory reader class.
+        /// </summary>
         void PrintInventoryItems()
         {
-            var playerAddress = reader.ReadAddress32(memory.Address.Character, AddressingMode.Relative);
-            var playerUnit = reader.Read<D2Unit>(playerAddress);
-            var inventory = reader.Read<D2Inventory>(playerUnit.pInventory.Address);
+            var inventoryReader = new D2InventoryReader(reader, memory);
 
-            var decoder = new D2ItemReader(reader, memory.Address);
-            var item = decoder.GetUnit(inventory.pLastItem);
+            // Find the horadric cube.
+            var cube = (from item in inventoryReader.EnumerateInventory()
+                        where item.eClass == (int)D2Data.ItemId.HORADRIC_CUBE
+                        select item).FirstOrDefault();
 
-            // Print all items not in stash.
-            //	Note: What if cube is in stash?
-            for (; item != null; item = decoder.GetPreviousItem(item))
-            {
-                var itemData = decoder.GetItemData(item);
+            // Ignore cubed items if the cube is in stash.
+            bool ignoreCubedItems = inventoryReader.ItemReader.IsItemInPage(cube, InventoryPage.Stash);
 
-                // Ignore items in stash.
-                if (itemData.InvPage == InventoryPage.Stash)
-                    continue;
-                // Ignore unidentified items.
-                if (!itemData.ItemFlags.HasFlag(ItemFlag.Identified))
-                    continue;
+            Func<D2ItemData, bool> printFilter = data =>
+                // Item must not be unidentified.
+                data.ItemFlags.HasFlag(ItemFlag.Identified) &&
+                data.InvPage == InventoryPage.HoradricCube
+                    // If the item is in the cube, only print them if the cube isn't in the stash.
+                    ? (ignoreCubedItems ? false : true)
+                    // Otherwise, print them if they aren't in the stash.
+                    : data.InvPage != InventoryPage.Stash;
 
-                string itemName = decoder.GetFullItemName(item);
-                Console.WriteLine("Name: {0}", itemName);
-            }
+            // Print the items using the filter specified.
+            foreach (var item in inventoryReader.EnumerateInventory(printFilter))
+                Console.WriteLine(inventoryReader.ItemReader.GetFullItemName(item));
         }
 
         private void doAutoSplits()
@@ -386,34 +384,10 @@ namespace DiabloInterface
 
             if (haveUnreachedItemSplits)
             {
-                D2Inventory inventory = reader.Read<D2Inventory>(pl.pInventory.Address);
-                // int inventoryAddr = readInt(ADDRESS_CHARACTER, OFFSETS_INVENTORY, true);
-
-
-                // cursor item (item that is "floating" below cursor when dragging or picking up with open inventory)
-                //itemAddress = inventory.pInvOwnerItem; // readInt(inventoryAddr + 0x20); //BitConverter.ToInt32(new byte[4] { inventory[0x20], inventory[0x21], inventory[0x22], inventory[0x23] }, 0);
-                if (inventory.pInvOwnerItem > 0)
-                {
-                    itemsIds.Add(reader.ReadInt32(new IntPtr(inventory.pInvOwnerItem + 0x04)));
-                    //Console.WriteLine("type cursor: " + itemType);
-                }
-
-                // all the other items
-                // 0x10: last item in inventory
-                if (!inventory.pLastItem.IsNull)
-                {
-                    IntPtr itemAddress = inventory.pLastItem.Address;
-                    D2Unit item;
-                    D2ItemData itemData;
-                    do
-                    {
-                        item = reader.Read<D2Unit>(itemAddress);
-                        itemsIds.Add(item.eClass);
-                        itemData = reader.Read<D2ItemData>(item.pUnitData.Address);
-                        itemAddress = itemData.PreviousItem.Address;
-                    } while (itemAddress != IntPtr.Zero);
-                }
-
+                // Get all item IDs.
+                var inventoryReader = new D2InventoryReader(reader, memory);
+                itemsIds = (from item in inventoryReader.EnumerateInventory()
+                          select item.eClass).ToList();
             }
 
             if (haveUnreachedAreaSplits)

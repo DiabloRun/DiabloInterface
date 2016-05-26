@@ -9,8 +9,10 @@ namespace DiabloInterface.D2
     class D2ItemReader
     {
         ProcessMemoryReader reader;
-        D2MemoryAdressTable memory;
+        D2MemoryAddressTable memory;
+        StringLookupTable stringReader;
 
+        Dictionary<IntPtr, D2ItemData> cachedItemData;
         Dictionary<int, D2ItemDescription> cachedDescriptions;
 
         D2GlobalData globals;
@@ -19,11 +21,13 @@ namespace DiabloInterface.D2
         ModifierTable magicModifiers;
         ModifierTable rareModifiers;
 
-        public D2ItemReader(ProcessMemoryReader reader, D2MemoryAdressTable memory)
+        public D2ItemReader(ProcessMemoryReader reader, D2MemoryAddressTable memory)
         {
             this.reader = reader;
             this.memory = memory;
+            stringReader = new StringLookupTable(reader, memory);
 
+            cachedItemData = new Dictionary<IntPtr, D2ItemData>();
             cachedDescriptions = new Dictionary<int, D2ItemDescription>();
 
             globals = reader.Read<D2GlobalData>(reader.ReadAddress32(memory.GlobalData, AddressingMode.Relative));
@@ -48,94 +52,6 @@ namespace DiabloInterface.D2
             return reader.Read<T>(array.Address + offset);
         }
 
-        private string LookupStringIdentifierTable(ushort identifier, IntPtr indexerTable, IntPtr addressTable)
-        {
-            /*
-                Info by [qhris].
-
-                Unicode strings are stored contiguous in a big buffer. To access this buffer
-                the address table is used. The address table maps an address index to a string
-                in the contiguous buffer.
-
-                Note that all strings end with a null terminator and string length does not seem to
-                be stored anywhere.
-
-                To get the address index, the string identifier (unsigned short) is looked up in the
-                item info table, along with a few checks to validate.
-            */
-            var tableInfo = reader.Read<D2StringTableInfo>(indexerTable);
-
-            // We use the identifier 0x1F4 for invalid identifiers.
-            if (identifier >= tableInfo.IdentifierCount)
-                identifier = 0x01F4;
-
-            // Right after the string info table (in memory) lies the identifier -> address index
-            // mapping array.
-            IntPtr stringDataRegion = indexerTable + Marshal.SizeOf<D2StringTableInfo>();
-            Func<ushort, IntPtr> GetAddressIndexLocation = (index) => stringDataRegion + index * sizeof(ushort);
-
-            // Read address index; must be in valid range.
-            ushort addressTableIndex = reader.ReadUInt16(GetAddressIndexLocation(identifier));
-            if (addressTableIndex >= tableInfo.AddressTableSize)
-                return null;
-
-            // Get the address containing string information.
-            IntPtr stringInfoBlock = GetAddressIndexLocation(tableInfo.IdentifierCount);
-            IntPtr stringInfoAddress = stringInfoBlock + addressTableIndex * Marshal.SizeOf<D2StringInfo>();
-
-            // Make sure it's in range.
-            IntPtr endTest = indexerTable + tableInfo.DataBlockSize;
-            if ((long)stringInfoAddress >= (long)endTest)
-                return null;
-
-            // Check if the string has been loaded into the address table.
-            D2StringInfo stringInfo = reader.Read<D2StringInfo>(stringInfoAddress);
-            if (!stringInfo.IsLoadedUnicode) return null;
-
-            // If we get a null string address, just ignore it.
-            IntPtr stringAddress = reader.ReadAddress32(addressTable + addressTableIndex * sizeof(uint));
-            if (stringAddress == IntPtr.Zero) return null;
-
-            // A maximum of 0x4000 sized buffer **should** be enough to read all strings, bump if too low.
-            return reader.GetNullTerminatedString(stringAddress, 0x100, 0x4000, Encoding.Unicode, AddressingMode.Absolute);
-        }
-
-        public string LookupStringIdentifier(ushort identifier)
-        {
-            IntPtr indexerTable = IntPtr.Zero;
-            IntPtr addressTable = IntPtr.Zero;
-
-            // Handle expansion strings.
-            if (identifier >= 0x4E20)
-            {
-                identifier -= 0x4E20;
-                indexerTable = memory.ExpansionStringIndexerTable;
-                addressTable = memory.ExpansionStringAddressTable;
-            }
-            // Handle patch strings.
-            else if (identifier >= 0x2710)
-            {
-                identifier -= 0x2710;
-                indexerTable = memory.PatchStringIndexerTable;
-                addressTable = memory.PatchStringAddressTable;
-            }
-            // Handle default strings.
-            else
-            {
-                indexerTable = memory.StringIndexerTable;
-                addressTable = memory.StringAddressTable;
-            }
-
-            // Get tables pointers.
-            indexerTable = reader.ReadAddress32(indexerTable, AddressingMode.Relative);
-            addressTable = reader.ReadAddress32(addressTable, AddressingMode.Relative);
-            if (indexerTable == IntPtr.Zero) return null;
-            if (addressTable == IntPtr.Zero) return null;
-
-            // Look up the string using the correct tables.
-            return LookupStringIdentifierTable(identifier, indexerTable, addressTable);
-        }
-
         public bool IsValidItem(D2Unit item)
         {
             return (item != null && item.eType == D2UnitType.Item);
@@ -149,7 +65,7 @@ namespace DiabloInterface.D2
             var description = GetItemDescription(item);
             if (description == null) return null;
 
-            return LookupStringIdentifier(description.NameHashCode);
+            return stringReader.GetString(description.NameHashCode);
         }
 
         private T LookupModifierTable<T>(ModifierTable table, ushort index) where T : class
@@ -214,7 +130,7 @@ namespace DiabloInterface.D2
             var prefixModifier = GetMagicPrefixModifier(item, 0);
             if (prefixModifier == null) return null;
 
-            return LookupStringIdentifier(prefixModifier.ModifierNameHash);
+            return stringReader.GetString(prefixModifier.ModifierNameHash);
         }
 
         public string GetMagicSuffixName(D2Unit item)
@@ -223,7 +139,7 @@ namespace DiabloInterface.D2
             var suffixModifier = GetMagicSuffixModifier(item, 0);
             if (suffixModifier == null) return null;
 
-            return LookupStringIdentifier(suffixModifier.ModifierNameHash);
+            return stringReader.GetString(suffixModifier.ModifierNameHash);
         }
 
         public string GetRarePrefixName(D2Unit item)
@@ -231,7 +147,7 @@ namespace DiabloInterface.D2
             var prefixModifier = GetRarePrefixModifier(item);
             if (prefixModifier == null) return null;
 
-            return LookupStringIdentifier(prefixModifier.ModifierNameHash);
+            return stringReader.GetString(prefixModifier.ModifierNameHash);
         }
 
         public string GetRareSuffixName(D2Unit item)
@@ -239,7 +155,7 @@ namespace DiabloInterface.D2
             var suffixModifier = GetRareSuffixModifier(item);
             if (suffixModifier == null) return null;
 
-            return LookupStringIdentifier(suffixModifier.ModifierNameHash);
+            return stringReader.GetString(suffixModifier.ModifierNameHash);
         }
 
         public bool IsItemOfQuality(D2Unit item, ItemQuality quality)
@@ -307,7 +223,7 @@ namespace DiabloInterface.D2
             var description = GetUniqueItemDescription(item);
             if (description == null) return null;
 
-            return LookupStringIdentifier(description.StringIdentifier);
+            return stringReader.GetString(description.StringIdentifier);
         }
 
         public string GetItemSetName(D2Unit item)
@@ -315,7 +231,7 @@ namespace DiabloInterface.D2
             var description = GetSetItemDescription(item);
             if (description == null) return null;
 
-            return LookupStringIdentifier(description.StringIdentifier);
+            return stringReader.GetString(description.StringIdentifier);
         }
 
         public bool ItemHasFlag(D2Unit item, ItemFlag flag)
@@ -337,7 +253,7 @@ namespace DiabloInterface.D2
 
             // When the runeword flag is set, magic prefix 0 is the hash code.
             ushort runewordHash = itemData.MagicPrefix[0];
-            return LookupStringIdentifier(runewordHash);
+            return stringReader.GetString(runewordHash);
         }
 
         public ItemQuality GetItemQuality(D2Unit item)
@@ -353,7 +269,7 @@ namespace DiabloInterface.D2
             if (!IsItemOfQuality(item, ItemQuality.Superior))
                 return null;
 
-            return LookupStringIdentifier(0x06BF);
+            return stringReader.GetString(StringConstants.Superior);
         }
 
         public string GetLowQualityItemName(D2Unit item)
@@ -361,7 +277,7 @@ namespace DiabloInterface.D2
             var description = GetLowQualityItemDescription(item);
             if (description == null) return null;
 
-            return LookupStringIdentifier(description.StringIdentifier);
+            return stringReader.GetString(description.StringIdentifier);
         }
 
         public string GetFullItemName(D2Unit item)
@@ -474,27 +390,27 @@ namespace DiabloInterface.D2
             return IndexIntoArray<D2SetItemDescription>(array, index, count);
         }
 
+        public bool IsItemInPage(D2Unit item, InventoryPage page)
+        {
+            var itemData = GetItemData(item);
+            if (itemData == null) return false;
+
+            return itemData.InvPage == page;
+        }
+
         public D2ItemData GetItemData(D2Unit item)
         {
             if (!IsValidItem(item)) return null;
             if (item.pUnitData.IsNull) return null;
 
-            return reader.Read<D2ItemData>(item.pUnitData.Address, AddressingMode.Absolute);
-        }
+            D2ItemData itemData;
+            if (cachedItemData.TryGetValue(item.pUnitData.Address, out itemData))
+                return itemData;
 
-        public D2Unit GetUnit(DataPointer pointer)
-        {
-            if (pointer.IsNull) return null;
-            return reader.Read<D2Unit>(pointer.Address, AddressingMode.Absolute);
-        }
-
-        public D2Unit GetPreviousItem(D2Unit item)
-        {
-            if (!IsValidItem(item)) return null;
-            var itemData = GetItemData(item);
-            if (itemData == null) return null;
-
-            return GetUnit(itemData.PreviousItem);
+            // Item data not cached, read from memory.
+            itemData = reader.Read<D2ItemData>(item.pUnitData.Address);
+            cachedItemData[item.pUnitData.Address] = itemData;
+            return itemData;
         }
     }
 }

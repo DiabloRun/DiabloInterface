@@ -75,6 +75,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoSplit.cs" />
+    <Compile Include="D2\StringLookupTable.cs" />
+    <Compile Include="D2\D2InventoryReader.cs" />
     <Compile Include="D2\Struct\D2GlobalData.cs" />
     <Compile Include="D2\Struct\D2ItemModifier.cs" />
     <Compile Include="D2\D2MemoryTable.cs" />

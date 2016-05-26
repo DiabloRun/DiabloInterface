@@ -2,7 +2,7 @@
 
 namespace DiabloInterface
 {
-    public class D2MemoryAdressTable
+    public class D2MemoryAddressTable
     {
         public IntPtr Character;
         public IntPtr Quests;
@@ -31,7 +31,7 @@ namespace DiabloInterface
     public class D2MemoryTable
     {
         public bool SupportsItemReading;
-        public D2MemoryAdressTable Address = new D2MemoryAdressTable();
+        public D2MemoryAddressTable Address = new D2MemoryAddressTable();
         public D2MemoryOffsetTable Offset = new D2MemoryOffsetTable();
     }
 }
