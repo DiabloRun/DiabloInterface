@@ -213,9 +213,9 @@ namespace DiabloInterface
                 main.getDebugWindow().updateItemStats(reader, playerUnit);
             }
 
-            var playerStats = reader.Read<D2StatListEx>(new IntPtr(playerUnit.pStatListEx));
+            var playerStats = reader.Read<D2StatListEx>(playerUnit.StatListNode.Address);
 
-            byte[] statsBuffer = reader.Read(new IntPtr(playerStats.FullStats), playerStats.FullStatsCount * 8);
+            byte[] statsBuffer = reader.Read(playerStats.FullStats.Array.Address, playerStats.FullStats.Length * 8);
 
             player.fill(readDataDict(statsBuffer), currentPenalty);
             player.mode = (D2Data.Mode)playerUnit.eMode;
@@ -329,7 +329,13 @@ namespace DiabloInterface
 
             // Print the items using the filter specified.
             foreach (var item in inventoryReader.EnumerateInventory(printFilter))
+            {
                 Console.WriteLine(inventoryReader.ItemReader.GetFullItemName(item));
+
+                // Print item defense (if it has any).
+                string defense = inventoryReader.ItemReader.GetDefenseString(item);
+                if (defense != null) Console.WriteLine("    {0}", defense);
+            }
         }
 
         private void doAutoSplits()

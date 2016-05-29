@@ -166,6 +166,31 @@ namespace DiabloInterface
             return data;
         }
 
+        public T[] ReadArray<T>(IntPtr address, int length, AddressingMode addressingMode = AddressingMode.Absolute)
+        {
+            // Read array memory.
+            int elementSize = Marshal.SizeOf<T>();
+            byte[] buffer = Read(address, elementSize * length, addressingMode);
+
+            T[] array = new T[length];
+            GCHandle handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+            try
+            {
+                var pinnedAddress = handle.AddrOfPinnedObject();
+                for (int i = 0; i < length; ++i)
+                {
+                    array[i] = Marshal.PtrToStructure<T>(pinnedAddress);
+                    pinnedAddress += elementSize;
+                }
+            }
+            finally
+            {
+                handle.Free();
+            }
+
+            return array;
+        }
+
         public byte ReadByte(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
         {
             return Read(address, 1, addressingMode)[0];

@@ -412,5 +412,59 @@ namespace DiabloInterface.D2
             cachedItemData[item.pUnitData.Address] = itemData;
             return itemData;
         }
+
+        public int GetStatsCount(D2Unit item)
+        {
+            if (item.StatListNode.IsNull)
+                return 0;
+
+            var node = reader.Read<D2StatListEx>(item.StatListNode.Address);
+            if (!node.ListFlags.HasFlag(StatListFlag.HasCompleteStats))
+                return 0;
+
+            return node.FullStats.Length;
+        }
+
+        public D2Stat[] GetStats(D2Unit item)
+        {
+            if (!IsValidItem(item))
+                return null;
+            if (item.StatListNode.IsNull)
+                return null;
+
+            var node = reader.Read<D2StatListEx>(item.StatListNode.Address);
+            if (!node.ListFlags.HasFlag(StatListFlag.HasCompleteStats))
+                return new D2Stat[] { };
+            if (node.FullStats.Length == 0)
+                return new D2Stat[] { };
+
+            return reader.ReadArray<D2Stat>(node.FullStats.Array.Address, node.FullStats.Length);
+        }
+
+        public int? GetStatValue(D2Unit item, D2StatIdentifier statID)
+        {
+            D2Stat[] stats = GetStats(item);
+            if (stats == null) return null;
+
+            foreach (D2Stat stat in stats)
+            {
+                if (stat.IsOfType(statID))
+                    return stat.Value;
+            }
+
+            return null;
+        }
+
+        public string GetDefenseString(D2Unit item)
+        {
+            int? defense = GetStatValue(item, D2StatIdentifier.Defense);
+            if (defense == null) return null;
+
+            var sb = new StringBuilder(stringReader.GetString(StringConstants.Defense));
+            sb.Append(' ');
+            sb.Append(defense.Value.ToString());
+
+            return sb.ToString();
+        }
     }
 }

@@ -330,10 +330,10 @@ namespace DiabloInterface
                 {
                     item = r.Read<D2Unit>(itemAddress);
                     itemData = r.Read<D2ItemData>(item.pUnitData.Address);
-                    itemStatListEx = r.Read<D2StatListEx>(new IntPtr(item.pStatListEx));
+                    itemStatListEx = r.Read<D2StatListEx>(item.StatListNode.Address);
                     if (itemData.BodyLoc > (int)D2Data.BodyLoc.None && (int)itemData.BodyLoc <= (int)D2Data.BodyLoc.Gloves)
                     {
-                        byte[] statsBuffer = r.Read(new IntPtr(itemStatListEx.FullStats), itemStatListEx.FullStatsCount * 8);
+                        byte[] statsBuffer = r.Read(itemStatListEx.FullStats.Array.Address, itemStatListEx.FullStats.Length * 8);
                         List<D2ItemStatCost> statsList = D2ItemStatCost.getAll();
 
                         Dictionary<int, int> dataDict = new Dictionary<int, int>();

@@ -8,7 +8,19 @@ namespace DiabloInterface.D2
 {
     public static class StringConstants
     {
-        public const ushort Superior = 0x06BF;
+        public const ushort Superior    = 0x06BF;
+
+        public const ushort Durability          = 0x0D81; // "Durability:"
+        public const ushort Defense             = 0x0D85; // "Defense:"
+        public const ushort DurabilityBetween   = 0x0D87; // "of"
+
+        public const ushort OnlyAmazon      = 0x2AA5;
+        public const ushort OnlySorceress   = 0x2AA6;
+        public const ushort OnlyNecromancer = 0x2AA7;
+        public const ushort OnlyPaladin     = 0x2AA8;
+        public const ushort OnlyBarbarian   = 0x2AA9;
+        public const ushort OnlyDruid       = 0x2AAA;
+        public const ushort OnlyAssassin    = 0x2AAB;
     }
 
     class StringLookupTable

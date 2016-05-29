@@ -44,7 +44,7 @@ namespace DiabloInterface.D2.Struct
         public int pAnimData;       // 0x50
         public int pGfxData;        // 0x54
         public int pGfxData2;       // 0x58 another copy of pGfxData
-        public int pStatListEx;     // 0x5C
+        public DataPointer StatListNode; // 0x5C
         public DataPointer pInventory; // 0x60
         // clientside
         public int pLightMap;           // 0x64
