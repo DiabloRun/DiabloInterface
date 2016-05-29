@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace DiabloInterface.D2.Struct
 {
     [StructLayout(LayoutKind.Sequential)]
-    class D2Stat
+    public class D2Stat
     {
         public ushort HiStatID;
         public ushort LoStatID;
@@ -55,7 +55,7 @@ namespace DiabloInterface.D2.Struct
         public int pMyStats;            // 0x40
         public int pUnit;               // 0x44  list owner
         public D2StatArray FullStats;   // 0x48
-        public int ModStats;            // 0x50 
+        public int ModStats;            // 0x50
         public int __unknown9;          // 0x54
         public int StatFlags;           // 0x58 pointer to an array
         public int fCallback;           // 0x5C

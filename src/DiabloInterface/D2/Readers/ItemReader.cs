@@ -4,14 +4,10 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace DiabloInterface.D2
+namespace DiabloInterface.D2.Readers
 {
-    class D2ItemReader
+    class ItemReader : UnitReader
     {
-        ProcessMemoryReader reader;
-        D2MemoryAddressTable memory;
-        StringLookupTable stringReader;
-
         Dictionary<IntPtr, D2ItemData> cachedItemData;
         Dictionary<int, D2ItemDescription> cachedDescriptions;
 
@@ -21,12 +17,8 @@ namespace DiabloInterface.D2
         ModifierTable magicModifiers;
         ModifierTable rareModifiers;
 
-        public D2ItemReader(ProcessMemoryReader reader, D2MemoryAddressTable memory)
+        public ItemReader(ProcessMemoryReader reader, D2MemoryAddressTable memory) : base(reader, memory)
         {
-            this.reader = reader;
-            this.memory = memory;
-            stringReader = new StringLookupTable(reader, memory);
-
             cachedItemData = new Dictionary<IntPtr, D2ItemData>();
             cachedDescriptions = new Dictionary<int, D2ItemDescription>();
 
@@ -411,48 +403,6 @@ namespace DiabloInterface.D2
             itemData = reader.Read<D2ItemData>(item.pUnitData);
             cachedItemData[item.pUnitData] = itemData;
             return itemData;
-        }
-
-        public int GetStatsCount(D2Unit item)
-        {
-            if (item.StatListNode.IsNull)
-                return 0;
-
-            var node = reader.Read<D2StatListEx>(item.StatListNode);
-            if (!node.ListFlags.HasFlag(StatListFlag.HasCompleteStats))
-                return 0;
-
-            return node.FullStats.Length;
-        }
-
-        public D2Stat[] GetStats(D2Unit item)
-        {
-            if (!IsValidItem(item))
-                return null;
-            if (item.StatListNode.IsNull)
-                return null;
-
-            var node = reader.Read<D2StatListEx>(item.StatListNode);
-            if (!node.ListFlags.HasFlag(StatListFlag.HasCompleteStats))
-                return new D2Stat[] { };
-            if (node.FullStats.Length == 0)
-                return new D2Stat[] { };
-
-            return reader.ReadArray<D2Stat>(node.FullStats.Array, node.FullStats.Length);
-        }
-
-        public int? GetStatValue(D2Unit item, D2StatIdentifier statID)
-        {
-            D2Stat[] stats = GetStats(item);
-            if (stats == null) return null;
-
-            foreach (D2Stat stat in stats)
-            {
-                if (stat.IsOfType(statID))
-                    return stat.Value;
-            }
-
-            return null;
         }
 
         public string GetDefenseString(D2Unit item)

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace DiabloInterface.D2
+namespace DiabloInterface.D2.Readers
 {
     public static class StringConstants
     {
@@ -23,7 +23,7 @@ namespace DiabloInterface.D2
         public const ushort OnlyAssassin    = 0x2AAB;
     }
 
-    class StringLookupTable
+    public class StringLookupTable
     {
         ProcessMemoryReader reader;
         D2MemoryAddressTable memory;

@@ -75,13 +75,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoSplit.cs" />
-    <Compile Include="D2\StringLookupTable.cs" />
-    <Compile Include="D2\D2InventoryReader.cs" />
+    <Compile Include="D2\Readers\UnitReader.cs" />
+    <Compile Include="D2\Readers\StringLookupTable.cs" />
+    <Compile Include="D2\Readers\InventoryReader.cs" />
     <Compile Include="D2\Struct\D2GlobalData.cs" />
     <Compile Include="D2\Struct\D2ItemModifier.cs" />
     <Compile Include="D2\D2MemoryTable.cs" />
     <Compile Include="D2\D2ItemStatCost.cs" />
-    <Compile Include="D2\D2ItemReader.cs" />
+    <Compile Include="D2\Readers\ItemReader.cs" />
     <Compile Include="D2\Struct\D2Inventory.cs" />
     <Compile Include="D2\Struct\D2ItemData.cs" />
     <Compile Include="D2\D2MagicSuffix.cs" />

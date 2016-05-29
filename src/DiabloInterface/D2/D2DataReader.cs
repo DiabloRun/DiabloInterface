@@ -1,4 +1,5 @@
 ﻿using DiabloInterface.D2;
+using DiabloInterface.D2.Readers;
 using DiabloInterface.D2.Struct;
 using System;
 using System.Collections.Generic;
@@ -308,7 +309,7 @@ namespace DiabloInterface
         /// </summary>
         void PrintInventoryItems()
         {
-            var inventoryReader = new D2InventoryReader(reader, memory);
+            var inventoryReader = new InventoryReader(reader, memory);
 
             // Find the horadric cube.
             var cube = (from item in inventoryReader.EnumerateInventory()
@@ -391,7 +392,7 @@ namespace DiabloInterface
             if (haveUnreachedItemSplits)
             {
                 // Get all item IDs.
-                var inventoryReader = new D2InventoryReader(reader, memory);
+                var inventoryReader = new InventoryReader(reader, memory);
                 itemsIds = (from item in inventoryReader.EnumerateInventory()
                           select item.eClass).ToList();
             }

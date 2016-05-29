@@ -3,21 +3,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DiabloInterface.D2
+namespace DiabloInterface.D2.Readers
 {
-    class D2InventoryReader
+    class InventoryReader
     {
         D2MemoryTable memory;
         ProcessMemoryReader processReader;
-        D2ItemReader itemReader;
+        ItemReader itemReader;
 
-        public D2ItemReader ItemReader { get { return itemReader; } }
+        public ItemReader ItemReader { get { return itemReader; } }
 
-        public D2InventoryReader(ProcessMemoryReader reader, D2MemoryTable memory)
+        public InventoryReader(ProcessMemoryReader reader, D2MemoryTable memory)
         {
             processReader = reader;
             this.memory = memory;
-            itemReader = new D2ItemReader(processReader, memory.Address);
+            itemReader = new ItemReader(processReader, memory.Address);
         }
 
         public void ResetCache()
