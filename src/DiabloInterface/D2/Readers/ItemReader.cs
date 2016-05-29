@@ -407,7 +407,7 @@ namespace DiabloInterface.D2.Readers
 
         public string GetDefenseString(D2Unit item)
         {
-            int? defense = GetStatValue(item, D2StatIdentifier.Defense);
+            int? defense = GetStatValue(item, StatIdentifier.Defense);
             if (defense == null) return null;
 
             var sb = new StringBuilder(stringReader.GetString(StringConstants.Defense));

@@ -128,22 +128,22 @@ namespace DiabloInterface
         public void updateLabels ( D2Player player )
         {
             nameLabel.Invoke(new Action(delegate () { nameLabel.Text = player.name; })); // name
-            lvlLabel.Invoke(new Action(delegate () { lvlLabel.Text = "LVL: " + player.lvl ; })); // level
-            strengthLabel.Invoke(new Action(delegate () { strengthLabel.Text = "STR: " + player.strength; }));
-            dexterityLabel.Invoke(new Action(delegate () { dexterityLabel.Text = "DEX: " + player.dexterity; }));
-            vitalityLabel.Invoke(new Action(delegate () { vitalityLabel.Text = "VIT: " + player.vitality; }));
-            energyLabel.Invoke(new Action(delegate () { energyLabel.Text = "ENE: " + player.energy; }));
-            fireResLabel.Invoke(new Action(delegate () { fireResLabel.Text = "FIRE: " + player.calculatedFireRes; }));
-            coldResLabel.Invoke(new Action(delegate () { coldResLabel.Text = "COLD: " + player.calculatedColdRes; }));
-            lightningResLabel.Invoke(new Action(delegate () { lightningResLabel.Text = "LIGH: " + player.calculatedLightningRes; }));
-            poisonResLabel.Invoke(new Action(delegate () { poisonResLabel.Text = "POIS: " + player.calculatedPoisonRes; }));
-            goldLabel.Invoke(new Action(delegate () { goldLabel.Text = "GOLD: " + (player.goldBody + player.goldStash); }));
-            deathsLabel.Invoke(new Action(delegate () { deathsLabel.Text = "DEATHS: " + player.deaths; }));
+            lvlLabel.Invoke(new Action(delegate () { lvlLabel.Text = "LVL: " + player.Level ; })); // level
+            strengthLabel.Invoke(new Action(delegate () { strengthLabel.Text = "STR: " + player.Strength; }));
+            dexterityLabel.Invoke(new Action(delegate () { dexterityLabel.Text = "DEX: " + player.Dexterity; }));
+            vitalityLabel.Invoke(new Action(delegate () { vitalityLabel.Text = "VIT: " + player.Vitality; }));
+            energyLabel.Invoke(new Action(delegate () { energyLabel.Text = "ENE: " + player.Energy; }));
+            fireResLabel.Invoke(new Action(delegate () { fireResLabel.Text = "FIRE: " + player.FireResist; }));
+            coldResLabel.Invoke(new Action(delegate () { coldResLabel.Text = "COLD: " + player.ColdResist; }));
+            lightningResLabel.Invoke(new Action(delegate () { lightningResLabel.Text = "LIGH: " + player.LightningResist; }));
+            poisonResLabel.Invoke(new Action(delegate () { poisonResLabel.Text = "POIS: " + player.PoisonResist; }));
+            goldLabel.Invoke(new Action(delegate () { goldLabel.Text = "GOLD: " + (player.Gold + player.GoldStash); }));
+            deathsLabel.Invoke(new Action(delegate () { deathsLabel.Text = "DEATHS: " + player.Deaths; }));
         }
 
         public void triggerAutosplit(D2Player player)
         {
-            if (player.newlyStarted && settings.doAutosplit && settings.triggerKeys != "")
+            if (player.IsRecentlyStarted && settings.doAutosplit && settings.triggerKeys != "")
             {
                 KeyManager.sendKeys(settings.triggerKeys);
             }
@@ -164,17 +164,17 @@ namespace DiabloInterface
             }
 
             File.WriteAllText(settings.fileFolder + "/name.txt", player.name);
-            File.WriteAllText(settings.fileFolder + "/level.txt", player.lvl.ToString());
-            File.WriteAllText(settings.fileFolder + "/strength.txt", player.strength.ToString());
-            File.WriteAllText(settings.fileFolder + "/dexterity.txt", player.dexterity.ToString());
-            File.WriteAllText(settings.fileFolder + "/vitality.txt", player.vitality.ToString());
-            File.WriteAllText(settings.fileFolder + "/energy.txt", player.energy.ToString());
-            File.WriteAllText(settings.fileFolder + "/fire_res.txt", player.calculatedFireRes.ToString());
-            File.WriteAllText(settings.fileFolder + "/cold_res.txt", player.calculatedColdRes.ToString());
-            File.WriteAllText(settings.fileFolder + "/light_res.txt", player.calculatedLightningRes.ToString());
-            File.WriteAllText(settings.fileFolder + "/poison_res.txt", player.calculatedPoisonRes.ToString());
-            File.WriteAllText(settings.fileFolder + "/gold.txt", (player.goldBody + player.goldStash).ToString());
-            File.WriteAllText(settings.fileFolder + "/deaths.txt", player.deaths.ToString());
+            File.WriteAllText(settings.fileFolder + "/level.txt", player.Level.ToString());
+            File.WriteAllText(settings.fileFolder + "/strength.txt", player.Strength.ToString());
+            File.WriteAllText(settings.fileFolder + "/dexterity.txt", player.Dexterity.ToString());
+            File.WriteAllText(settings.fileFolder + "/vitality.txt", player.Vitality.ToString());
+            File.WriteAllText(settings.fileFolder + "/energy.txt", player.Energy.ToString());
+            File.WriteAllText(settings.fileFolder + "/fire_res.txt", player.FireResist.ToString());
+            File.WriteAllText(settings.fileFolder + "/cold_res.txt", player.ColdResist.ToString());
+            File.WriteAllText(settings.fileFolder + "/light_res.txt", player.LightningResist.ToString());
+            File.WriteAllText(settings.fileFolder + "/poison_res.txt", player.PoisonResist.ToString());
+            File.WriteAllText(settings.fileFolder + "/gold.txt", (player.Gold + player.GoldStash).ToString());
+            File.WriteAllText(settings.fileFolder + "/deaths.txt", player.Deaths.ToString());
 
         }
 

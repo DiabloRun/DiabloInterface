@@ -1,5 +1,4 @@
-﻿using DiabloInterface.D2;
-using DiabloInterface.D2.Readers;
+﻿using DiabloInterface.D2.Readers;
 using DiabloInterface.D2.Struct;
 using System;
 using System.Collections.Generic;
@@ -162,7 +161,11 @@ namespace DiabloInterface
 
         public void readData()
         {
+            // Make sure there is a player before continuing.
             IntPtr characterUnitAddress = reader.ReadAddress32(memory.Address.Character, AddressingMode.Relative);
+            if (characterUnitAddress == IntPtr.Zero)
+                return;
+
             var playerUnit = reader.Read<D2Unit>(characterUnitAddress);
             var playerData = reader.Read<D2PlayerData>(playerUnit.pUnitData);
 
@@ -171,13 +174,13 @@ namespace DiabloInterface
             if (tmpName != "" && tmpName != player.name)
             {
                 player.name = tmpName;
-                player.deaths = 0; // reset the deaths if name changed
+                player.Deaths = 0; // reset the deaths if name changed
                 foreach (AutoSplit autosplit in main.settings.autosplits)
                 {
                     autosplit.reached = false;
                 }
                 haveReset = true;
-                player.newlyStarted = false;
+                player.IsRecentlyStarted = false;
                 return;
             }
 
@@ -200,30 +203,28 @@ namespace DiabloInterface
             {
                 IntPtr questDataAddress = IntPtr.Zero;
 
-                // Well this is becoming a mess to clean up...
-                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 0;
-                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                main.getDebugWindow().setQuestDataNormal(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
-                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 1;
-                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                main.getDebugWindow().setQuestDataNightmare(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
-                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 2;
-                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                main.getDebugWindow().setQuestDataHell(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+                // Currently not working.
+                //memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 0;
+                //questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                //main.getDebugWindow().setQuestDataNormal(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+                //memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 1;
+                //questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                //main.getDebugWindow().setQuestDataNightmare(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+                //memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 2;
+                //questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                //main.getDebugWindow().setQuestDataHell(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
 
-                main.getDebugWindow().updateItemStats(reader, playerUnit);
+                main.getDebugWindow().UpdateItemStats(reader, memory, playerUnit);
             }
 
-            var playerStats = reader.Read<D2StatListEx>(playerUnit.StatListNode);
+            UnitReader unitReader = new UnitReader(reader, memory.Address);
+            var statsMap = unitReader.GetStatsMap(playerUnit);
 
-            byte[] statsBuffer = reader.Read(playerStats.FullStats.Array, playerStats.FullStats.Length * 8);
-
-            player.fill(readDataDict(statsBuffer), currentPenalty);
-            player.mode = (D2Data.Mode)playerUnit.eMode;
-            player.handleDeath();
+            player.ParseStats(statsMap, currentPenalty);
+            player.UpdateMode((D2Data.Mode)playerUnit.eMode);
             if (haveReset)
             {
-                player.newlyStarted = (player.xp == 0 && player.lvl == 1);
+                player.IsRecentlyStarted = (player.Experience == 0 && player.Level == 1);
                 haveReset = false;
             }
 
@@ -231,77 +232,10 @@ namespace DiabloInterface
             main.writeFiles(player);
 
             // autosplits only if newly started player
-            if (player.newlyStarted)
+            if (player.IsRecentlyStarted)
             {
                 doAutoSplits();
             }
-        }
-
-        private Dictionary<int, int> readDataDict(byte[] statsBuffer)
-        {
-
-            // 70/71 = arbitrary number to get all the player data, could probably be set to lower number.
-
-            // stats
-            Dictionary<int, int> dataDict = new Dictionary<int, int>();
-            int indexVal = 0;
-            int valOffset;
-            int off;
-
-            for (int i = 0; i < statsBuffer.Length/8; i++)
-            {
-                off = 2 + i * 8;
-                indexVal = statsBuffer[off];
-
-                if (dataDict.ContainsKey(indexVal))
-                {
-                    continue;
-                }
-
-                valOffset = 0;
-
-                switch (indexVal)
-                {
-                    case D2Data.CHAR_STR_IDX:
-                    case D2Data.CHAR_ENE_IDX:
-                    case D2Data.CHAR_DEX_IDX:
-                    case D2Data.CHAR_VIT_IDX:
-                    case D2Data.CHAR_LVL_IDX:
-                    case D2Data.CHAR_XP_IDX:
-                    case D2Data.CHAR_GOLD_BODY_IDX:
-                    case D2Data.CHAR_GOLD_STASH_IDX:
-                    case D2Data.CHAR_DEF_IDX:
-                    case D2Data.CHAR_FIRE_RES_IDX:
-                    case D2Data.CHAR_FIRE_RES_ADD_IDX:
-                    case D2Data.CHAR_LIGHTNING_RES_IDX:
-                    case D2Data.CHAR_LIGHTNING_RES_ADD_IDX:
-                    case D2Data.CHAR_COLD_RES_IDX:
-                    case D2Data.CHAR_COLD_RES_ADD_IDX:
-                    case D2Data.CHAR_POISON_RES_IDX:
-                    case D2Data.CHAR_POISON_RES_ADD_IDX:
-                        valOffset = 2;
-                        break;
-                    case D2Data.CHAR_CURRENT_MANA_IDX:
-                    case D2Data.CHAR_MAX_MANA_IDX:
-                    case D2Data.CHAR_CURRENT_STAMINA_IDX:
-                    case D2Data.CHAR_MAX_STAMINA_IDX:
-                    case D2Data.CHAR_CURRENT_LIFE_IDX:
-                    case D2Data.CHAR_MAX_LIFE_IDX:
-                        // at offset 2 is a comma value. for us it is enough to know the int val
-                        valOffset = 3;
-                        break;
-                }
-                if (valOffset > 0)
-                {
-                    dataDict.Add(indexVal, BitConverter.ToInt32(new byte[] {
-                        statsBuffer[off + valOffset],
-                        statsBuffer[off + valOffset + 1],
-                        statsBuffer[off + valOffset + 2],
-                        statsBuffer[off + valOffset + 3]
-                    }, 0));
-                }
-            }
-            return dataDict;
         }
 
         /// <summary>
@@ -420,7 +354,7 @@ namespace DiabloInterface
                 switch (autosplit.type)
                 {
                     case AutoSplit.TYPE_CHAR_LEVEL:
-                        if (autosplit.value <= player.lvl)
+                        if (autosplit.value <= player.Level)
                         {
                             autosplit.reached = true;
                             main.triggerAutosplit(player);

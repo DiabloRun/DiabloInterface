@@ -10,7 +10,7 @@ namespace DiabloInterface.D2.Struct
         public ushort LoStatID;
         public int Value;
 
-        public bool IsOfType(D2StatIdentifier id)
+        public bool IsOfType(StatIdentifier id)
         {
             return LoStatID == (ushort)id;
         }

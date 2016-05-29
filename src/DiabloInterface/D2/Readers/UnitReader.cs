@@ -1,4 +1,7 @@
 ﻿using DiabloInterface.D2.Struct;
+using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace DiabloInterface.D2.Readers
 {
@@ -42,7 +45,18 @@ namespace DiabloInterface.D2.Readers
             return reader.ReadArray<D2Stat>(node.FullStats.Array, node.FullStats.Length);
         }
 
-        public int? GetStatValue(D2Unit unit, D2StatIdentifier statID)
+        public Dictionary<StatIdentifier, D2Stat> GetStatsMap(D2Unit unit)
+        {
+            D2Stat[] stats = GetStats(unit);
+            if (stats == null) return null;
+
+            return (from stat in stats
+                    where Enum.IsDefined(typeof(StatIdentifier), stat.LoStatID)
+                    group stat by (StatIdentifier)stat.LoStatID into g
+                    select g).ToDictionary(x => x.Key, x => x.Single());
+        }
+
+        public int? GetStatValue(D2Unit unit, StatIdentifier statID)
         {
             D2Stat[] stats = GetStats(unit);
             if (stats == null) return null;

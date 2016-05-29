@@ -1,7 +1,9 @@
-﻿using DiabloInterface.D2.Struct;
+﻿using DiabloInterface.D2.Readers;
+using DiabloInterface.D2.Struct;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 namespace DiabloInterface
@@ -313,110 +315,62 @@ namespace DiabloInterface
 
         }
 
-        public void updateItemStats(ProcessMemoryReader r, D2Unit pl)
+        public void UpdateItemStats(ProcessMemoryReader r, D2MemoryTable memory, D2Unit pl)
         {
-            D2Inventory inventory = r.Read<D2Inventory>(pl.pInventory);
+            InventoryReader inventoryReader = new InventoryReader(r, memory);
+            UnitReader unitReader = new UnitReader(r, memory.Address);
 
-            // all the other items
-            // 0x10: last item in inventory
-            if (!inventory.pLastItem.IsNull)
+            // Build filter to get only equipped items.
+            Func<D2ItemData, bool> filter = data => data.BodyLoc != BodyLocation.None;
+            foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))
             {
-                IntPtr itemAddress = inventory.pLastItem.Address;
-                D2Unit item;
-                D2ItemData itemData;
-                D2StatListEx itemStatListEx;
-                do
+                D2Stat[] itemStats = unitReader.GetStats(item);
+                if (itemStats == null) continue;
+
+                StringBuilder statBuilder = new StringBuilder();
+                List<D2ItemStatCost> statsList = D2ItemStatCost.getAll();
+                foreach (D2Stat stat in itemStats)
                 {
-                    item = r.Read<D2Unit>(itemAddress);
-                    itemData = r.Read<D2ItemData>(item.pUnitData);
-                    itemStatListEx = r.Read<D2StatListEx>(item.StatListNode);
-                    if (itemData.BodyLoc > (int)D2Data.BodyLoc.None && (int)itemData.BodyLoc <= (int)D2Data.BodyLoc.Gloves)
+                    foreach (D2ItemStatCost st in statsList)
                     {
-                        byte[] statsBuffer = r.Read(itemStatListEx.FullStats.Array, itemStatListEx.FullStats.Length * 8);
-                        List<D2ItemStatCost> statsList = D2ItemStatCost.getAll();
-
-                        Dictionary<int, int> dataDict = new Dictionary<int, int>();
-                        int off;
-                        int indexVal;
-                        int valOffset;
-                        for (int i = 0; i < statsBuffer.Length / 8; i++)
+                        if (st.id == stat.LoStatID)
                         {
-                            off = 2 + i * 8;
-                            indexVal = statsBuffer[off];
+                            statBuilder.Append(st.name);
+                            statBuilder.Append(": ");
+                            statBuilder.Append(stat.Value);
+                            statBuilder.Append('\n');
 
-                            if (dataDict.ContainsKey(indexVal))
-                            {
-                                continue;
-                            }
-
-                            valOffset = 0;
-
-                            switch (indexVal)
-                            {
-                                case D2Data.CHAR_CURRENT_MANA_IDX:
-                                case D2Data.CHAR_MAX_MANA_IDX:
-                                case D2Data.CHAR_CURRENT_STAMINA_IDX:
-                                case D2Data.CHAR_MAX_STAMINA_IDX:
-                                case D2Data.CHAR_CURRENT_LIFE_IDX:
-                                case D2Data.CHAR_MAX_LIFE_IDX:
-                                    // at offset 2 is a comma value. for us it is enough to know the int val
-                                    valOffset = 3;
-                                    break;
-                                default:
-                                    valOffset = 2;
-                                    break;
-                            }
-                            if (valOffset > 0)
-                            {
-                                dataDict.Add(indexVal, BitConverter.ToInt32(new byte[] {
-                            statsBuffer[off + valOffset],
-                            statsBuffer[off + valOffset + 1],
-                            statsBuffer[off + valOffset + 2],
-                            statsBuffer[off + valOffset + 3]
-                        }, 0));
-                            }
-                        }
-
-
-                        string str = "";
-                        foreach (KeyValuePair<int, int> pair in dataDict)
-                        {
-                            foreach (D2ItemStatCost st in statsList)
-                            {
-                                if (st.id == pair.Key)
-                                {
-                                    str += st.name + ":" + pair.Value + "\n";
-                                }
-                            }
-                        }
-                        Control c = null;
-                        switch ((D2Data.BodyLoc)itemData.BodyLoc)
-                        {
-                            case D2Data.BodyLoc.Head: c = tabPageHead; break;
-                            case D2Data.BodyLoc.Neck: c = tabPageAmulet; break;
-                            case D2Data.BodyLoc.Torso: c = tabPageBody; break;
-                            case D2Data.BodyLoc.RightArm: c = tabPageWeaponRight; break;
-                            case D2Data.BodyLoc.LeftArm: c = tabPageWeaponLeft; break;
-                            case D2Data.BodyLoc.RightRing: c = tabPageRingRight; break;
-                            case D2Data.BodyLoc.LeftRing: c = tabPageRingLeft; break;
-                            case D2Data.BodyLoc.Belt: c = tabPageBelt; break;
-                            case D2Data.BodyLoc.Feet: c = tabPageFeet; break;
-                            case D2Data.BodyLoc.Gloves: c = tabPageHand; break;
-                        }
-                        if (c != null)
-                        {
-                            if (c.Controls.Count == 0)
-                            {
-                                c.Invoke(new Action(delegate () {
-                                    c.Controls.Add(new RichTextBox());
-                                    c.Controls[0].Dock = DockStyle.Fill;
-                                }));
-                            }
-                            c.Controls[0].Invoke(new Action(delegate () { c.Controls[0].Text = str; }));
+                            break;
                         }
                     }
-                    itemAddress = itemData.PreviousItem.Address;
-                } while (itemAddress != IntPtr.Zero);
+                }
+
+                Control c = null;
+                D2ItemData itemData = r.Read<D2ItemData>(item.pUnitData);
+                switch (itemData.BodyLoc)
+                {
+                    case BodyLocation.Head: c = tabPageHead; break;
+                    case BodyLocation.Amulet: c = tabPageAmulet; break;
+                    case BodyLocation.BodyArmor: c = tabPageBody; break;
+                    case BodyLocation.PrimaryRight: c = tabPageWeaponRight; break;
+                    case BodyLocation.PrimaryLeft: c = tabPageWeaponLeft; break;
+                    case BodyLocation.SecondaryLeft: c = tabPageRingRight; break;
+                    case BodyLocation.SecondaryRight: c = tabPageRingLeft; break;
+                    case BodyLocation.Belt: c = tabPageBelt; break;
+                    case BodyLocation.Boots: c = tabPageFeet; break;
+                    case BodyLocation.Gloves: c = tabPageHand; break;
+                }
+                if (c != null)
+                {
+                    if (c.Controls.Count == 0)
+                    {
+                        c.Invoke(new Action(delegate () {
+                            c.Controls.Add(new RichTextBox());
+                            c.Controls[0].Dock = DockStyle.Fill;
+                        }));
+                    }
+                    c.Controls[0].Invoke(new Action(() => c.Controls[0].Text = statBuilder.ToString()));
+                }
             }
         }
     }
