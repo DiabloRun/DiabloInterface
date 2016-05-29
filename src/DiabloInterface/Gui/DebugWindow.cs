@@ -315,8 +315,7 @@ namespace DiabloInterface
 
         public void updateItemStats(ProcessMemoryReader r, D2Unit pl)
         {
-            D2Inventory inventory = r.Read<D2Inventory>(pl.pInventory.Address);
-
+            D2Inventory inventory = r.Read<D2Inventory>(pl.pInventory);
 
             // all the other items
             // 0x10: last item in inventory
@@ -329,11 +328,11 @@ namespace DiabloInterface
                 do
                 {
                     item = r.Read<D2Unit>(itemAddress);
-                    itemData = r.Read<D2ItemData>(item.pUnitData.Address);
-                    itemStatListEx = r.Read<D2StatListEx>(item.StatListNode.Address);
+                    itemData = r.Read<D2ItemData>(item.pUnitData);
+                    itemStatListEx = r.Read<D2StatListEx>(item.StatListNode);
                     if (itemData.BodyLoc > (int)D2Data.BodyLoc.None && (int)itemData.BodyLoc <= (int)D2Data.BodyLoc.Gloves)
                     {
-                        byte[] statsBuffer = r.Read(itemStatListEx.FullStats.Array.Address, itemStatListEx.FullStats.Length * 8);
+                        byte[] statsBuffer = r.Read(itemStatListEx.FullStats.Array, itemStatListEx.FullStats.Length * 8);
                         List<D2ItemStatCost> statsList = D2ItemStatCost.getAll();
 
                         Dictionary<int, int> dataDict = new Dictionary<int, int>();

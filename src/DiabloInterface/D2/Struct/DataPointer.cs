@@ -25,5 +25,10 @@ namespace DiabloInterface.D2.Struct
         {
             return address.ToString("X8");
         }
+
+        public static implicit operator IntPtr(DataPointer instance)
+        {
+            return instance.Address;
+        }
     }
 }

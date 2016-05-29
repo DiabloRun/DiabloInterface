@@ -163,7 +163,7 @@ namespace DiabloInterface
         {
             IntPtr characterUnitAddress = reader.ReadAddress32(memory.Address.Character, AddressingMode.Relative);
             var playerUnit = reader.Read<D2Unit>(characterUnitAddress);
-            var playerData = reader.Read<D2PlayerData>(playerUnit.pUnitData.Address);
+            var playerData = reader.Read<D2PlayerData>(playerUnit.pUnitData);
 
             // get name
             tmpName = playerData.szPlayerName;
@@ -213,9 +213,9 @@ namespace DiabloInterface
                 main.getDebugWindow().updateItemStats(reader, playerUnit);
             }
 
-            var playerStats = reader.Read<D2StatListEx>(playerUnit.StatListNode.Address);
+            var playerStats = reader.Read<D2StatListEx>(playerUnit.StatListNode);
 
-            byte[] statsBuffer = reader.Read(playerStats.FullStats.Array.Address, playerStats.FullStats.Length * 8);
+            byte[] statsBuffer = reader.Read(playerStats.FullStats.Array, playerStats.FullStats.Length * 8);
 
             player.fill(readDataDict(statsBuffer), currentPenalty);
             player.mode = (D2Data.Mode)playerUnit.eMode;

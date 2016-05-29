@@ -404,12 +404,12 @@ namespace DiabloInterface.D2
             if (item.pUnitData.IsNull) return null;
 
             D2ItemData itemData;
-            if (cachedItemData.TryGetValue(item.pUnitData.Address, out itemData))
+            if (cachedItemData.TryGetValue(item.pUnitData, out itemData))
                 return itemData;
 
             // Item data not cached, read from memory.
-            itemData = reader.Read<D2ItemData>(item.pUnitData.Address);
-            cachedItemData[item.pUnitData.Address] = itemData;
+            itemData = reader.Read<D2ItemData>(item.pUnitData);
+            cachedItemData[item.pUnitData] = itemData;
             return itemData;
         }
 
@@ -418,7 +418,7 @@ namespace DiabloInterface.D2
             if (item.StatListNode.IsNull)
                 return 0;
 
-            var node = reader.Read<D2StatListEx>(item.StatListNode.Address);
+            var node = reader.Read<D2StatListEx>(item.StatListNode);
             if (!node.ListFlags.HasFlag(StatListFlag.HasCompleteStats))
                 return 0;
 
@@ -432,13 +432,13 @@ namespace DiabloInterface.D2
             if (item.StatListNode.IsNull)
                 return null;
 
-            var node = reader.Read<D2StatListEx>(item.StatListNode.Address);
+            var node = reader.Read<D2StatListEx>(item.StatListNode);
             if (!node.ListFlags.HasFlag(StatListFlag.HasCompleteStats))
                 return new D2Stat[] { };
             if (node.FullStats.Length == 0)
                 return new D2Stat[] { };
 
-            return reader.ReadArray<D2Stat>(node.FullStats.Array.Address, node.FullStats.Length);
+            return reader.ReadArray<D2Stat>(node.FullStats.Array, node.FullStats.Length);
         }
 
         public int? GetStatValue(D2Unit item, D2StatIdentifier statID)
