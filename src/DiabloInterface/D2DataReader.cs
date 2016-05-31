@@ -248,8 +248,8 @@ namespace DiabloInterface
                 OFFSETS_QUESTS[OFFSETS_QUESTS.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 2;
                 main.getDebugWindow().setQuestDataHell(readBuffer(QUEST_BUFFER_LENGTH, ADDRESS_QUESTS, OFFSETS_QUESTS, true));
             }
-
-            player.fill(readDataDict(), currentPenalty);
+            var tempPenalty = currentPenalty;
+            player.fill(readDataDict(), tempPenalty);
             player.mode = (D2Data.Mode)readShort(ADDRESS_CHARACTER, OFFSETS_MODE, true);
             player.handleDeath();
             if (haveReset)
