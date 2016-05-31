@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace DiabloInterface.D2.Struct
 {
     [StructLayout(LayoutKind.Sequential)]
-    struct D2StatList
+    class D2StatList
     {
         #region structure (sizeof = 0x40)
         public int pMemPool;        // 0x00

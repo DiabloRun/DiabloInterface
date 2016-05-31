@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DiabloInterface.D2.Readers
 {
@@ -274,55 +275,144 @@ namespace DiabloInterface.D2.Readers
 
         public string GetFullItemName(D2Unit item)
         {
-            if (!IsValidItem(item)) return null;
+            if (!IsValidItem(item))
+                return null;
 
-            string name = null;
+            if (!ItemHasFlag(item, ItemFlag.Identified))
+                return null;
+
+            string fullName;
+            string prefix = null;
+            string suffix = null;
+            string name = GetItemName(item);
+            string runeword = GetRunewordName(item);
+            string quality = null;
             switch (GetItemQuality(item))
             {
                 case ItemQuality.Low:
-                    name = GetLowQualityItemName(item);
+                    // fullName: quality + name
+                    quality = GetLowQualityItemName(item);
                     name += " " + GetItemName(item);
                     break;
                 case ItemQuality.Normal:
-                    name = GetItemName(item);
+                    // fullName: name
                     break;
                 case ItemQuality.Superior:
-                    name = GetSuperiorItemName(item);
-                    name += GetItemName(item);
+                    // fullName: quality + name
+                    quality = GetSuperiorItemName(item);
                     break;
                 case ItemQuality.Magic:
-                    name = GetItemMagicName(item);
+                    // fullName: prefix + name + suffix  
+                    prefix = GetMagicPrefixName(item);
+                    suffix = GetMagicSuffixName(item);
                     break;
                 case ItemQuality.Set:
-                    name = GetItemSetName(item);
-                    name += " " + GetItemName(item);
+                    // fullName: prefix + name
+                    prefix = GetItemSetName(item);
                     break;
                 case ItemQuality.Rare:
                 case ItemQuality.Crafted:
                 case ItemQuality.Tempered:
-                    name = GetItemRareName(item);
+                    // fullName: prefix + suffix + name
+                    prefix = GetRarePrefixName(item);
+                    suffix = GetRareSuffixName(item);
                     break;
                 case ItemQuality.Unique:
-                    name = GetItemUniqueName(item);
-                    name += " " + GetItemName(item);
+                    // Hacky: if the item is one of the quest items, the prefix is garbage and is not read
+                    if (Enum.IsDefined(typeof(D2Data.QuestItemId), item.eClass))
+                    {
+
+                    } else
+                    {
+                        // fullName: prefix + name
+                        prefix = GetItemUniqueName(item);
+                    }
                     break;
                 default: return null;
             }
 
+
+            // Find the gender/grammatic case of the item in order to match the correct adjectives 
+            Regex regex = new Regex(@"^(\[[a-z]+\])");
+            Match match = regex.Match(name);
+            if (match.Success)
+            {
+                Regex splitRegex = new Regex(@"(\[[a-z]+\])");
+                if (runeword == null && quality != null)
+                {
+                    string[] sArr = splitRegex.Split(quality);
+                    int idx = Array.IndexOf(sArr, match.Value);
+                    if (idx >= 0 && idx < sArr.Length - 1)
+                    {
+                        quality = sArr[idx + 1];
+                    }
+                }
+                if (prefix != null)
+                {
+                    string[] sArr = splitRegex.Split(prefix);
+                    int idx = Array.IndexOf(sArr, match.Value);
+                    if (idx >= 0 && idx < sArr.Length - 1)
+                    {
+                        prefix = sArr[idx + 1];
+                    }
+                }
+                if (suffix != null)
+                {
+                    string[] sArr = splitRegex.Split(suffix);
+                    int idx = Array.IndexOf(sArr, match.Value);
+                    if (idx >= 0 && idx < sArr.Length - 1)
+                    {
+                        suffix = sArr[idx + 1];
+                    }
+                }
+
+                fullName = name.Substring(match.Length);
+            }
+            else
+            {
+                fullName = name;
+            }
+
+            if (prefix != null)
+            {
+                if (IsItemOfQuality(item, ItemQuality.Rare))
+                {
+                    fullName = string.Format("{0} \n{1}", prefix, fullName);
+                }
+                else
+                {
+                    fullName = string.Format("{0} {1}", prefix, fullName);
+                }
+            }
+
+            if (runeword == null && quality != null)
+            {
+                fullName = string.Format("{0} {1}", quality, fullName);
+            }
+            if (suffix != null)
+            {
+                if (IsItemOfQuality(item, ItemQuality.Rare))
+                {
+                    fullName = string.Format("{0} {1}", suffix, fullName);
+                }
+                else
+                {
+                    fullName = string.Format("{1} {0}", suffix, fullName);
+                }
+            }
+
             // Runeword item name.
-            string runeword = GetRunewordName(item);
             if (runeword != null)
             {
-                name += ": " + runeword;
+                fullName += ": " + runeword;
             }
 
             // Ethereal item name.
             if (ItemHasFlag(item, ItemFlag.Ethereal))
             {
-                name = "Ethereal " + name;
+                fullName = "Ethereal " + fullName;
             }
-
-            return name;
+            return fullName;
         }
 
         public D2ItemDescription GetItemDescription(D2Unit item)

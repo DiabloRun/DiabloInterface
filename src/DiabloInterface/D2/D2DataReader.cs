@@ -204,15 +204,15 @@ namespace DiabloInterface
                 IntPtr questDataAddress = IntPtr.Zero;
 
                 // Currently not working.
-                //memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 0;
-                //questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                //main.getDebugWindow().setQuestDataNormal(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
-                //memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 1;
-                //questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                //main.getDebugWindow().setQuestDataNightmare(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
-                //memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 2;
-                //questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                //main.getDebugWindow().setQuestDataHell(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 0;
+                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                main.getDebugWindow().setQuestDataNormal(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 1;
+                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                main.getDebugWindow().setQuestDataNightmare(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 2;
+                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                main.getDebugWindow().setQuestDataHell(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
 
                 main.getDebugWindow().UpdateItemStats(reader, memory, playerUnit);
             }
@@ -278,7 +278,7 @@ namespace DiabloInterface
 
             foreach (AutoSplit autosplit in main.settings.autosplits)
             {
-                if (!autosplit.reached && autosplit.type == AutoSplit.TYPE_SPECIAL && autosplit.value == (int)AutoSplit.Special.GAMESTART)
+                if (!autosplit.reached && autosplit.type == AutoSplit.Type.Special && autosplit.value == (int)AutoSplit.Special.GAMESTART)
                 {
                     autosplit.reached = true;
                     main.triggerAutosplit(player);
@@ -298,16 +298,16 @@ namespace DiabloInterface
                 }
                 switch (autosplit.type)
                 {
-                    case AutoSplit.TYPE_CHAR_LEVEL:
+                    case AutoSplit.Type.CharLevel:
                         haveUnreachedCharLevelSplits = true;
                         break;
-                    case AutoSplit.TYPE_AREA:
+                    case AutoSplit.Type.Area:
                         haveUnreachedAreaSplits = true;
                         break;
-                    case AutoSplit.TYPE_ITEM:
+                    case AutoSplit.Type.Item:
                         haveUnreachedItemSplits = true;
                         break;
-                    case AutoSplit.TYPE_QUEST:
+                    case AutoSplit.Type.Quest:
                         haveUnreachedQuestSplits = true;
                         break;
                 }
@@ -353,28 +353,28 @@ namespace DiabloInterface
 
                 switch (autosplit.type)
                 {
-                    case AutoSplit.TYPE_CHAR_LEVEL:
+                    case AutoSplit.Type.CharLevel:
                         if (autosplit.value <= player.Level)
                         {
                             autosplit.reached = true;
                             main.triggerAutosplit(player);
                         }
                         break;
-                    case AutoSplit.TYPE_AREA:
+                    case AutoSplit.Type.Area:
                         if (autosplit.value == area)
                         {
                             autosplit.reached = true;
                             main.triggerAutosplit(player);
                         }
                         break;
-                    case AutoSplit.TYPE_ITEM:
+                    case AutoSplit.Type.Item:
                         if (itemsIds.Contains(autosplit.value))
                         {
                             autosplit.reached = true;
                             main.triggerAutosplit(player);
                         }
                         break;
-                    case AutoSplit.TYPE_QUEST:
+                    case AutoSplit.Type.Quest:
                         short value = BitConverter.ToInt16(new byte[2] { reverseBits(questBuffer[autosplit.value]), reverseBits(questBuffer[autosplit.value + 1]), }, 0);
                         if (isNthBitSet(value, 1) || isNthBitSet(value, 0))
                         {

@@ -99,7 +99,7 @@ namespace DiabloInterface
                         {
                             AutoSplit autosplit = new AutoSplit(
                                 parts2[0],
-                                Convert.ToInt16(parts2[1]),
+                                (AutoSplit.Type)Convert.ToInt16(parts2[1]),
                                 Convert.ToInt16(parts2[2]),
                                 (short)0
                             );
@@ -109,7 +109,7 @@ namespace DiabloInterface
                         {
                             AutoSplit autosplit = new AutoSplit(
                                 parts2[0],
-                                Convert.ToInt16(parts2[1]),
+                                (AutoSplit.Type)Convert.ToInt16(parts2[1]),
                                 Convert.ToInt16(parts2[2]),
                                 Convert.ToInt16(parts2[3])
                             );

@@ -3,7 +3,7 @@
 namespace DiabloInterface.D2.Struct
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct D2SkillData
+    class D2SkillData
     {
         #region structure ( sizeof = 0x023C most likely)
         public int skillId;             // 0x0004 skill id (from skills.txt)

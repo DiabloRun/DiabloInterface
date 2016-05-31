@@ -79,14 +79,24 @@ namespace DiabloInterface
                     memoryTable.Address.GlobalData                  = new IntPtr(0x33FD78);
                     memoryTable.Address.LowQualityItems             = new IntPtr(0x563BE0);
                     memoryTable.Address.ItemDescriptions            = new IntPtr(0x5639E0);
+                        //memoryTable.Address.unknown1            = new IntPtr(0x5639EC);
+                        //memoryTable.Address.unknown2            = new IntPtr(0x5639F4);
+                        //memoryTable.Address.unknown3            = new IntPtr(0x5639FC);
                     memoryTable.Address.MagicModifierTable          = new IntPtr(0x563A04);
+                        //memoryTable.Address.unknown4            = new IntPtr(0x563A18);
+                        //memoryTable.Address.unknown5            = new IntPtr(0x563A20);
                     memoryTable.Address.RareModifierTable           = new IntPtr(0x563A28);
+                        //memoryTable.Address.unknown6            = new IntPtr(0x563A38);
+
                     memoryTable.Address.StringIndexerTable          = new IntPtr(0x479A3C);
                     memoryTable.Address.StringAddressTable          = new IntPtr(0x479A40);
                     memoryTable.Address.PatchStringIndexerTable     = new IntPtr(0x479A58);
                     memoryTable.Address.PatchStringAddressTable     = new IntPtr(0x479A44);
                     memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(0x479A5C);
                     memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x479A48);
+
+                    // More Tables seem to exist:
+
                     break;
             }
 

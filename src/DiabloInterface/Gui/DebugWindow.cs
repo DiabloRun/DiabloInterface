@@ -319,6 +319,7 @@ namespace DiabloInterface
         {
             InventoryReader inventoryReader = new InventoryReader(r, memory);
             UnitReader unitReader = new UnitReader(r, memory.Address);
+            
 
             // Build filter to get only equipped items.
             Func<D2ItemData, bool> filter = data => data.BodyLoc != BodyLocation.None;
@@ -328,6 +329,8 @@ namespace DiabloInterface
                 if (itemStats == null) continue;
 
                 StringBuilder statBuilder = new StringBuilder();
+                statBuilder.Append(inventoryReader.ItemReader.GetFullItemName(item));
+                statBuilder.Append('\n');
                 List<D2ItemStatCost> statsList = D2ItemStatCost.getAll();
                 foreach (D2Stat stat in itemStats)
                 {
