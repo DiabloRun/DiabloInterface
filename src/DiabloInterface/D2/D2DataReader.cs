@@ -197,6 +197,7 @@ namespace DiabloInterface
                 case 0:
                 default: currentPenalty = D2Data.Penalty.NORMAL; break;
             }
+            var tmpPenalty = currentPenalty;
 
             // debug window - quests
             if (main.getDebugWindow() != null)
@@ -220,7 +221,7 @@ namespace DiabloInterface
             UnitReader unitReader = new UnitReader(reader, memory.Address);
             var statsMap = unitReader.GetStatsMap(playerUnit);
 
-            player.ParseStats(statsMap, currentPenalty);
+            player.ParseStats(statsMap, tmpPenalty);
             player.UpdateMode((D2Data.Mode)playerUnit.eMode);
             if (haveReset)
             {
