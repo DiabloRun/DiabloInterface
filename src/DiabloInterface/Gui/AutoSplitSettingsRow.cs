@@ -37,12 +37,9 @@ namespace DiabloInterface
             cmbType.Items.Add(new Item("Special", (int)AutoSplit.Type.Special));
             cmbType.SelectedIndex = (int)autosplit.type;
 
-            cmbDifficulty.Items.Add(new Item("Normal", 0));
-            cmbDifficulty.Items.Add(new Item("Nightmare", 1));
-            cmbDifficulty.Items.Add(new Item("Hell", 2));
-            cmbDifficulty.SelectedIndex = autosplit.difficulty;
+            fillComboBoxes();
 
-            fillValueComboBox();
+            cmbDifficulty.SelectedIndex = autosplit.difficulty;
 
             var i = 0;
             foreach (Item item in cmbValue.Items)
@@ -55,9 +52,29 @@ namespace DiabloInterface
                 i++;
             }
         }
-        private void fillValueComboBox ()
+        private void fillComboBoxes ()
         {
 
+
+            cmbDifficulty.Items.Clear();
+            switch (autosplit.type)
+            {
+                case AutoSplit.Type.CharLevel:
+                case AutoSplit.Type.Special:
+                    cmbDifficulty.Items.Add(new Item("Normal", 0));
+                    cmbDifficulty.SelectedIndex = 0;
+                    cmbDifficulty.Hide();
+                    break;
+                case AutoSplit.Type.Area:
+                case AutoSplit.Type.Item:
+                case AutoSplit.Type.Quest:
+                    cmbDifficulty.Items.Add(new Item("Normal", 0));
+                    cmbDifficulty.Items.Add(new Item("Nightmare", 1));
+                    cmbDifficulty.Items.Add(new Item("Hell", 2));
+                    cmbDifficulty.SelectedIndex = 0;
+                    cmbDifficulty.Show();
+                    break;
+            }
 
             cmbValue.Items.Clear();
             switch (autosplit.type)
@@ -106,7 +123,7 @@ namespace DiabloInterface
             ComboBox comboBox = (ComboBox)sender;
             Item selectedItem = (Item)comboBox.SelectedItem;
             autosplit.type = (AutoSplit.Type)selectedItem.Value;
-            fillValueComboBox();
+            fillComboBoxes();
         }
 
         private void cmbValue_SelectedIndexChanged(object sender, EventArgs e)
