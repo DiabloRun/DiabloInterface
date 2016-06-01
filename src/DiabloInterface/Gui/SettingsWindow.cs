@@ -116,6 +116,7 @@ namespace DiabloInterface
         {
 
             if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9
+                || e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9
                 || e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z
                 || e.KeyCode >= Keys.F1 && e.KeyCode <= Keys.F12)
             {

@@ -32,7 +32,7 @@ namespace DiabloInterface
             confString += "D2Version:" + d2Version + "\n";
             foreach (AutoSplit autosplit in autosplits)
             {
-                confString += "AutoSplit: " + autosplit.name.Replace('|', ' ') + "|"+ autosplit.type + "|" + autosplit.value + "|" + autosplit.difficulty + "\n";
+                confString += "AutoSplit: " + autosplit.name.Replace('|', ' ') + "|"+ (int)autosplit.type + "|" + autosplit.value + "|" + autosplit.difficulty + "\n";
             }
             
             File.WriteAllText("settings.conf", confString);

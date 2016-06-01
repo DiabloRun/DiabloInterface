@@ -39,7 +39,7 @@ namespace DiabloInterface
 
             fillComboBoxes();
 
-            cmbDifficulty.SelectedIndex = autosplit.difficulty;
+            cmbDifficulty.SelectedIndex = (int)autosplit.difficulty;
 
             var i = 0;
             foreach (Item item in cmbValue.Items)
@@ -59,12 +59,6 @@ namespace DiabloInterface
             cmbDifficulty.Items.Clear();
             switch (autosplit.type)
             {
-                case AutoSplit.Type.CharLevel:
-                case AutoSplit.Type.Special:
-                    cmbDifficulty.Items.Add(new Item("Normal", 0));
-                    cmbDifficulty.SelectedIndex = 0;
-                    cmbDifficulty.Hide();
-                    break;
                 case AutoSplit.Type.Area:
                 case AutoSplit.Type.Item:
                 case AutoSplit.Type.Quest:
@@ -73,6 +67,13 @@ namespace DiabloInterface
                     cmbDifficulty.Items.Add(new Item("Hell", 2));
                     cmbDifficulty.SelectedIndex = 0;
                     cmbDifficulty.Show();
+                    break;
+                case AutoSplit.Type.CharLevel:
+                case AutoSplit.Type.Special:
+                default:
+                    cmbDifficulty.Items.Add(new Item("Normal", 0));
+                    cmbDifficulty.SelectedIndex = 0;
+                    cmbDifficulty.Hide();
                     break;
             }
 
