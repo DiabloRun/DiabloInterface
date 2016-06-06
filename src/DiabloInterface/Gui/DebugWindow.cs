@@ -331,10 +331,11 @@ namespace DiabloInterface
                 StringBuilder statBuilder = new StringBuilder();
                 statBuilder.Append(inventoryReader.ItemReader.GetFullItemName(item));
                 statBuilder.Append('\n');
-                List<D2ItemStatCost> statsList = D2ItemStatCost.getAll();
+                List<D2ItemStatCostTxt> statsList = D2ItemStatCostTxt.getAll();
+
                 foreach (D2Stat stat in itemStats)
                 {
-                    foreach (D2ItemStatCost st in statsList)
+                    foreach (D2ItemStatCostTxt st in statsList)
                     {
                         if (st.id == stat.LoStatID)
                         {

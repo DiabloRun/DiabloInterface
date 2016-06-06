@@ -5,19 +5,19 @@ using System.Reflection;
 
 namespace DiabloInterface
 {
-    class D2ItemStatCost
+    class D2ItemStatCostTxt
     {
         public string name;
         public int id;
-        private static List<D2ItemStatCost> suffixes;
+        private static List<D2ItemStatCostTxt> suffixes;
 
-        public D2ItemStatCost(string[] lineArray)
+        public D2ItemStatCostTxt(string[] lineArray)
         {
             name = lineArray[0];
             id = Int32.Parse(lineArray[1]);
         }
 
-        public static List<D2ItemStatCost> getAll()
+        public static List<D2ItemStatCostTxt> getAll()
         {
             if (suffixes == null)
             {
@@ -26,10 +26,10 @@ namespace DiabloInterface
             return suffixes;
         }
 
-        public static List<D2ItemStatCost> readAll()
+        public static List<D2ItemStatCostTxt> readAll()
         {
 
-            List<D2ItemStatCost> list = new List<D2ItemStatCost>();
+            List<D2ItemStatCostTxt> list = new List<D2ItemStatCostTxt>();
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = "DiabloInterface.Resources.ItemStatCost.txt";
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
@@ -56,7 +56,7 @@ namespace DiabloInterface
                     }
                     try
                     {
-                        list.Add(new D2ItemStatCost(lineArray));
+                        list.Add(new D2ItemStatCostTxt(lineArray));
                         //Console.Write(lineArray[1] + ":" + lineArray[0] + "\n") ;
                     }
                     catch (FormatException e)

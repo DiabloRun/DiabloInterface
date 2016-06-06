@@ -13,6 +13,7 @@ namespace DiabloInterface
         public IntPtr RareModifierTable;
 
         // These all probably belong to a global struct the compiler optimized away.
+        public IntPtr PlayerUnit;
         public IntPtr GlobalData;
         public IntPtr LowQualityItems;
         public IntPtr StringIndexerTable;

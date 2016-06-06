@@ -268,9 +268,10 @@ namespace DiabloInterface
             {
                 Console.WriteLine(inventoryReader.ItemReader.GetFullItemName(item));
 
-                // Print item defense (if it has any).
-                string defense = inventoryReader.ItemReader.GetDefenseString(item);
-                if (defense != null) Console.WriteLine("    {0}", defense);
+                // Print magical prefixes/affixes.
+                List<string> magicalStrings = inventoryReader.ItemReader.GetMagicalStrings(item);
+                foreach (string str in magicalStrings)
+                    Console.WriteLine("    {0}", str);
             }
         }
 

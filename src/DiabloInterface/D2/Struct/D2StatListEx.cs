@@ -28,11 +28,12 @@ namespace DiabloInterface.D2.Struct
     enum StatListFlag : uint
     {
         None             = 0,
+        HasProperties    = 0x40,
         HasCompleteStats = 0x80000000
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct D2StatListEx
+    class D2StatListEx
     {
         #region structure (sizeof = 0x64)
         public int pMemPool;            // 0x00
@@ -40,19 +41,17 @@ namespace DiabloInterface.D2.Struct
         public int eOwnerType;          // 0x08
         public int OwnerGUID;           // 0x0C
         public StatListFlag ListFlags;  // 0x10
-        public int __unknown2;          // 0x14
+        public uint NodeType;           // 0x14
         public int __unknown3;          // 0x18
         public int __unknown4;          // 0x1C
         public int __unknown5;          // 0x20
-        public int BaseStats;           // 0x24  rly ?
-        public short BaseStatsCount;    // 0x28
-        public short __unknown6;        // 0x2A
-        public int pLastList;           // 0x2C
+        public D2StatArray BaseStats;   // 0x24
+        public DataPointer pLastList;   // 0x2C
         public int __unknown7;          // 0x30
         public int pStatListEx;         // 0x34
         public int pNextListEx;         // 0x38
-        public int pMyLastList;         // 0x3C
-        public int pMyStats;            // 0x40
+        public DataPointer pMyLastList; // 0x3C
+        public DataPointer pMyStats;    // 0x40
         public int pUnit;               // 0x44  list owner
         public D2StatArray FullStats;   // 0x48
         public int ModStats;            // 0x50

@@ -10,9 +10,23 @@ namespace DiabloInterface.D2.Readers
     {
         public const ushort Superior    = 0x06BF;
 
-        public const ushort Durability          = 0x0D81; // "Durability:"
-        public const ushort Defense             = 0x0D85; // "Defense:"
-        public const ushort DurabilityBetween   = 0x0D87; // "of"
+        public const ushort Durability              = 0x0D81; // "Durability:"
+        public const ushort Defense                 = 0x0D85; // "Defense:"
+        public const ushort DurabilityBetween       = 0x0D87; // "of"
+        public const ushort FireDamageRange         = 0x0E1C;
+        public const ushort FireDamage              = 0x0E1D;
+        public const ushort ColdDamageRange         = 0x0E1E;
+        public const ushort ColdDamage              = 0x0E1F;
+        public const ushort LightningDamageRange    = 0x0E20;
+        public const ushort LightningDamage         = 0x0E21;
+        public const ushort MagicDamageRange        = 0x0E22;
+        public const ushort MagicDamage             = 0x0E23;
+        public const ushort PoisonOverTimeSame      = 0x0E24;
+        public const ushort PoisonOverTime          = 0x0E25;
+        public const ushort DamageRange             = 0x0E27;
+        public const ushort BonusTo                 = 0x0FA3; // "to"
+
+        public const ushort EnhancedDamage = 0x2727;
 
         public const ushort OnlyAmazon      = 0x2AA5;
         public const ushort OnlySorceress   = 0x2AA6;
@@ -21,6 +35,10 @@ namespace DiabloInterface.D2.Readers
         public const ushort OnlyBarbarian   = 0x2AA9;
         public const ushort OnlyDruid       = 0x2AAA;
         public const ushort OnlyAssassin    = 0x2AAB;
+
+        public const ushort RepairsDurability   = 0x52F9;
+        public const ushort RepairsDurabilityN  = 0x52FA;
+        public const ushort ItemSkillLevel      = 0x5301;
     }
 
     public class StringLookupTable
@@ -132,6 +150,63 @@ namespace DiabloInterface.D2.Readers
             if (identifierString != null)
                 StringCache[identifier] = identifierString;
             return identifierString;
+        }
+
+        /// <summary>
+        /// Converts a C-format string (sprintf) to a C# format string.
+        /// Does not handle precision formats or padding.
+        /// Example: "Number: %d" -> "Number: {0}"
+        /// </summary>
+        /// <param name="input">The C-format string.</param>
+        /// <param name="arguments">Outputs the argument count.</param>
+        /// <returns>A C# format string.</returns>
+        public string ConvertCFormatString(string input, out int arguments)
+        {
+            arguments = 0;
+            if (input == null) return null;
+
+            StringBuilder sb = new StringBuilder(input.Length + 20);
+
+            bool handleArgument = false;
+            foreach (char c in input.ToCharArray())
+            {
+                if (handleArgument)
+                {
+                    switch (c)
+                    {
+                        case 'd':
+                        case 'f':
+                        case 's':
+                        case 'u':
+                            // Format value.
+                            sb.Append('{');
+                            sb.Append(arguments);
+                            sb.Append('}');
+
+                            arguments += 1;
+                            break;
+                        case '%':
+                            // Percent literal.
+                            sb.Append(c);
+                            break;
+                        default: break;
+                    }
+
+                    handleArgument = false;
+                }
+                else
+                {
+                    handleArgument = c == '%';
+                    if (!handleArgument)
+                    {
+                        sb.Append(c);
+                    }
+                }
+            }
+
+
+            // Output the C# format string.
+            return sb.ToString();
         }
     }
 }

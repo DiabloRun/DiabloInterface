@@ -88,7 +88,7 @@ namespace DiabloInterface.D2.Struct
         public short __unknown4;        // 0x5A
         public DataPointer pNodeOwnerInventory; // 0x5C
         public DataPointer PreviousItem; // 0x60
-        public int pNextItem;           // 0x64
+        public DataPointer NextItem;    // 0x64
         public byte nNodePosition;      // 0x68
         public byte nNodePositionOther; // 0x69
         public short __unknown6;        // 0x6A

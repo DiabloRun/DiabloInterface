@@ -76,6 +76,7 @@ namespace DiabloInterface
                     memoryTable.Address.Area        = new IntPtr(0x0039A1C8);
 
                     memoryTable.SupportsItemReading = true;
+                    memoryTable.Address.PlayerUnit                  = new IntPtr(0x39DAF8);
                     memoryTable.Address.GlobalData                  = new IntPtr(0x33FD78);
                     memoryTable.Address.LowQualityItems             = new IntPtr(0x563BE0);
                     memoryTable.Address.ItemDescriptions            = new IntPtr(0x5639E0);

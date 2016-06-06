@@ -30,6 +30,19 @@ namespace DiabloInterface.D2.Readers
             return node.FullStats.Length;
         }
 
+        public D2Stat[] GetOwnStats(D2Unit unit)
+        {
+            if (unit == null) return null;
+            if (unit.StatListNode.IsNull)
+                return null;
+
+            var node = reader.Read<D2StatListEx>(unit.StatListNode);
+            if (node.BaseStats.Length == 0)
+                return new D2Stat[] { };
+
+            return reader.ReadArray<D2Stat>(node.BaseStats.Array, node.BaseStats.Length);
+        }
+
         public D2Stat[] GetStats(D2Unit unit)
         {
             if (unit == null) return null;
