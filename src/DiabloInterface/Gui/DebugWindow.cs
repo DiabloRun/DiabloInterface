@@ -325,7 +325,7 @@ namespace DiabloInterface
             Func<D2ItemData, bool> filter = data => data.BodyLoc != BodyLocation.None;
             foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))
             {
-                D2Stat[] itemStats = unitReader.GetStats(item);
+                List<D2Stat> itemStats = unitReader.GetStats(item);
                 if (itemStats == null) continue;
 
                 StringBuilder statBuilder = new StringBuilder();

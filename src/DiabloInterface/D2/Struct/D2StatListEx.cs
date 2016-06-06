@@ -17,15 +17,15 @@ namespace DiabloInterface.D2.Struct
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct D2StatArray
+    public struct D2StatArray
     {
-        public DataPointer Array;
+        public DataPointer Address;
         public ushort Length;
         public ushort ByteSize;
     }
 
     [Flags]
-    enum StatListFlag : uint
+    public enum StatListFlag : uint
     {
         None             = 0,
         HasProperties    = 0x40,

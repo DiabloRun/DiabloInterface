@@ -10,36 +10,6 @@ namespace DiabloInterface.D2.Readers
 {
     class ItemReader : UnitReader
     {
-        class RangeStatData
-        {
-            public int DamageMin;
-            public bool IsDamageMinSecondary;
-            public int DamageMax;
-            public bool IsDamageMaxSecondary;
-            public bool HasDamageRange;
-            public bool HasHandledDamageRange;
-            public int DamagePercentMin;
-            public int DamagePercentMax;
-            public bool HasDamagePercentRange;
-            public int FireMinDamage;
-            public int FireMaxDamage;
-            public bool HasFireRange;
-            public int LightningMinDamage;
-            public int LightningMaxDamage;
-            public bool HasLightningRange;
-            public int ColdMinDamage;
-            public int ColdMaxDamage;
-            public bool HasColdRange;
-            public int PoisonMinDamage;
-            public int PoisonMaxDamage;
-            public int PoisonDuration;
-            public int PoisonDivisor;
-            public bool HasPoisonRange;
-            public int MagicMinDamage;
-            public int MagicMaxDamage;
-            public bool HasMagicRange;
-        }
-
         static D2ItemStatCost[] ItemStatCost = null;
 
         Dictionary<IntPtr, D2ItemData> cachedItemData;
@@ -72,8 +42,9 @@ namespace DiabloInterface.D2.Readers
             }
         }
 
-        public void ResetCache()
+        public override void ResetCache()
         {
+            base.ResetCache();
             cachedDescriptions.Clear();
         }
 
@@ -575,190 +546,21 @@ namespace DiabloInterface.D2.Readers
             return stringReader.GetString(skillNameID);
         }
 
-        private bool HandleRangeData(RangeStatData data, D2Stat stat, out string description)
-        {
-            description = null;
-            StatIdentifier statId = 0;
-            if (Enum.IsDefined(typeof(StatIdentifier), stat.LoStatID))
-                statId = (StatIdentifier)stat.LoStatID;
-            else return false;
-
-            // Helper function for printing elemental damage types.
-            Func<int, int, ushort, ushort, string> formatSimpleDamage = (min, max, idEqual, idDifferent) => {
-                int arguments;
-                if (min == max)
-                {
-                    string format = stringReader.GetString(idEqual);
-                    format = stringReader.ConvertCFormatString(format, out arguments).TrimEnd();
-                    if (arguments != 1) return null;
-                    return string.Format(format, min);
-                }
-                else
-                {
-                    string format = stringReader.GetString(idDifferent);
-                    format = stringReader.ConvertCFormatString(format, out arguments).TrimEnd();
-                    if (arguments != 2) return null;
-                    return string.Format(format, min, max);
-                }
-            };
-
-            bool PoisonMinMax = true;
-            switch (statId)
-            {
-                    //Handle one and two handed damage.
-                case StatIdentifier.DamageMin:
-                case StatIdentifier.DamageMax:
-                case StatIdentifier.SecondaryDamageMin:
-                case StatIdentifier.SecondaryDamageMax:
-                    if (data.HasHandledDamageRange)
-                        return true;
-                    // Damage source is primary, skip secondary.
-                    if (stat.LoStatID == (ushort)StatIdentifier.SecondaryDamageMin && !data.IsDamageMinSecondary)
-                        return true;
-                    if (stat.LoStatID == (ushort)StatIdentifier.SecondaryDamageMax && !data.IsDamageMaxSecondary)
-                        return true;
-                    // If not a range, print normally.
-                    if (!data.HasDamageRange) return false;
-                    // We also print twice if they are the same.
-                    if (data.DamageMin == data.DamageMax)
-                        return false;
-
-                    data.HasHandledDamageRange = true;
-                    description = formatSimpleDamage(data.DamageMin, data.DamageMax,
-                        StringConstants.DamageRange,
-                        StringConstants.DamageRange);
-                    return true;
-
-                    // Handle enhanced damage.
-                case StatIdentifier.ItemDamageMinPercent:
-                    {
-                        if (!data.HasDamagePercentRange)
-                            return false;
-                        string enhanced = stringReader.GetString(StringConstants.EnhancedDamage);
-                        description = string.Format("+{0}% {1}", stat.Value, enhanced.TrimEnd());
-                        return true;
-                    }
-                case StatIdentifier.ItemDamageMaxPercent:
-                    return data.HasDamagePercentRange;
-
-                    // Handle fire damage ranges.
-                case StatIdentifier.FireDamageMin:
-                    if (!data.HasFireRange) return false;
-                    description = formatSimpleDamage(
-                        data.FireMinDamage,
-                        data.FireMaxDamage,
-                        StringConstants.FireDamageRange,
-                        StringConstants.FireDamage);
-                    return true;
-                case StatIdentifier.FireDamageMax:
-                    return data.HasFireRange;
-
-                    // Handle lightning damage ranges.
-                case StatIdentifier.LightningDamageMin:
-                    if (!data.HasLightningRange) return false;
-                    description = formatSimpleDamage(
-                        data.LightningMinDamage,
-                        data.LightningMaxDamage,
-                        StringConstants.LightningDamageRange,
-                        StringConstants.LightningDamage);
-                    return true;
-                case StatIdentifier.LightningDamageMax:
-                    return data.HasLightningRange;
-
-                    // Handle magic damage ranges.
-                case StatIdentifier.MagicDamageMin:
-                    if (!data.HasMagicRange) return false;
-                    description = formatSimpleDamage(
-                        data.MagicMinDamage,
-                        data.MagicMaxDamage,
-                        StringConstants.MagicDamageRange,
-                        StringConstants.MagicDamage);
-                    return true;
-                case StatIdentifier.MagicDamageMax:
-                    return data.HasMagicRange;
-
-                    // Handle cold damage ranges.
-                case StatIdentifier.ColdDamageMin:
-                    if (!data.HasColdRange) return false;
-                    description = formatSimpleDamage(
-                        data.ColdMinDamage,
-                        data.ColdMaxDamage,
-                        StringConstants.ColdDamageRange,
-                        StringConstants.ColdDamage);
-                    return true;
-                case StatIdentifier.ColdDamageMax:
-                    return data.HasColdRange;
-
-                    // Handle poison damage ranges.
-                case StatIdentifier.PoisonDamageMax:
-                case StatIdentifier.PoisonDamageDuration:
-                    return data.HasPoisonRange;
-                case StatIdentifier.PoisonDamageMin:
-                    {
-                        if (!PoisonMinMax) return false;
-                        int divisor = data.PoisonDivisor == 0 ? 1 : data.PoisonDivisor;
-                        int duration = data.PoisonDuration / divisor;
-                        int min = (data.PoisonMinDamage * duration + 128) / 256;
-                        int max = (data.PoisonMaxDamage * duration + 128) / 256;
-                        duration /= 25;
-
-                        if (min == max)
-                        {
-                            int arguments;
-                            string format = stringReader.GetString(StringConstants.PoisonOverTimeSame);
-                            format = stringReader.ConvertCFormatString(format, out arguments);
-                            if (arguments != 2) return true;
-                            description = string.Format(format, min, duration).TrimEnd();
-                        }
-                        else
-                        {
-                            int arguments;
-                            string format = stringReader.GetString(StringConstants.PoisonOverTime);
-                            format = stringReader.ConvertCFormatString(format, out arguments);
-                            if (arguments != 3) return true;
-                            description = string.Format(format, min, max, duration).TrimEnd();
-                        }
-
-                        return true;
-                    }
-                default:
-                    return false;
-            }
-        }
-
-        private int GetPlayerStat(ushort statId)
-        {
-            var playerAddress = reader.ReadAddress32(memory.PlayerUnit, AddressingMode.Relative);
-            var player = reader.Read<D2Unit>(playerAddress);
-            if (player.StatListNode.IsNull) return 0;
-            var node = reader.Read<D2StatListEx>(player.StatListNode);
-            D2StatArray statArray = node.BaseStats;
-            if (node.ListFlags.HasFlag(StatListFlag.HasCompleteStats))
-                statArray = node.FullStats;
-            if (statArray.Array.IsNull) return 0;
-
-            var stats = reader.ReadArray<D2Stat>(statArray.Array, statArray.Length);
-            foreach (var stat in stats)
-            {
-                if (stat.LoStatID == statId)
-                {
-                    return stat.Value;
-                }
-            }
-
-            return 0;
-        }
-
         private int EvaluateStat(D2Stat stat, D2ItemStatCost statCost)
         {
             int value = stat.Value;
             if (statCost.Op >= 2 && statCost.Op <= 5)
             {
-                // Evaluate stats based on player stats (mostly player level).
                 if (statCost.OpBase < 0 || statCost.OpBase >= ItemStatCost.Length)
                     return 0;
                 D2ItemStatCost baseStatCost = ItemStatCost[statCost.OpBase];
-                int playerStat = GetPlayerStat(statCost.OpBase) >> baseStatCost.ValShift;
+
+                // Get the player stat.
+                D2Unit player = GetPlayer();
+                int playerStat = GetStatValue(player, statCost.OpBase) ?? 0;
+                playerStat >>= baseStatCost.ValShift;
+
+                // Evaluate based on the player stat (e.g. player level)
                 value = (value * playerStat) >> statCost.OpParam;
             }
 
@@ -777,6 +579,8 @@ namespace DiabloInterface.D2.Readers
             ushort printStringId = statCost.DescStrPos;
 
             // Check if the group of the value is used.
+            // Grouping of stats is for stats such as resistances and attribute bonuses.
+            //      E.g: "+6 light res, +6 fire res, +6 cold res, +6 psn res" becomes: "+6 All Res"
             if (statCost.DGrp != 0)
             {
                 // Check if all stats in the group have the same value.
@@ -809,6 +613,8 @@ namespace DiabloInterface.D2.Readers
                 }
             }
 
+            // Gets the evaluated stat value, takes care of stats per player level,
+            // value shifts, etc...
             int value = EvaluateStat(stat, statCost);
 
             int arguments;
@@ -1067,154 +873,16 @@ namespace DiabloInterface.D2.Readers
             return null;
         }
 
-        public D2StatList GetBaseStatsNode(D2Unit item, uint state)
-        {
-            if (item.StatListNode.IsNull)
-                return null;
-            var statNodeEx = reader.Read<D2StatListEx>(item.StatListNode);
-            DataPointer statsPointer;
-            if (statNodeEx.ListFlags.HasFlag(StatListFlag.HasCompleteStats))
-                statsPointer = statNodeEx.pMyLastList;
-            else statsPointer = statNodeEx.pMyStats;
-            if (statsPointer.IsNull) return null;
-
-            // Get previous node in the linked list (belonging to this ex list).
-            Func<D2StatList, D2StatList> getPreviousNode = x => {
-                if (x.PreviousList.IsNull) return null;
-                return reader.Read<D2StatList>(x.PreviousList);
-            };
-
-            D2StatList statNode = reader.Read<D2StatList>(statsPointer);
-            for (; statNode != null; statNode = getPreviousNode(statNode))
-            {
-                if (statNode.State != state)
-                    continue;
-                if (statNode.Flags.HasFlag(StatListFlag.HasProperties))
-                    break;
-            }
-
-            return statNode;
-        }
-
-        public void CombineNodeStats(List<D2Stat> stats, D2StatList node)
-        {
-            if (node == null) return;
-            D2Stat[] nodeStats = reader.ReadArray<D2Stat>(node.Stats.Array, node.Stats.Length);
-            foreach (D2Stat nodeStat in nodeStats)
-            {
-                int index = stats.FindIndex(x =>
-                    x.HiStatID == nodeStat.HiStatID &&
-                    x.LoStatID == nodeStat.LoStatID);
-                // Already have the stat, increase value.
-                if (index >= 0)
-                {
-                    stats[index].Value += nodeStat.Value;
-                }
-                // Stat not found, add to list.
-                else stats.Add(nodeStat);
-            }
-        }
-
-        private RangeStatData BuildRangeData(List<D2Stat> stats)
-        {
-            RangeStatData data = new RangeStatData();
-            foreach (var stat in stats)
-            {
-                switch (stat.LoStatID)
-                {
-                    case (ushort)StatIdentifier.DamageMin:
-                        data.DamageMin = stat.Value;
-                        if (data.DamageMin == 0)
-                        {
-                            int index = stats.FindIndex(x => x.LoStatID == (ushort)StatIdentifier.SecondaryDamageMin);
-                            if (index >= 0) data.DamageMin = stats[index].Value;
-                            data.IsDamageMinSecondary = data.DamageMin != 0;
-                        }
-                        break;
-                    case (ushort)StatIdentifier.DamageMax:
-                        data.DamageMax = stat.Value;
-                        if (data.DamageMax == 0)
-                        {
-                            int index = stats.FindIndex(x => x.LoStatID == (ushort)StatIdentifier.SecondaryDamageMax);
-                            if (index >= 0) data.DamageMax = stats[index].Value;
-                            data.IsDamageMaxSecondary = data.DamageMax != 0;
-                        }
-                        break;
-                    case (ushort)StatIdentifier.SecondaryDamageMin:
-                        {
-                            int index = stats.FindIndex(x => x.LoStatID == (ushort)StatIdentifier.DamageMin);
-                            if (index >= 0) data.DamageMin = stats[index].Value;
-
-                            if (data.DamageMin == 0)
-                            {
-                                data.DamageMin = stat.Value;
-                                data.IsDamageMinSecondary = stat.Value != 0;
-                            }
-                            break;
-                        }
-                    case (ushort)StatIdentifier.SecondaryDamageMax:
-                        {
-                            int index = stats.FindIndex(x => x.LoStatID == (ushort)StatIdentifier.DamageMax);
-                            if (index >= 0) data.DamageMax = stats[index].Value;
-
-                            if (data.DamageMax == 0)
-                            {
-                                data.DamageMax = stat.Value;
-                                data.IsDamageMaxSecondary = stat.Value != 0;
-                            }
-                            break;
-                        }
-                    case (ushort)StatIdentifier.ItemDamageMinPercent:
-                        data.DamagePercentMin = stat.Value; break;
-                    case (ushort)StatIdentifier.ItemDamageMaxPercent:
-                        data.DamagePercentMax = stat.Value; break;
-                    case (ushort)StatIdentifier.FireDamageMin:
-                        data.FireMinDamage = stat.Value; break;
-                    case (ushort)StatIdentifier.FireDamageMax:
-                        data.FireMaxDamage = stat.Value; break;
-                    case (ushort)StatIdentifier.LightningDamageMin:
-                        data.LightningMinDamage = stat.Value; break;
-                    case (ushort)StatIdentifier.LightningDamageMax:
-                        data.LightningMaxDamage = stat.Value; break;
-                    case (ushort)StatIdentifier.MagicDamageMin:
-                        data.MagicMinDamage = stat.Value; break;
-                    case (ushort)StatIdentifier.MagicDamageMax:
-                        data.MagicMaxDamage = stat.Value; break;
-                    case (ushort)StatIdentifier.ColdDamageMin:
-                        data.ColdMinDamage = stat.Value; break;
-                    case (ushort)StatIdentifier.ColdDamageMax:
-                        data.ColdMaxDamage = stat.Value; break;
-                    case (ushort)StatIdentifier.PoisonDamageMin:
-                        data.PoisonMinDamage = stat.Value; break;
-                    case (ushort)StatIdentifier.PoisonDamageMax:
-                        data.PoisonMaxDamage = stat.Value; break;
-                    case (ushort)StatIdentifier.PoisonDamageDuration:
-                        data.PoisonDuration = stat.Value; break;
-                    case 0x146: // Not In ItemStatCost.txt
-                        data.PoisonDivisor = stat.Value; break;
-                    default: break;
-                }
-            }
-
-            data.HasDamageRange = (data.DamageMin != 0 && data.DamageMax != 0);
-            data.HasDamagePercentRange = (data.DamagePercentMin != 0 && data.DamagePercentMax != 0);
-            data.HasFireRange = (data.FireMinDamage != 0 && data.FireMaxDamage != 0);
-            data.HasLightningRange = (data.LightningMinDamage != 0 && data.LightningMaxDamage != 0);
-            data.HasMagicRange = (data.MagicMinDamage != 0 && data.MagicMaxDamage != 0);
-            data.HasColdRange = (data.ColdMinDamage != 0 && data.ColdMaxDamage != 0);
-            data.HasPoisonRange = (data.PoisonMinDamage != 0 && data.PoisonMaxDamage != 0);
-
-            return data;
-        }
-
         public List<string> GetMagicalStrings(D2Unit item)
         {
             if (item == null) return null;
 
+            // Combine stats in different states.
             List<D2Stat> stats = new List<D2Stat>(16);
-            CombineNodeStats(stats, GetBaseStatsNode(item, 0x00));
-            CombineNodeStats(stats, GetBaseStatsNode(item, 0xAB));
+            CombineNodeStats(stats, FindStatListNode(item, 0x00));
+            CombineNodeStats(stats, FindStatListNode(item, 0xAB));
 
+            // Helper for iterating item inventory.
             Func<D2Unit, D2Unit> getNextInventoryItem = subItem => {
                 var subItemData = GetItemData(subItem);
                 if (subItemData == null) return null;
@@ -1222,6 +890,9 @@ namespace DiabloInterface.D2.Readers
                 return reader.Read<D2Unit>(subItemData.NextItem);
             };
 
+            // Combine with socketed item stats (runes, gems).
+            // This is also done for runewords and such, without this an "Ancient's Pledge" runeword
+            // would be missing a few resistances...
             if (!item.pInventory.IsNull)
             {
                 var inventory = reader.Read<D2Inventory>(item.pInventory);
@@ -1230,17 +901,21 @@ namespace DiabloInterface.D2.Readers
                     D2Unit subItem = reader.Read<D2Unit>(inventory.pFirstItem);
                     for (; subItem != null; subItem = getNextInventoryItem(subItem))
                     {
-                        var node = GetBaseStatsNode(subItem, 0x00);
+                        var node = FindStatListNode(subItem, 0x00);
                         CombineNodeStats(stats, node);
                     }
                 }
             }
 
-            var rangeData = BuildRangeData(stats);
+            // Perform special handling for some stats such as damage ranges.
+            // Example: "1-80 lightning damage" comes from 2 stats.
+            var rangeData = new RangeStatData(stringReader, stats);
             Func<D2Stat, string> getDescription = stat => {
                 string description;
-                if (HandleRangeData(rangeData, stat, out description))
+                if (rangeData.TryHandleStat(stat, out description))
                     return description;
+
+                // If not handled specially, do default handling.
                 return GetStatPropertyDescription(stats, stat);
             };
 

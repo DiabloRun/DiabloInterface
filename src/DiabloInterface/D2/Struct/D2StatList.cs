@@ -3,7 +3,7 @@
 namespace DiabloInterface.D2.Struct
 {
     [StructLayout(LayoutKind.Sequential, Size = 0x40)]
-    class D2StatList
+    public class D2StatList
     {
         public int pMemPool;                // 0x00
         public int pUnit;                   // 0x04
