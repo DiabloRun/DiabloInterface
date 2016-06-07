@@ -6,3 +6,8 @@
 /src/DiabloInterface/obj
 /src/.vs
 /src/DiabloInterface/DiabloInterface.csproj.user
+
+# Recommended ignores for Visual Studio NuGet
+*.nupkg
+**/packages/*
+!**/packages/build/

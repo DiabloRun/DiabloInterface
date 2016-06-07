@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using WindowsInput;
+using WindowsInput.Native;
 
 namespace DiabloInterface
 {
@@ -9,7 +10,21 @@ namespace DiabloInterface
     /// </summary>
     class KeyManager
     {
-        
+        static IInputSimulator simulatorInstance;
+        static IInputSimulator Simulator
+        {
+            get
+            {
+                if (simulatorInstance == null)
+                {
+                    // Create a default input simulator.
+                    simulatorInstance = new InputSimulator();
+                }
+
+                return simulatorInstance;
+            }
+        }
+
         public static string KeyEventArgsToKeyString(KeyEventArgs e)
         {
             //ok keys
@@ -75,7 +90,7 @@ namespace DiabloInterface
             string[] keyArr = keys.Split('+');
             List<VirtualKeyCode> modifiers = new List<VirtualKeyCode>();
             VirtualKeyCode key = 0;
-            
+
             foreach ( string k in keyArr )
             {
                 string kLower = k.ToLower();
@@ -111,8 +126,8 @@ namespace DiabloInterface
             {
                 return;
             }
-            InputSimulator.SimulateModifiedKeyStroke(modifiers.ToArray(), key);
-           
+
+            Simulator.Keyboard.ModifiedKeyStroke(modifiers, key);
         }
     }
 }
