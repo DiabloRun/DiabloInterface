@@ -286,142 +286,123 @@ namespace DiabloInterface.D2.Readers
             return stringReader.GetString(description.StringIdentifier);
         }
 
+        string GetGrammaticalName(string name, out string grammarCase)
+        {
+            var grammarMatch = Regex.Match(name, @"^(\[[a-z]+\])");
+            if (grammarMatch.Success)
+            {
+                grammarCase = grammarMatch.Value;
+                return name.Substring(grammarMatch.Length);
+            }
+            else
+            {
+                grammarCase = null;
+                return name;
+            }
+        }
+
+        string ExtractGrammaticalCase(string value, string grammarCase)
+        {
+            // No grammar case on english version of the game.
+            if (grammarCase == null)
+                return value;
+
+            string[] cases = Regex.Split(value, @"(\[[a-z]+\])");
+            int caseIndex = Array.IndexOf(cases, grammarCase);
+            if (caseIndex >= 0 && caseIndex < cases.Length - 1)
+            {
+                return cases[caseIndex + 1];
+            }
+            // Something went wrong, just return it.
+            else return value;
+        }
+
         public string GetFullItemName(D2Unit item)
         {
             if (!IsValidItem(item))
                 return null;
 
-            if (!ItemHasFlag(item, ItemFlag.Identified))
-                return null;
-
             string fullName;
-            string prefix = null;
-            string suffix = null;
-            string name = GetItemName(item);
-            string runeword = GetRunewordName(item);
-            string quality = null;
-            switch (GetItemQuality(item))
+            string grammarCase;
+            string name = GetGrammaticalName(GetItemName(item), out grammarCase);
+            List<string> words = new List<string>();
+
+            // Non identified items just get the base item name.
+            if (!ItemHasFlag(item, ItemFlag.Identified))
+                return name;
+
+            ItemQuality quality = GetItemQuality(item);
+            switch (quality)
             {
                 case ItemQuality.Low:
                     // fullName: quality + name
-                    quality = GetLowQualityItemName(item);
-                    name += " " + GetItemName(item);
+                    fullName = ExtractGrammaticalCase(GetLowQualityItemName(item), grammarCase);
+                    fullName += " " + name;
                     break;
                 case ItemQuality.Normal:
-                    // fullName: name
+                    fullName = name;
                     break;
                 case ItemQuality.Superior:
                     // fullName: quality + name
-                    quality = GetSuperiorItemName(item);
+                    fullName = ExtractGrammaticalCase(GetSuperiorItemName(item), grammarCase);
+                    fullName = " " + name;
                     break;
                 case ItemQuality.Magic:
                     // fullName: prefix + name + suffix
-                    prefix = GetMagicPrefixName(item);
-                    suffix = GetMagicSuffixName(item);
+                    string magicPrefix = ExtractGrammaticalCase(GetMagicPrefixName(item), grammarCase);
+                    string magicSuffix = ExtractGrammaticalCase(GetMagicSuffixName(item), grammarCase);
+                    words.Add(magicPrefix);
+                    words.Add(name);
+                    words.Add(magicSuffix);
+                    fullName = string.Join(" ", words.Where(s => !string.IsNullOrEmpty(s)));
+
                     break;
                 case ItemQuality.Set:
                     // fullName: prefix + name
-                    prefix = GetItemSetName(item);
+                    fullName = ExtractGrammaticalCase(GetItemSetName(item), grammarCase);
+                    fullName += " " + name;
                     break;
                 case ItemQuality.Rare:
                 case ItemQuality.Crafted:
                 case ItemQuality.Tempered:
                     // fullName: prefix + suffix + name
-                    prefix = GetRarePrefixName(item);
-                    suffix = GetRareSuffixName(item);
+                    string rarePrefix = ExtractGrammaticalCase(GetRarePrefixName(item), grammarCase);
+                    string rareSuffix = ExtractGrammaticalCase(GetRareSuffixName(item), grammarCase);
+                    if (grammarCase == null)
+                    {
+                        words.Add(rarePrefix);
+                        words.Add(rareSuffix);
+                        words.Add(name);
+                    }
+                    else
+                    {
+                        words.Add(rareSuffix);
+                        words.Add(rarePrefix);
+                        words.Add(name);
+                    }
+                    fullName = string.Join(" ", words.Where(s => !string.IsNullOrEmpty(s)));
                     break;
                 case ItemQuality.Unique:
-                    // Hacky: if the item is one of the quest items, the prefix is garbage and is not read
+                    // Ignore prefixes for quest items.
                     if (Enum.IsDefined(typeof(D2Data.QuestItemId), item.eClass))
                     {
-
-                    } else
+                        fullName = name;
+                    }
+                    else
                     {
                         // fullName: prefix + name
-                        prefix = GetItemUniqueName(item);
+                        fullName = ExtractGrammaticalCase(GetItemUniqueName(item), grammarCase);
+                        fullName += " " + name;
                     }
                     break;
                 default: return null;
             }
 
-            //Console.WriteLine(prefix);
-            //Console.WriteLine(suffix);
-            //Console.WriteLine(name);
-
-
-            // Find the gender/grammatic case of the item in order to match the correct adjectives
-            Regex regex = new Regex(@"^(\[[a-z]+\])");
-            Match match = regex.Match(name);
-            if (match.Success)
-            {
-                Regex splitRegex = new Regex(@"(\[[a-z]+\])");
-                if (runeword == null && quality != null)
-                {
-                    string[] sArr = splitRegex.Split(quality);
-                    int idx = Array.IndexOf(sArr, match.Value);
-                    if (idx >= 0 && idx < sArr.Length - 1)
-                    {
-                        quality = sArr[idx + 1];
-                    }
-                }
-                if (prefix != null)
-                {
-                    string[] sArr = splitRegex.Split(prefix);
-                    int idx = Array.IndexOf(sArr, match.Value);
-                    if (idx >= 0 && idx < sArr.Length - 1)
-                    {
-                        prefix = sArr[idx + 1];
-                    }
-                }
-                if (suffix != null)
-                {
-                    string[] sArr = splitRegex.Split(suffix);
-                    int idx = Array.IndexOf(sArr, match.Value);
-                    if (idx >= 0 && idx < sArr.Length - 1)
-                    {
-                        suffix = sArr[idx + 1];
-                    }
-                }
-
-                fullName = name.Substring(match.Length);
-            }
-            else
-            {
-                fullName = name;
-            }
-
-            if (prefix != null)
-            {
-                if (IsItemOfQuality(item, ItemQuality.Rare))
-                {
-                    fullName = string.Format("{0}, {1}", prefix, fullName);
-                }
-                else
-                {
-                    fullName = string.Format("{0} {1}", prefix, fullName);
-                }
-            }
-
-            if (runeword == null && quality != null)
-            {
-                fullName = string.Format("{0} {1}", quality, fullName);
-            }
-            if (suffix != null)
-            {
-                if (IsItemOfQuality(item, ItemQuality.Rare))
-                {
-                    fullName = string.Format("{0} {1}", suffix, fullName);
-                }
-                else
-                {
-                    fullName = string.Format("{1} {0}", suffix, fullName);
-                }
-            }
-
             // Runeword item name.
+            string runeword = GetRunewordName(item);
             if (runeword != null)
             {
-                fullName += ": " + runeword;
+                fullName = name + " [" + runeword + "]";
             }
 
             // Ethereal item name.
@@ -429,6 +410,7 @@ namespace DiabloInterface.D2.Readers
             {
                 fullName = "Ethereal " + fullName;
             }
+
             return fullName;
         }
 
