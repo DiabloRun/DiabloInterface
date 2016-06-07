@@ -178,7 +178,7 @@ namespace DiabloInterface
         public void readData()
         {
             // Make sure there is a player before continuing.
-            IntPtr characterUnitAddress = reader.ReadAddress32(memory.Address.Character, AddressingMode.Relative);
+            IntPtr characterUnitAddress = reader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
             if (characterUnitAddress == IntPtr.Zero)
                 return;
 
@@ -201,8 +201,14 @@ namespace DiabloInterface
             }
 
             // todo: only read difficulty when it could possibly have changed
-            difficulty = reader.ReadByte(memory.Address.Difficulty, AddressingMode.Relative);
-            if (difficulty < 0 || difficulty > 2 )
+            if (memory.SupportsDifficultyReading)
+            {
+                difficulty = reader.ReadByte(memory.Address.Difficulty, AddressingMode.Relative);
+                if (difficulty < 0 || difficulty > 2)
+                {
+                    difficulty = 0;
+                }
+            } else
             {
                 difficulty = 0;
             }
@@ -218,20 +224,27 @@ namespace DiabloInterface
             // debug window - quests
             if (main.getDebugWindow() != null)
             {
-                IntPtr questDataAddress = IntPtr.Zero;
+                if (memory.SupportsQuestReading)
+                {
 
-                // Currently not working.
-                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 0;
-                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                main.getDebugWindow().setQuestDataNormal(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
-                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 1;
-                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                main.getDebugWindow().setQuestDataNightmare(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
-                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 2;
-                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                main.getDebugWindow().setQuestDataHell(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+                    IntPtr questDataAddress = IntPtr.Zero;
 
-                main.getDebugWindow().UpdateItemStats(reader, memory, playerUnit);
+                    // Currently not working.
+                    memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 0;
+                    questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                    main.getDebugWindow().setQuestDataNormal(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+                    memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 1;
+                    questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                    main.getDebugWindow().setQuestDataNightmare(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+                    memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 2;
+                    questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                    main.getDebugWindow().setQuestDataHell(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+                }
+                
+                if (memory.SupportsItemReading)
+                {
+                    main.getDebugWindow().UpdateItemStats(reader, memory, playerUnit);
+                }
             }
 
             UnitReader unitReader = new UnitReader(reader, memory.Address);
@@ -358,8 +371,11 @@ namespace DiabloInterface
             {
                 memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * difficulty;
 
-                var questBufferAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                questBuffer = reader.Read(questBufferAddress, QUEST_BUFFER_LENGTH);
+                if (memory.SupportsQuestReading)
+                {
+                    var questBufferAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                    questBuffer = reader.Read(questBufferAddress, QUEST_BUFFER_LENGTH);
+                }
             }
 
             foreach (AutoSplit autosplit in main.settings.autosplits)
@@ -393,12 +409,15 @@ namespace DiabloInterface
                         }
                         break;
                     case AutoSplit.Type.Quest:
-                        short value = BitConverter.ToInt16(new byte[2] { reverseBits(questBuffer[autosplit.value]), reverseBits(questBuffer[autosplit.value + 1]), }, 0);
-                        if (isNthBitSet(value, 1) || isNthBitSet(value, 0))
+                        if (questBuffer.Length > autosplit.value+1)
                         {
-                            // quest finished
-                            autosplit.reached = true;
-                            main.triggerAutosplit(player);
+                            short value = BitConverter.ToInt16(new byte[2] { reverseBits(questBuffer[autosplit.value]), reverseBits(questBuffer[autosplit.value + 1]), }, 0);
+                            if (isNthBitSet(value, 1) || isNthBitSet(value, 0))
+                            {
+                                // quest finished
+                                autosplit.reached = true;
+                                main.triggerAutosplit(player);
+                            }
                         }
                         break;
                 }

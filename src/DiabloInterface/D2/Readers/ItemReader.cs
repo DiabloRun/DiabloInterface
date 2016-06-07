@@ -33,12 +33,15 @@ namespace DiabloInterface.D2.Readers
             descriptionTable = reader.Read<D2SafeArray>(memory.ItemDescriptions, AddressingMode.Relative);
             magicModifiers = reader.Read<ModifierTable>(memory.MagicModifierTable, AddressingMode.Relative);
             rareModifiers = reader.Read<ModifierTable>(memory.RareModifierTable, AddressingMode.Relative);
-
-            opNestings = reader.ReadArray<ushort>(globals.OpStatNesting, (int)globals.OpStatNestingCount);
-
-            if (ItemStatCost == null && !globals.ItemStatCost.IsNull)
+            if (globals != null)
             {
-                ItemStatCost = reader.ReadArray<D2ItemStatCost>(globals.ItemStatCost, (int)globals.ItemStatCostCount);
+
+                opNestings = reader.ReadArray<ushort>(globals.OpStatNesting, (int)globals.OpStatNestingCount);
+
+                if (ItemStatCost == null && !globals.ItemStatCost.IsNull)
+                {
+                    ItemStatCost = reader.ReadArray<D2ItemStatCost>(globals.ItemStatCost, (int)globals.ItemStatCostCount);
+                }
             }
         }
 
@@ -288,6 +291,11 @@ namespace DiabloInterface.D2.Readers
 
         string GetGrammaticalName(string name, out string grammarCase)
         {
+            if (name == null)
+            {
+                grammarCase = null;
+                return name;
+            }
             var grammarMatch = Regex.Match(name, @"^(\[[a-z]+\])");
             if (grammarMatch.Success)
             {

@@ -22,12 +22,11 @@ namespace DiabloInterface
 
         public MainWindow()
         {
+
             // We want to dispose our handles once the window is disposed.
             Disposed += OnWindowDisposed;
 
             InitializeComponent();
-
-            initialize();
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -65,26 +64,24 @@ namespace DiabloInterface
             D2MemoryTable memoryTable = new D2MemoryTable();
             memoryTable.SupportsItemReading = false;
 
-            // Offsets are the same for both versions so far.
+            // Offsets are the same for all versions so far.
             memoryTable.Offset.Quests = new int[] { 0x264, 0x450, 0x20, 0x00 };
 
             switch (version)
             {
                 case "1.14b":
-                    memoryTable.Address.Character   = new IntPtr(0x0039DEFC);
+                    memoryTable.Address.PlayerUnit  = new IntPtr(0x0039DEFC);
                     memoryTable.Address.Quests      = new IntPtr(0x003B8E54);
                     memoryTable.Address.Difficulty  = new IntPtr(0x00398694);
                     memoryTable.Address.Area        = new IntPtr(0x0039B1C8);
                     break;
                 case "1.14c":
-                default:
-                    memoryTable.Address.Character   = new IntPtr(0x0039CEFC);
+                    memoryTable.Address.PlayerUnit  = new IntPtr(0x0039CEFC);//(0x39DAF8);
                     memoryTable.Address.Quests      = new IntPtr(0x003B7E54);
                     memoryTable.Address.Difficulty  = new IntPtr(0x00397694);
                     memoryTable.Address.Area        = new IntPtr(0x0039A1C8);
 
                     memoryTable.SupportsItemReading = true;
-                    memoryTable.Address.PlayerUnit                  = new IntPtr(0x39DAF8);
                     memoryTable.Address.GlobalData                  = new IntPtr(0x33FD78);
                     memoryTable.Address.LowQualityItems             = new IntPtr(0x563BE0);
                     memoryTable.Address.ItemDescriptions            = new IntPtr(0x5639E0);
@@ -105,6 +102,35 @@ namespace DiabloInterface
                     memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x479A48);
 
                     // More Tables seem to exist:
+
+                    break;
+                case "1.14d":
+                default:
+                    var off = 0x8f78;
+                    memoryTable.Address.PlayerUnit = new IntPtr(0x0039CEFC + off);
+
+                    memoryTable.SupportsQuestReading = true;
+                    memoryTable.Address.Quests = new IntPtr(0x003B7E54 + off);
+                    memoryTable.SupportsDifficultyReading = true;
+                    memoryTable.Address.Difficulty = new IntPtr(0x00397694 + off);
+                    memoryTable.SupportsAreaReading = true;
+                    memoryTable.Address.Area = new IntPtr(0x0039A1C8 + off);
+
+                    memoryTable.SupportsItemReading = true;
+                    memoryTable.Address.GlobalData = new IntPtr(0x344304);
+                    memoryTable.Address.LowQualityItems = new IntPtr(0x56CC58); // ok
+                    memoryTable.Address.ItemDescriptions = new IntPtr(0x56CA58);
+                    memoryTable.Address.MagicModifierTable = new IntPtr(0x56CC58 - 0x1dc);
+                    memoryTable.Address.RareModifierTable = new IntPtr(0x56CC58 - 0x1dc + 0x24);
+
+                    // 0x4829b4 = new adress
+                    off = 0x4829b4- 0x479A3C;
+                    memoryTable.Address.StringIndexerTable = new IntPtr(0x479A3C+ off);
+                    memoryTable.Address.StringAddressTable = new IntPtr(0x479A40 + off);
+                    memoryTable.Address.PatchStringAddressTable = new IntPtr(0x479A44 + off);
+                    memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x479A48 + off);
+                    memoryTable.Address.PatchStringIndexerTable = new IntPtr(0x479A58 + off);
+                    memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(0x479A5C + off);
 
                     break;
             }
@@ -265,5 +291,10 @@ namespace DiabloInterface
             //settingsWindow.Focus();
         }
 
+        private void MainWindow_Load(object sender, EventArgs e)
+        {
+
+            initialize();
+        }
     }
 }

@@ -435,6 +435,7 @@
             this.cmbVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbVersion.FormattingEnabled = true;
             this.cmbVersion.Items.AddRange(new object[] {
+            "1.14d",
             "1.14c",
             "1.14b"});
             this.cmbVersion.Location = new System.Drawing.Point(90, 17);

@@ -27,7 +27,7 @@ namespace DiabloInterface.D2.Readers
 
         public D2Inventory GetPlayerInventory()
         {
-            var playerAddress = processReader.ReadAddress32(memory.Address.Character, AddressingMode.Relative);
+            var playerAddress = processReader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
             if (playerAddress == IntPtr.Zero) return null;
 
             var playerUnit = processReader.Read<D2Unit>(playerAddress);
