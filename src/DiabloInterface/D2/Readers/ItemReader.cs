@@ -917,12 +917,24 @@ namespace DiabloInterface.D2.Readers
             };
 
             // Only get stat descriptions for stat identifiers contained in the opNestings array.
-            var printFilter = new HashSet<ushort>(opNestings);
-            return (from stat in stats
-                    where printFilter.Contains(stat.LoStatID)
-                    let description = getDescription(stat)
-                    where description != null
-                    select description).ToList();
+            // This also orders stats into the same order that the game displays the stats.
+            var properties = (from op in opNestings
+                              from stat in stats
+                              where stat.LoStatID == op
+                              let description = getDescription(stat)
+                              where description != null
+                              // Get the property list in reverse (d2 builds them backwards).
+                              select description).Reverse().ToList();
+
+            // Check for sockets.
+            int? socketCount = GetStatValue(item, StatIdentifier.SocketCount);
+            if (socketCount.HasValue)
+            {
+                string sockets = string.Format("Socketed ({0})", socketCount.Value);
+                properties.Add(sockets);
+            }
+
+            return properties;
         }
     }
 }

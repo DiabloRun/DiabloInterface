@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace DiabloInterface
 {
@@ -32,10 +31,6 @@ namespace DiabloInterface
         int[] mask8BitSet = { 128, 64, 32, 16, 8, 4, 2, 1 };
 
         private D2Player player;
-
-#if DEBUG
-        bool didPrintInventory = false;
-#endif
 
         public D2DataReader(MainWindow main, D2MemoryTable memory)
         {
@@ -108,6 +103,9 @@ namespace DiabloInterface
 
         public void ItemSlotAction(List<BodyLocation> slots, Action<ItemReader, D2Unit> action)
         {
+            if (!memory.SupportsItemReading)
+                return;
+
             var inventoryReader = new InventoryReader(reader, memory);
 
             // Add all items found in the slots.
@@ -156,14 +154,6 @@ namespace DiabloInterface
                 try
                 {
                     readData();
-
-#if DEBUG
-                    if (!didPrintInventory && memory.SupportsItemReading)
-                    {
-                        didPrintInventory = true;
-                        PrintInventoryItems();
-                    }
-#endif
                 }
                 catch (Exception e)
                 {
@@ -265,42 +255,6 @@ namespace DiabloInterface
             if (player.IsRecentlyStarted)
             {
                 doAutoSplits();
-            }
-        }
-
-        /// <summary>
-        /// Example usage of the inventory reader class.
-        /// </summary>
-        void PrintInventoryItems()
-        {
-            var inventoryReader = new InventoryReader(reader, memory);
-
-            // Find the horadric cube.
-            var cube = (from item in inventoryReader.EnumerateInventory()
-                        where item.eClass == (int)D2Data.ItemId.HORADRIC_CUBE
-                        select item).FirstOrDefault();
-
-            // Ignore cubed items if the cube is in stash.
-            bool ignoreCubedItems = inventoryReader.ItemReader.IsItemInPage(cube, InventoryPage.Stash);
-
-            Func<D2ItemData, bool> printFilter = data =>
-                // Item must not be unidentified.
-                data.ItemFlags.HasFlag(ItemFlag.Identified) &&
-                data.InvPage == InventoryPage.HoradricCube
-                    // If the item is in the cube, only print them if the cube isn't in the stash.
-                    ? (ignoreCubedItems ? false : true)
-                    // Otherwise, print them if they aren't in the stash.
-                    : data.InvPage != InventoryPage.Stash;
-
-            // Print the items using the filter specified.
-            foreach (var item in inventoryReader.EnumerateInventory(printFilter))
-            {
-                Console.WriteLine(inventoryReader.ItemReader.GetFullItemName(item));
-
-                // Print magical prefixes/affixes.
-                List<string> magicalStrings = inventoryReader.ItemReader.GetMagicalStrings(item);
-                foreach (string str in magicalStrings)
-                    Console.WriteLine("    {0}", str);
             }
         }
 
