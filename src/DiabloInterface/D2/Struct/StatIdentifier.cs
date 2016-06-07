@@ -78,6 +78,7 @@
         Durability              = 72,
         DurabilityMax           = 73,
         HealthRegen             = 74,
+        SocketCount             = 194,
 
         // Not listed in ItemStatCost.txt, but used for poison calculations.
         PoisonDivisor           = 326
