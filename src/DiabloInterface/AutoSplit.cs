@@ -5,6 +5,15 @@ namespace DiabloInterface
 {
     public class AutoSplit
     {
+        public enum Type
+        {
+            None = -1,
+            CharLevel = 0,
+            Area = 1,
+            Item = 2,
+            Quest = 3,
+            Special = 4,
+        }
 
         public enum Special
         {
@@ -26,15 +35,8 @@ namespace DiabloInterface
             }
         }
 
-        public const int TYPE_NONE = -1;
-        public const int TYPE_CHAR_LEVEL = 0;
-        public const int TYPE_AREA = 1;
-        public const int TYPE_ITEM = 2;
-        public const int TYPE_QUEST = 3;
-        public const int TYPE_SPECIAL = 4;
-
         private string _name = "";
-        private short _type = TYPE_NONE;
+        private Type _type = Type.None;
         private short _value = -1;
         private short _difficulty = 0;
 
@@ -43,7 +45,7 @@ namespace DiabloInterface
             get { return this._difficulty; }
             set { _difficulty = value; }
         }
-        public short type
+        public Type type
         {
             get { return this._type; }
             set { _type = value; }
@@ -116,7 +118,7 @@ namespace DiabloInterface
         {
 
         }
-        public AutoSplit(string name, short type, short value, short difficulty)
+        public AutoSplit(string name, Type type, short value, short difficulty)
         {
             this._name = name;
             this._type = type;

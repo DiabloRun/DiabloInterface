@@ -32,7 +32,7 @@ namespace DiabloInterface
             confString += "D2Version:" + d2Version + "\n";
             foreach (AutoSplit autosplit in autosplits)
             {
-                confString += "AutoSplit: " + autosplit.name.Replace('|', ' ') + "|"+ autosplit.type + "|" + autosplit.value + "|" + autosplit.difficulty + "\n";
+                confString += "AutoSplit: " + autosplit.name.Replace('|', ' ') + "|"+ (int)autosplit.type + "|" + autosplit.value + "|" + autosplit.difficulty + "\n";
             }
             
             File.WriteAllText("settings.conf", confString);
@@ -99,7 +99,7 @@ namespace DiabloInterface
                         {
                             AutoSplit autosplit = new AutoSplit(
                                 parts2[0],
-                                Convert.ToInt16(parts2[1]),
+                                (AutoSplit.Type)Convert.ToInt16(parts2[1]),
                                 Convert.ToInt16(parts2[2]),
                                 (short)0
                             );
@@ -109,7 +109,7 @@ namespace DiabloInterface
                         {
                             AutoSplit autosplit = new AutoSplit(
                                 parts2[0],
-                                Convert.ToInt16(parts2[1]),
+                                (AutoSplit.Type)Convert.ToInt16(parts2[1]),
                                 Convert.ToInt16(parts2[2]),
                                 Convert.ToInt16(parts2[3])
                             );

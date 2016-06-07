@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using WindowsInput;
+using WindowsInput.Native;
 
 namespace DiabloInterface
 {
@@ -9,7 +10,21 @@ namespace DiabloInterface
     /// </summary>
     class KeyManager
     {
-        
+        static IInputSimulator simulatorInstance;
+        static IInputSimulator Simulator
+        {
+            get
+            {
+                if (simulatorInstance == null)
+                {
+                    // Create a default input simulator.
+                    simulatorInstance = new InputSimulator();
+                }
+
+                return simulatorInstance;
+            }
+        }
+
         public static string KeyEventArgsToKeyString(KeyEventArgs e)
         {
             //ok keys
@@ -38,7 +53,10 @@ namespace DiabloInterface
             {
                 c = ((char)((int)'A' + (int)(key - Keys.A))).ToString();
             }
-
+            else if ((key >= Keys.NumPad0) && (key <= Keys.NumPad9))
+            {
+                c = "NumPad" + ((char)((int)'0' + (int)(key - Keys.NumPad0))).ToString();
+            }
             else if ((key >= Keys.D0) && (key <= Keys.D9))
             {
                 c = ((char)((int)'0' + (int)(key - Keys.D0))).ToString();
@@ -72,7 +90,7 @@ namespace DiabloInterface
             string[] keyArr = keys.Split('+');
             List<VirtualKeyCode> modifiers = new List<VirtualKeyCode>();
             VirtualKeyCode key = 0;
-            
+
             foreach ( string k in keyArr )
             {
                 string kLower = k.ToLower();
@@ -92,14 +110,24 @@ namespace DiabloInterface
                 else if (kLower == "f10") { key = VirtualKeyCode.F10; }
                 else if (kLower == "f11") { key = VirtualKeyCode.F11; }
                 else if (kLower == "f12") { key = VirtualKeyCode.F12; }
+                else if (kLower == "numpad0") { key = VirtualKeyCode.NUMPAD0; }
+                else if (kLower == "numpad1") { key = VirtualKeyCode.NUMPAD1; }
+                else if (kLower == "numpad2") { key = VirtualKeyCode.NUMPAD2; }
+                else if (kLower == "numpad3") { key = VirtualKeyCode.NUMPAD3; }
+                else if (kLower == "numpad4") { key = VirtualKeyCode.NUMPAD4; }
+                else if (kLower == "numpad5") { key = VirtualKeyCode.NUMPAD5; }
+                else if (kLower == "numpad6") { key = VirtualKeyCode.NUMPAD6; }
+                else if (kLower == "numpad7") { key = VirtualKeyCode.NUMPAD7; }
+                else if (kLower == "numpad8") { key = VirtualKeyCode.NUMPAD8; }
+                else if (kLower == "numpad9") { key = VirtualKeyCode.NUMPAD9; }
             }
 
             if (key == 0)
             {
                 return;
             }
-            InputSimulator.SimulateModifiedKeyStroke(modifiers.ToArray(), key);
-           
+
+            Simulator.Keyboard.ModifiedKeyStroke(modifiers, key);
         }
     }
 }

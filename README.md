@@ -12,6 +12,7 @@ The information that is currently shown in the tool are as follows:
  - Level
  - Base stats (strength, dexterity, vitality, energy)
  - Resistances
+ 
 
 The tool is also able to do automatic splits in connection with a split tool like Livesplit. You need to setup the same splits and hotkeys as in your split tool (hotkey in DiabloInterface = Start/Split hotkey in split tool). There is no timer integrated directly into this tool (yet). Please note that automatic splits will only work if you start a new character while the tool is running.
 

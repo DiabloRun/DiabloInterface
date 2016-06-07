@@ -53,9 +53,16 @@
   <PropertyGroup>
     <ApplicationIcon>Resources\Diablo II_101.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>App.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="InputSimulator">
-      <HintPath>lib\InputSimulator.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -66,18 +73,50 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsInput, Version=1.0.4.0, Culture=neutral, PublicKeyToken=9b287f7dc5073cad, processorArchitecture=MSIL">
+      <HintPath>..\packages\InputSimulator.1.0.4.0\lib\net20\WindowsInput.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoSplit.cs" />
+    <Compile Include="D2\Readers\RangeStatData.cs" />
+    <Compile Include="D2\Readers\UnitReader.cs" />
+    <Compile Include="D2\Readers\StringLookupTable.cs" />
+    <Compile Include="D2\Readers\InventoryReader.cs" />
+    <Compile Include="D2\Struct\D2CharacterStats.cs" />
+    <Compile Include="D2\Struct\D2GlobalData.cs" />
+    <Compile Include="D2\Struct\D2ItemModifier.cs" />
+    <Compile Include="D2\D2MemoryTable.cs" />
+    <Compile Include="D2\D2ItemStatCostTxt.cs" />
+    <Compile Include="D2\Readers\ItemReader.cs" />
+    <Compile Include="D2\Struct\D2Inventory.cs" />
+    <Compile Include="D2\Struct\D2ItemData.cs" />
+    <Compile Include="D2\D2MagicSuffix.cs" />
+    <Compile Include="D2\Struct\D2ItemDescription.cs" />
+    <Compile Include="D2\Struct\D2ItemStatCost.cs" />
+    <Compile Include="D2\Struct\D2LowQualityItemDescription.cs" />
+    <Compile Include="D2\Struct\D2PlayerData.cs" />
+    <Compile Include="D2\Struct\D2SetDescription.cs" />
+    <Compile Include="D2\Struct\D2SetItemDescription.cs" />
+    <Compile Include="D2\Struct\D2Skill.cs" />
+    <Compile Include="D2\Struct\D2SkillData.cs" />
+    <Compile Include="D2\Struct\StatIdentifier.cs" />
+    <Compile Include="D2\Struct\D2StatList.cs" />
+    <Compile Include="D2\Struct\D2StatListEx.cs" />
+    <Compile Include="D2\Struct\D2StringTableInfo.cs" />
+    <Compile Include="D2\Struct\D2UniqueItemDescription.cs" />
+    <Compile Include="D2\Struct\D2Unit.cs" />
+    <Compile Include="D2\Struct\DataPointer.cs" />
     <Compile Include="Gui\AutoSplitSettingsRow.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\AutoSplitSettingsRow.Designer.cs">
       <DependentUpon>AutoSplitSettingsRow.cs</DependentUpon>
     </Compile>
-    <Compile Include="D2Data.cs" />
-    <Compile Include="D2DataReader.cs" />
-    <Compile Include="D2Player.cs" />
+    <Compile Include="D2\D2Data.cs" />
+    <Compile Include="D2\D2DataReader.cs" />
+    <Compile Include="D2\D2Player.cs" />
     <Compile Include="Gui\DebugWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -90,10 +129,16 @@
     <Compile Include="Gui\MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="D2Level.cs" />
+    <Compile Include="D2\D2Level.cs" />
     <Compile Include="KeyManager.cs" />
+    <Compile Include="Server\QueryRequest.cs" />
+    <Compile Include="Server\QueryResponse.cs" />
+    <Compile Include="Server\ItemServer.cs" />
+    <Compile Include="ProcessMemoryReader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server\JsonStreamReader.cs" />
+    <Compile Include="Server\JsonStreamWriter.cs" />
     <Compile Include="SettingsHolder.cs" />
     <Compile Include="Gui\SettingsWindow.cs">
       <SubType>Form</SubType>
@@ -123,6 +168,10 @@
     <EmbeddedResource Include="Gui\SettingsWindow.resx">
       <DependentUpon>SettingsWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="App.manifest">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -138,6 +187,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Diablo II_101.ico" />
+    <EmbeddedResource Include="Resources\ItemStatCost.txt" />
+    <Content Include="Resources\MagicSuffix.txt" />
     <EmbeddedResource Include="Resources\Levels.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -151,9 +202,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DiabloInterface.D2;
+using System;
 using System.Windows.Forms;
 
 namespace DiabloInterface
@@ -22,26 +23,25 @@ namespace DiabloInterface
         }
 
         AutoSplit autosplit;
-        public AutoSplitSettingsRow( AutoSplit autosplit )
+        SettingsWindow settingsWindow;
+        public AutoSplitSettingsRow( AutoSplit autosplit, SettingsWindow w )
         {
             InitializeComponent();
             this.autosplit = autosplit;
+            this.settingsWindow = w;
 
             txtName.Text = autosplit.name;
 
-            cmbType.Items.Add(new Item("Char Level", AutoSplit.TYPE_CHAR_LEVEL));
-            cmbType.Items.Add(new Item("Area", AutoSplit.TYPE_AREA));
-            cmbType.Items.Add(new Item("Item", AutoSplit.TYPE_ITEM));
-            cmbType.Items.Add(new Item("Quest", AutoSplit.TYPE_QUEST));
-            cmbType.Items.Add(new Item("Special", AutoSplit.TYPE_SPECIAL));
-            cmbType.SelectedIndex = autosplit.type;
+            cmbType.Items.Add(new Item("Char Level", (int)AutoSplit.Type.CharLevel));
+            cmbType.Items.Add(new Item("Area", (int)AutoSplit.Type.Area));
+            cmbType.Items.Add(new Item("Item", (int)AutoSplit.Type.Item));
+            cmbType.Items.Add(new Item("Quest", (int)AutoSplit.Type.Quest));
+            cmbType.Items.Add(new Item("Special", (int)AutoSplit.Type.Special));
+            cmbType.SelectedIndex = (int)autosplit.type;
 
-            cmbDifficulty.Items.Add(new Item("Normal", 0));
-            cmbDifficulty.Items.Add(new Item("Nightmare", 1));
-            cmbDifficulty.Items.Add(new Item("Hell", 2));
-            cmbDifficulty.SelectedIndex = autosplit.difficulty;
+            fillComboBoxes();
 
-            fillValueComboBox();
+            cmbDifficulty.SelectedIndex = (int)autosplit.difficulty;
 
             var i = 0;
             foreach (Item item in cmbValue.Items)
@@ -54,20 +54,41 @@ namespace DiabloInterface
                 i++;
             }
         }
-        private void fillValueComboBox ()
+        private void fillComboBoxes ()
         {
 
+
+            cmbDifficulty.Items.Clear();
+            switch (autosplit.type)
+            {
+                case AutoSplit.Type.Area:
+                case AutoSplit.Type.Item:
+                case AutoSplit.Type.Quest:
+                    cmbDifficulty.Items.Add(new Item("Normal", 0));
+                    cmbDifficulty.Items.Add(new Item("Nightmare", 1));
+                    cmbDifficulty.Items.Add(new Item("Hell", 2));
+                    cmbDifficulty.SelectedIndex = 0;
+                    cmbDifficulty.Show();
+                    break;
+                case AutoSplit.Type.CharLevel:
+                case AutoSplit.Type.Special:
+                default:
+                    cmbDifficulty.Items.Add(new Item("Normal", 0));
+                    cmbDifficulty.SelectedIndex = 0;
+                    cmbDifficulty.Hide();
+                    break;
+            }
 
             cmbValue.Items.Clear();
             switch (autosplit.type)
             {
-                case AutoSplit.TYPE_CHAR_LEVEL:
+                case AutoSplit.Type.CharLevel:
                     for (int i = 1; i < 100; i++)
                     {
                         cmbValue.Items.Add(new Item("" + i, i));
                     }
                     break;
-                case AutoSplit.TYPE_AREA:
+                case AutoSplit.Type.Area:
 
                     foreach (D2Level lvl in D2Level.getAll())
                     {
@@ -77,7 +98,7 @@ namespace DiabloInterface
                         }
                     }
                     break;
-                case AutoSplit.TYPE_ITEM:
+                case AutoSplit.Type.Item:
                     cmbValue.Items.Add(new Item("Horadric Cube", (int)D2Data.ItemId.HORADRIC_CUBE));
                     cmbValue.Items.Add(new Item("Horadric Shaft", (int)D2Data.ItemId.HORADRIC_SHAFT));
                     cmbValue.Items.Add(new Item("Horadric Amulet", (int)D2Data.ItemId.HORADRIC_AMULET));
@@ -85,7 +106,7 @@ namespace DiabloInterface
                     cmbValue.Items.Add(new Item("Khalim's Heart", (int)D2Data.ItemId.KHALIM_HEART));
                     cmbValue.Items.Add(new Item("Khalim's Brain", (int)D2Data.ItemId.KHALIM_BRAIN));
                     break;
-                case AutoSplit.TYPE_QUEST:
+                case AutoSplit.Type.Quest:
                     cmbValue.Items.Add(new Item("Den of Evil", (int)D2Data.Quest.A1Q1));
                     cmbValue.Items.Add(new Item("Andariel", (int)D2Data.Quest.A1Q6));
                     cmbValue.Items.Add(new Item("Duriel", (int)D2Data.Quest.A2Q6));
@@ -94,7 +115,7 @@ namespace DiabloInterface
                     cmbValue.Items.Add(new Item("Ancients", (int)D2Data.Quest.A5Q5));
                     cmbValue.Items.Add(new Item("Baal", (int)D2Data.Quest.A5Q6));
                     break;
-                case AutoSplit.TYPE_SPECIAL:
+                case AutoSplit.Type.Special:
                     cmbValue.Items.Add(new Item("Game Start", (int)AutoSplit.Special.GAMESTART));
                     break;
             }
@@ -104,8 +125,8 @@ namespace DiabloInterface
         {
             ComboBox comboBox = (ComboBox)sender;
             Item selectedItem = (Item)comboBox.SelectedItem;
-            autosplit.type = (short)selectedItem.Value;
-            fillValueComboBox();
+            autosplit.type = (AutoSplit.Type)selectedItem.Value;
+            fillComboBoxes();
         }
 
         private void cmbValue_SelectedIndexChanged(object sender, EventArgs e)
@@ -150,6 +171,8 @@ namespace DiabloInterface
             {
                 c.Enabled = false;
             }
+            this.Hide();
+            settingsWindow.relayout();
         }
     }
 }

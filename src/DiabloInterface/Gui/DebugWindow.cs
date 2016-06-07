@@ -1,6 +1,9 @@
-﻿using System;
+﻿using DiabloInterface.D2.Readers;
+using DiabloInterface.D2.Struct;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 namespace DiabloInterface
@@ -29,12 +32,12 @@ namespace DiabloInterface
                 return myCp;
             }
         }
-        
+
         public DebugWindow()
         {
             InitializeComponent();
-            MinimizeBox = false;
-            MaximizeBox = false;
+            //MinimizeBox = false;
+            //MaximizeBox = false;
         }
         private byte reverseBits(byte b)
         {
@@ -305,6 +308,67 @@ namespace DiabloInterface
                 e.Cancel = true;
             }
 
+        }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        public void UpdateItemStats(ProcessMemoryReader r, D2MemoryTable memory, D2Unit pl)
+        {
+            InventoryReader inventoryReader = new InventoryReader(r, memory);
+            UnitReader unitReader = new UnitReader(r, memory.Address);
+            
+
+            // Build filter to get only equipped items.
+            Func<D2ItemData, bool> filter = data => data.BodyLoc != BodyLocation.None;
+            foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))
+            {
+                List<D2Stat> itemStats = unitReader.GetStats(item);
+                if (itemStats == null) continue;
+
+                StringBuilder statBuilder = new StringBuilder();
+                statBuilder.Append(inventoryReader.ItemReader.GetFullItemName(item));
+
+                statBuilder.Append("\n");
+                List<string> magicalStrings = inventoryReader.ItemReader.GetMagicalStrings(item);
+                foreach (string str in magicalStrings)
+                {
+                    statBuilder.Append("    ");
+                    statBuilder.Append(str);
+                    statBuilder.Append("\n");
+                }
+
+                Control c = null;
+                D2ItemData itemData = r.Read<D2ItemData>(item.pUnitData);
+                switch (itemData.BodyLoc)
+                {
+                    case BodyLocation.Head: c = tabPageHead; break;
+                    case BodyLocation.Amulet: c = tabPageAmulet; break;
+                    case BodyLocation.BodyArmor: c = tabPageBody; break;
+                    case BodyLocation.PrimaryRight: c = tabPageWeaponRight; break;
+                    case BodyLocation.PrimaryLeft: c = tabPageWeaponLeft; break;
+                    case BodyLocation.RingRight: c = tabPageRingRight; break;
+                    case BodyLocation.RingLeft: c = tabPageRingLeft; break;
+                    //case BodyLocation.SecondaryLeft: c = tabPageRingRight; break;
+                    //case BodyLocation.SecondaryRight: c = tabPageRingLeft; break;
+                    case BodyLocation.Belt: c = tabPageBelt; break;
+                    case BodyLocation.Boots: c = tabPageFeet; break;
+                    case BodyLocation.Gloves: c = tabPageHand; break;
+                }
+                if (c != null)
+                {
+                    if (c.Controls.Count == 0)
+                    {
+                        c.Invoke(new Action(delegate () {
+                            c.Controls.Add(new RichTextBox());
+                            c.Controls[0].Dock = DockStyle.Fill;
+                        }));
+                    }
+                    c.Controls[0].Invoke(new Action(() => c.Controls[0].Text = statBuilder.ToString()));
+                }
+            }
         }
     }
 }

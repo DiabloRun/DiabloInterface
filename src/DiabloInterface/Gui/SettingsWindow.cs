@@ -23,13 +23,12 @@ namespace DiabloInterface
             this.txtAutoSplitHotkey.Text = main.settings.triggerKeys;
             this.chkShowDebug.Checked = main.settings.showDebug;
             this.cmbVersion.SelectedIndex = 0;
-
-            int x = 0;
+            
             foreach (AutoSplit a in main.settings.autosplits)
             {
-                addAutosplit(a, x, false);
-                x++;
+                addAutosplit(a, false);
             }
+            relayout(false);
         }
 
         private void resetSettings()
@@ -84,21 +83,34 @@ namespace DiabloInterface
 
         private void button1_Click(object sender, EventArgs e)
         {
-            this.addAutosplit(new AutoSplit(), main.settings.autosplits.Count);
+            this.addAutosplit(new AutoSplit());
+            relayout();
         }
 
-        private void addAutosplit(AutoSplit autosplit, int idx, bool addToMain = true)
+        private void addAutosplit(AutoSplit autosplit, bool addToMain = true)
         {
-            AutoSplitSettingsRow row = new AutoSplitSettingsRow(autosplit);
+            AutoSplitSettingsRow row = new AutoSplitSettingsRow(autosplit, this);
             this.panel1.Controls.Add(row);
             int scroll = this.panel1.VerticalScroll.Value;
 
-            idx = idx + 1;
-            row.Location = new Point(0, -scroll + idx * 24);
             if (addToMain)
             {
                 main.settings.autosplits.Add(autosplit);
             }
+        }
+        public void relayout( bool checkVisible = true)
+        {
+            int i = 0;
+            int scroll = this.panel1.VerticalScroll.Value;
+            foreach (Control c in this.panel1.Controls)
+            {
+                if (c is AutoSplitSettingsRow && (!checkVisible || c.Visible))
+                {
+                    i = i + 1;
+                    c.Location = new Point(0, -scroll + i * 24);
+                }
+            }
+                
         }
 
         private void BtnRemove_Click(object sender, EventArgs e)
@@ -116,6 +128,7 @@ namespace DiabloInterface
         {
 
             if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9
+                || e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9
                 || e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z
                 || e.KeyCode >= Keys.F1 && e.KeyCode <= Keys.F12)
             {

@@ -12,10 +12,10 @@ namespace DiabloInterface
         public string name;
         private static List<D2Level> levels;
 
-        public D2Level(int id, string name)
+        public D2Level(string[] lineArray)
         {
-            this.id = id;
-            this.name = name;
+            id = Int32.Parse(lineArray[1]);
+            name = lineArray[152];
         }
 
         public static List<D2Level> getAll ()
@@ -53,12 +53,10 @@ namespace DiabloInterface
                     }
                     try
                     {
-
-                        list.Add(new D2Level(Int32.Parse(lineArray[1]), lineArray[152]));
+                        list.Add(new D2Level(lineArray));
                         //Console.Write(lineArray[1] + ":" + lineArray[0] + "\n") ;
-
                     }
-                    catch (System.FormatException e )
+                    catch (FormatException e )
                     {
                         Console.Write(e);
                         break;

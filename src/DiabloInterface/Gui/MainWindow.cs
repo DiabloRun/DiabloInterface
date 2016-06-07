@@ -1,23 +1,15 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
+using DiabloInterface.Server;
 
 namespace DiabloInterface
 {
     public partial class MainWindow : Form
     {
-        const int PROCESS_WM_READ = 0x0010;
-
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
-
-        [DllImport("kernel32.dll")]
-        public static extern bool ReadProcessMemory(int hProcess, int lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesRead);
-        
         public SettingsHolder settings;
 
         Thread dataReaderThread;
@@ -26,12 +18,32 @@ namespace DiabloInterface
         DebugWindow debugWindow;
 
         D2DataReader dataReader;
+        ItemServer itemServer;
 
         public MainWindow()
         {
+            // We want to dispose our handles once the window is disposed.
+            Disposed += OnWindowDisposed;
+
             InitializeComponent();
-            
+
             initialize();
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            itemServer.Stop();
+            base.OnFormClosing(e);
+        }
+
+        private void OnWindowDisposed(object sender, EventArgs e)
+        {
+            // Make sure the process handles close correctly.
+            if (dataReader != null)
+            {
+                dataReader.Dispose();
+                dataReader = null;
+            }
         }
 
         public DebugWindow getDebugWindow()
@@ -48,6 +60,58 @@ namespace DiabloInterface
             this.settings.autosplits.Add(autosplit);
         }
 
+        private D2MemoryTable GetVersionMemoryTable(string version)
+        {
+            D2MemoryTable memoryTable = new D2MemoryTable();
+            memoryTable.SupportsItemReading = false;
+
+            // Offsets are the same for both versions so far.
+            memoryTable.Offset.Quests = new int[] { 0x264, 0x450, 0x20, 0x00 };
+
+            switch (version)
+            {
+                case "1.14b":
+                    memoryTable.Address.Character   = new IntPtr(0x0039DEFC);
+                    memoryTable.Address.Quests      = new IntPtr(0x003B8E54);
+                    memoryTable.Address.Difficulty  = new IntPtr(0x00398694);
+                    memoryTable.Address.Area        = new IntPtr(0x0039B1C8);
+                    break;
+                case "1.14c":
+                default:
+                    memoryTable.Address.Character   = new IntPtr(0x0039CEFC);
+                    memoryTable.Address.Quests      = new IntPtr(0x003B7E54);
+                    memoryTable.Address.Difficulty  = new IntPtr(0x00397694);
+                    memoryTable.Address.Area        = new IntPtr(0x0039A1C8);
+
+                    memoryTable.SupportsItemReading = true;
+                    memoryTable.Address.PlayerUnit                  = new IntPtr(0x39DAF8);
+                    memoryTable.Address.GlobalData                  = new IntPtr(0x33FD78);
+                    memoryTable.Address.LowQualityItems             = new IntPtr(0x563BE0);
+                    memoryTable.Address.ItemDescriptions            = new IntPtr(0x5639E0);
+                        //memoryTable.Address.unknown1            = new IntPtr(0x5639EC);
+                        //memoryTable.Address.unknown2            = new IntPtr(0x5639F4);
+                        //memoryTable.Address.unknown3            = new IntPtr(0x5639FC);
+                    memoryTable.Address.MagicModifierTable          = new IntPtr(0x563A04);
+                        //memoryTable.Address.unknown4            = new IntPtr(0x563A18);
+                        //memoryTable.Address.unknown5            = new IntPtr(0x563A20);
+                    memoryTable.Address.RareModifierTable           = new IntPtr(0x563A28);
+                        //memoryTable.Address.unknown6            = new IntPtr(0x563A38);
+
+                    memoryTable.Address.StringIndexerTable          = new IntPtr(0x479A3C);
+                    memoryTable.Address.StringAddressTable          = new IntPtr(0x479A40);
+                    memoryTable.Address.PatchStringIndexerTable     = new IntPtr(0x479A58);
+                    memoryTable.Address.PatchStringAddressTable     = new IntPtr(0x479A44);
+                    memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(0x479A5C);
+                    memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x479A48);
+
+                    // More Tables seem to exist:
+
+                    break;
+            }
+
+            return memoryTable;
+        }
+
         private void initialize()
         {
             settings = new SettingsHolder();
@@ -55,7 +119,9 @@ namespace DiabloInterface
 
             if (dataReader == null)
             {
-                dataReader = new D2DataReader(this);
+                var memoryTable = GetVersionMemoryTable(settings.d2Version);
+                dataReader = new D2DataReader(this, memoryTable);
+                itemServer = new ItemServer(dataReader, "DiabloInterfaceItems");
             }
             if (!dataReader.checkIfD2Running())
             {
@@ -82,22 +148,22 @@ namespace DiabloInterface
         public void updateLabels ( D2Player player )
         {
             nameLabel.Invoke(new Action(delegate () { nameLabel.Text = player.name; })); // name
-            lvlLabel.Invoke(new Action(delegate () { lvlLabel.Text = "LVL: " + player.lvl ; })); // level
-            strengthLabel.Invoke(new Action(delegate () { strengthLabel.Text = "STR: " + player.strength; }));
-            dexterityLabel.Invoke(new Action(delegate () { dexterityLabel.Text = "DEX: " + player.dexterity; }));
-            vitalityLabel.Invoke(new Action(delegate () { vitalityLabel.Text = "VIT: " + player.vitality; }));
-            energyLabel.Invoke(new Action(delegate () { energyLabel.Text = "ENE: " + player.energy; }));
-            fireResLabel.Invoke(new Action(delegate () { fireResLabel.Text = "FIRE: " + player.calculatedFireRes; }));
-            coldResLabel.Invoke(new Action(delegate () { coldResLabel.Text = "COLD: " + player.calculatedColdRes; }));
-            lightningResLabel.Invoke(new Action(delegate () { lightningResLabel.Text = "LIGH: " + player.calculatedLightningRes; }));
-            poisonResLabel.Invoke(new Action(delegate () { poisonResLabel.Text = "POIS: " + player.calculatedPoisonRes; }));
-            goldLabel.Invoke(new Action(delegate () { goldLabel.Text = "GOLD: " + (player.goldBody + player.goldStash); }));
-            deathsLabel.Invoke(new Action(delegate () { deathsLabel.Text = "DEATHS: " + player.deaths; }));
+            lvlLabel.Invoke(new Action(delegate () { lvlLabel.Text = "LVL: " + player.Level ; })); // level
+            strengthLabel.Invoke(new Action(delegate () { strengthLabel.Text = "STR: " + player.Strength; }));
+            dexterityLabel.Invoke(new Action(delegate () { dexterityLabel.Text = "DEX: " + player.Dexterity; }));
+            vitalityLabel.Invoke(new Action(delegate () { vitalityLabel.Text = "VIT: " + player.Vitality; }));
+            energyLabel.Invoke(new Action(delegate () { energyLabel.Text = "ENE: " + player.Energy; }));
+            fireResLabel.Invoke(new Action(delegate () { fireResLabel.Text = "FIRE: " + player.FireResist; }));
+            coldResLabel.Invoke(new Action(delegate () { coldResLabel.Text = "COLD: " + player.ColdResist; }));
+            lightningResLabel.Invoke(new Action(delegate () { lightningResLabel.Text = "LIGH: " + player.LightningResist; }));
+            poisonResLabel.Invoke(new Action(delegate () { poisonResLabel.Text = "POIS: " + player.PoisonResist; }));
+            goldLabel.Invoke(new Action(delegate () { goldLabel.Text = "GOLD: " + (player.Gold + player.GoldStash); }));
+            deathsLabel.Invoke(new Action(delegate () { deathsLabel.Text = "DEATHS: " + player.Deaths; }));
         }
-        
+
         public void triggerAutosplit(D2Player player)
         {
-            if (player.newlyStarted && settings.doAutosplit && settings.triggerKeys != "")
+            if (player.IsRecentlyStarted && settings.doAutosplit && settings.triggerKeys != "")
             {
                 KeyManager.sendKeys(settings.triggerKeys);
             }
@@ -118,18 +184,18 @@ namespace DiabloInterface
             }
 
             File.WriteAllText(settings.fileFolder + "/name.txt", player.name);
-            File.WriteAllText(settings.fileFolder + "/level.txt", player.lvl.ToString());
-            File.WriteAllText(settings.fileFolder + "/strength.txt", player.strength.ToString());
-            File.WriteAllText(settings.fileFolder + "/dexterity.txt", player.dexterity.ToString());
-            File.WriteAllText(settings.fileFolder + "/vitality.txt", player.vitality.ToString());
-            File.WriteAllText(settings.fileFolder + "/energy.txt", player.energy.ToString());
-            File.WriteAllText(settings.fileFolder + "/fire_res.txt", player.calculatedFireRes.ToString());
-            File.WriteAllText(settings.fileFolder + "/cold_res.txt", player.calculatedColdRes.ToString());
-            File.WriteAllText(settings.fileFolder + "/light_res.txt", player.calculatedLightningRes.ToString());
-            File.WriteAllText(settings.fileFolder + "/poison_res.txt", player.calculatedPoisonRes.ToString());
-            File.WriteAllText(settings.fileFolder + "/gold.txt", (player.goldBody + player.goldStash).ToString());
-            File.WriteAllText(settings.fileFolder + "/deaths.txt", player.deaths.ToString());
-            
+            File.WriteAllText(settings.fileFolder + "/level.txt", player.Level.ToString());
+            File.WriteAllText(settings.fileFolder + "/strength.txt", player.Strength.ToString());
+            File.WriteAllText(settings.fileFolder + "/dexterity.txt", player.Dexterity.ToString());
+            File.WriteAllText(settings.fileFolder + "/vitality.txt", player.Vitality.ToString());
+            File.WriteAllText(settings.fileFolder + "/energy.txt", player.Energy.ToString());
+            File.WriteAllText(settings.fileFolder + "/fire_res.txt", player.FireResist.ToString());
+            File.WriteAllText(settings.fileFolder + "/cold_res.txt", player.ColdResist.ToString());
+            File.WriteAllText(settings.fileFolder + "/light_res.txt", player.LightningResist.ToString());
+            File.WriteAllText(settings.fileFolder + "/poison_res.txt", player.PoisonResist.ToString());
+            File.WriteAllText(settings.fileFolder + "/gold.txt", (player.Gold + player.GoldStash).ToString());
+            File.WriteAllText(settings.fileFolder + "/deaths.txt", player.Deaths.ToString());
+
         }
 
         public void applySettings()
@@ -165,7 +231,8 @@ namespace DiabloInterface
                 }
             }
 
-            dataReader.setD2Version(settings.d2Version);
+            var memoryTable = GetVersionMemoryTable(settings.d2Version);
+            dataReader.SetNextMemoryTable(memoryTable);
         }
 
         private void button1_Click(object sender, EventArgs e)
