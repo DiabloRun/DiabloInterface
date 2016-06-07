@@ -31,9 +31,6 @@ namespace DiabloInterface
     public class D2MemoryTable
     {
         public bool SupportsItemReading;
-        public bool SupportsQuestReading;
-        public bool SupportsDifficultyReading;
-        public bool SupportsAreaReading;
 
         public D2MemoryAddressTable Address = new D2MemoryAddressTable();
         public D2MemoryOffsetTable Offset = new D2MemoryOffsetTable();

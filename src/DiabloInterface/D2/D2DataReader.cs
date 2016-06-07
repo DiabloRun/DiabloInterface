@@ -191,14 +191,8 @@ namespace DiabloInterface
             }
 
             // todo: only read difficulty when it could possibly have changed
-            if (memory.SupportsDifficultyReading)
-            {
-                difficulty = reader.ReadByte(memory.Address.Difficulty, AddressingMode.Relative);
-                if (difficulty < 0 || difficulty > 2)
-                {
-                    difficulty = 0;
-                }
-            } else
+            difficulty = reader.ReadByte(memory.Address.Difficulty, AddressingMode.Relative);
+            if (difficulty < 0 || difficulty > 2)
             {
                 difficulty = 0;
             }
@@ -214,27 +208,21 @@ namespace DiabloInterface
             // debug window - quests
             if (main.getDebugWindow() != null)
             {
-                if (memory.SupportsQuestReading)
-                {
-
-                    IntPtr questDataAddress = IntPtr.Zero;
-
-                    // Currently not working.
-                    memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 0;
-                    questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                    main.getDebugWindow().setQuestDataNormal(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
-                    memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 1;
-                    questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                    main.getDebugWindow().setQuestDataNightmare(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
-                    memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 2;
-                    questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                    main.getDebugWindow().setQuestDataHell(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
-                }
+                // read quests for debug window
+                IntPtr questDataAddress = IntPtr.Zero;
                 
-                if (memory.SupportsItemReading)
-                {
-                    main.getDebugWindow().UpdateItemStats(reader, memory, playerUnit);
-                }
+                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 0;
+                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                main.getDebugWindow().setQuestDataNormal(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 1;
+                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                main.getDebugWindow().setQuestDataNightmare(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 2;
+                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                main.getDebugWindow().setQuestDataHell(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
+
+                // read items for debug window
+                main.getDebugWindow().UpdateItemStats(reader, memory, playerUnit);
             }
 
             UnitReader unitReader = new UnitReader(reader, memory.Address);
@@ -324,12 +312,9 @@ namespace DiabloInterface
             if (haveUnreachedQuestSplits)
             {
                 memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * difficulty;
-
-                if (memory.SupportsQuestReading)
-                {
-                    var questBufferAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                    questBuffer = reader.Read(questBufferAddress, QUEST_BUFFER_LENGTH);
-                }
+                
+                var questBufferAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
+                questBuffer = reader.Read(questBufferAddress, QUEST_BUFFER_LENGTH);
             }
 
             foreach (AutoSplit autosplit in main.settings.autosplits)
