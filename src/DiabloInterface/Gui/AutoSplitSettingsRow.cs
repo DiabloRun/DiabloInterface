@@ -23,10 +23,12 @@ namespace DiabloInterface
         }
 
         AutoSplit autosplit;
-        public AutoSplitSettingsRow( AutoSplit autosplit )
+        SettingsWindow settingsWindow;
+        public AutoSplitSettingsRow( AutoSplit autosplit, SettingsWindow w )
         {
             InitializeComponent();
             this.autosplit = autosplit;
+            this.settingsWindow = w;
 
             txtName.Text = autosplit.name;
 
@@ -169,6 +171,8 @@ namespace DiabloInterface
             {
                 c.Enabled = false;
             }
+            this.Hide();
+            settingsWindow.relayout();
         }
     }
 }

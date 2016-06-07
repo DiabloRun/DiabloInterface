@@ -344,6 +344,10 @@ namespace DiabloInterface.D2.Readers
                 default: return null;
             }
 
+            //Console.WriteLine(prefix);
+            //Console.WriteLine(suffix);
+            //Console.WriteLine(name);
+
 
             // Find the gender/grammatic case of the item in order to match the correct adjectives 
             Regex regex = new Regex(@"^(\[[a-z]+\])");
@@ -390,7 +394,7 @@ namespace DiabloInterface.D2.Readers
             {
                 if (IsItemOfQuality(item, ItemQuality.Rare))
                 {
-                    fullName = string.Format("{0} \n{1}", prefix, fullName);
+                    fullName = string.Format("{0}, {1}", prefix, fullName);
                 }
                 else
                 {

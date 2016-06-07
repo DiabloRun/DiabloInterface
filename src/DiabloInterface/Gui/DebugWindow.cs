@@ -36,8 +36,8 @@ namespace DiabloInterface
         public DebugWindow()
         {
             InitializeComponent();
-            MinimizeBox = false;
-            MaximizeBox = false;
+            //MinimizeBox = false;
+            //MaximizeBox = false;
         }
         private byte reverseBits(byte b)
         {
@@ -358,8 +358,10 @@ namespace DiabloInterface
                     case BodyLocation.BodyArmor: c = tabPageBody; break;
                     case BodyLocation.PrimaryRight: c = tabPageWeaponRight; break;
                     case BodyLocation.PrimaryLeft: c = tabPageWeaponLeft; break;
-                    case BodyLocation.SecondaryLeft: c = tabPageRingRight; break;
-                    case BodyLocation.SecondaryRight: c = tabPageRingLeft; break;
+                    case BodyLocation.RingRight: c = tabPageRingRight; break;
+                    case BodyLocation.RingLeft: c = tabPageRingLeft; break;
+                    //case BodyLocation.SecondaryLeft: c = tabPageRingRight; break;
+                    //case BodyLocation.SecondaryRight: c = tabPageRingLeft; break;
                     case BodyLocation.Belt: c = tabPageBelt; break;
                     case BodyLocation.Boots: c = tabPageFeet; break;
                     case BodyLocation.Gloves: c = tabPageHand; break;
