@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace DiabloInterface
 {
@@ -102,6 +103,21 @@ namespace DiabloInterface
             {
                 // Failed to open process.
                 return false;
+            }
+        }
+
+        public void ItemSlotAction(List<BodyLocation> slots, Action<ItemReader, D2Unit> action)
+        {
+            var inventoryReader = new InventoryReader(reader, memory);
+
+            // Add all items found in the slots.
+            Func<D2ItemData, bool> filterSlots = data => slots.FindIndex(x => x == data.BodyLoc) >= 0;
+            foreach (var item in inventoryReader.EnumerateInventory(filterSlots))
+            {
+                if (action != null)
+                {
+                    action(inventoryReader.ItemReader, item);
+                }
             }
         }
 

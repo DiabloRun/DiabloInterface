@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace DiabloInterface.D2.Struct
 {
-    enum ItemQuality : uint
+    public enum ItemQuality : uint
     {
         Invalid,    // 0
         Low,        // 1
@@ -18,7 +18,7 @@ namespace DiabloInterface.D2.Struct
     }
 
     [Flags]
-    enum ItemFlag : uint
+    public enum ItemFlag : uint
     {
         Identified      = 0x00000010,
         Socketed        = 0x00000800,
@@ -29,7 +29,7 @@ namespace DiabloInterface.D2.Struct
         Runeword        = 0x04000000
     }
 
-    enum InventoryPage : sbyte
+    public enum InventoryPage : sbyte
     {
         Equipped        = -1,
         Inventory       = 0,
@@ -37,7 +37,7 @@ namespace DiabloInterface.D2.Struct
         Stash           = 4
     }
 
-    enum BodyLocation : byte
+    public enum BodyLocation : byte
     {
         None,               // 0x0
         Head,               // 0x1
@@ -55,7 +55,7 @@ namespace DiabloInterface.D2.Struct
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    class D2ItemData
+    public class D2ItemData
     {
         #region structure (sizeof = 0x74)
         public ItemQuality Quality;     // 0x00

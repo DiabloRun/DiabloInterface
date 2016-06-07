@@ -10,7 +10,7 @@ namespace DiabloInterface.D2.Struct
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1, Size = 0x1A8)]
-    class D2ItemDescription
+    public class D2ItemDescription
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string flippyFile;                   // 0x000

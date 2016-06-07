@@ -4,6 +4,7 @@ using System.Threading;
 using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
+using DiabloInterface.Server;
 
 namespace DiabloInterface
 {
@@ -17,6 +18,7 @@ namespace DiabloInterface
         DebugWindow debugWindow;
 
         D2DataReader dataReader;
+        ItemServer itemServer;
 
         public MainWindow()
         {
@@ -113,6 +115,7 @@ namespace DiabloInterface
             {
                 var memoryTable = GetVersionMemoryTable(settings.d2Version);
                 dataReader = new D2DataReader(this, memoryTable);
+                itemServer = new ItemServer(dataReader, "DiabloInterfaceItems");
             }
             if (!dataReader.checkIfD2Running())
             {

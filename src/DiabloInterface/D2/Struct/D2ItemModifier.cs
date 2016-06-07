@@ -11,7 +11,7 @@ namespace DiabloInterface.D2.Struct
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1, Size = 0x90)]
-    class MagicModifier
+    public class MagicModifier
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x20)]
         public string ModifierName;             // 0x00
@@ -20,7 +20,7 @@ namespace DiabloInterface.D2.Struct
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1, Size = 0x48)]
-    class RareModifier
+    public class RareModifier
     {
         public int __unknown1;          // 0x00
         public int __unknown2;          // 0x04

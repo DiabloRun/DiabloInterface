@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace DiabloInterface.D2.Readers
 {
-    class ItemReader : UnitReader
+    public class ItemReader : UnitReader
     {
         static D2ItemStatCost[] ItemStatCost = null;
 
@@ -315,7 +315,7 @@ namespace DiabloInterface.D2.Readers
                     quality = GetSuperiorItemName(item);
                     break;
                 case ItemQuality.Magic:
-                    // fullName: prefix + name + suffix  
+                    // fullName: prefix + name + suffix
                     prefix = GetMagicPrefixName(item);
                     suffix = GetMagicSuffixName(item);
                     break;
@@ -349,7 +349,7 @@ namespace DiabloInterface.D2.Readers
             //Console.WriteLine(name);
 
 
-            // Find the gender/grammatic case of the item in order to match the correct adjectives 
+            // Find the gender/grammatic case of the item in order to match the correct adjectives
             Regex regex = new Regex(@"^(\[[a-z]+\])");
             Match match = regex.Match(name);
             if (match.Success)
