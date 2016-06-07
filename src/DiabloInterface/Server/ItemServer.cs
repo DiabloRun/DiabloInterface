@@ -38,7 +38,6 @@ namespace DiabloInterface.Server
                     1024, 1024, ps);
                 try
                 {
-                    Console.WriteLine("Awaiting connection...");
                     pipe.WaitForConnection();
                     HandleClientConnection(pipe);
                 }
@@ -55,33 +54,27 @@ namespace DiabloInterface.Server
 
         void HandleClientConnection(NamedPipeServerStream pipe)
         {
-            Console.WriteLine("Client connected.");
-
             var reader = new JsonStreamReader(pipe, Encoding.UTF8);
-            var request = reader.ReadJson<ItemRequest>();
+            var request = reader.ReadJson<QueryRequest>();
+
+            QueryResponse response = new QueryResponse();
             var equipmentLocations = GetItemLocations(request);
 
-            Console.WriteLine("Got request: {0}", equipmentLocations.Count);
-
-            ItemResponse response = new ItemResponse();
             dataReader.ItemSlotAction(equipmentLocations, (itemReader, item) => {
-                ItemResponseData data = new ItemResponseData();
+                ItemResponse data = new ItemResponse();
                 data.ItemName = itemReader.GetFullItemName(item);
                 data.Properties = itemReader.GetMagicalStrings(item);
                 response.Items.Add(data);
             });
 
-            Console.WriteLine("Got items data.");
-
+            response.IsValid = equipmentLocations.Count > 0;
             response.Success = response.Items.Count > 0;
             var writer = new JsonStreamWriter(pipe, Encoding.UTF8);
             writer.WriteJson(response);
             writer.Flush();
-
-            Console.WriteLine("Response sent.");
         }
 
-        List<BodyLocation> GetItemLocations(ItemRequest request)
+        List<BodyLocation> GetItemLocations(QueryRequest request)
         {
             List<BodyLocation> locations = new List<BodyLocation>();
             var name = request.EquipmentSlot.ToLowerInvariant();

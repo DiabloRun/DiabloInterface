@@ -1,6 +1,6 @@
 ﻿namespace DiabloInterface.Server
 {
-    class ItemRequest
+    class QueryRequest
     {
         public string EquipmentSlot { get; set; }
     }

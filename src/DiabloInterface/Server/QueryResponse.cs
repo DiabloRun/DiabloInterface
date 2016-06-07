@@ -2,25 +2,26 @@
 
 namespace DiabloInterface.Server
 {
-    class ItemResponseData
+    class ItemResponse
     {
         public string ItemName { get; set; }
         public List<string> Properties { get; set; }
 
-        public ItemResponseData()
+        public ItemResponse()
         {
             Properties = new List<string>();
         }
     }
 
-    class ItemResponse
+    class QueryResponse
     {
+        public bool IsValid { get; set; }
         public bool Success { get; set; }
-        public List<ItemResponseData> Items { get; set; }
+        public List<ItemResponse> Items { get; set; }
 
-        public ItemResponse()
+        public QueryResponse()
         {
-            Items = new List<ItemResponseData>();
+            Items = new List<ItemResponse>();
         }
     }
 }
