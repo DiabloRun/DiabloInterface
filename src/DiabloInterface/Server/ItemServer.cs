@@ -23,6 +23,15 @@ namespace DiabloInterface.Server
             listenThread.Start();
         }
 
+        public void Stop()
+        {
+            if (listenThread != null)
+            {
+                listenThread.Abort();
+                listenThread = null;
+            }
+        }
+
         void ServerListen()
         {
             var ps = new PipeSecurity();
@@ -40,13 +49,11 @@ namespace DiabloInterface.Server
                 {
                     pipe.WaitForConnection();
                     HandleClientConnection(pipe);
+                    pipe.Close();
                 }
                 catch (IOException e)
                 {
                     Console.WriteLine("Error: {0}", e.Message);
-                }
-                finally
-                {
                     pipe.Close();
                 }
             }

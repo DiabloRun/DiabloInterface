@@ -30,6 +30,12 @@ namespace DiabloInterface
             initialize();
         }
 
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            itemServer.Stop();
+            base.OnFormClosing(e);
+        }
+
         private void OnWindowDisposed(object sender, EventArgs e)
         {
             // Make sure the process handles close correctly.
