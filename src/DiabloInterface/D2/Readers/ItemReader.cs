@@ -303,6 +303,9 @@ namespace DiabloInterface.D2.Readers
 
         string ExtractGrammaticalCase(string value, string grammarCase)
         {
+            // null value, so just return null
+            if (value == null)
+                return value;
             // No grammar case on english version of the game.
             if (grammarCase == null)
                 return value;

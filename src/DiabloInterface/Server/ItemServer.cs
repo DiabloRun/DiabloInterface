@@ -35,8 +35,8 @@ namespace DiabloInterface.Server
         void ServerListen()
         {
             var ps = new PipeSecurity();
-            ps.AddAccessRule(new PipeAccessRule("Everyone", PipeAccessRights.ReadWrite,
-                System.Security.AccessControl.AccessControlType.Allow));
+            System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier(System.Security.Principal.WellKnownSidType.BuiltinUsersSid, null);
+            ps.AddAccessRule(new PipeAccessRule(sid, PipeAccessRights.ReadWrite, System.Security.AccessControl.AccessControlType.Allow));
 
             while (true)
             {

@@ -330,23 +330,14 @@ namespace DiabloInterface
 
                 StringBuilder statBuilder = new StringBuilder();
                 statBuilder.Append(inventoryReader.ItemReader.GetFullItemName(item));
-                statBuilder.Append('\n');
-                List<D2ItemStatCostTxt> statsList = D2ItemStatCostTxt.getAll();
 
-                foreach (D2Stat stat in itemStats)
+                statBuilder.Append("\n");
+                List<string> magicalStrings = inventoryReader.ItemReader.GetMagicalStrings(item);
+                foreach (string str in magicalStrings)
                 {
-                    foreach (D2ItemStatCostTxt st in statsList)
-                    {
-                        if (st.id == stat.LoStatID)
-                        {
-                            statBuilder.Append(st.name);
-                            statBuilder.Append(": ");
-                            statBuilder.Append(stat.Value);
-                            statBuilder.Append('\n');
-
-                            break;
-                        }
-                    }
+                    statBuilder.Append("    ");
+                    statBuilder.Append(str);
+                    statBuilder.Append("\n");
                 }
 
                 Control c = null;
