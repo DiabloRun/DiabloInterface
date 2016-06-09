@@ -11,6 +11,11 @@ namespace DiabloInterface.D2.Struct
         public bool IsNull { get { return address == 0; } }
         public IntPtr Address { get { return new IntPtr(address); } }
 
+        public DataPointer(uint address)
+        {
+            this.address = address;
+        }
+
         public int ToInt32()
         {
             return (int)address;
@@ -29,6 +34,16 @@ namespace DiabloInterface.D2.Struct
         public static implicit operator IntPtr(DataPointer instance)
         {
             return instance.Address;
+        }
+
+        public static DataPointer operator +(DataPointer pointer, int offset)
+        {
+            return new DataPointer((uint)(pointer.address + offset));
+        }
+
+        public static DataPointer operator +(DataPointer pointer, uint offset)
+        {
+            return new DataPointer(pointer.address + offset);
         }
     }
 }

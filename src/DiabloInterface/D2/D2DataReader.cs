@@ -9,26 +9,32 @@ namespace DiabloInterface
 {
     public class D2DataReader : IDisposable
     {
-        MainWindow main;
-
-        bool disposed = false;
-
         const string DIABLO_PROCESS_NAME = "game";
         const string DIABLO_MODULE_NAME = "Game.exe";
 
-        const int QUEST_BUFFER_DIFFICULTY_OFFSET = 128;
-        const int QUEST_BUFFER_LENGTH = 96;
+        class GameInfo
+        {
+            public D2Game Game { get; private set; }
+            public D2Unit Player { get; private set; }
+            public D2PlayerData PlayerData { get; private set; }
+
+            public GameInfo(D2Game game, D2Unit player, D2PlayerData playerData)
+            {
+                Game = game;
+                Player = player;
+                PlayerData = playerData;
+            }
+        }
+
+        MainWindow main;
+
+        bool disposed = false;
 
         ProcessMemoryReader reader;
         D2MemoryTable memory;
         D2MemoryTable nextMemoryTable;
 
-        short difficulty;
-        D2Data.Penalty currentPenalty;
         bool haveReset;
-        string tmpName;
-
-        int[] mask8BitSet = { 128, 64, 32, 16, 8, 4, 2, 1 };
 
         private D2Player player;
 
@@ -119,21 +125,6 @@ namespace DiabloInterface
             }
         }
 
-        private byte reverseBits(byte b)
-        {
-            return (byte)(((b * 0x80200802ul) & 0x0884422110ul) * 0x0101010101ul >> 32);
-        }
-
-        private bool isNthBitSet(short c, int n)
-        {
-            if (n >= 8)
-            {
-                c = (short)((int)c >> 8);
-                n -= 8;
-            }
-            return ((c & mask8BitSet[n]) != 0);
-        }
-
         public void readDataThreadFunc()
         {
             while (!disposed)
@@ -153,7 +144,7 @@ namespace DiabloInterface
 
                 try
                 {
-                    readData();
+                    ProcessGameData();
                 }
                 catch (Exception e)
                 {
@@ -165,21 +156,64 @@ namespace DiabloInterface
             }
         }
 
-        public void readData()
+        GameInfo GetGameInfo()
         {
-            // Make sure there is a player before continuing.
-            IntPtr characterUnitAddress = reader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
-            if (characterUnitAddress == IntPtr.Zero)
-                return;
+            if (!memory.SupportsGameReading)
+                return null;
 
-            var playerUnit = reader.Read<D2Unit>(characterUnitAddress);
-            var playerData = reader.Read<D2PlayerData>(playerUnit.pUnitData);
+            uint gameId = reader.ReadUInt32(memory.Address.GameId, AddressingMode.Relative);
+            IntPtr worldPointer = reader.ReadAddress32(memory.Address.World, AddressingMode.Relative);
 
-            // get name
-            tmpName = playerData.szPlayerName;
-            if (tmpName != "" && tmpName != player.name)
+            // Get world if game is loaded.
+            if (worldPointer == IntPtr.Zero) return null;
+            D2World world = reader.Read<D2World>(worldPointer);
+
+            // Find the game address.
+            uint gameIndex = gameId & world.GameMask;
+            uint gameOffset = gameIndex * 0x0C + 0x08;
+            IntPtr gamePointer = reader.ReadAddress32(world.GameBuffer + gameOffset);
+
+            // Check for invalid pointers, this value can actually be negative during transition
+            // screens, so we need to reinterpret the pointer as a signed integer.
+            if (unchecked((int)gamePointer.ToInt64()) < 0)
+                return null;
+
+            try
             {
-                player.name = tmpName;
+                D2Game game = reader.Read<D2Game>(gamePointer);
+                if (game.Client.IsNull) return null;
+                D2Client client = reader.Read<D2Client>(game.Client);
+
+                // Make sure we are reading a player type.
+                if (client.UnitType != 0) return null;
+
+                // Get the player address from the list of units.
+                DataPointer unitAddress = game.UnitLists[0][client.UnitId & 0x7F];
+                if (unitAddress.IsNull) return null;
+
+                // Read player with player data.
+                var player = reader.Read<D2Unit>(unitAddress);
+                var playerData = player.UnitData.IsNull ?
+                    null : reader.Read<D2PlayerData>(player.UnitData);
+
+                return new GameInfo(game, player, playerData);
+            }
+            catch (ProcessMemoryReadException)
+            {
+                return null;
+            }
+        }
+
+        public void ProcessGameData()
+        {
+            // Make sure the game is loaded.
+            var gameInfo = GetGameInfo();
+            if (gameInfo == null) return;
+
+            // Check if the player has changed.
+            if (gameInfo.PlayerData.PlayerName != player.name)
+            {
+                player.name = gameInfo.PlayerData.PlayerName;
                 player.Deaths = 0; // reset the deaths if name changed
                 foreach (AutoSplit autosplit in main.settings.autosplits)
                 {
@@ -189,47 +223,14 @@ namespace DiabloInterface
                 player.IsRecentlyStarted = false;
                 return;
             }
-
-            // todo: only read difficulty when it could possibly have changed
-            difficulty = reader.ReadByte(memory.Address.Difficulty, AddressingMode.Relative);
-            if (difficulty < 0 || difficulty > 2)
-            {
-                difficulty = 0;
-            }
-            switch (difficulty)
-            {
-                case 2: currentPenalty = D2Data.Penalty.HELL; break;
-                case 1: currentPenalty = D2Data.Penalty.NIGHTMARE; break;
-                case 0:
-                default: currentPenalty = D2Data.Penalty.NORMAL; break;
-            }
-            var tmpPenalty = currentPenalty;
-
-            // debug window - quests
-            if (main.getDebugWindow() != null)
-            {
-                // read quests for debug window
-                IntPtr questDataAddress = IntPtr.Zero;
-                
-                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 0;
-                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                main.getDebugWindow().setQuestDataNormal(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
-                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 1;
-                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                main.getDebugWindow().setQuestDataNightmare(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
-                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * 2;
-                questDataAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                main.getDebugWindow().setQuestDataHell(reader.Read(questDataAddress, QUEST_BUFFER_LENGTH));
-
-                // read items for debug window
-                main.getDebugWindow().UpdateItemStats(reader, memory, playerUnit);
-            }
+			
+            UpdateDebugWindow(gameInfo);
 
             UnitReader unitReader = new UnitReader(reader, memory.Address);
-            var statsMap = unitReader.GetStatsMap(playerUnit);
+            var statsMap = unitReader.GetStatsMap(gameInfo.Player);
 
-            player.ParseStats(statsMap, tmpPenalty);
-            player.UpdateMode((D2Data.Mode)playerUnit.eMode);
+            player.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
+            player.ParseStats(statsMap, gameInfo.Game.Difficulty);
             if (haveReset)
             {
                 player.IsRecentlyStarted = (player.Experience == 0 && player.Level == 1);
@@ -242,13 +243,59 @@ namespace DiabloInterface
             // autosplits only if newly started player
             if (player.IsRecentlyStarted)
             {
-                doAutoSplits();
+                UpdateAutoSplits(gameInfo);
             }
         }
 
-        private void doAutoSplits()
+        void UpdateDebugWindow(GameInfo gameInfo)
         {
+            var debugWindow = main.getDebugWindow();
+            if (debugWindow == null) return;
 
+            // Fill in quest data.
+            for (int difficulty = 0; difficulty < gameInfo.PlayerData.Quests.Length; ++difficulty)
+            {
+                ushort[] questBuffer = GetQuestBuffer(gameInfo.PlayerData, difficulty);
+                if (questBuffer != null)
+                {
+                    debugWindow.UpdateQuestData(questBuffer, difficulty);
+                }
+            }
+
+            debugWindow.UpdateItemStats(reader, memory, gameInfo.Player);
+        }
+
+        ushort[] GetQuestBuffer(D2PlayerData playerData, int difficulty)
+        {
+            if (difficulty < 0 || difficulty >= playerData.Quests.Length)
+                return null;
+            if (playerData.Quests[difficulty].IsNull)
+                return null;
+
+            // Read quest array as an array of 16 bit values.
+            D2QuestArray questArray = reader.Read<D2QuestArray>(playerData.Quests[difficulty]);
+            byte[] questBytes = reader.Read(questArray.Buffer, questArray.Length);
+            ushort[] questBuffer = new ushort[(questBytes.Length + 1) / 2];
+            Buffer.BlockCopy(questBytes, 0, questBuffer, 0, questBytes.Length);
+
+            return questBuffer;
+        }
+
+        bool IsQuestCompleted(GameInfo gameInfo, int questId)
+        {
+            ushort[] questBuffer = GetQuestBuffer(gameInfo.PlayerData, gameInfo.Game.Difficulty);
+            if (questBuffer == null) return false;
+
+            if (questId < 0 || questId >= questBuffer.Length)
+                return false;
+
+            // Make sure one of the completions bits are set.
+            ushort questCompletionBits = (1 << 0) | (1 << 1);
+            return (questBuffer[questId] & questCompletionBits) != 0;
+        }
+
+        private void UpdateAutoSplits(GameInfo gameInfo)
+        {
             foreach (AutoSplit autosplit in main.settings.autosplits)
             {
                 if (!autosplit.reached && autosplit.type == AutoSplit.Type.Special && autosplit.value == (int)AutoSplit.Special.GAMESTART)
@@ -265,7 +312,7 @@ namespace DiabloInterface
 
             foreach (AutoSplit autosplit in main.settings.autosplits)
             {
-                if (autosplit.reached || autosplit.difficulty != difficulty)
+                if (autosplit.reached || autosplit.difficulty != gameInfo.Game.Difficulty)
                 {
                     continue;
                 }
@@ -294,7 +341,6 @@ namespace DiabloInterface
 
             List<int> itemsIds = new List<int>();
             int area = -1;
-            byte[] questBuffer = new byte[] { };
 
             if (haveUnreachedItemSplits)
             {
@@ -309,17 +355,9 @@ namespace DiabloInterface
                 area = reader.ReadByte(memory.Address.Area, AddressingMode.Relative);
             }
 
-            if (haveUnreachedQuestSplits)
-            {
-                memory.Offset.Quests[memory.Offset.Quests.Length - 1] = QUEST_BUFFER_DIFFICULTY_OFFSET * difficulty;
-                
-                var questBufferAddress = reader.ResolveAddressPath(memory.Address.Quests, memory.Offset.Quests, AddressingMode.Relative);
-                questBuffer = reader.Read(questBufferAddress, QUEST_BUFFER_LENGTH);
-            }
-
             foreach (AutoSplit autosplit in main.settings.autosplits)
             {
-                if (autosplit.reached || autosplit.difficulty != difficulty)
+                if (autosplit.reached || autosplit.difficulty != gameInfo.Game.Difficulty)
                 {
                     continue;
                 }
@@ -348,20 +386,15 @@ namespace DiabloInterface
                         }
                         break;
                     case AutoSplit.Type.Quest:
-                        if (questBuffer.Length > autosplit.value+1)
+                        if (IsQuestCompleted(gameInfo, autosplit.value >> 1))
                         {
-                            short value = BitConverter.ToInt16(new byte[2] { reverseBits(questBuffer[autosplit.value]), reverseBits(questBuffer[autosplit.value + 1]), }, 0);
-                            if (isNthBitSet(value, 1) || isNthBitSet(value, 0))
-                            {
-                                // quest finished
-                                autosplit.reached = true;
-                                main.triggerAutosplit(player);
-                            }
+                            // quest finished
+                            autosplit.reached = true;
+                            main.triggerAutosplit(player);
                         }
                         break;
                 }
             }
-
         }
     }
 }

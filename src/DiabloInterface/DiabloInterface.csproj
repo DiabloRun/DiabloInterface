@@ -85,6 +85,8 @@
     <Compile Include="D2\Readers\StringLookupTable.cs" />
     <Compile Include="D2\Readers\InventoryReader.cs" />
     <Compile Include="D2\Struct\D2CharacterStats.cs" />
+    <Compile Include="D2\Struct\D2Client.cs" />
+    <Compile Include="D2\Struct\D2Game.cs" />
     <Compile Include="D2\Struct\D2GlobalData.cs" />
     <Compile Include="D2\Struct\D2ItemModifier.cs" />
     <Compile Include="D2\D2MemoryTable.cs" />
@@ -101,6 +103,8 @@
     <Compile Include="D2\Struct\D2SetItemDescription.cs" />
     <Compile Include="D2\Struct\D2Skill.cs" />
     <Compile Include="D2\Struct\D2SkillData.cs" />
+    <Compile Include="D2\Struct\D2World.cs" />
+    <Compile Include="D2\Struct\ExpectOffsetAttribute.cs" />
     <Compile Include="D2\Struct\StatIdentifier.cs" />
     <Compile Include="D2\Struct\D2StatList.cs" />
     <Compile Include="D2\Struct\D2StatListEx.cs" />

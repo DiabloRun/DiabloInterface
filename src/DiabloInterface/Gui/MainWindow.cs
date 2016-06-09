@@ -71,17 +71,17 @@ namespace DiabloInterface
             {
                 case "1.14b":
                     memoryTable.Address.PlayerUnit  = new IntPtr(0x0039DEFC);
-                    memoryTable.Address.Quests      = new IntPtr(0x003B8E54);
-                    memoryTable.Address.Difficulty  = new IntPtr(0x00398694);
                     memoryTable.Address.Area        = new IntPtr(0x0039B1C8);
                     break;
                 case "1.14c":
+                    memoryTable.SupportsGameReading = true;
+					memoryTable.SupportsItemReading = true;
+
+                    memoryTable.Address.World       = new IntPtr(0x0047ACC0);
+                    memoryTable.Address.GameId      = new IntPtr(0x00479C94);
                     memoryTable.Address.PlayerUnit  = new IntPtr(0x0039CEFC);//(0x39DAF8);
-                    memoryTable.Address.Quests      = new IntPtr(0x003B7E54);
-                    memoryTable.Address.Difficulty  = new IntPtr(0x00397694);
                     memoryTable.Address.Area        = new IntPtr(0x0039A1C8);
 
-                    memoryTable.SupportsItemReading = true;
                     memoryTable.Address.GlobalData                  = new IntPtr(0x33FD78);
                     memoryTable.Address.LowQualityItems             = new IntPtr(0x563BE0);
                     memoryTable.Address.ItemDescriptions            = new IntPtr(0x5639E0);
@@ -100,17 +100,15 @@ namespace DiabloInterface
                 default:
                     var off = 0x8f78;
                     memoryTable.Address.PlayerUnit = new IntPtr(0x0039CEFC + off);
-                    memoryTable.Address.Quests = new IntPtr(0x003B7E54 + off);
-                    memoryTable.Address.Difficulty = new IntPtr(0x00397694 + off);
                     memoryTable.Address.Area = new IntPtr(0x0039A1C8 + off);
-                    
+
                     memoryTable.SupportsItemReading = true;
                     memoryTable.Address.GlobalData = new IntPtr(0x344304);
                     memoryTable.Address.LowQualityItems = new IntPtr(0x56CC58);
                     memoryTable.Address.ItemDescriptions = new IntPtr(0x56CA58);
                     memoryTable.Address.MagicModifierTable = new IntPtr(0x56CA7C);
                     memoryTable.Address.RareModifierTable = new IntPtr(0x56CAA0);
-                    
+
                     off = 0x4829b4 - 0x479A3C; // 0x4829b4 = new adress
                     memoryTable.Address.StringIndexerTable = new IntPtr(0x479A3C+ off);
                     memoryTable.Address.StringAddressTable = new IntPtr(0x479A40 + off);
@@ -136,10 +134,7 @@ namespace DiabloInterface
                 dataReader = new D2DataReader(this, memoryTable);
                 itemServer = new ItemServer(dataReader, "DiabloInterfaceItems");
             }
-            if (!dataReader.checkIfD2Running())
-            {
-                MessageBox.Show("Unable to initialize. Run with admin rights + make sure diablo 2 is running.");
-            }
+
             if (dataReaderThread == null)
             {
                 dataReaderThread = new Thread(dataReader.readDataThreadFunc);

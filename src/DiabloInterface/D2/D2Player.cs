@@ -41,8 +41,12 @@ namespace DiabloInterface
         /// </summary>
         /// <param name="dict"></param>
         /// <param name="resistancPenalty"></param>
-        public void ParseStats(Dictionary<StatIdentifier, D2Stat> data, D2Data.Penalty resistancPenalty)
+        public void ParseStats(Dictionary<StatIdentifier, D2Stat> data, int gameDifficulty)
         {
+            // Don't update stats while dead.
+            if (IsDead) return;
+
+            int penalty = GetResistancePenalty(gameDifficulty);
             Func<StatIdentifier, int> getStat = statID =>
             {
                 D2Stat stat;
@@ -60,7 +64,6 @@ namespace DiabloInterface
 
             Defense = getStat(StatIdentifier.Defense);
 
-            int penalty = (int)resistancPenalty;
             int maxFire = BASE_MAX_RESIST + getStat(StatIdentifier.ResistFireMax);
             int maxCold = BASE_MAX_RESIST + getStat(StatIdentifier.ResistColdMax);
             int maxLightning = BASE_MAX_RESIST + getStat(StatIdentifier.ResistLightningMax);
@@ -74,7 +77,17 @@ namespace DiabloInterface
             Gold = getStat(StatIdentifier.Gold);
             GoldStash = getStat(StatIdentifier.GoldStash);
         }
-        
+
+        private int GetResistancePenalty(int gameDifficulty)
+        {
+            switch (gameDifficulty)
+            {
+                case 1: return -40;
+                case 2: return -100;
+                default: return 0;
+            }
+        }
+
         public void UpdateMode(D2Data.Mode mode)
         {
             Mode = mode;

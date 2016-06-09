@@ -493,15 +493,15 @@ namespace DiabloInterface.D2.Readers
         public D2ItemData GetItemData(D2Unit item)
         {
             if (!IsValidItem(item)) return null;
-            if (item.pUnitData.IsNull) return null;
+            if (item.UnitData.IsNull) return null;
 
             D2ItemData itemData;
-            if (cachedItemData.TryGetValue(item.pUnitData, out itemData))
+            if (cachedItemData.TryGetValue(item.UnitData, out itemData))
                 return itemData;
 
             // Item data not cached, read from memory.
-            itemData = reader.Read<D2ItemData>(item.pUnitData);
-            cachedItemData[item.pUnitData] = itemData;
+            itemData = reader.Read<D2ItemData>(item.UnitData);
+            cachedItemData[item.UnitData] = itemData;
             return itemData;
         }
 

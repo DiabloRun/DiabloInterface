@@ -4,8 +4,8 @@ namespace DiabloInterface
 {
     public class D2MemoryAddressTable
     {
-        public IntPtr Quests;
-        public IntPtr Difficulty;
+        public IntPtr World;
+        public IntPtr GameId;
         public IntPtr Area;
         public IntPtr ItemDescriptions;
         public IntPtr MagicModifierTable;
@@ -30,6 +30,7 @@ namespace DiabloInterface
 
     public class D2MemoryTable
     {
+        public bool SupportsGameReading;
         public bool SupportsItemReading;
 
         public D2MemoryAddressTable Address = new D2MemoryAddressTable();

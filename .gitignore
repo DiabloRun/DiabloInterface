@@ -7,6 +7,9 @@
 /src/.vs
 /src/DiabloInterface/DiabloInterface.csproj.user
 
+/src/tests/bin
+/src/tests/obj
+
 # Recommended ignores for Visual Studio NuGet
 *.nupkg
 **/packages/*

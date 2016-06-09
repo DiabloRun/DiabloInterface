@@ -21,7 +21,7 @@ namespace DiabloInterface.D2.Struct
         public int pMempool;        // 0x08
         public int GUID;            // 0x0C
         public int eMode;           // 0x10
-        public DataPointer pUnitData; // 0x14
+        public DataPointer UnitData; // 0x14
         public byte actNo;          // 0x18
         public byte __unknown1;     // 0x19
         public byte __unknown2;     // 0x1A

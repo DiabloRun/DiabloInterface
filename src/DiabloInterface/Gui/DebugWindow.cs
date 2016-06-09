@@ -39,26 +39,8 @@ namespace DiabloInterface
             //MinimizeBox = false;
             //MaximizeBox = false;
         }
-        private byte reverseBits(byte b)
-        {
-            return (byte)(((b * 0x80200802ul) & 0x0884422110ul) * 0x0101010101ul >> 32);
-        }
 
-        public void setQuestDataNormal(byte[] questBuffer)
-        {
-            setQuestData(questBuffer, 0);
-        }
-
-        public void setQuestDataNightmare(byte[] questBuffer)
-        {
-            setQuestData(questBuffer, 1);
-        }
-
-        public void setQuestDataHell(byte[] questBuffer)
-        {
-            setQuestData(questBuffer, 2);
-        }
-        public void setQuestData(byte[] questBuffer, int difficulty)
+        public void UpdateQuestData(ushort[] questBuffer, int difficulty)
         {
             Label[,,] bitlabels;
             switch (difficulty)
@@ -72,15 +54,16 @@ namespace DiabloInterface
                     bitlabels = questBits; break;
             }
 
-            short value;
+            ushort value;
             int act, quest;
-            for (int i = 0; i < questBuffer.Length - 1; i += 2)
+            for (int i = 0; i < questBuffer.Length; i++)
             {
-                value = BitConverter.ToInt16(new byte[2] { reverseBits(questBuffer[i]), reverseBits(questBuffer[i + 1]), }, 0);
-                switch ((D2Data.Quest)i)
+                value = questBuffer[i];
+
+                switch ((D2Data.Quest)(i << 1))
                 {
                     case D2Data.Quest.A1Q1:
-                        act = 1;quest = 1;
+                        act = 1; quest = 1;
                         break;
                     case D2Data.Quest.A1Q2:
                         act = 1; quest = 2;
@@ -170,13 +153,13 @@ namespace DiabloInterface
                         quest = 0;
                         break;
                 }
+
                 if (act > 0 && quest > 0)
                 {
                     for ( int x = 0; x < 16; x++ )
                     {
-
-                        bitlabels[act - 1, quest - 1, x].Invoke(new Action(delegate () {
-                            if (isNthBitSet(value, x))
+                        bitlabels[act - 1, quest - 1, x].Invoke(new Action(() => {
+                            if (IsBitSet(value, x))
                             {
                                 if (bitlabels[act - 1, quest - 1, x].BackColor != Color.GreenYellow)
                                 {
@@ -205,15 +188,10 @@ namespace DiabloInterface
                 y += 16;
             }
         }
-        private bool isNthBitSet(short c, int n)
+
+        private bool IsBitSet(ushort value, int bit)
         {
-            int[] mask = { 128, 64, 32, 16, 8, 4, 2, 1 };
-            if (n >= 8)
-            {
-                c = (short)((int)c >> 8);
-                n -= 8;
-            }
-            return ((c & mask[n]) != 0);
+            return (value & (1 << bit)) != 0;
         }
 
         private void DebugWindow_Load(object sender, EventArgs e)
@@ -319,7 +297,7 @@ namespace DiabloInterface
         {
             InventoryReader inventoryReader = new InventoryReader(r, memory);
             UnitReader unitReader = new UnitReader(r, memory.Address);
-            
+
 
             // Build filter to get only equipped items.
             Func<D2ItemData, bool> filter = data => data.BodyLoc != BodyLocation.None;
@@ -341,7 +319,7 @@ namespace DiabloInterface
                 }
 
                 Control c = null;
-                D2ItemData itemData = r.Read<D2ItemData>(item.pUnitData);
+                D2ItemData itemData = r.Read<D2ItemData>(item.UnitData);
                 switch (itemData.BodyLoc)
                 {
                     case BodyLocation.Head: c = tabPageHead; break;

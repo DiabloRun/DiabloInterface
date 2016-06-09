@@ -20,8 +20,8 @@ namespace DiabloInterface
 
     public class ProcessMemoryReadException : Exception
     {
-        public ProcessMemoryReadException(uint address) :
-            base(string.Format("Failed to read memory at: 0x{0:X}", address))
+        public ProcessMemoryReadException(IntPtr address) :
+            base(string.Format("Failed to read memory at: 0x{0:X8}", address.ToInt64()))
         { }
     }
 
@@ -136,7 +136,7 @@ namespace DiabloInterface
 
             // Make sure we read successfully.
             if (!success || bytesRead != (uint)data.Length)
-                throw new ProcessMemoryReadException((uint)address);
+                throw new ProcessMemoryReadException(address);
             return data;
         }
 

@@ -1,18 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
 namespace DiabloInterface.D2.Struct
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct D2PlayerData
+    struct D2QuestArray
     {
-        #region structure (sizeof = 0x10)
+#pragma warning disable 0649
+        public DataPointer Buffer;
+        public int Length;
+#pragma warning restore 0649
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    class D2PlayerData
+    {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
-        public string szPlayerName;     // 0x00
-        #endregion
+        [ExpectOffset(0x00)] public string PlayerName;
+        [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 3)]
+        [ExpectOffset(0x10)] public DataPointer[] Quests;
+        [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 3)]
+        [ExpectOffset(0x1C)] public DataPointer[] Waypoints;
+        // Struct is bigger but rest is not needed.
     }
 }
