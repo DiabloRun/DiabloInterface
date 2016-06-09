@@ -62,7 +62,6 @@ namespace DiabloInterface
         private D2MemoryTable GetVersionMemoryTable(string version)
         {
             D2MemoryTable memoryTable = new D2MemoryTable();
-            memoryTable.SupportsItemReading = false;
 
             // Offsets are the same for all versions so far.
             memoryTable.Offset.Quests = new int[] { 0x264, 0x450, 0x20, 0x00 };
@@ -70,9 +69,6 @@ namespace DiabloInterface
             switch (version)
             {
                 case "1.14c":
-                    memoryTable.SupportsGameReading = true;
-					memoryTable.SupportsItemReading = true;
-
                     memoryTable.Address.World       = new IntPtr(0x0047ACC0);
                     memoryTable.Address.GameId      = new IntPtr(0x00479C94);
                     memoryTable.Address.PlayerUnit  = new IntPtr(0x0039CEFC);//(0x39DAF8);
@@ -95,10 +91,12 @@ namespace DiabloInterface
                 case "1.14d":
                 default:
                     var off = 0x8f78;
-                    memoryTable.Address.PlayerUnit = new IntPtr(0x0039CEFC + off);
-                    memoryTable.Address.Area = new IntPtr(0x0039A1C8 + off);
 
-                    memoryTable.SupportsItemReading = true;
+                    memoryTable.Address.World       = new IntPtr(0x00483D38);
+                    memoryTable.Address.GameId      = new IntPtr(0x00482D0C);
+                    memoryTable.Address.PlayerUnit  = new IntPtr(0x0039CEFC + off);
+                    memoryTable.Address.Area        = new IntPtr(0x0039A1C8 + off);
+
                     memoryTable.Address.GlobalData = new IntPtr(0x344304);
                     memoryTable.Address.LowQualityItems = new IntPtr(0x56CC58);
                     memoryTable.Address.ItemDescriptions = new IntPtr(0x56CA58);

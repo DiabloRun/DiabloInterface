@@ -109,9 +109,6 @@ namespace DiabloInterface
 
         public void ItemSlotAction(List<BodyLocation> slots, Action<ItemReader, D2Unit> action)
         {
-            if (!memory.SupportsItemReading)
-                return;
-
             var inventoryReader = new InventoryReader(reader, memory);
 
             // Add all items found in the slots.
@@ -158,9 +155,6 @@ namespace DiabloInterface
 
         GameInfo GetGameInfo()
         {
-            if (!memory.SupportsGameReading)
-                return null;
-
             uint gameId = reader.ReadUInt32(memory.Address.GameId, AddressingMode.Relative);
             IntPtr worldPointer = reader.ReadAddress32(memory.Address.World, AddressingMode.Relative);
 
@@ -223,7 +217,7 @@ namespace DiabloInterface
                 player.IsRecentlyStarted = false;
                 return;
             }
-			
+
             UpdateDebugWindow(gameInfo);
 
             UnitReader unitReader = new UnitReader(reader, memory.Address);
