@@ -22,8 +22,12 @@ namespace DiabloInterface
             this.chkAutosplit.Checked = main.settings.doAutosplit;
             this.txtAutoSplitHotkey.Text = main.settings.triggerKeys;
             this.chkShowDebug.Checked = main.settings.showDebug;
-            this.cmbVersion.SelectedIndex = 0;
-            
+
+            // Show the selected diablo version.
+            int versionIndex = this.cmbVersion.FindString(main.settings.d2Version);
+            if (versionIndex < 0) versionIndex = 0;
+            this.cmbVersion.SelectedIndex = versionIndex;
+
             foreach (AutoSplit a in main.settings.autosplits)
             {
                 addAutosplit(a, false);
@@ -110,7 +114,7 @@ namespace DiabloInterface
                     c.Location = new Point(0, -scroll + i * 24);
                 }
             }
-                
+
         }
 
         private void BtnRemove_Click(object sender, EventArgs e)
@@ -119,7 +123,7 @@ namespace DiabloInterface
             AutoSplit a = (AutoSplit)b.Tag;
             a.deleted = true;
         }
-        
+
         private void txtAutoSplitHotkey_KeyDown(object sender, KeyEventArgs e)
         {
             e.Handled = true;

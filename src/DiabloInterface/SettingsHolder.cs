@@ -29,12 +29,12 @@ namespace DiabloInterface
             confString += "DoAutosplit: " + (doAutosplit ? "1" : "0") + "\n";
             confString += "ShowDebug: " + (showDebug ? "1" : "0") + "\n";
             confString += "TriggerKeys: " + triggerKeys + "\n";
-            confString += "D2Version:" + d2Version + "\n";
+            confString += "D2Version: " + d2Version + "\n";
             foreach (AutoSplit autosplit in autosplits)
             {
                 confString += "AutoSplit: " + autosplit.name.Replace('|', ' ') + "|"+ (int)autosplit.type + "|" + autosplit.value + "|" + autosplit.difficulty + "\n";
             }
-            
+
             File.WriteAllText("settings.conf", confString);
         }
         public void load()

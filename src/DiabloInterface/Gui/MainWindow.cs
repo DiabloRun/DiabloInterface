@@ -69,10 +69,6 @@ namespace DiabloInterface
 
             switch (version)
             {
-                case "1.14b":
-                    memoryTable.Address.PlayerUnit  = new IntPtr(0x0039DEFC);
-                    memoryTable.Address.Area        = new IntPtr(0x0039B1C8);
-                    break;
                 case "1.14c":
                     memoryTable.SupportsGameReading = true;
 					memoryTable.SupportsItemReading = true;

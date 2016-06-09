@@ -436,8 +436,7 @@
             this.cmbVersion.FormattingEnabled = true;
             this.cmbVersion.Items.AddRange(new object[] {
             "1.14d",
-            "1.14c",
-            "1.14b"});
+            "1.14c"});
             this.cmbVersion.Location = new System.Drawing.Point(90, 17);
             this.cmbVersion.Name = "cmbVersion";
             this.cmbVersion.Size = new System.Drawing.Size(53, 21);
