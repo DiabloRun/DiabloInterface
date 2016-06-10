@@ -249,7 +249,7 @@ namespace DiabloInterface
             if (characters.TryGetValue(playerName, out character))
             {
                 // We were just in the title screen and came back to a new character.
-                bool ResetOnBeginning = wasInTitleScreen && character.Experience == 0;
+                bool ResetOnBeginning = wasInTitleScreen && experience == 0;
 
                 // If we lost experience on level 1 we have a reset. Level 1 check is important or
                 // this might think we reset when losing experience in nightmare or hell after dying.
