@@ -285,6 +285,11 @@ namespace DiabloInterface
 
             // Make sure one of the completions bits are set.
             ushort questCompletionBits = (1 << 0) | (1 << 1);
+
+            // Use the "Duriel Killed" for the duriel quest.
+            if ((questId << 1) == (int)D2Data.Quest.A2Q6)
+                questCompletionBits = (1 << 5);
+
             return (questBuffer[questId] & questCompletionBits) != 0;
         }
 

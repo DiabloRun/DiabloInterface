@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Linq;
 using WindowsInput;
 using WindowsInput.Native;
 
@@ -127,7 +128,34 @@ namespace DiabloInterface
                 return;
             }
 
+            // Unpress untanted modifier keys, the user have to repress them.
+            var invalidModifiers = BuildInvalidModifiers(modifiers);
+            foreach (var modifier in invalidModifiers)
+                Simulator.Keyboard.KeyUp(modifier);
+
+            // Trigger split.
             Simulator.Keyboard.ModifiedKeyStroke(modifiers, key);
+        }
+
+        static IEnumerable<VirtualKeyCode> BuildInvalidModifiers(List<VirtualKeyCode> keys)
+        {
+            List<VirtualKeyCode> modifiers = new List<VirtualKeyCode>() {
+                VirtualKeyCode.CONTROL,
+                VirtualKeyCode.MENU
+            };
+
+            List<VirtualKeyCode> invalidModifiers = new List<VirtualKeyCode>();
+            foreach (VirtualKeyCode modifier in modifiers)
+            {
+                if (keys.Contains(modifier))
+                    continue;
+
+                // Modifier is down, but our hotkey doesn't have the modifier.
+                if (Simulator.InputDeviceState.IsHardwareKeyDown(modifier))
+                    invalidModifiers.Add(modifier);
+            }
+
+            return invalidModifiers;
         }
     }
 }
