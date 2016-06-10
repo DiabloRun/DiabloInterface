@@ -147,7 +147,7 @@ namespace DiabloInterface
             }
         }
 
-        public void updateLabels ( D2Player player )
+        public void updateLabels ( Character player )
         {
             nameLabel.Invoke(new Action(delegate () { nameLabel.Text = player.name; })); // name
             lvlLabel.Invoke(new Action(delegate () { lvlLabel.Text = "LVL: " + player.Level ; })); // level
@@ -163,15 +163,15 @@ namespace DiabloInterface
             deathsLabel.Invoke(new Action(delegate () { deathsLabel.Text = "DEATHS: " + player.Deaths; }));
         }
 
-        public void triggerAutosplit(D2Player player)
+        public void triggerAutosplit(Character player)
         {
-            if (player.IsRecentlyStarted && settings.doAutosplit && settings.triggerKeys != "")
+            if (settings.doAutosplit && settings.triggerKeys != "")
             {
                 KeyManager.sendKeys(settings.triggerKeys);
             }
         }
 
-        public void writeFiles(D2Player player)
+        public void writeFiles(Character player)
         {
 
             // todo: only write files if content changed

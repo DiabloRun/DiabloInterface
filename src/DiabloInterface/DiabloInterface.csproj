@@ -120,7 +120,7 @@
     </Compile>
     <Compile Include="D2\D2Data.cs" />
     <Compile Include="D2\D2DataReader.cs" />
-    <Compile Include="D2\D2Player.cs" />
+    <Compile Include="D2\Character.cs" />
     <Compile Include="Gui\DebugWindow.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace DiabloInterface
 {
-    public class D2Player
+    public class Character
     {
         const int BASE_MAX_RESIST = 75;
 
@@ -13,8 +13,6 @@ namespace DiabloInterface
         public D2Data.Mode Mode { get; private set; }
 
         public bool IsDead { get; private set; }
-
-        public bool IsRecentlyStarted = false; // if true, the char has been created since tool is running. (eligable for autosplits)
 
         public int Level { get; private set; }
         public int Experience { get; private set; }

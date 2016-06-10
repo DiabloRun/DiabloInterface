@@ -34,16 +34,16 @@ namespace DiabloInterface
         D2MemoryTable memory;
         D2MemoryTable nextMemoryTable;
 
-        bool haveReset;
-
-        private D2Player player;
+        bool wasInTitleScreen = false;
+        Character activeCharacter = null;
+        Dictionary<string, Character> characters;
 
         public D2DataReader(MainWindow main, D2MemoryTable memory)
         {
             this.main = main;
             this.memory = memory;
 
-            player = new D2Player();
+            characters = new Dictionary<string, Character>();
         }
 
         #region Disposable
@@ -202,42 +202,95 @@ namespace DiabloInterface
         {
             // Make sure the game is loaded.
             var gameInfo = GetGameInfo();
-            if (gameInfo == null) return;
-
-            // Check if the player has changed.
-            if (gameInfo.PlayerData.PlayerName != player.name)
+            if (gameInfo == null)
             {
-                player.name = gameInfo.PlayerData.PlayerName;
-                player.Deaths = 0; // reset the deaths if name changed
-                foreach (AutoSplit autosplit in main.settings.autosplits)
-                {
-                    autosplit.reached = false;
-                }
-                haveReset = true;
-                player.IsRecentlyStarted = false;
+                wasInTitleScreen = true;
                 return;
             }
 
             UpdateDebugWindow(gameInfo);
 
+            // Get associated character data.
+            Character character = GetCurrentCharacter(gameInfo);
             UnitReader unitReader = new UnitReader(reader, memory.Address);
             var statsMap = unitReader.GetStatsMap(gameInfo.Player);
 
-            player.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
-            player.ParseStats(statsMap, gameInfo.Game.Difficulty);
-            if (haveReset)
+            // Update character data.
+            character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
+            character.ParseStats(statsMap, gameInfo.Game.Difficulty);
+
+            // Update UI.
+            main.updateLabels(character);
+            main.writeFiles(character);
+
+            // Update autosplits only if enabled and the character was a freshly started character.
+            if (IsAutosplitCharacter(character) && main.settings.doAutosplit)
             {
-                player.IsRecentlyStarted = (player.Experience == 0 && player.Level == 1);
-                haveReset = false;
+                UpdateAutoSplits(gameInfo, character);
+            }
+        }
+
+        bool IsAutosplitCharacter(Character character)
+        {
+            return activeCharacter == character;
+        }
+
+        Character GetCurrentCharacter(GameInfo gameInfo)
+        {
+            string playerName = gameInfo.PlayerData.PlayerName;
+
+            // Read character stats.
+            UnitReader unitReader = new UnitReader(reader, memory.Address);
+            int level = unitReader.GetStatValue(gameInfo.Player, StatIdentifier.Level) ?? 0;
+            int experience = unitReader.GetStatValue(gameInfo.Player, StatIdentifier.Experience) ?? 0;
+
+            // We encountered this character name before.
+            Character character = null;
+            if (characters.TryGetValue(playerName, out character))
+            {
+                // We were just in the title screen and came back to a new character.
+                bool ResetOnBeginning = wasInTitleScreen && character.Experience == 0;
+
+                // If we lost experience on level 1 we have a reset. Level 1 check is important or
+                // this might think we reset when losing experience in nightmare or hell after dying.
+                bool ResetOnLevelOne = character.Level == 1 && experience < character.Experience;
+
+                // Check for reset with same character name.
+                if (ResetOnBeginning || ResetOnLevelOne || level < character.Level)
+                {
+                    // Recreate character.
+                    characters.Remove(playerName);
+                    character = null;
+                }
             }
 
-            main.updateLabels(player);
-            main.writeFiles(player);
-
-            // autosplits only if newly started player
-            if (player.IsRecentlyStarted)
+            // If this character has not been read before, or if the character was reset
+            // with the same name as a previous character.
+            if (character == null)
             {
-                UpdateAutoSplits(gameInfo);
+                character = new Character();
+                character.name = playerName;
+                characters[playerName] = character;
+
+                // A brand new character has been started.
+                if (experience == 0 && level == 1)
+                {
+                    activeCharacter = character;
+                    ResetAutosplits();
+                }
+            }
+
+            // Not in title screen anymore.
+            wasInTitleScreen = false;
+
+            return character;
+        }
+
+        void ResetAutosplits()
+        {
+            foreach (AutoSplit autosplit in main.settings.autosplits)
+            {
+                autosplit.reached = false;
             }
         }
 
@@ -293,14 +346,14 @@ namespace DiabloInterface
             return (questBuffer[questId] & questCompletionBits) != 0;
         }
 
-        private void UpdateAutoSplits(GameInfo gameInfo)
+        private void UpdateAutoSplits(GameInfo gameInfo, Character character)
         {
             foreach (AutoSplit autosplit in main.settings.autosplits)
             {
                 if (!autosplit.reached && autosplit.type == AutoSplit.Type.Special && autosplit.value == (int)AutoSplit.Special.GAMESTART)
                 {
                     autosplit.reached = true;
-                    main.triggerAutosplit(player);
+                    main.triggerAutosplit(character);
                 }
             }
 
@@ -364,24 +417,24 @@ namespace DiabloInterface
                 switch (autosplit.type)
                 {
                     case AutoSplit.Type.CharLevel:
-                        if (autosplit.value <= player.Level)
+                        if (autosplit.value <= character.Level)
                         {
                             autosplit.reached = true;
-                            main.triggerAutosplit(player);
+                            main.triggerAutosplit(character);
                         }
                         break;
                     case AutoSplit.Type.Area:
                         if (autosplit.value == area)
                         {
                             autosplit.reached = true;
-                            main.triggerAutosplit(player);
+                            main.triggerAutosplit(character);
                         }
                         break;
                     case AutoSplit.Type.Item:
                         if (itemsIds.Contains(autosplit.value))
                         {
                             autosplit.reached = true;
-                            main.triggerAutosplit(player);
+                            main.triggerAutosplit(character);
                         }
                         break;
                     case AutoSplit.Type.Quest:
@@ -389,7 +442,7 @@ namespace DiabloInterface
                         {
                             // quest finished
                             autosplit.reached = true;
-                            main.triggerAutosplit(player);
+                            main.triggerAutosplit(character);
                         }
                         break;
                 }
