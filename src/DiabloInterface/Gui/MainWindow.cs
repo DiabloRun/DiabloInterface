@@ -22,11 +22,13 @@ namespace DiabloInterface
 
         public MainWindow()
         {
-
             // We want to dispose our handles once the window is disposed.
             Disposed += OnWindowDisposed;
 
             InitializeComponent();
+
+            // Display current version along with the application name.
+            Text = string.Format("Diablo Interface v{0}", Application.ProductVersion);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
