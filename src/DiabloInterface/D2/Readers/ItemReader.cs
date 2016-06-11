@@ -23,16 +23,16 @@ namespace DiabloInterface.D2.Readers
 
         ushort[] opNestings;
 
-        public ItemReader(ProcessMemoryReader reader, D2MemoryAddressTable memory) : base(reader, memory)
+        public ItemReader(ProcessMemoryReader reader, D2MemoryTable memory) : base(reader, memory)
         {
             cachedItemData = new Dictionary<IntPtr, D2ItemData>();
             cachedDescriptions = new Dictionary<int, D2ItemDescription>();
 
-            globals = reader.Read<D2GlobalData>(reader.ReadAddress32(memory.GlobalData, AddressingMode.Relative));
-            lowQualityTable = reader.Read<D2SafeArray>(memory.LowQualityItems, AddressingMode.Relative);
-            descriptionTable = reader.Read<D2SafeArray>(memory.ItemDescriptions, AddressingMode.Relative);
-            magicModifiers = reader.Read<ModifierTable>(memory.MagicModifierTable, AddressingMode.Relative);
-            rareModifiers = reader.Read<ModifierTable>(memory.RareModifierTable, AddressingMode.Relative);
+            globals = reader.Read<D2GlobalData>(reader.ReadAddress32(memory.Address.GlobalData, AddressingMode.Relative));
+            lowQualityTable = reader.Read<D2SafeArray>(memory.Address.LowQualityItems, AddressingMode.Relative);
+            descriptionTable = reader.Read<D2SafeArray>(memory.Address.ItemDescriptions, AddressingMode.Relative);
+            magicModifiers = reader.Read<ModifierTable>(memory.Address.MagicModifierTable, AddressingMode.Relative);
+            rareModifiers = reader.Read<ModifierTable>(memory.Address.RareModifierTable, AddressingMode.Relative);
             if (globals != null)
             {
 
@@ -870,7 +870,7 @@ namespace DiabloInterface.D2.Readers
             return null;
         }
 
-        public List<string> GetMagicalStrings(D2Unit item)
+        public List<D2Stat> GetMagicalStats(D2Unit item)
         {
             if (item == null) return null;
 
@@ -902,6 +902,16 @@ namespace DiabloInterface.D2.Readers
                         CombineNodeStats(stats, node);
                     }
                 }
+            }
+            return stats;
+        }
+
+        public List<string> GetMagicalStrings(D2Unit item)
+        {
+            List<D2Stat> stats = GetMagicalStats(item);
+            if (stats == null)
+            {
+                return null;
             }
 
             // Perform special handling for some stats such as damage ranges.

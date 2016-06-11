@@ -296,7 +296,7 @@ namespace DiabloInterface
         public void UpdateItemStats(ProcessMemoryReader r, D2MemoryTable memory, D2Unit pl)
         {
             InventoryReader inventoryReader = new InventoryReader(r, memory);
-            UnitReader unitReader = new UnitReader(r, memory.Address);
+            UnitReader unitReader = new UnitReader(r, memory);
 
 
             // Build filter to get only equipped items.

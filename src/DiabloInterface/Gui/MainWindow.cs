@@ -5,6 +5,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
 using DiabloInterface.Server;
+using DiabloInterface.Gui;
 
 namespace DiabloInterface
 {
@@ -19,6 +20,8 @@ namespace DiabloInterface
 
         D2DataReader dataReader;
         ItemServer itemServer;
+
+        private const int originalHeight = 200;
 
         public MainWindow()
         {
@@ -36,6 +39,20 @@ namespace DiabloInterface
             itemServer.Stop();
             base.OnFormClosing(e);
         }
+        public void Reset()
+        {
+            foreach (AutoSplit autosplit in settings.autosplits)
+            {
+                autosplit.reached = false;
+            }
+            if (runeDisplayPanel.Controls.Count > 0)
+            {
+                foreach (RuneDisplayElement c in runeDisplayPanel.Controls)
+                {
+                    c.setHaveRune(false);
+                }
+            }
+        }
 
         private void OnWindowDisposed(object sender, EventArgs e)
         {
@@ -49,16 +66,16 @@ namespace DiabloInterface
 
         public DebugWindow getDebugWindow()
         {
-            return this.debugWindow;
+            return debugWindow;
         }
 
         public List<AutoSplit> getAutosplits()
         {
-            return this.settings.autosplits;
+            return settings.autosplits;
         }
         public void addAutosplit(AutoSplit autosplit)
         {
-            this.settings.autosplits.Add(autosplit);
+            settings.autosplits.Add(autosplit);
         }
 
         private D2MemoryTable GetVersionMemoryTable(string version)
@@ -149,20 +166,44 @@ namespace DiabloInterface
             }
         }
 
-        public void updateLabels ( Character player )
+        public void updateLabels ( Character player, Dictionary<int, int> itemClassMap )
         {
             nameLabel.Invoke(new Action(delegate () { nameLabel.Text = player.name; })); // name
             lvlLabel.Invoke(new Action(delegate () { lvlLabel.Text = "LVL: " + player.Level ; })); // level
-            strengthLabel.Invoke(new Action(delegate () { strengthLabel.Text = "STR: " + player.Strength; }));
-            dexterityLabel.Invoke(new Action(delegate () { dexterityLabel.Text = "DEX: " + player.Dexterity; }));
-            vitalityLabel.Invoke(new Action(delegate () { vitalityLabel.Text = "VIT: " + player.Vitality; }));
-            energyLabel.Invoke(new Action(delegate () { energyLabel.Text = "ENE: " + player.Energy; }));
-            fireResLabel.Invoke(new Action(delegate () { fireResLabel.Text = "FIRE: " + player.FireResist; }));
-            coldResLabel.Invoke(new Action(delegate () { coldResLabel.Text = "COLD: " + player.ColdResist; }));
-            lightningResLabel.Invoke(new Action(delegate () { lightningResLabel.Text = "LIGH: " + player.LightningResist; }));
-            poisonResLabel.Invoke(new Action(delegate () { poisonResLabel.Text = "POIS: " + player.PoisonResist; }));
+
+            strLabel.Invoke(new Action(delegate () { strLabel.Text = "STR: " + player.Strength; }));
+            dexLabel.Invoke(new Action(delegate () { dexLabel.Text = "DEX: " + player.Dexterity; }));
+            vitLabel.Invoke(new Action(delegate () { vitLabel.Text = "VIT: " + player.Vitality; }));
+            eneLabel.Invoke(new Action(delegate () { eneLabel.Text = "ENE: " + player.Energy; }));
+
+            frwLabel.Invoke(new Action(delegate () { frwLabel.Text = "FRW: " + player.FasterRunWalk; }));
+            fcrLabel.Invoke(new Action(delegate () { fcrLabel.Text = "FCR: " + player.FasterCastRate; }));
+            fhrLabel.Invoke(new Action(delegate () { fhrLabel.Text = "FHR: " + player.FasterHitRecovery; }));
+            iasLabel.Invoke(new Action(delegate () { iasLabel.Text = "IAS: " + player.IncreasedAttackSpeed; }));
+
+            fireLabel.Invoke(new Action(delegate () { fireLabel.Text = "FIRE: " + player.FireResist; }));
+            coldLabel.Invoke(new Action(delegate () { coldLabel.Text = "COLD: " + player.ColdResist; }));
+            lighLabel.Invoke(new Action(delegate () { lighLabel.Text = "LIGH: " + player.LightningResist; }));
+            poisLabel.Invoke(new Action(delegate () { poisLabel.Text = "POIS: " + player.PoisonResist; }));
+
             goldLabel.Invoke(new Action(delegate () { goldLabel.Text = "GOLD: " + (player.Gold + player.GoldStash); }));
+
             deathsLabel.Invoke(new Action(delegate () { deathsLabel.Text = "DEATHS: " + player.Deaths; }));
+
+            if (runeDisplayPanel.Controls.Count > 0)
+            {
+
+                Dictionary<int, int> dict = new Dictionary<int, int>(itemClassMap);
+                foreach (RuneDisplayElement c in runeDisplayPanel.Controls)
+                {
+                    int eClass = (int)c.getRune() + 610;
+                    if (dict.ContainsKey(eClass) && dict[eClass] > 0)
+                    {
+                        dict[eClass]--;
+                        c.setHaveRune(true);
+                    }
+                }
+            }
         }
 
         public void triggerAutosplit(Character player)
@@ -209,14 +250,20 @@ namespace DiabloInterface
 
             nameLabel.Font = fBig;
             lvlLabel.Font = fSmall;
-            strengthLabel.Font = fSmall;
-            dexterityLabel.Font = fSmall;
-            vitalityLabel.Font = fSmall;
-            energyLabel.Font = fSmall;
-            fireResLabel.Font = fSmall;
-            coldResLabel.Font = fSmall;
-            lightningResLabel.Font = fSmall;
-            poisonResLabel.Font = fSmall;
+            strLabel.Font = fSmall;
+            dexLabel.Font = fSmall;
+            vitLabel.Font = fSmall;
+            eneLabel.Font = fSmall;
+
+            fcrLabel.Font = fSmall;
+            frwLabel.Font = fSmall;
+            fhrLabel.Font = fSmall;
+            iasLabel.Font = fSmall;
+
+            fireLabel.Font = fSmall;
+            coldLabel.Font = fSmall;
+            lighLabel.Font = fSmall;
+            poisLabel.Font = fSmall;
             goldLabel.Font = fSmall;
             deathsLabel.Font = fSmall;
 
@@ -237,6 +284,55 @@ namespace DiabloInterface
 
             var memoryTable = GetVersionMemoryTable(settings.d2Version);
             dataReader.SetNextMemoryTable(memoryTable);
+
+            runeDisplayPanel.Controls.Clear();
+            if ( settings.runes.Count > 0 )
+            {
+                int extraheight = 0;
+                foreach (int r in settings.runes)
+                {
+                    RuneDisplayElement element = new RuneDisplayElement((Rune)r, null, this);
+                    element.setRemovable(false);
+                    element.setHaveRune(false);
+                    runeDisplayPanel.Controls.Add(element);
+                    extraheight = relayout();
+                }
+
+                Height = originalHeight + extraheight + 8;
+            } else
+            {
+                Height = originalHeight;
+            }
+        }
+
+        public int relayout(bool checkVisible = true)
+        {
+            int y = 0;
+            int x = 0;
+            int height = -1;
+            int scroll = runeDisplayPanel.VerticalScroll.Value;
+            foreach (Control c in runeDisplayPanel.Controls)
+            {
+                if (c is RuneDisplayElement && (!checkVisible || c.Visible))
+                {
+                    if(height == -1)
+                    {
+                        height = c.Height;
+                    }
+                    if (x + c.Width > runeDisplayPanel.Width && runeDisplayPanel.Width >= c.Width)
+                    {
+                        y += c.Height;
+                        x = 0;
+                        height = y += c.Height;
+                    }
+                    c.Location = new Point(x, -scroll + y);
+                    x += c.Width;
+                }
+            }
+
+            runeDisplayPanel.Height = height == -1 ? 0 : height;
+            return height;
+
         }
 
         private void button1_Click(object sender, EventArgs e)

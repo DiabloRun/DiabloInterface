@@ -16,6 +16,7 @@ namespace DiabloInterface
         public bool showDebug = false;
         public string triggerKeys = "";
         public List<AutoSplit> autosplits = new List<AutoSplit>();
+        public List<int> runes = new List<int>();
 
         public void save()
         {
@@ -34,6 +35,10 @@ namespace DiabloInterface
             {
                 confString += "AutoSplit: " + autosplit.name.Replace('|', ' ') + "|"+ (int)autosplit.type + "|" + autosplit.value + "|" + autosplit.difficulty + "\n";
             }
+            foreach (int rune in runes)
+            {
+                confString += "Rune: " + rune + "\n";
+            }
 
             File.WriteAllText("settings.conf", confString);
         }
@@ -48,6 +53,8 @@ namespace DiabloInterface
             string[] conf = File.ReadAllLines("settings.conf");
             string[] parts;
             string[] parts2;
+
+            runes = new List<int>();
             foreach (string line in conf)
             {
                 parts = line.Split(new string[] { ": " }, 2, StringSplitOptions.None);
@@ -115,6 +122,9 @@ namespace DiabloInterface
                             );
                             autosplitsNew.Add(autosplit);
                         }
+                        break;
+                    case "Rune":
+                        runes.Add(Convert.ToInt32(parts[1]));
                         break;
                 }
             }

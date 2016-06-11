@@ -8,16 +8,16 @@ namespace DiabloInterface.D2.Readers
     public class UnitReader
     {
         protected ProcessMemoryReader reader;
-        protected D2MemoryAddressTable memory;
+        protected D2MemoryTable memory;
         protected StringLookupTable stringReader;
 
         D2Unit player = null;
 
-        public UnitReader(ProcessMemoryReader reader, D2MemoryAddressTable memory)
+        public UnitReader(ProcessMemoryReader reader, D2MemoryTable memory)
         {
             this.reader = reader;
             this.memory = memory;
-            stringReader = new StringLookupTable(reader, memory);
+            stringReader = new StringLookupTable(reader, memory.Address);
         }
 
         public virtual void ResetCache()
@@ -29,16 +29,58 @@ namespace DiabloInterface.D2.Readers
         {
             if (player == null)
             {
-                IntPtr playerAddress = reader.ReadAddress32(memory.PlayerUnit, AddressingMode.Relative);
+                IntPtr playerAddress = reader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
                 player = reader.Read<D2Unit>(playerAddress);
             }
 
             return player;
         }
 
+        public List<D2Stat> GetItemStats(D2Unit unit)
+        {
+            List<D2Stat> statList = new List<D2Stat>();
+            InventoryReader inventoryReader = new InventoryReader(reader, memory);
+
+            // Build filter to get only equipped items and items in inventory
+            Func<D2ItemData, bool> filter = data =>
+               (data.InvPage == InventoryPage.Equipped && data.BodyLoc != BodyLocation.SecondaryLeft && data.BodyLoc != BodyLocation.SecondaryRight)
+               ||
+               (data.InvPage == InventoryPage.Inventory)
+            ;
+            foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))
+            {
+                List<D2Stat> itemStats = GetStats(item);
+                if (itemStats == null)
+                {
+                    continue;
+                }
+                
+                D2ItemData itemData = reader.Read<D2ItemData>(item.UnitData);
+                if (itemData.InvPage == InventoryPage.Inventory && !(item.eClass == 605 || item.eClass == 604 || item.eClass == 603)) { 
+
+                    // The item is in inventory, but it is not a charm
+                    continue;
+
+                } else
+                {
+                    // The item is either equipped (see filter above) or is a charm in inventory
+                }
+                
+                List<D2Stat> magicalItems = inventoryReader.ItemReader.GetMagicalStats(item);
+                foreach (D2Stat stat in magicalItems)
+                {
+                    statList.Add(stat);
+                }
+
+            }
+
+            return statList;
+        }
+
         public List<D2Stat> GetStats(D2Unit unit)
         {
-            if (unit == null) return null;
+            if (unit == null)
+                return null;
             if (unit.StatListNode.IsNull)
                 return null;
 
@@ -69,15 +111,83 @@ namespace DiabloInterface.D2.Readers
                     select g).ToDictionary(x => x.Key, x => x.Single());
         }
 
+        public Dictionary<int, int> GetItemClassMap(D2Unit unit)
+        {
+            Dictionary<int, int> units = new Dictionary<int, int>();
+
+            List<D2Stat> statList = new List<D2Stat>();
+            InventoryReader inventoryReader = new InventoryReader(reader, memory);
+
+            // Build filter to get only equipped items and items in inventory
+            Func<D2ItemData, bool> filter = data => true;
+            foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))
+            {
+                List<D2Stat> itemStats = GetStats(item);
+                if (itemStats == null)
+                {
+                    continue;
+                }
+
+                if ( units.ContainsKey(item.eClass) )
+                {
+                    units[item.eClass]++;
+                } else
+                {
+                    units[item.eClass] = 1;
+                }
+            }
+            
+            return units;
+        }
+
+        public Dictionary<StatIdentifier, D2Stat> GetItemStatsMap(D2Unit unit)
+        {
+            List<D2Stat> stats = GetItemStats(unit);
+            if (stats == null)
+            {
+                return null;
+            }
+            Dictionary<StatIdentifier, D2Stat> dict = new Dictionary<StatIdentifier, D2Stat>();
+
+            foreach ( D2Stat stat in stats )
+            {
+                if (!Enum.IsDefined(typeof(StatIdentifier), stat.LoStatID))
+                {
+                    continue;
+                }
+
+                D2Stat s = new D2Stat();
+                s.LoStatID = stat.LoStatID;
+                s.HiStatID = stat.HiStatID;
+                s.Value = stat.Value;
+
+                if (dict.ContainsKey((StatIdentifier)stat.LoStatID))
+                {
+                    dict[(StatIdentifier)stat.LoStatID].Value = dict[(StatIdentifier)stat.LoStatID].Value + s.Value;
+                } else
+                {
+                    dict[(StatIdentifier)stat.LoStatID] = s;
+                }
+            }
+
+            return dict;
+            
+        }
+
         public int? GetStatValue(D2Unit unit, ushort statId)
         {
             List<D2Stat> stats = GetStats(unit);
-            if (stats == null) return null;
+            if (stats == null)
+            {
+                return null;
+            }
 
             foreach (D2Stat stat in stats)
             {
                 if (stat.LoStatID == statId)
+                {
                     return stat.Value;
+                }
             }
 
             return null;

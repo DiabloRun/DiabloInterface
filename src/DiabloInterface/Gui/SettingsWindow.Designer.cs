@@ -44,34 +44,31 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.chkAutosplit = new System.Windows.Forms.CheckBox();
+            this.btnTestHotkey = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label8 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.txtAutoSplitHotkey = new System.Windows.Forms.TextBox();
             this.lblAutoSplitHotkey = new System.Windows.Forms.Label();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.richTextBox3 = new System.Windows.Forms.RichTextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.richTextBox4 = new System.Windows.Forms.RichTextBox();
+            this.txtAutoSplitHotkey = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.chkShowDebug = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.label9 = new System.Windows.Forms.Label();
             this.cmbVersion = new System.Windows.Forms.ComboBox();
-            this.btnTestHotkey = new System.Windows.Forms.Button();
+            this.grpRunes = new System.Windows.Forms.GroupBox();
+            this.runeDisplayPanel = new System.Windows.Forms.Panel();
+            this.btnAddRune = new System.Windows.Forms.Button();
+            this.comboBoxRunes = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.grpRunes.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnSave
@@ -203,10 +200,14 @@
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.chkAutosplit);
+            this.groupBox3.Controls.Add(this.btnTestHotkey);
             this.groupBox3.Controls.Add(this.panel1);
+            this.groupBox3.Controls.Add(this.button1);
+            this.groupBox3.Controls.Add(this.lblAutoSplitHotkey);
+            this.groupBox3.Controls.Add(this.txtAutoSplitHotkey);
             this.groupBox3.Location = new System.Drawing.Point(12, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(426, 275);
+            this.groupBox3.Size = new System.Drawing.Size(426, 277);
             this.groupBox3.TabIndex = 10;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Auto-Split";
@@ -214,12 +215,23 @@
             // chkAutosplit
             // 
             this.chkAutosplit.AutoSize = true;
-            this.chkAutosplit.Location = new System.Drawing.Point(6, 252);
+            this.chkAutosplit.Location = new System.Drawing.Point(296, 252);
             this.chkAutosplit.Name = "chkAutosplit";
-            this.chkAutosplit.Size = new System.Drawing.Size(107, 17);
+            this.chkAutosplit.Size = new System.Drawing.Size(59, 17);
             this.chkAutosplit.TabIndex = 1;
-            this.chkAutosplit.Text = "Enable Auto-Split";
+            this.chkAutosplit.Text = "Enable";
             this.chkAutosplit.UseVisualStyleBackColor = true;
+            this.chkAutosplit.CheckedChanged += new System.EventHandler(this.chkAutosplit_CheckedChanged);
+            // 
+            // btnTestHotkey
+            // 
+            this.btnTestHotkey.Location = new System.Drawing.Point(167, 248);
+            this.btnTestHotkey.Name = "btnTestHotkey";
+            this.btnTestHotkey.Size = new System.Drawing.Size(75, 23);
+            this.btnTestHotkey.TabIndex = 18;
+            this.btnTestHotkey.Text = "Test Hotkey";
+            this.btnTestHotkey.UseVisualStyleBackColor = true;
+            this.btnTestHotkey.Click += new System.EventHandler(this.btnTestHotkey_Click);
             // 
             // panel1
             // 
@@ -230,7 +242,7 @@
             this.panel1.Controls.Add(this.label1);
             this.panel1.Location = new System.Drawing.Point(6, 19);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(414, 227);
+            this.panel1.Size = new System.Drawing.Size(414, 225);
             this.panel1.TabIndex = 0;
             // 
             // label8
@@ -271,124 +283,32 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 293);
+            this.button1.Location = new System.Drawing.Point(361, 248);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(104, 23);
+            this.button1.Size = new System.Drawing.Size(59, 23);
             this.button1.TabIndex = 11;
-            this.button1.Text = "Add Auto-Split";
+            this.button1.Text = "Add Split";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // lblAutoSplitHotkey
+            // 
+            this.lblAutoSplitHotkey.AutoSize = true;
+            this.lblAutoSplitHotkey.Location = new System.Drawing.Point(6, 253);
+            this.lblAutoSplitHotkey.Name = "lblAutoSplitHotkey";
+            this.lblAutoSplitHotkey.Size = new System.Drawing.Size(67, 13);
+            this.lblAutoSplitHotkey.TabIndex = 13;
+            this.lblAutoSplitHotkey.Text = "Split-Hotkey:";
+            // 
             // txtAutoSplitHotkey
             // 
-            this.txtAutoSplitHotkey.Location = new System.Drawing.Point(234, 295);
+            this.txtAutoSplitHotkey.Location = new System.Drawing.Point(79, 250);
             this.txtAutoSplitHotkey.Name = "txtAutoSplitHotkey";
             this.txtAutoSplitHotkey.Size = new System.Drawing.Size(82, 20);
             this.txtAutoSplitHotkey.TabIndex = 12;
             this.txtAutoSplitHotkey.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtAutoSplitHotkey_KeyDown);
             this.txtAutoSplitHotkey.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtAutoSplitHotkey_KeyPress);
             this.txtAutoSplitHotkey.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtAutoSplitHotkey_KeyUp);
-            // 
-            // lblAutoSplitHotkey
-            // 
-            this.lblAutoSplitHotkey.AutoSize = true;
-            this.lblAutoSplitHotkey.Location = new System.Drawing.Point(136, 298);
-            this.lblAutoSplitHotkey.Name = "lblAutoSplitHotkey";
-            this.lblAutoSplitHotkey.Size = new System.Drawing.Size(92, 13);
-            this.lblAutoSplitHotkey.TabIndex = 13;
-            this.lblAutoSplitHotkey.Text = "Auto-Split Hotkey:";
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox1.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.richTextBox1.Location = new System.Drawing.Point(110, 396);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(386, 35);
-            this.richTextBox1.TabIndex = 14;
-            this.richTextBox1.Text = "These keys are triggered when a split is reached and Auto-Split is enabled. Enter" +
-    " the same Hotkey that your split tool (e.g. Livesplit) listens to for Start/Spli" +
-    "t.";
-            // 
-            // richTextBox2
-            // 
-            this.richTextBox2.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.richTextBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox2.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.richTextBox2.Location = new System.Drawing.Point(110, 362);
-            this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.ReadOnly = true;
-            this.richTextBox2.Size = new System.Drawing.Size(414, 28);
-            this.richTextBox2.TabIndex = 14;
-            this.richTextBox2.Text = "Add a new split that should be triggered. After setting up all your splits, they " +
-    "should match the splits in your split tool (e.g. Livesplit).";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label4.Location = new System.Drawing.Point(12, 338);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(91, 13);
-            this.label4.TabIndex = 15;
-            this.label4.Text = "Enable Auto-Split:";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label5.Location = new System.Drawing.Point(12, 362);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(77, 13);
-            this.label5.TabIndex = 15;
-            this.label5.Text = "Add Auto-Split:";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label6.Location = new System.Drawing.Point(12, 396);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(92, 13);
-            this.label6.TabIndex = 15;
-            this.label6.Text = "Auto-Split Hotkey:";
-            // 
-            // richTextBox3
-            // 
-            this.richTextBox3.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.richTextBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox3.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.richTextBox3.Location = new System.Drawing.Point(110, 338);
-            this.richTextBox3.Name = "richTextBox3";
-            this.richTextBox3.ReadOnly = true;
-            this.richTextBox3.Size = new System.Drawing.Size(414, 18);
-            this.richTextBox3.TabIndex = 14;
-            this.richTextBox3.Text = "This option enables automatic splitting.";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label7.Location = new System.Drawing.Point(12, 437);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(65, 13);
-            this.label7.TabIndex = 15;
-            this.label7.Text = "Create Files:";
-            // 
-            // richTextBox4
-            // 
-            this.richTextBox4.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.richTextBox4.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox4.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.richTextBox4.Location = new System.Drawing.Point(110, 437);
-            this.richTextBox4.Name = "richTextBox4";
-            this.richTextBox4.ReadOnly = true;
-            this.richTextBox4.Size = new System.Drawing.Size(399, 35);
-            this.richTextBox4.TabIndex = 14;
-            this.richTextBox4.Text = "Enabling this causes the tool to create txt files in exe-folder/txt/... that can " +
-    "be read by your streaming software.";
             // 
             // groupBox4
             // 
@@ -442,35 +362,87 @@
             this.cmbVersion.Size = new System.Drawing.Size(53, 21);
             this.cmbVersion.TabIndex = 0;
             // 
-            // btnTestHotkey
+            // grpRunes
             // 
-            this.btnTestHotkey.Location = new System.Drawing.Point(322, 293);
-            this.btnTestHotkey.Name = "btnTestHotkey";
-            this.btnTestHotkey.Size = new System.Drawing.Size(75, 23);
-            this.btnTestHotkey.TabIndex = 18;
-            this.btnTestHotkey.Text = "Test Hotkey";
-            this.btnTestHotkey.UseVisualStyleBackColor = true;
-            this.btnTestHotkey.Click += new System.EventHandler(this.btnTestHotkey_Click);
+            this.grpRunes.Controls.Add(this.runeDisplayPanel);
+            this.grpRunes.Controls.Add(this.btnAddRune);
+            this.grpRunes.Controls.Add(this.comboBoxRunes);
+            this.grpRunes.Location = new System.Drawing.Point(12, 295);
+            this.grpRunes.Name = "grpRunes";
+            this.grpRunes.Size = new System.Drawing.Size(426, 111);
+            this.grpRunes.TabIndex = 19;
+            this.grpRunes.TabStop = false;
+            this.grpRunes.Text = "Rune Display";
+            // 
+            // runeDisplayPanel
+            // 
+            this.runeDisplayPanel.AutoScroll = true;
+            this.runeDisplayPanel.Location = new System.Drawing.Point(6, 19);
+            this.runeDisplayPanel.Name = "runeDisplayPanel";
+            this.runeDisplayPanel.Size = new System.Drawing.Size(414, 57);
+            this.runeDisplayPanel.TabIndex = 2;
+            // 
+            // btnAddRune
+            // 
+            this.btnAddRune.Location = new System.Drawing.Point(345, 82);
+            this.btnAddRune.Name = "btnAddRune";
+            this.btnAddRune.Size = new System.Drawing.Size(75, 23);
+            this.btnAddRune.TabIndex = 1;
+            this.btnAddRune.Text = "Add Rune";
+            this.btnAddRune.UseVisualStyleBackColor = true;
+            this.btnAddRune.Click += new System.EventHandler(this.btnAddRune_Click);
+            // 
+            // comboBoxRunes
+            // 
+            this.comboBoxRunes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxRunes.FormattingEnabled = true;
+            this.comboBoxRunes.Items.AddRange(new object[] {
+            "El",
+            "Eld",
+            "Tir",
+            "Nef",
+            "Eth",
+            "Ith",
+            "Tal",
+            "Ral",
+            "Ort",
+            "Thul",
+            "Amn",
+            "Sol",
+            "Shael",
+            "Dol",
+            "Hel",
+            "Io",
+            "Lum",
+            "Ko",
+            "Fal",
+            "Lem",
+            "Pul",
+            "Um",
+            "Mal",
+            "Ist",
+            "Gul",
+            "Vex",
+            "Ohm",
+            "Lo",
+            "Sur",
+            "Ber",
+            "Jah",
+            "Cham",
+            "Zod"});
+            this.comboBoxRunes.Location = new System.Drawing.Point(218, 83);
+            this.comboBoxRunes.Name = "comboBoxRunes";
+            this.comboBoxRunes.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxRunes.TabIndex = 0;
             // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(670, 474);
-            this.Controls.Add(this.btnTestHotkey);
+            this.ClientSize = new System.Drawing.Size(670, 416);
+            this.Controls.Add(this.grpRunes);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.richTextBox3);
-            this.Controls.Add(this.richTextBox2);
-            this.Controls.Add(this.richTextBox4);
-            this.Controls.Add(this.richTextBox1);
-            this.Controls.Add(this.lblAutoSplitHotkey);
-            this.Controls.Add(this.txtAutoSplitHotkey);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnApply);
@@ -493,8 +465,8 @@
             this.groupBox4.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
+            this.grpRunes.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -522,14 +494,6 @@
         private System.Windows.Forms.CheckBox chkAutosplit;
         private System.Windows.Forms.TextBox txtAutoSplitHotkey;
         private System.Windows.Forms.Label lblAutoSplitHotkey;
-        private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.RichTextBox richTextBox2;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.RichTextBox richTextBox3;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.RichTextBox richTextBox4;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.CheckBox chkShowDebug;
         private System.Windows.Forms.Label label8;
@@ -537,5 +501,9 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox cmbVersion;
         private System.Windows.Forms.Button btnTestHotkey;
+        private System.Windows.Forms.GroupBox grpRunes;
+        private System.Windows.Forms.Button btnAddRune;
+        private System.Windows.Forms.ComboBox comboBoxRunes;
+        private System.Windows.Forms.Panel runeDisplayPanel;
     }
 }

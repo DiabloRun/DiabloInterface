@@ -212,15 +212,17 @@ namespace DiabloInterface
 
             // Get associated character data.
             Character character = GetCurrentCharacter(gameInfo);
-            UnitReader unitReader = new UnitReader(reader, memory.Address);
+            UnitReader unitReader = new UnitReader(reader, memory);
             var statsMap = unitReader.GetStatsMap(gameInfo.Player);
+            var itemStatsMap = unitReader.GetItemStatsMap(gameInfo.Player);
+            Dictionary<int, int> itemClassMap = unitReader.GetItemClassMap(gameInfo.Player);
 
             // Update character data.
             character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
-            character.ParseStats(statsMap, gameInfo.Game.Difficulty);
+            character.ParseStats(statsMap, itemStatsMap, gameInfo.Game.Difficulty);
 
             // Update UI.
-            main.updateLabels(character);
+            main.updateLabels(character, itemClassMap);
             main.writeFiles(character);
 
             // Update autosplits only if enabled and the character was a freshly started character.
@@ -240,7 +242,7 @@ namespace DiabloInterface
             string playerName = gameInfo.PlayerData.PlayerName;
 
             // Read character stats.
-            UnitReader unitReader = new UnitReader(reader, memory.Address);
+            UnitReader unitReader = new UnitReader(reader, memory);
             int level = unitReader.GetStatValue(gameInfo.Player, StatIdentifier.Level) ?? 0;
             int experience = unitReader.GetStatValue(gameInfo.Player, StatIdentifier.Experience) ?? 0;
 
@@ -276,7 +278,7 @@ namespace DiabloInterface
                 if (experience == 0 && level == 1)
                 {
                     activeCharacter = character;
-                    ResetAutosplits();
+                    main.Reset();
                 }
             }
 
@@ -285,15 +287,7 @@ namespace DiabloInterface
 
             return character;
         }
-
-        void ResetAutosplits()
-        {
-            foreach (AutoSplit autosplit in main.settings.autosplits)
-            {
-                autosplit.reached = false;
-            }
-        }
-
+        
         void UpdateDebugWindow(GameInfo gameInfo)
         {
             var debugWindow = main.getDebugWindow();

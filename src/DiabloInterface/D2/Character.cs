@@ -27,6 +27,11 @@ namespace DiabloInterface
         public int LightningResist { get; private set; }
         public int PoisonResist { get; private set; }
 
+        public int FasterHitRecovery { get; private set; }
+        public int FasterRunWalk { get; private set; }
+        public int FasterCastRate { get; private set; }
+        public int IncreasedAttackSpeed { get; private set; }
+
         public int Gold { get; private set; }
         public int GoldStash { get; private set; }
 
@@ -39,7 +44,7 @@ namespace DiabloInterface
         /// </summary>
         /// <param name="dict"></param>
         /// <param name="resistancPenalty"></param>
-        public void ParseStats(Dictionary<StatIdentifier, D2Stat> data, int gameDifficulty)
+        public void ParseStats(Dictionary<StatIdentifier, D2Stat> data, Dictionary<StatIdentifier, D2Stat> itemData, int gameDifficulty)
         {
             // Don't update stats while dead.
             if (IsDead) return;
@@ -50,6 +55,12 @@ namespace DiabloInterface
                 D2Stat stat;
                 // Get the value if if the key exists, else assume zero.
                 return data.TryGetValue(statID, out stat) ? stat.Value : 0;
+            };
+            Func<StatIdentifier, int> getItemStat = statID =>
+            {
+                D2Stat stat;
+                // Get the value if if the key exists, else assume zero.
+                return itemData.TryGetValue(statID, out stat) ? stat.Value : 0;
             };
 
             Level = getStat(StatIdentifier.Level);
@@ -71,6 +82,11 @@ namespace DiabloInterface
             ColdResist = Math.Min(getStat(StatIdentifier.ResistCold) + penalty, maxCold);
             LightningResist = Math.Min(getStat(StatIdentifier.ResistLightning) + penalty, maxLightning);
             PoisonResist = Math.Min(getStat(StatIdentifier.ResistPoison) + penalty, maxPoison);
+
+            FasterHitRecovery = getItemStat(StatIdentifier.FasterHitRecovery);
+            FasterRunWalk = getItemStat(StatIdentifier.FasterRunWalk);
+            FasterCastRate = getItemStat(StatIdentifier.FasterCastRate);
+            IncreasedAttackSpeed = getItemStat(StatIdentifier.IncreasedAttackSpeed);
 
             Gold = getStat(StatIdentifier.Gold);
             GoldStash = getStat(StatIdentifier.GoldStash);

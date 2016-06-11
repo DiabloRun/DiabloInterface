@@ -134,6 +134,12 @@
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="D2\D2Level.cs" />
+    <Compile Include="Gui\RuneDisplayElement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\RuneDisplayElement.Designer.cs">
+      <DependentUpon>RuneDisplayElement.cs</DependentUpon>
+    </Compile>
     <Compile Include="KeyManager.cs" />
     <Compile Include="Server\QueryRequest.cs" />
     <Compile Include="Server\QueryResponse.cs" />
@@ -158,6 +164,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\RuneDisplayElement.resx">
+      <DependentUpon>RuneDisplayElement.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -192,6 +201,7 @@
   <ItemGroup>
     <Content Include="Resources\Diablo II_101.ico" />
     <EmbeddedResource Include="Resources\ItemStatCost.txt" />
+    <EmbeddedResource Include="Resources\Images\Runes\runes.png" />
     <Content Include="Resources\MagicSuffix.txt" />
     <EmbeddedResource Include="Resources\Levels.txt" />
   </ItemGroup>

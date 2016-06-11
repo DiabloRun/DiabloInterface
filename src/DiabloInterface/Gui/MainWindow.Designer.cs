@@ -32,20 +32,25 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.lvlLabel = new System.Windows.Forms.Label();
             this.nameLabel = new System.Windows.Forms.Label();
-            this.strengthLabel = new System.Windows.Forms.Label();
-            this.dexterityLabel = new System.Windows.Forms.Label();
-            this.vitalityLabel = new System.Windows.Forms.Label();
-            this.energyLabel = new System.Windows.Forms.Label();
-            this.fireResLabel = new System.Windows.Forms.Label();
-            this.coldResLabel = new System.Windows.Forms.Label();
-            this.lightningResLabel = new System.Windows.Forms.Label();
-            this.poisonResLabel = new System.Windows.Forms.Label();
+            this.strLabel = new System.Windows.Forms.Label();
+            this.dexLabel = new System.Windows.Forms.Label();
+            this.vitLabel = new System.Windows.Forms.Label();
+            this.eneLabel = new System.Windows.Forms.Label();
+            this.fireLabel = new System.Windows.Forms.Label();
+            this.coldLabel = new System.Windows.Forms.Label();
+            this.lighLabel = new System.Windows.Forms.Label();
+            this.poisLabel = new System.Windows.Forms.Label();
             this.goldLabel = new System.Windows.Forms.Label();
             this.deathsLabel = new System.Windows.Forms.Label();
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.frwLabel = new System.Windows.Forms.Label();
+            this.fcrLabel = new System.Windows.Forms.Label();
+            this.fhrLabel = new System.Windows.Forms.Label();
+            this.iasLabel = new System.Windows.Forms.Label();
+            this.runeDisplayPanel = new System.Windows.Forms.Panel();
             this.contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -53,7 +58,7 @@
             // 
             this.lvlLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lvlLabel.ForeColor = System.Drawing.Color.White;
-            this.lvlLabel.Location = new System.Drawing.Point(159, 63);
+            this.lvlLabel.Location = new System.Drawing.Point(196, 63);
             this.lvlLabel.Name = "lvlLabel";
             this.lvlLabel.Size = new System.Drawing.Size(80, 16);
             this.lvlLabel.TabIndex = 2;
@@ -69,93 +74,93 @@
             this.nameLabel.TabIndex = 6;
             this.nameLabel.Text = "Char Name";
             // 
-            // strengthLabel
+            // strLabel
             // 
-            this.strengthLabel.AutoSize = true;
-            this.strengthLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.strengthLabel.ForeColor = System.Drawing.Color.Coral;
-            this.strengthLabel.Location = new System.Drawing.Point(15, 84);
-            this.strengthLabel.Name = "strengthLabel";
-            this.strengthLabel.Size = new System.Drawing.Size(56, 16);
-            this.strengthLabel.TabIndex = 7;
-            this.strengthLabel.Text = "STR: -";
+            this.strLabel.AutoSize = true;
+            this.strLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.strLabel.ForeColor = System.Drawing.Color.Coral;
+            this.strLabel.Location = new System.Drawing.Point(15, 84);
+            this.strLabel.Name = "strLabel";
+            this.strLabel.Size = new System.Drawing.Size(56, 16);
+            this.strLabel.TabIndex = 7;
+            this.strLabel.Text = "STR: -";
             // 
-            // dexterityLabel
+            // dexLabel
             // 
-            this.dexterityLabel.AutoSize = true;
-            this.dexterityLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.dexterityLabel.ForeColor = System.Drawing.Color.Coral;
-            this.dexterityLabel.Location = new System.Drawing.Point(15, 100);
-            this.dexterityLabel.Name = "dexterityLabel";
-            this.dexterityLabel.Size = new System.Drawing.Size(56, 16);
-            this.dexterityLabel.TabIndex = 8;
-            this.dexterityLabel.Text = "DEX: -";
+            this.dexLabel.AutoSize = true;
+            this.dexLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.dexLabel.ForeColor = System.Drawing.Color.Coral;
+            this.dexLabel.Location = new System.Drawing.Point(15, 100);
+            this.dexLabel.Name = "dexLabel";
+            this.dexLabel.Size = new System.Drawing.Size(56, 16);
+            this.dexLabel.TabIndex = 8;
+            this.dexLabel.Text = "DEX: -";
             // 
-            // vitalityLabel
+            // vitLabel
             // 
-            this.vitalityLabel.AutoSize = true;
-            this.vitalityLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.vitalityLabel.ForeColor = System.Drawing.Color.Coral;
-            this.vitalityLabel.Location = new System.Drawing.Point(15, 116);
-            this.vitalityLabel.Name = "vitalityLabel";
-            this.vitalityLabel.Size = new System.Drawing.Size(56, 16);
-            this.vitalityLabel.TabIndex = 10;
-            this.vitalityLabel.Text = "VIT: -";
+            this.vitLabel.AutoSize = true;
+            this.vitLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.vitLabel.ForeColor = System.Drawing.Color.Coral;
+            this.vitLabel.Location = new System.Drawing.Point(15, 116);
+            this.vitLabel.Name = "vitLabel";
+            this.vitLabel.Size = new System.Drawing.Size(56, 16);
+            this.vitLabel.TabIndex = 10;
+            this.vitLabel.Text = "VIT: -";
             // 
-            // energyLabel
+            // eneLabel
             // 
-            this.energyLabel.AutoSize = true;
-            this.energyLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.energyLabel.ForeColor = System.Drawing.Color.Coral;
-            this.energyLabel.Location = new System.Drawing.Point(15, 132);
-            this.energyLabel.Name = "energyLabel";
-            this.energyLabel.Size = new System.Drawing.Size(56, 16);
-            this.energyLabel.TabIndex = 11;
-            this.energyLabel.Text = "ENE: -";
+            this.eneLabel.AutoSize = true;
+            this.eneLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.eneLabel.ForeColor = System.Drawing.Color.Coral;
+            this.eneLabel.Location = new System.Drawing.Point(15, 132);
+            this.eneLabel.Name = "eneLabel";
+            this.eneLabel.Size = new System.Drawing.Size(56, 16);
+            this.eneLabel.TabIndex = 11;
+            this.eneLabel.Text = "ENE: -";
             // 
-            // fireResLabel
+            // fireLabel
             // 
-            this.fireResLabel.AutoSize = true;
-            this.fireResLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.fireResLabel.ForeColor = System.Drawing.Color.Red;
-            this.fireResLabel.Location = new System.Drawing.Point(159, 84);
-            this.fireResLabel.Name = "fireResLabel";
-            this.fireResLabel.Size = new System.Drawing.Size(64, 16);
-            this.fireResLabel.TabIndex = 12;
-            this.fireResLabel.Text = "FIRE: -";
+            this.fireLabel.AutoSize = true;
+            this.fireLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.fireLabel.ForeColor = System.Drawing.Color.Red;
+            this.fireLabel.Location = new System.Drawing.Point(196, 84);
+            this.fireLabel.Name = "fireLabel";
+            this.fireLabel.Size = new System.Drawing.Size(64, 16);
+            this.fireLabel.TabIndex = 12;
+            this.fireLabel.Text = "FIRE: -";
             // 
-            // coldResLabel
+            // coldLabel
             // 
-            this.coldResLabel.AutoSize = true;
-            this.coldResLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.coldResLabel.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.coldResLabel.Location = new System.Drawing.Point(159, 100);
-            this.coldResLabel.Name = "coldResLabel";
-            this.coldResLabel.Size = new System.Drawing.Size(64, 16);
-            this.coldResLabel.TabIndex = 13;
-            this.coldResLabel.Text = "COLD: -";
+            this.coldLabel.AutoSize = true;
+            this.coldLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.coldLabel.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.coldLabel.Location = new System.Drawing.Point(196, 100);
+            this.coldLabel.Name = "coldLabel";
+            this.coldLabel.Size = new System.Drawing.Size(64, 16);
+            this.coldLabel.TabIndex = 13;
+            this.coldLabel.Text = "COLD: -";
             // 
-            // lightningResLabel
+            // lighLabel
             // 
-            this.lightningResLabel.AutoSize = true;
-            this.lightningResLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lightningResLabel.ForeColor = System.Drawing.Color.Yellow;
-            this.lightningResLabel.Location = new System.Drawing.Point(159, 116);
-            this.lightningResLabel.Name = "lightningResLabel";
-            this.lightningResLabel.Size = new System.Drawing.Size(64, 16);
-            this.lightningResLabel.TabIndex = 14;
-            this.lightningResLabel.Text = "LIGH: -";
+            this.lighLabel.AutoSize = true;
+            this.lighLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lighLabel.ForeColor = System.Drawing.Color.Yellow;
+            this.lighLabel.Location = new System.Drawing.Point(196, 116);
+            this.lighLabel.Name = "lighLabel";
+            this.lighLabel.Size = new System.Drawing.Size(64, 16);
+            this.lighLabel.TabIndex = 14;
+            this.lighLabel.Text = "LIGH: -";
             // 
-            // poisonResLabel
+            // poisLabel
             // 
-            this.poisonResLabel.AutoSize = true;
-            this.poisonResLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.poisonResLabel.ForeColor = System.Drawing.Color.YellowGreen;
-            this.poisonResLabel.Location = new System.Drawing.Point(159, 132);
-            this.poisonResLabel.Name = "poisonResLabel";
-            this.poisonResLabel.Size = new System.Drawing.Size(64, 16);
-            this.poisonResLabel.TabIndex = 15;
-            this.poisonResLabel.Text = "POIS: -";
+            this.poisLabel.AutoSize = true;
+            this.poisLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.poisLabel.ForeColor = System.Drawing.Color.YellowGreen;
+            this.poisLabel.Location = new System.Drawing.Point(196, 132);
+            this.poisLabel.Name = "poisLabel";
+            this.poisLabel.Size = new System.Drawing.Size(64, 16);
+            this.poisLabel.TabIndex = 15;
+            this.poisLabel.Text = "POIS: -";
             // 
             // goldLabel
             // 
@@ -210,6 +215,57 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.button1_Click);
             // 
+            // frwLabel
+            // 
+            this.frwLabel.AutoSize = true;
+            this.frwLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.frwLabel.ForeColor = System.Drawing.Color.Coral;
+            this.frwLabel.Location = new System.Drawing.Point(107, 84);
+            this.frwLabel.Name = "frwLabel";
+            this.frwLabel.Size = new System.Drawing.Size(56, 16);
+            this.frwLabel.TabIndex = 7;
+            this.frwLabel.Text = "FRW: -";
+            // 
+            // fcrLabel
+            // 
+            this.fcrLabel.AutoSize = true;
+            this.fcrLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.fcrLabel.ForeColor = System.Drawing.Color.Coral;
+            this.fcrLabel.Location = new System.Drawing.Point(107, 100);
+            this.fcrLabel.Name = "fcrLabel";
+            this.fcrLabel.Size = new System.Drawing.Size(56, 16);
+            this.fcrLabel.TabIndex = 8;
+            this.fcrLabel.Text = "FCR: -";
+            // 
+            // fhrLabel
+            // 
+            this.fhrLabel.AutoSize = true;
+            this.fhrLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.fhrLabel.ForeColor = System.Drawing.Color.Coral;
+            this.fhrLabel.Location = new System.Drawing.Point(107, 116);
+            this.fhrLabel.Name = "fhrLabel";
+            this.fhrLabel.Size = new System.Drawing.Size(56, 16);
+            this.fhrLabel.TabIndex = 10;
+            this.fhrLabel.Text = "FHR: -";
+            // 
+            // iasLabel
+            // 
+            this.iasLabel.AutoSize = true;
+            this.iasLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.iasLabel.ForeColor = System.Drawing.Color.Coral;
+            this.iasLabel.Location = new System.Drawing.Point(107, 132);
+            this.iasLabel.Name = "iasLabel";
+            this.iasLabel.Size = new System.Drawing.Size(56, 16);
+            this.iasLabel.TabIndex = 11;
+            this.iasLabel.Text = "IAS: -";
+            // 
+            // runeDisplayPanel
+            // 
+            this.runeDisplayPanel.Location = new System.Drawing.Point(18, 158);
+            this.runeDisplayPanel.Name = "runeDisplayPanel";
+            this.runeDisplayPanel.Size = new System.Drawing.Size(248, 41);
+            this.runeDisplayPanel.TabIndex = 18;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -217,16 +273,21 @@
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(284, 161);
             this.ContextMenuStrip = this.contextMenu;
+            this.Controls.Add(this.runeDisplayPanel);
             this.Controls.Add(this.deathsLabel);
             this.Controls.Add(this.goldLabel);
-            this.Controls.Add(this.poisonResLabel);
-            this.Controls.Add(this.lightningResLabel);
-            this.Controls.Add(this.coldResLabel);
-            this.Controls.Add(this.fireResLabel);
-            this.Controls.Add(this.energyLabel);
-            this.Controls.Add(this.vitalityLabel);
-            this.Controls.Add(this.dexterityLabel);
-            this.Controls.Add(this.strengthLabel);
+            this.Controls.Add(this.poisLabel);
+            this.Controls.Add(this.lighLabel);
+            this.Controls.Add(this.coldLabel);
+            this.Controls.Add(this.fireLabel);
+            this.Controls.Add(this.iasLabel);
+            this.Controls.Add(this.eneLabel);
+            this.Controls.Add(this.fhrLabel);
+            this.Controls.Add(this.vitLabel);
+            this.Controls.Add(this.fcrLabel);
+            this.Controls.Add(this.dexLabel);
+            this.Controls.Add(this.frwLabel);
+            this.Controls.Add(this.strLabel);
             this.Controls.Add(this.nameLabel);
             this.Controls.Add(this.lvlLabel);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
@@ -235,7 +296,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MainWindow";
-            this.Text = "DiabloInterface v0.2.6";
+            this.Text = "aa";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.MainWindow_Load);
             this.contextMenu.ResumeLayout(false);
@@ -247,20 +308,25 @@
         #endregion
         private System.Windows.Forms.Label lvlLabel;
         private System.Windows.Forms.Label nameLabel;
-        private System.Windows.Forms.Label strengthLabel;
-        private System.Windows.Forms.Label dexterityLabel;
-        private System.Windows.Forms.Label vitalityLabel;
-        private System.Windows.Forms.Label energyLabel;
-        private System.Windows.Forms.Label fireResLabel;
-        private System.Windows.Forms.Label coldResLabel;
-        private System.Windows.Forms.Label lightningResLabel;
-        private System.Windows.Forms.Label poisonResLabel;
+        private System.Windows.Forms.Label strLabel;
+        private System.Windows.Forms.Label dexLabel;
+        private System.Windows.Forms.Label vitLabel;
+        private System.Windows.Forms.Label eneLabel;
+        private System.Windows.Forms.Label fireLabel;
+        private System.Windows.Forms.Label coldLabel;
+        private System.Windows.Forms.Label lighLabel;
+        private System.Windows.Forms.Label poisLabel;
         private System.Windows.Forms.Label goldLabel;
         private System.Windows.Forms.Label deathsLabel;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.Label frwLabel;
+        private System.Windows.Forms.Label fcrLabel;
+        private System.Windows.Forms.Label fhrLabel;
+        private System.Windows.Forms.Label iasLabel;
+        private System.Windows.Forms.Panel runeDisplayPanel;
     }
 }
 

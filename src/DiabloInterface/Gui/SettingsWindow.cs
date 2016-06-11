@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using DiabloInterface.Gui;
 
 namespace DiabloInterface
 {
@@ -32,6 +33,15 @@ namespace DiabloInterface
             {
                 addAutosplit(a, false);
             }
+
+            foreach (int rune in main.settings.runes)
+            {
+                if (rune >= 0)
+                {
+                    RuneDisplayElement element = new RuneDisplayElement((Rune)rune, this, null);
+                    runeDisplayPanel.Controls.Add(element);
+                }
+            }
             relayout(false);
         }
 
@@ -49,6 +59,13 @@ namespace DiabloInterface
                     asList.Add(a);
                 }
             }
+            List<int> runesList = new List<int>();
+            foreach (RuneDisplayElement c in runeDisplayPanel.Controls)
+            {
+                if (!c.Visible) continue;
+                runesList.Add((int)c.getRune());
+            }
+            main.settings.runes = runesList;
             main.settings.autosplits = asList;
             main.settings.createFiles = chkCreateFiles.Checked;
             main.settings.doAutosplit = chkAutosplit.Checked;
@@ -71,23 +88,23 @@ namespace DiabloInterface
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            this.saveSettings();
-            this.Hide();
+            saveSettings();
+            Hide();
         }
         private void btnApply_Click(object sender, EventArgs e)
         {
-            this.saveSettings();
+            saveSettings();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.resetSettings();
-            this.Hide();
+            resetSettings();
+            Hide();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            this.addAutosplit(new AutoSplit());
+            addAutosplit(new AutoSplit());
             relayout();
         }
 
@@ -102,9 +119,12 @@ namespace DiabloInterface
                 main.settings.autosplits.Add(autosplit);
             }
         }
+        
         public void relayout( bool checkVisible = true)
         {
             int i = 0;
+            int y = 0;
+            int x = 0;
             int scroll = this.panel1.VerticalScroll.Value;
             foreach (Control c in this.panel1.Controls)
             {
@@ -112,6 +132,22 @@ namespace DiabloInterface
                 {
                     i = i + 1;
                     c.Location = new Point(0, -scroll + i * 24);
+                }
+            }
+
+            scroll = runeDisplayPanel.VerticalScroll.Value;
+            foreach (Control c in runeDisplayPanel.Controls )
+            {
+                if ( c is RuneDisplayElement && (! checkVisible || c.Visible))
+                { 
+                    
+                    if (x+c.Width > runeDisplayPanel.Width && runeDisplayPanel.Width >= c.Width)
+                    {
+                        y += c.Height;
+                        x = 0;
+                    }
+                    c.Location = new Point(x, -scroll + y);
+                    x += c.Width;
                 }
             }
 
@@ -175,6 +211,22 @@ namespace DiabloInterface
             if (txtAutoSplitHotkey.Text != "")
             {
                 KeyManager.sendKeys(txtAutoSplitHotkey.Text);
+            }
+        }
+
+        private void chkAutosplit_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAddRune_Click(object sender, EventArgs e)
+        {
+            int rune = this.comboBoxRunes.SelectedIndex;
+            if (rune >= 0)
+            {
+                RuneDisplayElement element = new RuneDisplayElement((Rune)rune, this, null);
+                runeDisplayPanel.Controls.Add(element);
+                relayout();
             }
         }
     }

@@ -78,6 +78,27 @@
         Durability              = 72,
         DurabilityMax           = 73,
         HealthRegen             = 74,
+
+        AttackerSelfDamage      = 78,
+        MonsterGold             = 79, // +%
+        MagicFind               = 80, // +%
+        Knockback               = 81,
+
+        LightRadius             = 89,
+        IncreasedAttackSpeed    = 93,
+        FasterRunWalk           = 96,
+        FasterHitRecovery       = 99,
+        FasterBlockRate         = 102,
+        FasterCastRate          = 105,
+        HalfFreezeDuration      = 118,
+        AttackRatingPercent     = 119, // +%
+        DamageToDemonsPercent   = 121, // +%
+        AttackRatingToDemons    = 123,
+
+        AttackerSelfLightningDamage = 128, // for example isenharts shield
+
+        CannotBeFrozen          = 153,
+
         SocketCount             = 194,
 
         // Not listed in ItemStatCost.txt, but used for poison calculations.

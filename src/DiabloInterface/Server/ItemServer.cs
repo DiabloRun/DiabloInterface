@@ -11,12 +11,15 @@ namespace DiabloInterface.Server
     class ItemServer
     {
         string pipeName;
+        string basePipeName;
+        int pipeNum = 0;
         Thread listenThread;
         D2DataReader dataReader;
 
         public ItemServer(D2DataReader dataReader, string pipeName)
         {
             this.dataReader = dataReader;
+            this.basePipeName = pipeName;
             this.pipeName = pipeName;
 
             listenThread = new Thread(new ThreadStart(ServerListen));
@@ -37,24 +40,31 @@ namespace DiabloInterface.Server
             var ps = new PipeSecurity();
             System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier(System.Security.Principal.WellKnownSidType.BuiltinUsersSid, null);
             ps.AddAccessRule(new PipeAccessRule(sid, PipeAccessRights.ReadWrite, System.Security.AccessControl.AccessControlType.Allow));
-
+            
             while (true)
             {
-                var pipe = new NamedPipeServerStream(pipeName,
-                    PipeDirection.InOut, 1,
-                    PipeTransmissionMode.Message,
-                    PipeOptions.Asynchronous,
-                    1024, 1024, ps);
+                NamedPipeServerStream pipe = null;
                 try
                 {
+                    pipe = new NamedPipeServerStream(pipeName,
+                        PipeDirection.InOut, 1,
+                        PipeTransmissionMode.Message,
+                        PipeOptions.Asynchronous,
+                        1024, 1024, ps);
                     pipe.WaitForConnection();
                     HandleClientConnection(pipe);
                     pipe.Close();
                 }
+                catch (UnauthorizedAccessException e )
+                {
+                    pipeName = basePipeName +"-"+ ++pipeNum;
+                    Console.WriteLine("Error: {0}", e.Message);
+                    Console.WriteLine("Changing name of pipe to "+ pipeName);
+                }
                 catch (IOException e)
                 {
                     Console.WriteLine("Error: {0}", e.Message);
-                    pipe.Close();
+                    if (pipe != null) pipe.Close();
                 }
             }
         }

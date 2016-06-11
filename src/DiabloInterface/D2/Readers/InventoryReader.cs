@@ -17,7 +17,7 @@ namespace DiabloInterface.D2.Readers
         {
             processReader = reader;
             this.memory = memory;
-            itemReader = new ItemReader(processReader, memory.Address);
+            itemReader = new ItemReader(processReader, memory);
         }
 
         public void ResetCache()
