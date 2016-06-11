@@ -11,15 +11,12 @@ namespace DiabloInterface.Server
     class ItemServer
     {
         string pipeName;
-        string basePipeName;
-        int pipeNum = 0;
         Thread listenThread;
         D2DataReader dataReader;
 
         public ItemServer(D2DataReader dataReader, string pipeName)
         {
             this.dataReader = dataReader;
-            this.basePipeName = pipeName;
             this.pipeName = pipeName;
 
             listenThread = new Thread(new ThreadStart(ServerListen));
@@ -57,9 +54,9 @@ namespace DiabloInterface.Server
                 }
                 catch (UnauthorizedAccessException e )
                 {
-                    pipeName = basePipeName +"-"+ ++pipeNum;
+                    // note: should only come here if another pipe with same name is already open (= another instance of d2interface is running)
                     Console.WriteLine("Error: {0}", e.Message);
-                    Console.WriteLine("Changing name of pipe to "+ pipeName);
+                    Thread.Sleep(1000); // try again in 1 sec to prevent tool from lagging
                 }
                 catch (IOException e)
                 {
