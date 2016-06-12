@@ -16,6 +16,12 @@ namespace DiabloInterface
         {
             this.main = main;
             InitializeComponent();
+            
+            foreach (FontFamily font in FontFamily.Families)
+            {
+                cmbFonts.Items.Add(font.Name);
+            }
+
             init();
         }
 
@@ -26,8 +32,15 @@ namespace DiabloInterface
 
         private void init() {
             updateTitle();
+            
+            foreach (string item in cmbFonts.Items)
+            {
+                if (item == main.Settings.FontName)
+                {
+                    this.cmbFonts.SelectedItem = item;
+                }
+            }
 
-            this.lblFontExample.Text = main.Settings.FontName;
             this.txtFontSize.Text = main.Settings.FontSize.ToString();
             this.txtTitleFontSize.Text = main.Settings.TitleFontSize.ToString();
             this.chkCreateFiles.Checked = main.Settings.CreateFiles;
@@ -87,7 +100,7 @@ namespace DiabloInterface
             main.Settings.TriggerKeys = txtAutoSplitHotkey.Text;
             main.Settings.FontSize = Int32.Parse(txtFontSize.Text);
             main.Settings.TitleFontSize = Int32.Parse(txtTitleFontSize.Text);
-            main.Settings.FontName = lblFontExample.Text;
+            main.Settings.FontName = cmbFonts.SelectedItem.ToString();
             main.Settings.ShowDebug = chkShowDebug.Checked;
             main.Settings.D2Version = (string)cmbVersion.SelectedItem;
         }
@@ -184,18 +197,6 @@ namespace DiabloInterface
             }
         }
 
-        private void btnFont_Click_1(object sender, EventArgs e)
-        {
-            FontDialog fontDialog1 = new FontDialog();
-            fontDialog1.Font = new Font(lblFontExample.Text, 8);
-            DialogResult result = fontDialog1.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                lblFontExample.Text = fontDialog1.Font.Name;
-            }
-
-        }
-
         private void btnTestHotkey_Click(object sender, EventArgs e)
         {
             if (txtAutoSplitHotkey.Text != "")
@@ -258,6 +259,18 @@ namespace DiabloInterface
         private void button2_Click(object sender, EventArgs e)
         {
             VersionChecker.CheckForUpdate(true);
+        }
+
+        private void comboBox1_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            // Draw the background 
+            e.DrawBackground();
+
+            // Get the item text
+            string text = ((ComboBox)sender).Items[e.Index].ToString();
+            
+            // Draw the text    
+            e.Graphics.DrawString(text, new Font(text, 10f), Brushes.Black, e.Bounds.X, e.Bounds.Y);
         }
     }
 

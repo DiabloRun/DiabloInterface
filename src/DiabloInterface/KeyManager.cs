@@ -43,7 +43,7 @@ namespace DiabloInterface
             {
                 keys.Add("Alt");
             }
-            keys.Add(KeyManager.KeyToString(e.KeyCode));
+            keys.Add(KeyToString(e.KeyCode));
             return string.Join("+", keys.ToArray());
         }
 
@@ -52,7 +52,7 @@ namespace DiabloInterface
             string c = "";
             if ((key >= Keys.D0) && (key <= Keys.D9))
             {
-                c = ((char)((int)'0' + (int)(key - Keys.D0))).ToString();
+                c = ((char)('0' + key - Keys.D0)).ToString();
             } else {
                 c = key.ToString();
             }

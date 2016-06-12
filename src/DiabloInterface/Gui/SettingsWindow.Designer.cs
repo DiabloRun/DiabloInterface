@@ -29,11 +29,10 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsWindow));
-            this.btnFont = new System.Windows.Forms.Button();
             this.lblSelectedFont = new System.Windows.Forms.Label();
-            this.lblFontExample = new System.Windows.Forms.Label();
             this.txtTitleFontSize = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.cmbFonts = new System.Windows.Forms.ComboBox();
             this.txtFontSize = new System.Windows.Forms.TextBox();
             this.lblFontSize = new System.Windows.Forms.Label();
             this.lblTitleFontSize = new System.Windows.Forms.Label();
@@ -51,6 +50,8 @@
             this.lblAutoSplitHotkey = new System.Windows.Forms.Label();
             this.txtAutoSplitHotkey = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.chkCheckUpdates = new System.Windows.Forms.CheckBox();
             this.chkShowDebug = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -61,14 +62,12 @@
             this.comboBoxRunes = new System.Windows.Forms.ComboBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.mainPanel = new System.Windows.Forms.Panel();
             this.loadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.closeSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkCheckUpdates = new System.Windows.Forms.CheckBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.mainPanel = new System.Windows.Forms.Panel();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -79,16 +78,6 @@
             this.mainPanel.SuspendLayout();
             this.SuspendLayout();
             // 
-            // btnFont
-            // 
-            this.btnFont.Location = new System.Drawing.Point(153, 19);
-            this.btnFont.Name = "btnFont";
-            this.btnFont.Size = new System.Drawing.Size(55, 23);
-            this.btnFont.TabIndex = 1;
-            this.btnFont.Text = "Change";
-            this.btnFont.UseVisualStyleBackColor = true;
-            this.btnFont.Click += new System.EventHandler(this.btnFont_Click_1);
-            // 
             // lblSelectedFont
             // 
             this.lblSelectedFont.AutoSize = true;
@@ -98,31 +87,21 @@
             this.lblSelectedFont.TabIndex = 2;
             this.lblSelectedFont.Text = "Selected Font:";
             // 
-            // lblFontExample
-            // 
-            this.lblFontExample.AutoSize = true;
-            this.lblFontExample.Location = new System.Drawing.Point(88, 24);
-            this.lblFontExample.Name = "lblFontExample";
-            this.lblFontExample.Size = new System.Drawing.Size(10, 13);
-            this.lblFontExample.TabIndex = 3;
-            this.lblFontExample.Text = "-";
-            // 
             // txtTitleFontSize
             // 
             this.txtTitleFontSize.Location = new System.Drawing.Point(91, 86);
             this.txtTitleFontSize.Name = "txtTitleFontSize";
-            this.txtTitleFontSize.Size = new System.Drawing.Size(49, 20);
+            this.txtTitleFontSize.Size = new System.Drawing.Size(117, 20);
             this.txtTitleFontSize.TabIndex = 4;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.cmbFonts);
             this.groupBox1.Controls.Add(this.txtFontSize);
             this.groupBox1.Controls.Add(this.lblFontSize);
             this.groupBox1.Controls.Add(this.lblTitleFontSize);
-            this.groupBox1.Controls.Add(this.btnFont);
             this.groupBox1.Controls.Add(this.txtTitleFontSize);
             this.groupBox1.Controls.Add(this.lblSelectedFont);
-            this.groupBox1.Controls.Add(this.lblFontExample);
             this.groupBox1.Location = new System.Drawing.Point(446, 14);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(214, 125);
@@ -130,11 +109,23 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Font";
             // 
+            // cmbFonts
+            // 
+            this.cmbFonts.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbFonts.DropDownWidth = 250;
+            this.cmbFonts.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.cmbFonts.FormattingEnabled = true;
+            this.cmbFonts.Location = new System.Drawing.Point(91, 21);
+            this.cmbFonts.Name = "cmbFonts";
+            this.cmbFonts.Size = new System.Drawing.Size(117, 21);
+            this.cmbFonts.TabIndex = 9;
+            this.cmbFonts.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.comboBox1_DrawItem);
+            // 
             // txtFontSize
             // 
             this.txtFontSize.Location = new System.Drawing.Point(91, 52);
             this.txtFontSize.Name = "txtFontSize";
-            this.txtFontSize.Size = new System.Drawing.Size(49, 20);
+            this.txtFontSize.Size = new System.Drawing.Size(117, 20);
             this.txtFontSize.TabIndex = 8;
             // 
             // lblFontSize
@@ -206,7 +197,7 @@
             // chkAutosplit
             // 
             this.chkAutosplit.AutoSize = true;
-            this.chkAutosplit.Location = new System.Drawing.Point(296, 252);
+            this.chkAutosplit.Location = new System.Drawing.Point(276, 252);
             this.chkAutosplit.Name = "chkAutosplit";
             this.chkAutosplit.Size = new System.Drawing.Size(59, 17);
             this.chkAutosplit.TabIndex = 1;
@@ -260,9 +251,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(361, 248);
+            this.button1.Location = new System.Drawing.Point(341, 248);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(59, 23);
+            this.button1.Size = new System.Drawing.Size(79, 23);
             this.button1.TabIndex = 11;
             this.button1.Text = "Add Split";
             this.button1.UseVisualStyleBackColor = true;
@@ -299,6 +290,26 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Other";
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(6, 66);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(202, 23);
+            this.button2.TabIndex = 2;
+            this.button2.Text = "Check for updates now";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // chkCheckUpdates
+            // 
+            this.chkCheckUpdates.AutoSize = true;
+            this.chkCheckUpdates.Location = new System.Drawing.Point(9, 43);
+            this.chkCheckUpdates.Name = "chkCheckUpdates";
+            this.chkCheckUpdates.Size = new System.Drawing.Size(148, 17);
+            this.chkCheckUpdates.TabIndex = 1;
+            this.chkCheckUpdates.Text = "Check for updates at start";
+            this.chkCheckUpdates.UseVisualStyleBackColor = true;
+            // 
             // chkShowDebug
             // 
             this.chkShowDebug.AutoSize = true;
@@ -313,9 +324,9 @@
             // 
             this.groupBox5.Controls.Add(this.label9);
             this.groupBox5.Controls.Add(this.cmbVersion);
-            this.groupBox5.Location = new System.Drawing.Point(448, 348);
+            this.groupBox5.Location = new System.Drawing.Point(446, 297);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(213, 44);
+            this.groupBox5.Size = new System.Drawing.Size(214, 44);
             this.groupBox5.TabIndex = 17;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Diablo 2";
@@ -363,9 +374,9 @@
             // 
             // btnAddRune
             // 
-            this.btnAddRune.Location = new System.Drawing.Point(345, 82);
+            this.btnAddRune.Location = new System.Drawing.Point(341, 82);
             this.btnAddRune.Name = "btnAddRune";
-            this.btnAddRune.Size = new System.Drawing.Size(75, 23);
+            this.btnAddRune.Size = new System.Drawing.Size(79, 23);
             this.btnAddRune.TabIndex = 1;
             this.btnAddRune.Text = "Add Rune";
             this.btnAddRune.UseVisualStyleBackColor = true;
@@ -409,9 +420,9 @@
             "Jah",
             "Cham",
             "Zod"});
-            this.comboBoxRunes.Location = new System.Drawing.Point(218, 83);
+            this.comboBoxRunes.Location = new System.Drawing.Point(276, 83);
             this.comboBoxRunes.Name = "comboBoxRunes";
-            this.comboBoxRunes.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxRunes.Size = new System.Drawing.Size(59, 21);
             this.comboBoxRunes.TabIndex = 0;
             // 
             // menuStrip1
@@ -438,25 +449,6 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(138, 6);
-            // 
-            // mainPanel
-            // 
-            this.mainPanel.Controls.Add(this.groupBox1);
-            this.mainPanel.Controls.Add(this.grpRunes);
-            this.mainPanel.Controls.Add(this.groupBox3);
-            this.mainPanel.Controls.Add(this.groupBox2);
-            this.mainPanel.Controls.Add(this.groupBox5);
-            this.mainPanel.Controls.Add(this.groupBox4);
-            this.mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainPanel.Location = new System.Drawing.Point(0, 24);
-            this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(672, 418);
-            this.mainPanel.TabIndex = 22;
-            // 
             // loadConfigToolStripMenuItem
             // 
             this.loadConfigToolStripMenuItem.Image = global::DiabloInterface.Properties.Resources.folder_explore;
@@ -481,6 +473,11 @@
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(138, 6);
+            // 
             // closeSettingsToolStripMenuItem
             // 
             this.closeSettingsToolStripMenuItem.Image = global::DiabloInterface.Properties.Resources.cross;
@@ -490,25 +487,19 @@
             this.closeSettingsToolStripMenuItem.Text = "Close Settings";
             this.closeSettingsToolStripMenuItem.Click += new System.EventHandler(this.closeSettingsToolStripMenuItem_Click);
             // 
-            // chkCheckUpdates
+            // mainPanel
             // 
-            this.chkCheckUpdates.AutoSize = true;
-            this.chkCheckUpdates.Location = new System.Drawing.Point(9, 43);
-            this.chkCheckUpdates.Name = "chkCheckUpdates";
-            this.chkCheckUpdates.Size = new System.Drawing.Size(148, 17);
-            this.chkCheckUpdates.TabIndex = 1;
-            this.chkCheckUpdates.Text = "Check for updates at start";
-            this.chkCheckUpdates.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(6, 66);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(202, 23);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "Check for updates now";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.mainPanel.Controls.Add(this.groupBox1);
+            this.mainPanel.Controls.Add(this.grpRunes);
+            this.mainPanel.Controls.Add(this.groupBox3);
+            this.mainPanel.Controls.Add(this.groupBox2);
+            this.mainPanel.Controls.Add(this.groupBox5);
+            this.mainPanel.Controls.Add(this.groupBox4);
+            this.mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainPanel.Location = new System.Drawing.Point(0, 24);
+            this.mainPanel.Name = "mainPanel";
+            this.mainPanel.Size = new System.Drawing.Size(672, 418);
+            this.mainPanel.TabIndex = 22;
             // 
             // SettingsWindow
             // 
@@ -542,9 +533,7 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button btnFont;
         private System.Windows.Forms.Label lblSelectedFont;
-        private System.Windows.Forms.Label lblFontExample;
         private System.Windows.Forms.TextBox txtTitleFontSize;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label lblTitleFontSize;
@@ -582,5 +571,6 @@
         private System.Windows.Forms.Panel mainPanel;
         private System.Windows.Forms.CheckBox chkCheckUpdates;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ComboBox cmbFonts;
     }
 }
