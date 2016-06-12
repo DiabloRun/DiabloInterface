@@ -1,4 +1,5 @@
 ﻿using DiabloInterface.D2.Struct;
+using DiabloInterface.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,7 +38,7 @@ namespace DiabloInterface.Server
             var ps = new PipeSecurity();
             System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier(System.Security.Principal.WellKnownSidType.BuiltinUsersSid, null);
             ps.AddAccessRule(new PipeAccessRule(sid, PipeAccessRights.ReadWrite, System.Security.AccessControl.AccessControlType.Allow));
-            
+
             while (true)
             {
                 NamedPipeServerStream pipe = null;
@@ -60,7 +61,8 @@ namespace DiabloInterface.Server
                 }
                 catch (IOException e)
                 {
-                    Console.WriteLine("Error: {0}", e.Message);
+                    Logger.Instance.WriteLine("ItemServer Error: {0}", e.Message);
+
                     if (pipe != null) pipe.Close();
                 }
             }

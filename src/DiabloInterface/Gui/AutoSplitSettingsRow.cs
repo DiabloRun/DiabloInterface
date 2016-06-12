@@ -93,7 +93,7 @@ namespace DiabloInterface
                     cmbDifficulty.Items.Add(new Item(LABEL_NORMAL, 0));
                     cmbDifficulty.Items.Add(new Item(LABEL_NIGHTMARE, 1));
                     cmbDifficulty.Items.Add(new Item(LABEL_HELL, 2));
-                    cmbDifficulty.SelectedIndex = autosplit.difficulty;
+                    cmbDifficulty.SelectedIndex = autosplit.Difficulty;
                     cmbDifficulty.Show();
                     break;
                 case AutoSplit.SplitType.CharLevel:

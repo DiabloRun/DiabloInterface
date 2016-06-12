@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using DiabloInterface.Server;
 using DiabloInterface.Gui;
+using DiabloInterface.Logging;
 
 namespace DiabloInterface
 {
@@ -31,6 +32,9 @@ namespace DiabloInterface
             // We want to dispose our handles once the window is disposed.
             Disposed += OnWindowDisposed;
 
+            InitializeLogger();
+            WriteLogHeader();
+
             InitializeComponent();
 
             // Display current version along with the application name.
@@ -41,6 +45,30 @@ namespace DiabloInterface
         {
             itemServer.Stop();
             base.OnFormClosing(e);
+        }
+
+        void InitializeLogger()
+        {
+            List<ILogWriter> logWriters = new List<ILogWriter>();
+
+            // Attatch log file writer.
+            string logFile = Path.Combine("Logs", FileLogWriter.TimedLogFilename());
+            logWriters.Add(new FileLogWriter(logFile));
+
+#if DEBUG
+            // Use a console logger on debug versions.
+            logWriters.Add(new ConsoleLogWriter());
+#endif
+
+            // Create and use the new logger.
+            Logger.Instance = new Logger(logWriters);
+        }
+
+        void WriteLogHeader()
+        {
+            Logger.Instance.WriteLineRaw("Diablo Interface Version {0}", Application.ProductVersion);
+            Logger.Instance.WriteLineRaw("Operating system: {0}", Environment.OSVersion);
+            Logger.Instance.WriteLineRaw(new string('-', 40));
         }
 
         public void Reset()

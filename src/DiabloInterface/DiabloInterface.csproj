@@ -147,6 +147,10 @@
       <DependentUpon>RuneDisplayElement.cs</DependentUpon>
     </Compile>
     <Compile Include="KeyManager.cs" />
+    <Compile Include="Logging\ConsoleLogWriter.cs" />
+    <Compile Include="Logging\FileLogWriter.cs" />
+    <Compile Include="Logging\ILogWriter.cs" />
+    <Compile Include="Logging\Logger.cs" />
     <Compile Include="Server\QueryRequest.cs" />
     <Compile Include="Server\QueryResponse.cs" />
     <Compile Include="Server\ItemServer.cs" />
