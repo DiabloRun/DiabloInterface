@@ -226,7 +226,7 @@ namespace DiabloInterface
             main.writeFiles(character);
 
             // Update autosplits only if enabled and the character was a freshly started character.
-            if (IsAutosplitCharacter(character) && main.settings.doAutosplit)
+            if (IsAutosplitCharacter(character) && main.Settings.DoAutosplit)
             {
                 UpdateAutoSplits(gameInfo, character);
             }
@@ -342,11 +342,11 @@ namespace DiabloInterface
 
         private void UpdateAutoSplits(GameInfo gameInfo, Character character)
         {
-            foreach (AutoSplit autosplit in main.settings.autosplits)
+            foreach (AutoSplit autosplit in main.Settings.Autosplits)
             {
-                if (!autosplit.reached && autosplit.type == AutoSplit.Type.Special && autosplit.value == (int)AutoSplit.Special.GAMESTART)
+                if (!autosplit.Reached && autosplit.Type == AutoSplit.SplitType.Special && autosplit.Value == (int)AutoSplit.Special.GAMESTART)
                 {
-                    autosplit.reached = true;
+                    autosplit.Reached = true;
                     main.triggerAutosplit(character);
                 }
             }
@@ -356,24 +356,24 @@ namespace DiabloInterface
             bool haveUnreachedItemSplits = false;
             bool haveUnreachedQuestSplits = false;
 
-            foreach (AutoSplit autosplit in main.settings.autosplits)
+            foreach (AutoSplit autosplit in main.Settings.Autosplits)
             {
-                if (autosplit.reached || autosplit.difficulty != gameInfo.Game.Difficulty)
+                if (autosplit.Reached || autosplit.Difficulty != gameInfo.Game.Difficulty)
                 {
                     continue;
                 }
-                switch (autosplit.type)
+                switch (autosplit.Type)
                 {
-                    case AutoSplit.Type.CharLevel:
+                    case AutoSplit.SplitType.CharLevel:
                         haveUnreachedCharLevelSplits = true;
                         break;
-                    case AutoSplit.Type.Area:
+                    case AutoSplit.SplitType.Area:
                         haveUnreachedAreaSplits = true;
                         break;
-                    case AutoSplit.Type.Item:
+                    case AutoSplit.SplitType.Item:
                         haveUnreachedItemSplits = true;
                         break;
-                    case AutoSplit.Type.Quest:
+                    case AutoSplit.SplitType.Quest:
                         haveUnreachedQuestSplits = true;
                         break;
                 }
@@ -401,41 +401,41 @@ namespace DiabloInterface
                 area = reader.ReadByte(memory.Address.Area, AddressingMode.Relative);
             }
 
-            foreach (AutoSplit autosplit in main.settings.autosplits)
+            foreach (AutoSplit autosplit in main.Settings.Autosplits)
             {
-                if (autosplit.reached || autosplit.difficulty != gameInfo.Game.Difficulty)
+                if (autosplit.Reached || autosplit.Difficulty != gameInfo.Game.Difficulty)
                 {
                     continue;
                 }
 
-                switch (autosplit.type)
+                switch (autosplit.Type)
                 {
-                    case AutoSplit.Type.CharLevel:
-                        if (autosplit.value <= character.Level)
+                    case AutoSplit.SplitType.CharLevel:
+                        if (autosplit.Value <= character.Level)
                         {
-                            autosplit.reached = true;
+                            autosplit.Reached = true;
                             main.triggerAutosplit(character);
                         }
                         break;
-                    case AutoSplit.Type.Area:
-                        if (autosplit.value == area)
+                    case AutoSplit.SplitType.Area:
+                        if (autosplit.Value == area)
                         {
-                            autosplit.reached = true;
+                            autosplit.Reached = true;
                             main.triggerAutosplit(character);
                         }
                         break;
-                    case AutoSplit.Type.Item:
-                        if (itemsIds.Contains(autosplit.value))
+                    case AutoSplit.SplitType.Item:
+                        if (itemsIds.Contains(autosplit.Value))
                         {
-                            autosplit.reached = true;
+                            autosplit.Reached = true;
                             main.triggerAutosplit(character);
                         }
                         break;
-                    case AutoSplit.Type.Quest:
-                        if (IsQuestCompleted(gameInfo, autosplit.value >> 1))
+                    case AutoSplit.SplitType.Quest:
+                        if (IsQuestCompleted(gameInfo, autosplit.Value >> 1))
                         {
                             // quest finished
-                            autosplit.reached = true;
+                            autosplit.Reached = true;
                             main.triggerAutosplit(character);
                         }
                         break;

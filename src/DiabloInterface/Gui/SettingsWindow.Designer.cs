@@ -212,7 +212,6 @@
             this.chkAutosplit.TabIndex = 1;
             this.chkAutosplit.Text = "Enable";
             this.chkAutosplit.UseVisualStyleBackColor = true;
-            this.chkAutosplit.CheckedChanged += new System.EventHandler(this.chkAutosplit_CheckedChanged);
             // 
             // label3
             // 
@@ -500,7 +499,6 @@
             this.chkCheckUpdates.TabIndex = 1;
             this.chkCheckUpdates.Text = "Check for updates at start";
             this.chkCheckUpdates.UseVisualStyleBackColor = true;
-            this.chkCheckUpdates.CheckedChanged += new System.EventHandler(this.chkCheckUpdates_CheckedChanged);
             // 
             // button2
             // 

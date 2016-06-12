@@ -11,7 +11,12 @@ namespace DiabloInterface
 {
     public partial class MainWindow : Form
     {
-        public SettingsHolder settings;
+
+        private const int OriginalHeight = 200;
+        private const string ItemServerPipeName = "DiabloInterfaceItems";
+        private const string WindowTitleFormat = "Diablo Interface v{0}"; // {0} => Application.ProductVersion
+
+        public SettingsHolder Settings;
 
         Thread dataReaderThread;
 
@@ -21,8 +26,6 @@ namespace DiabloInterface
         D2DataReader dataReader;
         ItemServer itemServer;
 
-        private const int originalHeight = 200;
-
         public MainWindow()
         {
             // We want to dispose our handles once the window is disposed.
@@ -31,7 +34,7 @@ namespace DiabloInterface
             InitializeComponent();
 
             // Display current version along with the application name.
-            Text = string.Format("Diablo Interface v{0}", Application.ProductVersion);
+            Text = string.Format(WindowTitleFormat, Application.ProductVersion);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -42,9 +45,9 @@ namespace DiabloInterface
 
         public void Reset()
         {
-            foreach (AutoSplit autosplit in settings.autosplits)
+            foreach (AutoSplit autosplit in Settings.Autosplits)
             {
-                autosplit.reached = false;
+                autosplit.Reached = false;
             }
             if (runeDisplayPanel.Controls.Count > 0)
             {
@@ -72,11 +75,11 @@ namespace DiabloInterface
 
         public List<AutoSplit> getAutosplits()
         {
-            return settings.autosplits;
+            return Settings.Autosplits;
         }
         public void addAutosplit(AutoSplit autosplit)
         {
-            settings.autosplits.Add(autosplit);
+            Settings.Autosplits.Add(autosplit);
         }
 
         private D2MemoryTable GetVersionMemoryTable(string version)
@@ -139,14 +142,14 @@ namespace DiabloInterface
 
         private void initialize()
         {
-            settings = new SettingsHolder();
-            settings.load();
+            Settings = new SettingsHolder();
+            Settings.load();
 
             if (dataReader == null)
             {
-                var memoryTable = GetVersionMemoryTable(settings.d2Version);
+                var memoryTable = GetVersionMemoryTable(Settings.D2Version);
                 dataReader = new D2DataReader(this, memoryTable);
-                itemServer = new ItemServer(dataReader, "DiabloInterfaceItems");
+                itemServer = new ItemServer(dataReader, ItemServerPipeName);
             }
 
             if (dataReaderThread == null)
@@ -155,7 +158,7 @@ namespace DiabloInterface
                 dataReaderThread.Start();
             }
 
-            if (settings.checkUpdates)
+            if (Settings.CheckUpdates)
             {
                 VersionChecker.CheckForUpdate(false);
             }
@@ -168,7 +171,7 @@ namespace DiabloInterface
         {
             if (debugWindow != null)
             {
-                debugWindow.updateAutosplits(settings.autosplits);
+                debugWindow.updateAutosplits(Settings.Autosplits);
             }
         }
 
@@ -214,9 +217,9 @@ namespace DiabloInterface
 
         public void triggerAutosplit(Character player)
         {
-            if (settings.doAutosplit && settings.triggerKeys != "")
+            if (Settings.DoAutosplit && Settings.TriggerKeys != "")
             {
-                KeyManager.sendKeys(settings.triggerKeys);
+                KeyManager.sendKeys(Settings.TriggerKeys);
             }
         }
 
@@ -224,35 +227,35 @@ namespace DiabloInterface
         {
 
             // todo: only write files if content changed
-            if (!settings.createFiles)
+            if (!Settings.CreateFiles)
             {
                 return;
             }
 
-            if (!Directory.Exists(settings.fileFolder))
+            if (!Directory.Exists(Settings.FileFolder))
             {
-                Directory.CreateDirectory(settings.fileFolder);
+                Directory.CreateDirectory(Settings.FileFolder);
             }
 
-            File.WriteAllText(settings.fileFolder + "/name.txt", player.name);
-            File.WriteAllText(settings.fileFolder + "/level.txt", player.Level.ToString());
-            File.WriteAllText(settings.fileFolder + "/strength.txt", player.Strength.ToString());
-            File.WriteAllText(settings.fileFolder + "/dexterity.txt", player.Dexterity.ToString());
-            File.WriteAllText(settings.fileFolder + "/vitality.txt", player.Vitality.ToString());
-            File.WriteAllText(settings.fileFolder + "/energy.txt", player.Energy.ToString());
-            File.WriteAllText(settings.fileFolder + "/fire_res.txt", player.FireResist.ToString());
-            File.WriteAllText(settings.fileFolder + "/cold_res.txt", player.ColdResist.ToString());
-            File.WriteAllText(settings.fileFolder + "/light_res.txt", player.LightningResist.ToString());
-            File.WriteAllText(settings.fileFolder + "/poison_res.txt", player.PoisonResist.ToString());
-            File.WriteAllText(settings.fileFolder + "/gold.txt", (player.Gold + player.GoldStash).ToString());
-            File.WriteAllText(settings.fileFolder + "/deaths.txt", player.Deaths.ToString());
+            File.WriteAllText(Settings.FileFolder + "/name.txt", player.name);
+            File.WriteAllText(Settings.FileFolder + "/level.txt", player.Level.ToString());
+            File.WriteAllText(Settings.FileFolder + "/strength.txt", player.Strength.ToString());
+            File.WriteAllText(Settings.FileFolder + "/dexterity.txt", player.Dexterity.ToString());
+            File.WriteAllText(Settings.FileFolder + "/vitality.txt", player.Vitality.ToString());
+            File.WriteAllText(Settings.FileFolder + "/energy.txt", player.Energy.ToString());
+            File.WriteAllText(Settings.FileFolder + "/fire_res.txt", player.FireResist.ToString());
+            File.WriteAllText(Settings.FileFolder + "/cold_res.txt", player.ColdResist.ToString());
+            File.WriteAllText(Settings.FileFolder + "/light_res.txt", player.LightningResist.ToString());
+            File.WriteAllText(Settings.FileFolder + "/poison_res.txt", player.PoisonResist.ToString());
+            File.WriteAllText(Settings.FileFolder + "/gold.txt", (player.Gold + player.GoldStash).ToString());
+            File.WriteAllText(Settings.FileFolder + "/deaths.txt", player.Deaths.ToString());
 
         }
 
         public void applySettings()
         {
-            Font fBig = new Font(this.settings.fontName, this.settings.titleFontSize);
-            Font fSmall = new Font(this.settings.fontName, this.settings.fontSize);
+            Font fBig = new Font(this.Settings.FontName, this.Settings.TitleFontSize);
+            Font fSmall = new Font(this.Settings.FontName, this.Settings.FontSize);
 
             nameLabel.Font = fBig;
             lvlLabel.Font = fSmall;
@@ -273,7 +276,7 @@ namespace DiabloInterface
             goldLabel.Font = fSmall;
             deathsLabel.Font = fSmall;
 
-            if ( settings.showDebug )
+            if ( Settings.ShowDebug )
             {
                 if (debugWindow == null || debugWindow.IsDisposed)
                 {
@@ -288,14 +291,14 @@ namespace DiabloInterface
                 }
             }
 
-            var memoryTable = GetVersionMemoryTable(settings.d2Version);
+            var memoryTable = GetVersionMemoryTable(Settings.D2Version);
             dataReader.SetNextMemoryTable(memoryTable);
 
             runeDisplayPanel.Controls.Clear();
-            if ( settings.runes.Count > 0 )
+            if ( Settings.Runes.Count > 0 )
             {
                 int extraheight = 0;
-                foreach (int r in settings.runes)
+                foreach (int r in Settings.Runes)
                 {
                     RuneDisplayElement element = new RuneDisplayElement((Rune)r, null, this);
                     element.setRemovable(false);
@@ -304,10 +307,10 @@ namespace DiabloInterface
                     extraheight = relayout();
                 }
 
-                Height = originalHeight + extraheight + 8;
+                Height = OriginalHeight + extraheight + 8;
             } else
             {
-                Height = originalHeight;
+                Height = OriginalHeight;
             }
         }
 
@@ -345,11 +348,6 @@ namespace DiabloInterface
         {
             dataReaderThread.Abort();
             Application.Exit();
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void button2_Click(object sender, EventArgs e)

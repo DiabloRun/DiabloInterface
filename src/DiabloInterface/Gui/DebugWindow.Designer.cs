@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DebugWindow));
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.autosplitPanel = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -57,12 +57,12 @@
             // 
             // panel1
             // 
-            this.panel1.AutoScroll = true;
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 16);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(192, 236);
-            this.panel1.TabIndex = 0;
+            this.autosplitPanel.AutoScroll = true;
+            this.autosplitPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.autosplitPanel.Location = new System.Drawing.Point(3, 16);
+            this.autosplitPanel.Name = "panel1";
+            this.autosplitPanel.Size = new System.Drawing.Size(192, 236);
+            this.autosplitPanel.TabIndex = 0;
             // 
             // groupBox1
             // 
@@ -121,7 +121,7 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.panel1);
+            this.groupBox2.Controls.Add(this.autosplitPanel);
             this.groupBox2.Location = new System.Drawing.Point(665, 4);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(198, 255);
@@ -138,7 +138,6 @@
             this.groupBox3.TabIndex = 4;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Last Item";
-            this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
             // 
             // tabPageBelt
             // 
@@ -284,7 +283,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel autosplitPanel;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TabControl tabControl1;

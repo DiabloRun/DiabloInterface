@@ -5,7 +5,7 @@ namespace DiabloInterface
 {
     public class AutoSplit
     {
-        public enum Type
+        public enum SplitType
         {
             None = -1,
             CharLevel = 0,
@@ -35,77 +35,72 @@ namespace DiabloInterface
             }
         }
 
-        private string _name = "";
-        private Type _type = Type.None;
-        private short _value = -1;
-        private short _difficulty = 0;
+        private Control control;
 
-        public short difficulty
+        private short _difficulty = 0;
+        public short Difficulty
         {
-            get { return this._difficulty; }
+            get { return _difficulty; }
             set { _difficulty = value; }
         }
-        public Type type
+
+        private SplitType _type = SplitType.None;
+        public SplitType Type
         {
-            get { return this._type; }
+            get { return _type; }
             set { _type = value; }
         }
-        public short value
+
+        private short _value = -1;
+        public short Value
         {
             get { return _value; }
             set { _value = value; }
         }
-        public string name
+
+        private string _name = "";
+        public string Name
         {
             get { return _name; }
             set { _name = value; }
         }
 
-        private Control control;
         private bool _reached = false;
-        private bool _deleted = false;
-
-        public bool reached
+        public bool Reached
         {
-            get { return this._reached; }
-            set
-            {
-                this._reached = value;
-                updateControl();
-            }
+            get { return _reached; }
+            set { _reached = value; updateControl(); }
         }
 
-        public bool deleted
+        private bool _deleted = false;
+        public bool Deleted
         {
-            get { return this._deleted; }
-            set
-            {
-                this._deleted = value;
-            }
+            get { return _deleted; }
+            set { _deleted = value; }
         }
 
         public void updateControl()
         {
-            if (this.control == null)
+            if (control == null)
             {
                 return;
             }
 
-            this.control.Text = this.name;
+            control.Text = Name;
                 
-            if (this._reached)
+            if (_reached)
             {
-                this.control.ForeColor = Color.Green;
+                control.ForeColor = Color.Green;
             }
             else
             {
-                this.control.ForeColor = Color.Red;
+                control.ForeColor = Color.Red;
             }
 
-            if (this._deleted)
+            if (_deleted)
             {
-                this.control.Parent.Controls.Remove(this.control);
-                this.control = null;
+                control.Parent.Controls.Remove(control);
+                control = null;
             }
         }
         public void bindControl(Control control)
@@ -113,17 +108,18 @@ namespace DiabloInterface
             this.control = control;
             updateControl();
         }
-
+        
         public AutoSplit()
         {
 
         }
-        public AutoSplit(string name, Type type, short value, short difficulty)
+
+        public AutoSplit(string name, SplitType type, short value, short difficulty)
         {
-            this._name = name;
-            this._type = type;
-            this._value = value;
-            this._difficulty = difficulty;
+            _name = name;
+            _type = type;
+            _value = value;
+            _difficulty = difficulty;
         }
     }
 }

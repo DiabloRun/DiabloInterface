@@ -8,7 +8,8 @@ namespace DiabloInterface
 {
     public partial class SettingsWindow : Form
     {
-
+        private const string WindowTitleFormat = "Settings ({0})"; // {0} => Settings File Path
+        
         private MainWindow main;
 
         public SettingsWindow(MainWindow main)
@@ -20,34 +21,34 @@ namespace DiabloInterface
 
         private void updateTitle()
         {
-            Text = "Settings (" + Properties.Settings.Default.SettingsFile + ")";
+            Text = string.Format(WindowTitleFormat, Properties.Settings.Default.SettingsFile);
         }
 
         private void init() {
             updateTitle();
 
-            this.lblFontExample.Text = main.settings.fontName;
-            this.txtFontSize.Text = main.settings.fontSize.ToString();
-            this.txtTitleFontSize.Text = main.settings.titleFontSize.ToString();
-            this.chkCreateFiles.Checked = main.settings.createFiles;
-            this.chkAutosplit.Checked = main.settings.doAutosplit;
-            this.txtAutoSplitHotkey.Text = main.settings.triggerKeys;
-            this.chkShowDebug.Checked = main.settings.showDebug;
-            this.chkCheckUpdates.Checked = main.settings.checkUpdates;
+            this.lblFontExample.Text = main.Settings.FontName;
+            this.txtFontSize.Text = main.Settings.FontSize.ToString();
+            this.txtTitleFontSize.Text = main.Settings.TitleFontSize.ToString();
+            this.chkCreateFiles.Checked = main.Settings.CreateFiles;
+            this.chkAutosplit.Checked = main.Settings.DoAutosplit;
+            this.txtAutoSplitHotkey.Text = main.Settings.TriggerKeys;
+            this.chkShowDebug.Checked = main.Settings.ShowDebug;
+            this.chkCheckUpdates.Checked = main.Settings.CheckUpdates;
 
             // Show the selected diablo version.
-            int versionIndex = this.cmbVersion.FindString(main.settings.d2Version);
+            int versionIndex = this.cmbVersion.FindString(main.Settings.D2Version);
             if (versionIndex < 0) versionIndex = 0;
             this.cmbVersion.SelectedIndex = versionIndex;
 
             panel1.Controls.Clear();
-            foreach (AutoSplit a in main.settings.autosplits)
+            foreach (AutoSplit a in main.Settings.Autosplits)
             {
                 addAutosplit(a, false);
             }
 
             runeDisplayPanel.Controls.Clear();
-            foreach (int rune in main.settings.runes)
+            foreach (int rune in main.Settings.Runes)
             {
                 if (rune >= 0)
                 {
@@ -65,9 +66,9 @@ namespace DiabloInterface
         private void updateSettings()
         {
             List<AutoSplit> asList = new List<AutoSplit>();
-            foreach (AutoSplit a in main.settings.autosplits)
+            foreach (AutoSplit a in main.Settings.Autosplits)
             {
-                if (!a.deleted)
+                if (!a.Deleted)
                 {
                     asList.Add(a);
                 }
@@ -78,17 +79,17 @@ namespace DiabloInterface
                 if (!c.Visible) continue;
                 runesList.Add((int)c.getRune());
             }
-            main.settings.runes = runesList;
-            main.settings.autosplits = asList;
-            main.settings.createFiles = chkCreateFiles.Checked;
-            main.settings.checkUpdates = chkCheckUpdates.Checked;
-            main.settings.doAutosplit = chkAutosplit.Checked;
-            main.settings.triggerKeys = txtAutoSplitHotkey.Text;
-            main.settings.fontSize = Int32.Parse(txtFontSize.Text);
-            main.settings.titleFontSize = Int32.Parse(txtTitleFontSize.Text);
-            main.settings.fontName = lblFontExample.Text;
-            main.settings.showDebug = chkShowDebug.Checked;
-            main.settings.d2Version = (string)cmbVersion.SelectedItem;
+            main.Settings.Runes = runesList;
+            main.Settings.Autosplits = asList;
+            main.Settings.CreateFiles = chkCreateFiles.Checked;
+            main.Settings.CheckUpdates = chkCheckUpdates.Checked;
+            main.Settings.DoAutosplit = chkAutosplit.Checked;
+            main.Settings.TriggerKeys = txtAutoSplitHotkey.Text;
+            main.Settings.FontSize = Int32.Parse(txtFontSize.Text);
+            main.Settings.TitleFontSize = Int32.Parse(txtTitleFontSize.Text);
+            main.Settings.FontName = lblFontExample.Text;
+            main.Settings.ShowDebug = chkShowDebug.Checked;
+            main.Settings.D2Version = (string)cmbVersion.SelectedItem;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -105,7 +106,7 @@ namespace DiabloInterface
 
             if (addToMain)
             {
-                main.settings.autosplits.Add(autosplit);
+                main.Settings.Autosplits.Add(autosplit);
             }
         }
         
@@ -146,7 +147,7 @@ namespace DiabloInterface
         {
             Button b = (Button)sender;
             AutoSplit a = (AutoSplit)b.Tag;
-            a.deleted = true;
+            a.Deleted = true;
         }
 
         private void txtAutoSplitHotkey_KeyDown(object sender, KeyEventArgs e)
@@ -203,11 +204,6 @@ namespace DiabloInterface
             }
         }
 
-        private void chkAutosplit_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnAddRune_Click(object sender, EventArgs e)
         {
             int rune = this.comboBoxRunes.SelectedIndex;
@@ -223,7 +219,7 @@ namespace DiabloInterface
         {
             updateSettings();
 
-            main.settings.save();
+            main.Settings.save();
             main.applySettings();
             main.updateAutosplits();
         }
@@ -238,7 +234,7 @@ namespace DiabloInterface
             OpenFileDialog d = new OpenFileDialog();
             if (d.ShowDialog() == DialogResult.OK)
             {
-                main.settings.loadFrom(d.FileName);
+                main.Settings.loadFrom(d.FileName);
                 updateTitle();
                 init();
                 main.applySettings();
@@ -252,7 +248,7 @@ namespace DiabloInterface
             if (d.ShowDialog() == DialogResult.OK)
             {
                 updateSettings();
-                main.settings.saveAs(d.FileName);
+                main.Settings.saveAs(d.FileName);
                 updateTitle();
                 main.applySettings();
                 main.updateAutosplits();
@@ -262,11 +258,6 @@ namespace DiabloInterface
         private void button2_Click(object sender, EventArgs e)
         {
             VersionChecker.CheckForUpdate(true);
-        }
-
-        private void chkCheckUpdates_CheckedChanged(object sender, EventArgs e)
-        {
-
         }
     }
 

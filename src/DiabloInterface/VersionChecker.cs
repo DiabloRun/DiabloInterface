@@ -12,8 +12,8 @@ namespace DiabloInterface
     class VersionChecker
     {
 
-        static string releasesUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases";
-        static string releasesLatestUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases/latest";
+        static string ReleasesUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases";
+        static string ReleasesLatestUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases/latest";
 
         public static void CheckForUpdate( bool userTriggered )
         {
@@ -32,7 +32,7 @@ namespace DiabloInterface
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                     MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                 {
-                    System.Diagnostics.Process.Start(releasesUrl);
+                    System.Diagnostics.Process.Start(ReleasesUrl);
                 }
             }
         }
@@ -54,8 +54,8 @@ namespace DiabloInterface
                 pre = Convert.ToInt32(verMatch.Groups[4].Value);
             }
 
-            HttpWebRequest r = (HttpWebRequest)WebRequest.Create(releasesLatestUrl);
-            r.Method = "HEAD";
+            HttpWebRequest r = (HttpWebRequest)WebRequest.Create(ReleasesLatestUrl);
+            r.Method = WebRequestMethods.Http.Head;
             r.AllowAutoRedirect = false;
             
             string location;
@@ -74,8 +74,7 @@ namespace DiabloInterface
             int majorNew = Convert.ToInt32(tagMatch.Groups[1].Value);
             int minorNew = Convert.ToInt32(tagMatch.Groups[2].Value);
             int patchNew = Convert.ToInt32(tagMatch.Groups[3].Value);
-
-
+            
             // version compare.
 
             if (majorNew > major)
