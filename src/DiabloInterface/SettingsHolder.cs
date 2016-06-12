@@ -8,19 +8,41 @@ namespace DiabloInterface
     {
         const string defaultSettingsFile = "settings.conf";
 
-        public string fileFolder = "txt";
-        public string fontName = "Courier New";
-        public string d2Version = "";
-        public int fontSize = 10;
-        public int titleFontSize = 18;
-        public bool createFiles = false;
-        public bool doAutosplit = false;
-        public bool showDebug = false;
-        public bool checkUpdates = false;
-        public string triggerKeys = "";
-        public List<AutoSplit> autosplits = new List<AutoSplit>();
-        public List<int> runes = new List<int>();
+        public string fileFolder;
+        public string fontName;
+        public string d2Version;
+        public int fontSize;
+        public int titleFontSize;
+        public bool createFiles;
+        public bool doAutosplit;
+        public bool showDebug;
+        public bool checkUpdates;
+        public string triggerKeys;
+        public List<AutoSplit> autosplits;
+        public List<int> runes;
 
+        public SettingsHolder ()
+        {
+            // init members with default values
+            init();
+        }
+
+        private void init()
+        {
+            fileFolder = "txt";
+            fontName = "Courier New";
+            d2Version = "";
+            fontSize = 10;
+            titleFontSize = 18;
+            createFiles = false;
+            doAutosplit = false;
+            showDebug = false;
+            checkUpdates = false;
+            triggerKeys = "";
+            autosplits = new List<AutoSplit>();
+            runes = new List<int>();
+        }
+        
         public void saveAs(string file)
         {
             Dictionary<string, dynamic> dict = new Dictionary<string, dynamic>();
@@ -59,6 +81,9 @@ namespace DiabloInterface
             {
                 return;
             }
+
+            // init members with default values
+            init();
 
             List<AutoSplit> autosplitsNew = new List<AutoSplit>();
             string[] conf = File.ReadAllLines(file);
