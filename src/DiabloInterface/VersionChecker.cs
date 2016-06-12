@@ -43,7 +43,7 @@ namespace DiabloInterface
             Match verMatch = Regex.Match(Application.ProductVersion, @"^(\d+)\.(\d+)\.(\d+)(?:\.PR\.(\d+))?$");
             if (!verMatch.Success)
             {
-                return "";
+                return null;
             }
             int major = Convert.ToInt32(verMatch.Groups[1].Value);
             int minor = Convert.ToInt32(verMatch.Groups[2].Value);
