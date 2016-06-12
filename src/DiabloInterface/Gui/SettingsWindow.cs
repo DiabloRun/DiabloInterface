@@ -269,8 +269,18 @@ namespace DiabloInterface
             // Get the item text
             string text = ((ComboBox)sender).Items[e.Index].ToString();
             
+            Font fSender = ((Control)sender).Font;
+            Font f;
+            try
+            {
+                f = new Font(text, 10f, fSender.Style);
+            } catch
+            {
+                f = fSender;
+            }
+
             // Draw the text    
-            e.Graphics.DrawString(text, new Font(text, 10f), Brushes.Black, e.Bounds.X, e.Bounds.Y);
+            e.Graphics.DrawString(text, f, Brushes.Black, e.Bounds.X, e.Bounds.Y);
         }
     }
 
