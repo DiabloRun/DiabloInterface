@@ -156,6 +156,7 @@
     <Compile Include="Gui\SettingsWindow.Designer.cs">
       <DependentUpon>SettingsWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="VersionChecker.cs" />
     <EmbeddedResource Include="Gui\AutoSplitSettingsRow.resx">
       <DependentUpon>AutoSplitSettingsRow.cs</DependentUpon>
     </EmbeddedResource>
@@ -202,6 +203,11 @@
     <Content Include="Resources\Diablo II_101.ico" />
     <EmbeddedResource Include="Resources\ItemStatCost.txt" />
     <EmbeddedResource Include="Resources\Images\Runes\runes.png" />
+    <None Include="Resources\Images\Icons\disk.png" />
+    <None Include="Resources\Images\Icons\folder_explore.png" />
+    <None Include="Resources\Images\Icons\cross.png" />
+    <None Include="Resources\Images\Icons\wrench_orange.png" />
+    <None Include="Resources\Images\Icons\arrow_refresh.png" />
     <Content Include="Resources\MagicSuffix.txt" />
     <EmbeddedResource Include="Resources\Levels.txt" />
   </ItemGroup>

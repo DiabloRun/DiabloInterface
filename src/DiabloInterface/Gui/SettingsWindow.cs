@@ -11,10 +11,20 @@ namespace DiabloInterface
 
         private MainWindow main;
 
-        public SettingsWindow( MainWindow main )
+        public SettingsWindow(MainWindow main)
         {
             this.main = main;
             InitializeComponent();
+            init();
+        }
+
+        private void updateTitle()
+        {
+            Text = "Settings (" + Properties.Settings.Default.SettingsFile + ")";
+        }
+
+        private void init() {
+            updateTitle();
 
             this.lblFontExample.Text = main.settings.fontName;
             this.txtFontSize.Text = main.settings.fontSize.ToString();
@@ -23,17 +33,20 @@ namespace DiabloInterface
             this.chkAutosplit.Checked = main.settings.doAutosplit;
             this.txtAutoSplitHotkey.Text = main.settings.triggerKeys;
             this.chkShowDebug.Checked = main.settings.showDebug;
+            this.chkCheckUpdates.Checked = main.settings.checkUpdates;
 
             // Show the selected diablo version.
             int versionIndex = this.cmbVersion.FindString(main.settings.d2Version);
             if (versionIndex < 0) versionIndex = 0;
             this.cmbVersion.SelectedIndex = versionIndex;
 
+            panel1.Controls.Clear();
             foreach (AutoSplit a in main.settings.autosplits)
             {
                 addAutosplit(a, false);
             }
 
+            runeDisplayPanel.Controls.Clear();
             foreach (int rune in main.settings.runes)
             {
                 if (rune >= 0)
@@ -49,11 +62,11 @@ namespace DiabloInterface
         {
             //todo : implement
         }
-
-        private void saveSettings()
+        private void updateSettings()
         {
             List<AutoSplit> asList = new List<AutoSplit>();
-            foreach (AutoSplit a in main.settings.autosplits) {
+            foreach (AutoSplit a in main.settings.autosplits)
+            {
                 if (!a.deleted)
                 {
                     asList.Add(a);
@@ -68,6 +81,7 @@ namespace DiabloInterface
             main.settings.runes = runesList;
             main.settings.autosplits = asList;
             main.settings.createFiles = chkCreateFiles.Checked;
+            main.settings.checkUpdates = chkCheckUpdates.Checked;
             main.settings.doAutosplit = chkAutosplit.Checked;
             main.settings.triggerKeys = txtAutoSplitHotkey.Text;
             main.settings.fontSize = Int32.Parse(txtFontSize.Text);
@@ -75,31 +89,6 @@ namespace DiabloInterface
             main.settings.fontName = lblFontExample.Text;
             main.settings.showDebug = chkShowDebug.Checked;
             main.settings.d2Version = (string)cmbVersion.SelectedItem;
-
-            main.settings.save();
-            main.applySettings();
-            main.updateAutosplits();
-        }
-
-        private void btnFont_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            saveSettings();
-            Hide();
-        }
-        private void btnApply_Click(object sender, EventArgs e)
-        {
-            saveSettings();
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            resetSettings();
-            Hide();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -111,8 +100,8 @@ namespace DiabloInterface
         private void addAutosplit(AutoSplit autosplit, bool addToMain = true)
         {
             AutoSplitSettingsRow row = new AutoSplitSettingsRow(autosplit, this);
-            this.panel1.Controls.Add(row);
-            int scroll = this.panel1.VerticalScroll.Value;
+            panel1.Controls.Add(row);
+            int scroll = panel1.VerticalScroll.Value;
 
             if (addToMain)
             {
@@ -125,13 +114,13 @@ namespace DiabloInterface
             int i = 0;
             int y = 0;
             int x = 0;
-            int scroll = this.panel1.VerticalScroll.Value;
-            foreach (Control c in this.panel1.Controls)
+            int scroll = panel1.VerticalScroll.Value;
+            foreach (Control c in panel1.Controls)
             {
                 if (c is AutoSplitSettingsRow && (!checkVisible || c.Visible))
                 {
-                    i = i + 1;
                     c.Location = new Point(0, -scroll + i * 24);
+                    i++;
                 }
             }
 
@@ -228,6 +217,56 @@ namespace DiabloInterface
                 runeDisplayPanel.Controls.Add(element);
                 relayout();
             }
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            updateSettings();
+
+            main.settings.save();
+            main.applySettings();
+            main.updateAutosplits();
+        }
+
+        private void closeSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Hide();
+        }
+
+        private void loadConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog d = new OpenFileDialog();
+            if (d.ShowDialog() == DialogResult.OK)
+            {
+                main.settings.loadFrom(d.FileName);
+                updateTitle();
+                init();
+                main.applySettings();
+                main.updateAutosplits();
+            }
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog d = new SaveFileDialog();
+            if (d.ShowDialog() == DialogResult.OK)
+            {
+                updateSettings();
+                main.settings.saveAs(d.FileName);
+                updateTitle();
+                main.applySettings();
+                main.updateAutosplits();
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            VersionChecker.CheckForUpdate(true);
+        }
+
+        private void chkCheckUpdates_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 

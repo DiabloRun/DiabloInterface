@@ -6,6 +6,8 @@ namespace DiabloInterface
 {
     public class SettingsHolder
     {
+        const string defaultSettingsFile = "settings.conf";
+
         public string fileFolder = "txt";
         public string fontName = "Courier New";
         public string d2Version = "";
@@ -14,11 +16,12 @@ namespace DiabloInterface
         public bool createFiles = false;
         public bool doAutosplit = false;
         public bool showDebug = false;
+        public bool checkUpdates = false;
         public string triggerKeys = "";
         public List<AutoSplit> autosplits = new List<AutoSplit>();
         public List<int> runes = new List<int>();
 
-        public void save()
+        public void saveAs(string file)
         {
             Dictionary<string, dynamic> dict = new Dictionary<string, dynamic>();
 
@@ -29,28 +32,36 @@ namespace DiabloInterface
             confString += "CreateFiles: " + (createFiles ? "1" : "0") + "\n";
             confString += "DoAutosplit: " + (doAutosplit ? "1" : "0") + "\n";
             confString += "ShowDebug: " + (showDebug ? "1" : "0") + "\n";
+            confString += "CheckUpdates: " + (checkUpdates ? "1" : "0") + "\n";
             confString += "TriggerKeys: " + triggerKeys + "\n";
             confString += "D2Version: " + d2Version + "\n";
             foreach (AutoSplit autosplit in autosplits)
             {
-                confString += "AutoSplit: " + autosplit.name.Replace('|', ' ') + "|"+ (int)autosplit.type + "|" + autosplit.value + "|" + autosplit.difficulty + "\n";
+                confString += "AutoSplit: " + autosplit.name.Replace('|', ' ') + "|" + (int)autosplit.type + "|" + autosplit.value + "|" + autosplit.difficulty + "\n";
             }
             foreach (int rune in runes)
             {
                 confString += "Rune: " + rune + "\n";
             }
 
-            File.WriteAllText("settings.conf", confString);
+            Properties.Settings.Default.SettingsFile = file;
+            Properties.Settings.Default.Save();
+
+            File.WriteAllText(file, confString);
         }
-        public void load()
+
+        public void loadFrom(string file)
         {
-            if (!File.Exists("settings.conf"))
+            Properties.Settings.Default.SettingsFile = file;
+            Properties.Settings.Default.Save();
+
+            if (!File.Exists(file))
             {
                 return;
             }
 
             List<AutoSplit> autosplitsNew = new List<AutoSplit>();
-            string[] conf = File.ReadAllLines("settings.conf");
+            string[] conf = File.ReadAllLines(file);
             string[] parts;
             string[] parts2;
 
@@ -87,6 +98,9 @@ namespace DiabloInterface
                         break;
                     case "ShowDebug":
                         showDebug = (parts[1] == "1");
+                        break;
+                    case "CheckUpdates":
+                        checkUpdates = (parts[1] == "1");
                         break;
                     case "CreateFiles":
                         createFiles = (parts[1] == "1");
@@ -129,6 +143,26 @@ namespace DiabloInterface
                 }
             }
             autosplits = autosplitsNew;
+        }
+
+        private string getSettingsFileName()
+        {
+            string settingsFile = Properties.Settings.Default.SettingsFile;
+            if (settingsFile == null || settingsFile == "")
+            {
+                settingsFile = defaultSettingsFile;
+            }
+            return settingsFile;
+        }
+
+        public void save()
+        {
+            saveAs(getSettingsFileName());
+        }
+
+        public void load()
+        {
+            loadFrom(getSettingsFileName());
         }
     }
 

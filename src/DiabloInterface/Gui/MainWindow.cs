@@ -39,6 +39,7 @@ namespace DiabloInterface
             itemServer.Stop();
             base.OnFormClosing(e);
         }
+
         public void Reset()
         {
             foreach (AutoSplit autosplit in settings.autosplits)
@@ -152,6 +153,11 @@ namespace DiabloInterface
             {
                 dataReaderThread = new Thread(dataReader.readDataThreadFunc);
                 dataReaderThread.Start();
+            }
+
+            if (settings.checkUpdates)
+            {
+                VersionChecker.CheckForUpdate(false);
             }
 
             applySettings();

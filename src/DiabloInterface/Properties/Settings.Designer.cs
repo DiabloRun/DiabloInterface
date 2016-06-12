@@ -22,5 +22,17 @@ namespace DiabloInterface.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SettingsFile {
+            get {
+                return ((string)(this["SettingsFile"]));
+            }
+            set {
+                this["SettingsFile"] = value;
+            }
+        }
     }
 }
