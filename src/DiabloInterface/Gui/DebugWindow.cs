@@ -19,17 +19,6 @@ namespace DiabloInterface
         QuestDebugRow[,] QuestRowsNightmare;
         QuestDebugRow[,] QuestRowsHell;
 
-        private const int CP_NOCLOSE_BUTTON = 0x200;
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                CreateParams myCp = base.CreateParams;
-                myCp.ClassStyle = myCp.ClassStyle | CP_NOCLOSE_BUTTON;
-                return myCp;
-            }
-        }
-
         public DebugWindow()
         {
             InitializeComponent();
@@ -96,7 +85,8 @@ namespace DiabloInterface
                 }
             }
         }
-        public void updateAutosplits (List<AutoSplit> autosplits)
+
+        public void UpdateAutosplits(List<AutoSplit> autosplits)
         {
             int y = 0;
             autosplitPanel.Controls.Clear();
@@ -152,17 +142,14 @@ namespace DiabloInterface
 
         private void DebugWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
-            {
-                e.Cancel = true;
-            }
+
         }
 
         public void UpdateItemStats(ProcessMemoryReader r, D2MemoryTable memory, D2Unit pl)
         {
             InventoryReader inventoryReader = new InventoryReader(r, memory);
             UnitReader unitReader = new UnitReader(r, memory);
-            
+
             // Build filter to get only equipped items.
             Func<D2ItemData, bool> filter = data => data.BodyLoc != BodyLocation.None;
             foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))

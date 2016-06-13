@@ -37,17 +37,17 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.tabPageBelt = new System.Windows.Forms.TabPage();
-            this.tabPageRingRight = new System.Windows.Forms.TabPage();
-            this.tabPageRingLeft = new System.Windows.Forms.TabPage();
-            this.tabPageFeet = new System.Windows.Forms.TabPage();
-            this.tabPageHand = new System.Windows.Forms.TabPage();
-            this.tabPageBody = new System.Windows.Forms.TabPage();
-            this.tabPageWeaponRight = new System.Windows.Forms.TabPage();
-            this.tabPageWeaponLeft = new System.Windows.Forms.TabPage();
-            this.tabPageAmulet = new System.Windows.Forms.TabPage();
-            this.tabPageHead = new System.Windows.Forms.TabPage();
             this.tabBoxItems = new System.Windows.Forms.TabControl();
+            this.tabPageHead = new System.Windows.Forms.TabPage();
+            this.tabPageAmulet = new System.Windows.Forms.TabPage();
+            this.tabPageWeaponLeft = new System.Windows.Forms.TabPage();
+            this.tabPageWeaponRight = new System.Windows.Forms.TabPage();
+            this.tabPageBody = new System.Windows.Forms.TabPage();
+            this.tabPageHand = new System.Windows.Forms.TabPage();
+            this.tabPageFeet = new System.Windows.Forms.TabPage();
+            this.tabPageRingLeft = new System.Windows.Forms.TabPage();
+            this.tabPageRingRight = new System.Windows.Forms.TabPage();
+            this.tabPageBelt = new System.Windows.Forms.TabPage();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -55,12 +55,12 @@
             this.tabBoxItems.SuspendLayout();
             this.SuspendLayout();
             // 
-            // panel1
+            // autosplitPanel
             // 
             this.autosplitPanel.AutoScroll = true;
             this.autosplitPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.autosplitPanel.Location = new System.Drawing.Point(3, 16);
-            this.autosplitPanel.Name = "panel1";
+            this.autosplitPanel.Name = "autosplitPanel";
             this.autosplitPanel.Size = new System.Drawing.Size(192, 236);
             this.autosplitPanel.TabIndex = 0;
             // 
@@ -139,105 +139,6 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Last Item";
             // 
-            // tabPageBelt
-            // 
-            this.tabPageBelt.Location = new System.Drawing.Point(4, 76);
-            this.tabPageBelt.Name = "tabPageBelt";
-            this.tabPageBelt.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBelt.Size = new System.Drawing.Size(178, 197);
-            this.tabPageBelt.TabIndex = 9;
-            this.tabPageBelt.Text = "Belt";
-            this.tabPageBelt.UseVisualStyleBackColor = true;
-            // 
-            // tabPageRingRight
-            // 
-            this.tabPageRingRight.Location = new System.Drawing.Point(4, 58);
-            this.tabPageRingRight.Name = "tabPageRingRight";
-            this.tabPageRingRight.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRingRight.Size = new System.Drawing.Size(178, 215);
-            this.tabPageRingRight.TabIndex = 8;
-            this.tabPageRingRight.Text = "Ring-Right";
-            this.tabPageRingRight.UseVisualStyleBackColor = true;
-            // 
-            // tabPageRingLeft
-            // 
-            this.tabPageRingLeft.Location = new System.Drawing.Point(4, 58);
-            this.tabPageRingLeft.Name = "tabPageRingLeft";
-            this.tabPageRingLeft.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRingLeft.Size = new System.Drawing.Size(178, 215);
-            this.tabPageRingLeft.TabIndex = 7;
-            this.tabPageRingLeft.Text = "Ring-Left";
-            this.tabPageRingLeft.UseVisualStyleBackColor = true;
-            // 
-            // tabPageFeet
-            // 
-            this.tabPageFeet.Location = new System.Drawing.Point(4, 58);
-            this.tabPageFeet.Name = "tabPageFeet";
-            this.tabPageFeet.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageFeet.Size = new System.Drawing.Size(178, 215);
-            this.tabPageFeet.TabIndex = 6;
-            this.tabPageFeet.Text = "Feet";
-            this.tabPageFeet.UseVisualStyleBackColor = true;
-            // 
-            // tabPageHand
-            // 
-            this.tabPageHand.Location = new System.Drawing.Point(4, 40);
-            this.tabPageHand.Name = "tabPageHand";
-            this.tabPageHand.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageHand.Size = new System.Drawing.Size(178, 233);
-            this.tabPageHand.TabIndex = 5;
-            this.tabPageHand.Text = "Hand";
-            this.tabPageHand.UseVisualStyleBackColor = true;
-            // 
-            // tabPageBody
-            // 
-            this.tabPageBody.Location = new System.Drawing.Point(4, 40);
-            this.tabPageBody.Name = "tabPageBody";
-            this.tabPageBody.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBody.Size = new System.Drawing.Size(178, 233);
-            this.tabPageBody.TabIndex = 4;
-            this.tabPageBody.Text = "Body";
-            this.tabPageBody.UseVisualStyleBackColor = true;
-            // 
-            // tabPageWeaponRight
-            // 
-            this.tabPageWeaponRight.Location = new System.Drawing.Point(4, 40);
-            this.tabPageWeaponRight.Name = "tabPageWeaponRight";
-            this.tabPageWeaponRight.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageWeaponRight.Size = new System.Drawing.Size(178, 233);
-            this.tabPageWeaponRight.TabIndex = 3;
-            this.tabPageWeaponRight.Text = "Weapon-Right";
-            this.tabPageWeaponRight.UseVisualStyleBackColor = true;
-            // 
-            // tabPageWeaponLeft
-            // 
-            this.tabPageWeaponLeft.Location = new System.Drawing.Point(4, 22);
-            this.tabPageWeaponLeft.Name = "tabPageWeaponLeft";
-            this.tabPageWeaponLeft.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageWeaponLeft.Size = new System.Drawing.Size(178, 251);
-            this.tabPageWeaponLeft.TabIndex = 2;
-            this.tabPageWeaponLeft.Text = "Weapon-Left";
-            this.tabPageWeaponLeft.UseVisualStyleBackColor = true;
-            // 
-            // tabPageAmulet
-            // 
-            this.tabPageAmulet.Location = new System.Drawing.Point(4, 22);
-            this.tabPageAmulet.Name = "tabPageAmulet";
-            this.tabPageAmulet.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageAmulet.Size = new System.Drawing.Size(178, 251);
-            this.tabPageAmulet.TabIndex = 1;
-            this.tabPageAmulet.Text = "Amulet";
-            // 
-            // tabPageHead
-            // 
-            this.tabPageHead.Location = new System.Drawing.Point(4, 76);
-            this.tabPageHead.Name = "tabPageHead";
-            this.tabPageHead.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageHead.Size = new System.Drawing.Size(178, 197);
-            this.tabPageHead.TabIndex = 0;
-            this.tabPageHead.Text = "Head";
-            this.tabPageHead.UseVisualStyleBackColor = true;
-            // 
             // tabBoxItems
             // 
             this.tabBoxItems.Controls.Add(this.tabPageHead);
@@ -257,6 +158,105 @@
             this.tabBoxItems.SelectedIndex = 0;
             this.tabBoxItems.Size = new System.Drawing.Size(186, 277);
             this.tabBoxItems.TabIndex = 0;
+            // 
+            // tabPageHead
+            // 
+            this.tabPageHead.Location = new System.Drawing.Point(4, 76);
+            this.tabPageHead.Name = "tabPageHead";
+            this.tabPageHead.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageHead.Size = new System.Drawing.Size(178, 197);
+            this.tabPageHead.TabIndex = 0;
+            this.tabPageHead.Text = "Head";
+            this.tabPageHead.UseVisualStyleBackColor = true;
+            // 
+            // tabPageAmulet
+            // 
+            this.tabPageAmulet.Location = new System.Drawing.Point(4, 76);
+            this.tabPageAmulet.Name = "tabPageAmulet";
+            this.tabPageAmulet.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageAmulet.Size = new System.Drawing.Size(178, 197);
+            this.tabPageAmulet.TabIndex = 1;
+            this.tabPageAmulet.Text = "Amulet";
+            // 
+            // tabPageWeaponLeft
+            // 
+            this.tabPageWeaponLeft.Location = new System.Drawing.Point(4, 76);
+            this.tabPageWeaponLeft.Name = "tabPageWeaponLeft";
+            this.tabPageWeaponLeft.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageWeaponLeft.Size = new System.Drawing.Size(178, 197);
+            this.tabPageWeaponLeft.TabIndex = 2;
+            this.tabPageWeaponLeft.Text = "Weapon-Left";
+            this.tabPageWeaponLeft.UseVisualStyleBackColor = true;
+            // 
+            // tabPageWeaponRight
+            // 
+            this.tabPageWeaponRight.Location = new System.Drawing.Point(4, 76);
+            this.tabPageWeaponRight.Name = "tabPageWeaponRight";
+            this.tabPageWeaponRight.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageWeaponRight.Size = new System.Drawing.Size(178, 197);
+            this.tabPageWeaponRight.TabIndex = 3;
+            this.tabPageWeaponRight.Text = "Weapon-Right";
+            this.tabPageWeaponRight.UseVisualStyleBackColor = true;
+            // 
+            // tabPageBody
+            // 
+            this.tabPageBody.Location = new System.Drawing.Point(4, 76);
+            this.tabPageBody.Name = "tabPageBody";
+            this.tabPageBody.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageBody.Size = new System.Drawing.Size(178, 197);
+            this.tabPageBody.TabIndex = 4;
+            this.tabPageBody.Text = "Body";
+            this.tabPageBody.UseVisualStyleBackColor = true;
+            // 
+            // tabPageHand
+            // 
+            this.tabPageHand.Location = new System.Drawing.Point(4, 76);
+            this.tabPageHand.Name = "tabPageHand";
+            this.tabPageHand.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageHand.Size = new System.Drawing.Size(178, 197);
+            this.tabPageHand.TabIndex = 5;
+            this.tabPageHand.Text = "Hand";
+            this.tabPageHand.UseVisualStyleBackColor = true;
+            // 
+            // tabPageFeet
+            // 
+            this.tabPageFeet.Location = new System.Drawing.Point(4, 76);
+            this.tabPageFeet.Name = "tabPageFeet";
+            this.tabPageFeet.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageFeet.Size = new System.Drawing.Size(178, 197);
+            this.tabPageFeet.TabIndex = 6;
+            this.tabPageFeet.Text = "Feet";
+            this.tabPageFeet.UseVisualStyleBackColor = true;
+            // 
+            // tabPageRingLeft
+            // 
+            this.tabPageRingLeft.Location = new System.Drawing.Point(4, 76);
+            this.tabPageRingLeft.Name = "tabPageRingLeft";
+            this.tabPageRingLeft.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageRingLeft.Size = new System.Drawing.Size(178, 197);
+            this.tabPageRingLeft.TabIndex = 7;
+            this.tabPageRingLeft.Text = "Ring-Left";
+            this.tabPageRingLeft.UseVisualStyleBackColor = true;
+            // 
+            // tabPageRingRight
+            // 
+            this.tabPageRingRight.Location = new System.Drawing.Point(4, 76);
+            this.tabPageRingRight.Name = "tabPageRingRight";
+            this.tabPageRingRight.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageRingRight.Size = new System.Drawing.Size(178, 197);
+            this.tabPageRingRight.TabIndex = 8;
+            this.tabPageRingRight.Text = "Ring-Right";
+            this.tabPageRingRight.UseVisualStyleBackColor = true;
+            // 
+            // tabPageBelt
+            // 
+            this.tabPageBelt.Location = new System.Drawing.Point(4, 76);
+            this.tabPageBelt.Name = "tabPageBelt";
+            this.tabPageBelt.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageBelt.Size = new System.Drawing.Size(178, 197);
+            this.tabPageBelt.TabIndex = 9;
+            this.tabPageBelt.Text = "Belt";
+            this.tabPageBelt.UseVisualStyleBackColor = true;
             // 
             // DebugWindow
             // 

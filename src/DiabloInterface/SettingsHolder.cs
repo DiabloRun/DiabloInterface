@@ -15,7 +15,6 @@ namespace DiabloInterface
         private const int DEFAULT_TITLE_FONT_SIZE = 18;
         private const bool DEFAULT_CREATE_FILES = false;
         private const bool DEFAULT_DO_AUTOSPLIT = false;
-        private const bool DEFAULT_SHOW_DEBUG = false;
         private const bool DEFAULT_CHECK_UPDATES = false;
         private const string DEFAULT_TRIGGER_KEYS = "";
         #endregion
@@ -29,7 +28,6 @@ namespace DiabloInterface
         public int TitleFontSize;
         public bool CreateFiles;
         public bool DoAutosplit;
-        public bool ShowDebug;
         public bool CheckUpdates;
         public string TriggerKeys;
         public List<AutoSplit> Autosplits;
@@ -49,7 +47,6 @@ namespace DiabloInterface
             TitleFontSize = DEFAULT_TITLE_FONT_SIZE;
             CreateFiles = DEFAULT_CREATE_FILES;
             DoAutosplit = DEFAULT_DO_AUTOSPLIT;
-            ShowDebug = DEFAULT_SHOW_DEBUG;
             CheckUpdates = DEFAULT_CHECK_UPDATES;
             TriggerKeys = DEFAULT_TRIGGER_KEYS;
             Autosplits = new List<AutoSplit>();
@@ -77,7 +74,6 @@ namespace DiabloInterface
                 FontSizeTitle = TitleFontSize,
                 CreateFiles = CreateFiles,
                 DoAutosplit = DoAutosplit,
-                ShowDebug = ShowDebug,
                 CheckUpdates = CheckUpdates,
                 TriggerKeys = TriggerKeys,
                 D2Version = D2Version,
@@ -117,7 +113,6 @@ namespace DiabloInterface
                 switch (parts[0])
                 {
                     case "Font": FontName = parts[1]; break;
-                    case "ShowDebug": ShowDebug = (parts[1] == "1"); break;
                     case "CheckUpdates": CheckUpdates = (parts[1] == "1"); break;
                     case "CreateFiles": CreateFiles = (parts[1] == "1"); break;
                     case "D2Version": D2Version = parts[1]; break;
@@ -195,7 +190,6 @@ namespace DiabloInterface
             if (propExists(json, "FontSizeTitle")) TitleFontSize = (int)json.FontSizeTitle;
             if (propExists(json, "CreateFiles")) CreateFiles = (bool)json.CreateFiles;
             if (propExists(json, "DoAutosplit")) DoAutosplit = (bool)json.DoAutosplit;
-            if (propExists(json, "ShowDebug")) ShowDebug = (bool)json.ShowDebug;
             if (propExists(json, "CheckUpdates")) CheckUpdates = (bool)json.CheckUpdates;
             if (propExists(json, "TriggerKeys")) TriggerKeys = (string)json.TriggerKeys;
             if (propExists(json, "D2Version")) D2Version = (string)json.D2Version;

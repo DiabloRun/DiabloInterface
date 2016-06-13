@@ -27,7 +27,6 @@ namespace DiabloInterface
                     || settings.FontSize != int.Parse(FontSizeText.Text)
                     || settings.TitleFontSize != int.Parse(TitleFontSizeText.Text)
                     || settings.CreateFiles != CreateFilesCheckBox.Checked
-                    || settings.ShowDebug != ShowDebugWindowCheckBox.Checked
                     || settings.CheckUpdates != CheckUpdatesCheckBox.Checked
                     || settings.D2Version != VersionComboBox.SelectedItem.ToString();
             }
@@ -96,7 +95,6 @@ namespace DiabloInterface
             CreateFilesCheckBox.Checked = settings.CreateFiles;
             EnableAutosplitCheckBox.Checked = settings.DoAutosplit;
             AutoSplitHotkeyText.Text = settings.TriggerKeys;
-            ShowDebugWindowCheckBox.Checked = settings.ShowDebug;
             CheckUpdatesCheckBox.Checked = settings.CheckUpdates;
 
             // Show the selected diablo version.
@@ -150,7 +148,6 @@ namespace DiabloInterface
             settings.FontSize = Int32.Parse(FontSizeText.Text);
             settings.TitleFontSize = Int32.Parse(TitleFontSizeText.Text);
             settings.FontName = FontComboBox.SelectedItem.ToString();
-            settings.ShowDebug = ShowDebugWindowCheckBox.Checked;
             settings.D2Version = (string)VersionComboBox.SelectedItem;
         }
 

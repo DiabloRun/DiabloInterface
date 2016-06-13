@@ -191,16 +191,7 @@ namespace DiabloInterface
                 VersionChecker.CheckForUpdate(false);
             }
 
-            applySettings();
-            updateAutosplits();
-        }
-
-        public void updateAutosplits()
-        {
-            if (debugWindow != null)
-            {
-                debugWindow.updateAutosplits(Settings.Autosplits);
-            }
+            ApplySettings();
         }
 
         public void updateLabels ( Character player, Dictionary<int, int> itemClassMap )
@@ -280,7 +271,7 @@ namespace DiabloInterface
 
         }
 
-        public void applySettings()
+        public void ApplySettings()
         {
             Font fBig = new Font(this.Settings.FontName, this.Settings.TitleFontSize);
             Font fSmall = new Font(this.Settings.FontName, this.Settings.FontSize);
@@ -304,21 +295,6 @@ namespace DiabloInterface
             goldLabel.Font = fSmall;
             deathsLabel.Font = fSmall;
 
-            if ( Settings.ShowDebug )
-            {
-                if (debugWindow == null || debugWindow.IsDisposed)
-                {
-                    debugWindow = new DebugWindow();
-                }
-                debugWindow.Show();
-            } else
-            {
-                if (debugWindow != null && !debugWindow.IsDisposed)
-                {
-                    debugWindow.Hide();
-                }
-            }
-
             var memoryTable = GetVersionMemoryTable(Settings.D2Version);
             dataReader.SetNextMemoryTable(memoryTable);
 
@@ -339,6 +315,12 @@ namespace DiabloInterface
             } else
             {
                 Height = OriginalHeight;
+            }
+
+            // Update debug window.
+            if (debugWindow != null && debugWindow.Visible)
+            {
+                debugWindow.UpdateAutosplits(Settings.Autosplits);
             }
         }
 
@@ -394,10 +376,7 @@ namespace DiabloInterface
             if (settingsWindow == null || settingsWindow.IsDisposed)
             {
                 settingsWindow = new SettingsWindow(Settings);
-                settingsWindow.SettingsUpdated += (settings) => {
-                    applySettings();
-                    updateAutosplits();
-                };
+                settingsWindow.SettingsUpdated += (settings) => ApplySettings();
             }
 
             settingsWindow.ShowDialog();
@@ -405,8 +384,18 @@ namespace DiabloInterface
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
-
             initialize();
+        }
+
+        private void debugMenuItem_Click(object sender, EventArgs e)
+        {
+            if (debugWindow == null || debugWindow.IsDisposed)
+            {
+                debugWindow = new DebugWindow();
+                debugWindow.UpdateAutosplits(Settings.Autosplits);
+            }
+
+            debugWindow.Show();
         }
     }
 }
