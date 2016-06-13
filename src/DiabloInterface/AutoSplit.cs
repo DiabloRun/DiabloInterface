@@ -37,46 +37,16 @@ namespace DiabloInterface
 
         private Control control;
 
-        private short _difficulty = 0;
-        public short Difficulty
-        {
-            get { return _difficulty; }
-            set { _difficulty = value; }
-        }
-
-        private SplitType _type = SplitType.None;
-        public SplitType Type
-        {
-            get { return _type; }
-            set { _type = value; }
-        }
-
-        private short _value = -1;
-        public short Value
-        {
-            get { return _value; }
-            set { _value = value; }
-        }
-
-        private string _name = "";
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
+        public short Difficulty { get; set; }
+        public SplitType Type { get; set; }
+        public short Value { get; set; }
+        public string Name { get; set; }
 
         private bool _reached = false;
         public bool Reached
         {
             get { return _reached; }
             set { _reached = value; updateControl(); }
-        }
-
-        private bool _deleted = false;
-        public bool Deleted
-        {
-            get { return _deleted; }
-            set { _deleted = value; }
         }
 
         public void updateControl()
@@ -87,7 +57,7 @@ namespace DiabloInterface
             }
 
             control.Text = Name;
-                
+
             if (_reached)
             {
                 control.ForeColor = Color.Green;
@@ -96,30 +66,36 @@ namespace DiabloInterface
             {
                 control.ForeColor = Color.Red;
             }
-
-            if (_deleted)
-            {
-                control.Parent.Controls.Remove(control);
-                control = null;
-            }
         }
+
         public void bindControl(Control control)
         {
             this.control = control;
             updateControl();
         }
-        
+
         public AutoSplit()
         {
+            Name = "Unnamed";
+            Type = SplitType.None;
+            Value = -1;
+            Difficulty = 0;
+        }
 
+        public AutoSplit(AutoSplit other)
+        {
+            Name = other.Name;
+            Type = other.Type;
+            Value = other.Value;
+            Difficulty = other.Difficulty;
         }
 
         public AutoSplit(string name, SplitType type, short value, short difficulty)
         {
-            _name = name;
-            _type = type;
-            _value = value;
-            _difficulty = difficulty;
+            Name = name;
+            Type = type;
+            Value = value;
+            Difficulty = difficulty;
         }
     }
 }

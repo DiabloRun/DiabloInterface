@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using DiabloInterface.Gui;
@@ -9,142 +10,180 @@ namespace DiabloInterface
     public partial class SettingsWindow : Form
     {
         private const string WindowTitleFormat = "Settings ({0})"; // {0} => Settings File Path
-        
-        private MainWindow main;
 
-        public SettingsWindow(MainWindow main)
+        AutoSplitTable autoSplitTable;
+        SettingsHolder settings;
+
+        public event Action<SettingsHolder> SettingsUpdated;
+
+        bool dirty = false;
+        public bool IsDirty
         {
-            this.main = main;
-            InitializeComponent();
-            
-            foreach (FontFamily font in FontFamily.Families)
+            get
             {
-                cmbFonts.Items.Add(font.Name);
+                return dirty
+                    || (autoSplitTable != null && autoSplitTable.IsDirty)
+                    || settings.FontName != FontComboBox.SelectedItem.ToString()
+                    || settings.FontSize != int.Parse(FontSizeText.Text)
+                    || settings.TitleFontSize != int.Parse(TitleFontSizeText.Text)
+                    || settings.CreateFiles != CreateFilesCheckBox.Checked
+                    || settings.ShowDebug != ShowDebugWindowCheckBox.Checked
+                    || settings.CheckUpdates != CheckUpdatesCheckBox.Checked
+                    || settings.D2Version != VersionComboBox.SelectedItem.ToString();
             }
-
-            init();
         }
 
-        private void updateTitle()
+        public SettingsWindow(SettingsHolder settings)
+        {
+            this.settings = settings;
+            InitializeComponent();
+            InitializeAutoSplitTable();
+
+            foreach (FontFamily font in FontFamily.Families)
+            {
+                FontComboBox.Items.Add(font.Name);
+            }
+
+            InitializeSettings();
+
+            // Loading the settings will dirty mark pretty much everything, here
+            // we just verify that nothing has actually changed yet.
+            MarkClean();
+        }
+
+        private void SettingsWindow_Shown(object sender, EventArgs e)
+        {
+            // Settings was closed with dirty settings, reload the original settings.
+            if (IsDirty)
+            {
+                InitializeSettings();
+                MarkClean();
+            }
+        }
+
+        void InitializeAutoSplitTable()
+        {
+            if (autoSplitTable != null)
+            {
+                AutoSplitLayout.Controls.Remove(autoSplitTable);
+            }
+
+            // Create a scrollable layout.
+            autoSplitTable = new AutoSplitTable();
+            autoSplitTable.Dock = DockStyle.Fill;
+            AutoSplitLayout.Controls.Add(autoSplitTable);
+        }
+
+        private void UpdateTitle()
         {
             Text = string.Format(WindowTitleFormat, Properties.Settings.Default.SettingsFile);
         }
 
-        private void init() {
-            updateTitle();
-            
-            foreach (string item in cmbFonts.Items)
+        private void InitializeSettings()
+        {
+            UpdateTitle();
+
+            foreach (string item in FontComboBox.Items)
             {
-                if (item == main.Settings.FontName)
+                if (item == settings.FontName)
                 {
-                    this.cmbFonts.SelectedItem = item;
+                    FontComboBox.SelectedItem = item;
                 }
             }
 
-            this.txtFontSize.Text = main.Settings.FontSize.ToString();
-            this.txtTitleFontSize.Text = main.Settings.TitleFontSize.ToString();
-            this.chkCreateFiles.Checked = main.Settings.CreateFiles;
-            this.chkAutosplit.Checked = main.Settings.DoAutosplit;
-            this.txtAutoSplitHotkey.Text = main.Settings.TriggerKeys;
-            this.chkShowDebug.Checked = main.Settings.ShowDebug;
-            this.chkCheckUpdates.Checked = main.Settings.CheckUpdates;
+            FontSizeText.Text = settings.FontSize.ToString();
+            TitleFontSizeText.Text = settings.TitleFontSize.ToString();
+            CreateFilesCheckBox.Checked = settings.CreateFiles;
+            EnableAutosplitCheckBox.Checked = settings.DoAutosplit;
+            AutoSplitHotkeyText.Text = settings.TriggerKeys;
+            ShowDebugWindowCheckBox.Checked = settings.ShowDebug;
+            CheckUpdatesCheckBox.Checked = settings.CheckUpdates;
 
             // Show the selected diablo version.
-            int versionIndex = this.cmbVersion.FindString(main.Settings.D2Version);
+            int versionIndex = this.VersionComboBox.FindString(settings.D2Version);
             if (versionIndex < 0) versionIndex = 0;
-            this.cmbVersion.SelectedIndex = versionIndex;
+            this.VersionComboBox.SelectedIndex = versionIndex;
 
-            panel1.Controls.Clear();
-            foreach (AutoSplit a in main.Settings.Autosplits)
+            InitializeAutoSplitTable();
+            foreach (AutoSplit a in settings.Autosplits)
             {
-                addAutosplit(a, false);
+                AddAutoSplit(a);
             }
 
-            runeDisplayPanel.Controls.Clear();
-            foreach (int rune in main.Settings.Runes)
+            RuneDisplayPanel.Controls.Clear();
+            foreach (int rune in settings.Runes)
             {
                 if (rune >= 0)
                 {
                     RuneDisplayElement element = new RuneDisplayElement((Rune)rune, this, null);
-                    runeDisplayPanel.Controls.Add(element);
+                    RuneDisplayPanel.Controls.Add(element);
                 }
             }
-            relayout(false);
+
+            LayoutControls(checkVisible: false);
         }
 
-        private void resetSettings()
+        void MarkClean()
         {
-            //todo : implement
-        }
-        private void updateSettings()
-        {
-            List<AutoSplit> asList = new List<AutoSplit>();
-            foreach (AutoSplit a in main.Settings.Autosplits)
+            dirty = false;
+            if (autoSplitTable != null)
             {
-                if (!a.Deleted)
-                {
-                    asList.Add(a);
-                }
+                autoSplitTable.MarkClean();
             }
+        }
+
+        private void UpdateSettings()
+        {
             List<int> runesList = new List<int>();
-            foreach (RuneDisplayElement c in runeDisplayPanel.Controls)
+            foreach (RuneDisplayElement c in RuneDisplayPanel.Controls)
             {
                 if (!c.Visible) continue;
                 runesList.Add((int)c.getRune());
             }
-            main.Settings.Runes = runesList;
-            main.Settings.Autosplits = asList;
-            main.Settings.CreateFiles = chkCreateFiles.Checked;
-            main.Settings.CheckUpdates = chkCheckUpdates.Checked;
-            main.Settings.DoAutosplit = chkAutosplit.Checked;
-            main.Settings.TriggerKeys = txtAutoSplitHotkey.Text;
-            main.Settings.FontSize = Int32.Parse(txtFontSize.Text);
-            main.Settings.TitleFontSize = Int32.Parse(txtTitleFontSize.Text);
-            main.Settings.FontName = cmbFonts.SelectedItem.ToString();
-            main.Settings.ShowDebug = chkShowDebug.Checked;
-            main.Settings.D2Version = (string)cmbVersion.SelectedItem;
+
+            settings.Runes = runesList;
+            settings.Autosplits = autoSplitTable.AutoSplits.ToList();
+            settings.CreateFiles = CreateFilesCheckBox.Checked;
+            settings.CheckUpdates = CheckUpdatesCheckBox.Checked;
+            settings.DoAutosplit = EnableAutosplitCheckBox.Checked;
+            settings.TriggerKeys = AutoSplitHotkeyText.Text;
+            settings.FontSize = Int32.Parse(FontSizeText.Text);
+            settings.TitleFontSize = Int32.Parse(TitleFontSizeText.Text);
+            settings.FontName = FontComboBox.SelectedItem.ToString();
+            settings.ShowDebug = ShowDebugWindowCheckBox.Checked;
+            settings.D2Version = (string)VersionComboBox.SelectedItem;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void AddAutoSplitButton_Clicked(object sender, EventArgs e)
         {
-            addAutosplit(new AutoSplit());
-            relayout();
+            AddAutoSplit(new AutoSplit());
         }
 
-        private void addAutosplit(AutoSplit autosplit, bool addToMain = true)
+        private void AddAutoSplit(AutoSplit autosplit)
         {
-            AutoSplitSettingsRow row = new AutoSplitSettingsRow(autosplit, this);
-            panel1.Controls.Add(row);
-            int scroll = panel1.VerticalScroll.Value;
+            if (autosplit == null) return;
 
-            if (addToMain)
-            {
-                main.Settings.Autosplits.Add(autosplit);
-            }
+            // Operate on a copy.
+            autosplit = new AutoSplit(autosplit);
+
+            // Create and show the autosplit row.
+            AutoSplitSettingsRow row = new AutoSplitSettingsRow(autosplit);
+            row.OnDelete += (item) => autoSplitTable.Controls.Remove(row);
+            autoSplitTable.Controls.Add(row);
+            autoSplitTable.ScrollControlIntoView(row);
         }
-        
-        public void relayout( bool checkVisible = true)
+
+        public void LayoutControls(bool checkVisible = true)
         {
-            int i = 0;
-            int y = 0;
             int x = 0;
-            int scroll = panel1.VerticalScroll.Value;
-            foreach (Control c in panel1.Controls)
+            int y = 0;
+            int scroll = RuneDisplayPanel.VerticalScroll.Value;
+            foreach (Control c in RuneDisplayPanel.Controls)
             {
-                if (c is AutoSplitSettingsRow && (!checkVisible || c.Visible))
+                if (c is RuneDisplayElement && (!checkVisible || c.Visible))
                 {
-                    c.Location = new Point(0, -scroll + i * 24);
-                    i++;
-                }
-            }
 
-            scroll = runeDisplayPanel.VerticalScroll.Value;
-            foreach (Control c in runeDisplayPanel.Controls )
-            {
-                if ( c is RuneDisplayElement && (! checkVisible || c.Visible))
-                { 
-                    
-                    if (x+c.Width > runeDisplayPanel.Width && runeDisplayPanel.Width >= c.Width)
+                    if (x + c.Width > RuneDisplayPanel.Width && RuneDisplayPanel.Width >= c.Width)
                     {
                         y += c.Height;
                         x = 0;
@@ -153,122 +192,147 @@ namespace DiabloInterface
                     x += c.Width;
                 }
             }
-
         }
 
-        private void BtnRemove_Click(object sender, EventArgs e)
-        {
-            Button b = (Button)sender;
-            AutoSplit a = (AutoSplit)b.Tag;
-            a.Deleted = true;
-        }
-
-        private void txtAutoSplitHotkey_KeyDown(object sender, KeyEventArgs e)
+        private void AutoSplitHotkeyText_KeyDown(object sender, KeyEventArgs e)
         {
             e.Handled = true;
         }
-        private void txtAutoSplitHotkey_KeyUp(object sender, KeyEventArgs e)
-        {
 
+        private void AutoSplitHotkeyText_KeyUp(object sender, KeyEventArgs e)
+        {
             if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9
                 || e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9
                 || e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z
                 || e.KeyCode >= Keys.F1 && e.KeyCode <= Keys.F12)
             {
-                txtAutoSplitHotkey.Text = KeyManager.KeyEventArgsToKeyString(e);
+                AutoSplitHotkeyText.Text = KeyManager.KeyEventArgsToKeyString(e);
             } else if (e.KeyCode == Keys.Escape)
             {
-                txtAutoSplitHotkey.Text = "";
+                AutoSplitHotkeyText.Text = "";
             }
             e.Handled = true;
         }
 
-        private void txtAutoSplitHotkey_KeyPress(object sender, KeyPressEventArgs e)
+        private void AutoSplitHotkeyText_KeyPress(object sender, KeyPressEventArgs e)
         {
             e.Handled = true;
         }
 
         private void SettingsWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if ( e.CloseReason == CloseReason.UserClosing )
+            if (e.CloseReason == CloseReason.UserClosing && IsDirty)
             {
-                e.Cancel = true;
-                Hide();
+                DialogResult result = MessageBox.Show(
+                    "Would you like to save your settings before closing?",
+                    "Save Changes",
+                    MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Question);
+
+                switch (result)
+                {
+                    case DialogResult.Yes:
+                        Save();
+                        break;
+                    case DialogResult.No:
+                        break;
+                    case DialogResult.Cancel:
+                        e.Cancel = true;
+                        return;
+                }
             }
         }
 
-        private void btnTestHotkey_Click(object sender, EventArgs e)
+        private void AutoSplitTestHotkey_Click(object sender, EventArgs e)
         {
-            if (txtAutoSplitHotkey.Text != "")
+            if (!string.IsNullOrEmpty(AutoSplitHotkeyText.Text))
             {
-                KeyManager.sendKeys(txtAutoSplitHotkey.Text);
+                KeyManager.sendKeys(AutoSplitHotkeyText.Text);
             }
         }
 
-        private void btnAddRune_Click(object sender, EventArgs e)
+        private void AddRuneButton_Click(object sender, EventArgs e)
         {
-            int rune = this.comboBoxRunes.SelectedIndex;
+            int rune = RuneComboBox.SelectedIndex;
             if (rune >= 0)
             {
                 RuneDisplayElement element = new RuneDisplayElement((Rune)rune, this, null);
-                runeDisplayPanel.Controls.Add(element);
-                relayout();
+                RuneDisplayPanel.Controls.Add(element);
+                LayoutControls();
             }
         }
 
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        void Save(string filename = null)
         {
-            updateSettings();
+            UpdateSettings();
 
-            main.Settings.save();
-            main.applySettings();
-            main.updateAutosplits();
+            // Save to current savefile.
+            if (string.IsNullOrEmpty(filename))
+            {
+                settings.save();
+            }
+            // Save to selected savefile.
+            else
+            {
+                settings.saveAs(filename);
+                UpdateTitle();
+            }
+
+            MarkClean();
+            if (SettingsUpdated != null)
+            {
+                SettingsUpdated(settings);
+            }
         }
 
-        private void closeSettingsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Hide();
-        }
-
-        private void loadConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        private void LoadSettingsMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog d = new OpenFileDialog();
             if (d.ShowDialog() == DialogResult.OK)
             {
-                main.Settings.loadFrom(d.FileName);
-                updateTitle();
-                init();
-                main.applySettings();
-                main.updateAutosplits();
+                settings.loadFrom(d.FileName);
+                UpdateTitle();
+                InitializeSettings();
+
+                if (SettingsUpdated != null)
+                {
+                    SettingsUpdated(settings);
+                }
             }
         }
 
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveSettingsMenuItem_Click(object sender, EventArgs e)
+        {
+            Save();
+        }
+
+        private void SaveSettingsAsMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog d = new SaveFileDialog();
-            if (d.ShowDialog() == DialogResult.OK)
+            if (d.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(d.FileName))
             {
-                updateSettings();
-                main.Settings.saveAs(d.FileName);
-                updateTitle();
-                main.applySettings();
-                main.updateAutosplits();
+                Save(d.FileName);
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void CloseSettingsMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void CheckUpdatesButton_Click(object sender, EventArgs e)
         {
             VersionChecker.CheckForUpdate(true);
         }
 
-        private void comboBox1_DrawItem(object sender, DrawItemEventArgs e)
+        private void FontComboBox_DrawItem(object sender, DrawItemEventArgs e)
         {
-            // Draw the background 
+            // Draw the background
             e.DrawBackground();
 
             // Get the item text
             string text = ((ComboBox)sender).Items[e.Index].ToString();
-            
+
             Font fSender = ((Control)sender).Font;
             Font f;
             try
@@ -279,9 +343,8 @@ namespace DiabloInterface
                 f = fSender;
             }
 
-            // Draw the text    
+            // Draw the text
             e.Graphics.DrawString(text, f, Brushes.Black, e.Bounds.X, e.Bounds.Y);
         }
     }
-
 }

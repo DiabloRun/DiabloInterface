@@ -388,13 +388,19 @@ namespace DiabloInterface
             dataReaderThread.Abort();
             Application.Exit();
         }
+
         private void button3_Click(object sender, EventArgs e)
         {
-            if (settingsWindow == null || settingsWindow.IsDisposed) {
-                settingsWindow = new SettingsWindow(this);
+            if (settingsWindow == null || settingsWindow.IsDisposed)
+            {
+                settingsWindow = new SettingsWindow(Settings);
+                settingsWindow.SettingsUpdated += (settings) => {
+                    applySettings();
+                    updateAutosplits();
+                };
             }
+
             settingsWindow.ShowDialog();
-            //settingsWindow.Focus();
         }
 
         private void MainWindow_Load(object sender, EventArgs e)

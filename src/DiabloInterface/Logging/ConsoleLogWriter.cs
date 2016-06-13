@@ -6,7 +6,7 @@ namespace DiabloInterface.Logging
     {
         public void LogMessage(string message)
         {
-            Console.WriteLine(message);
+            Console.Write(message);
         }
     }
 }

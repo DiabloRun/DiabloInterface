@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{25BB3310-9BD7-4234-AF7D-9F7FB6870A20}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DiabloInterface</RootNamespace>
     <AssemblyName>DiabloInterface</AssemblyName>
@@ -121,6 +121,12 @@
     <Compile Include="D2\D2Data.cs" />
     <Compile Include="D2\D2DataReader.cs" />
     <Compile Include="D2\Character.cs" />
+    <Compile Include="Gui\AutoSplitTable.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\AutoSplitTable.Designer.cs">
+      <DependentUpon>AutoSplitTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\DebugWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -169,6 +175,9 @@
     <Compile Include="VersionChecker.cs" />
     <EmbeddedResource Include="Gui\AutoSplitSettingsRow.resx">
       <DependentUpon>AutoSplitSettingsRow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\AutoSplitTable.resx">
+      <DependentUpon>AutoSplitTable.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\DebugWindow.resx">
       <DependentUpon>DebugWindow.cs</DependentUpon>

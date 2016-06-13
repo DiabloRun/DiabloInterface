@@ -29,364 +29,359 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsWindow));
-            this.lblSelectedFont = new System.Windows.Forms.Label();
-            this.txtTitleFontSize = new System.Windows.Forms.TextBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cmbFonts = new System.Windows.Forms.ComboBox();
-            this.txtFontSize = new System.Windows.Forms.TextBox();
-            this.lblFontSize = new System.Windows.Forms.Label();
-            this.lblTitleFontSize = new System.Windows.Forms.Label();
-            this.chkCreateFiles = new System.Windows.Forms.CheckBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.chkAutosplit = new System.Windows.Forms.CheckBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.btnTestHotkey = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
-            this.lblAutoSplitHotkey = new System.Windows.Forms.Label();
-            this.txtAutoSplitHotkey = new System.Windows.Forms.TextBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.chkCheckUpdates = new System.Windows.Forms.CheckBox();
-            this.chkShowDebug = new System.Windows.Forms.CheckBox();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.cmbVersion = new System.Windows.Forms.ComboBox();
-            this.grpRunes = new System.Windows.Forms.GroupBox();
-            this.runeDisplayPanel = new System.Windows.Forms.Panel();
-            this.btnAddRune = new System.Windows.Forms.Button();
-            this.comboBoxRunes = new System.Windows.Forms.ComboBox();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.FontLabel = new System.Windows.Forms.Label();
+            this.TitleFontSizeText = new System.Windows.Forms.TextBox();
+            this.FontGroup = new System.Windows.Forms.GroupBox();
+            this.FontComboBox = new System.Windows.Forms.ComboBox();
+            this.FontSizeText = new System.Windows.Forms.TextBox();
+            this.FontSizeLabel = new System.Windows.Forms.Label();
+            this.TitleFontSizeLabel = new System.Windows.Forms.Label();
+            this.CreateFilesCheckBox = new System.Windows.Forms.CheckBox();
+            this.DataGroup = new System.Windows.Forms.GroupBox();
+            this.AutoSplitGroup = new System.Windows.Forms.GroupBox();
+            this.AutoSplitLayout = new System.Windows.Forms.TableLayoutPanel();
+            this.AutoSplitToolbar = new System.Windows.Forms.Panel();
+            this.AutoSplitHotkeyLabel = new System.Windows.Forms.Label();
+            this.AutoSplitTestHotkeyButton = new System.Windows.Forms.Button();
+            this.EnableAutosplitCheckBox = new System.Windows.Forms.CheckBox();
+            this.AutoSplitHotkeyText = new System.Windows.Forms.TextBox();
+            this.AddAutoSplitButton = new System.Windows.Forms.Button();
+            this.OtherGroup = new System.Windows.Forms.GroupBox();
+            this.CheckUpdatesButton = new System.Windows.Forms.Button();
+            this.CheckUpdatesCheckBox = new System.Windows.Forms.CheckBox();
+            this.ShowDebugWindowCheckBox = new System.Windows.Forms.CheckBox();
+            this.VersionGroup = new System.Windows.Forms.GroupBox();
+            this.VersionLabel = new System.Windows.Forms.Label();
+            this.VersionComboBox = new System.Windows.Forms.ComboBox();
+            this.RuneDisplayGroup = new System.Windows.Forms.GroupBox();
+            this.RuneDisplayPanel = new System.Windows.Forms.Panel();
+            this.AddRuneButton = new System.Windows.Forms.Button();
+            this.RuneComboBox = new System.Windows.Forms.ComboBox();
+            this.SettingsMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.LoadSettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SaveSettingsAsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SaveSettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.closeSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CloseSettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainPanel = new System.Windows.Forms.Panel();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            this.groupBox5.SuspendLayout();
-            this.grpRunes.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
+            this.VerticalSplitContainer = new System.Windows.Forms.TableLayoutPanel();
+            this.HorizontalSplitContainer = new System.Windows.Forms.TableLayoutPanel();
+            this.RightPanelLayout = new System.Windows.Forms.FlowLayoutPanel();
+            this.FontGroup.SuspendLayout();
+            this.DataGroup.SuspendLayout();
+            this.AutoSplitGroup.SuspendLayout();
+            this.AutoSplitLayout.SuspendLayout();
+            this.AutoSplitToolbar.SuspendLayout();
+            this.OtherGroup.SuspendLayout();
+            this.VersionGroup.SuspendLayout();
+            this.RuneDisplayGroup.SuspendLayout();
+            this.SettingsMenuStrip.SuspendLayout();
             this.mainPanel.SuspendLayout();
+            this.VerticalSplitContainer.SuspendLayout();
+            this.HorizontalSplitContainer.SuspendLayout();
+            this.RightPanelLayout.SuspendLayout();
             this.SuspendLayout();
             // 
-            // lblSelectedFont
+            // FontLabel
             // 
-            this.lblSelectedFont.AutoSize = true;
-            this.lblSelectedFont.Location = new System.Drawing.Point(6, 24);
-            this.lblSelectedFont.Name = "lblSelectedFont";
-            this.lblSelectedFont.Size = new System.Drawing.Size(76, 13);
-            this.lblSelectedFont.TabIndex = 2;
-            this.lblSelectedFont.Text = "Selected Font:";
+            this.FontLabel.AutoSize = true;
+            this.FontLabel.Location = new System.Drawing.Point(6, 24);
+            this.FontLabel.Name = "FontLabel";
+            this.FontLabel.Size = new System.Drawing.Size(32, 13);
+            this.FontLabel.TabIndex = 2;
+            this.FontLabel.Text = "Font:";
             // 
-            // txtTitleFontSize
+            // TitleFontSizeText
             // 
-            this.txtTitleFontSize.Location = new System.Drawing.Point(91, 86);
-            this.txtTitleFontSize.Name = "txtTitleFontSize";
-            this.txtTitleFontSize.Size = new System.Drawing.Size(117, 20);
-            this.txtTitleFontSize.TabIndex = 4;
+            this.TitleFontSizeText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.TitleFontSizeText.Location = new System.Drawing.Point(105, 74);
+            this.TitleFontSizeText.Name = "TitleFontSizeText";
+            this.TitleFontSizeText.Size = new System.Drawing.Size(117, 20);
+            this.TitleFontSizeText.TabIndex = 4;
             // 
-            // groupBox1
+            // FontGroup
             // 
-            this.groupBox1.Controls.Add(this.cmbFonts);
-            this.groupBox1.Controls.Add(this.txtFontSize);
-            this.groupBox1.Controls.Add(this.lblFontSize);
-            this.groupBox1.Controls.Add(this.lblTitleFontSize);
-            this.groupBox1.Controls.Add(this.txtTitleFontSize);
-            this.groupBox1.Controls.Add(this.lblSelectedFont);
-            this.groupBox1.Location = new System.Drawing.Point(446, 14);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(214, 125);
-            this.groupBox1.TabIndex = 5;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Font";
+            this.FontGroup.Controls.Add(this.FontComboBox);
+            this.FontGroup.Controls.Add(this.FontSizeText);
+            this.FontGroup.Controls.Add(this.FontSizeLabel);
+            this.FontGroup.Controls.Add(this.TitleFontSizeLabel);
+            this.FontGroup.Controls.Add(this.TitleFontSizeText);
+            this.FontGroup.Controls.Add(this.FontLabel);
+            this.FontGroup.Location = new System.Drawing.Point(3, 3);
+            this.FontGroup.Name = "FontGroup";
+            this.FontGroup.Size = new System.Drawing.Size(231, 104);
+            this.FontGroup.TabIndex = 5;
+            this.FontGroup.TabStop = false;
+            this.FontGroup.Text = "Font";
             // 
-            // cmbFonts
+            // FontComboBox
             // 
-            this.cmbFonts.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbFonts.DropDownWidth = 250;
-            this.cmbFonts.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.cmbFonts.FormattingEnabled = true;
-            this.cmbFonts.Location = new System.Drawing.Point(91, 21);
-            this.cmbFonts.Name = "cmbFonts";
-            this.cmbFonts.Size = new System.Drawing.Size(117, 21);
-            this.cmbFonts.TabIndex = 9;
-            this.cmbFonts.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.comboBox1_DrawItem);
+            this.FontComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.FontComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.FontComboBox.DropDownWidth = 250;
+            this.FontComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.FontComboBox.FormattingEnabled = true;
+            this.FontComboBox.Location = new System.Drawing.Point(105, 21);
+            this.FontComboBox.Name = "FontComboBox";
+            this.FontComboBox.Size = new System.Drawing.Size(117, 21);
+            this.FontComboBox.TabIndex = 9;
+            this.FontComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.FontComboBox_DrawItem);
             // 
-            // txtFontSize
+            // FontSizeText
             // 
-            this.txtFontSize.Location = new System.Drawing.Point(91, 52);
-            this.txtFontSize.Name = "txtFontSize";
-            this.txtFontSize.Size = new System.Drawing.Size(117, 20);
-            this.txtFontSize.TabIndex = 8;
+            this.FontSizeText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.FontSizeText.Location = new System.Drawing.Point(105, 48);
+            this.FontSizeText.Name = "FontSizeText";
+            this.FontSizeText.Size = new System.Drawing.Size(117, 20);
+            this.FontSizeText.TabIndex = 8;
             // 
-            // lblFontSize
+            // FontSizeLabel
             // 
-            this.lblFontSize.AutoSize = true;
-            this.lblFontSize.Location = new System.Drawing.Point(6, 55);
-            this.lblFontSize.Name = "lblFontSize";
-            this.lblFontSize.Size = new System.Drawing.Size(54, 13);
-            this.lblFontSize.TabIndex = 7;
-            this.lblFontSize.Text = "Font Size:";
+            this.FontSizeLabel.AutoSize = true;
+            this.FontSizeLabel.Location = new System.Drawing.Point(6, 51);
+            this.FontSizeLabel.Name = "FontSizeLabel";
+            this.FontSizeLabel.Size = new System.Drawing.Size(57, 13);
+            this.FontSizeLabel.TabIndex = 7;
+            this.FontSizeLabel.Text = "Font Size:";
             // 
-            // lblTitleFontSize
+            // TitleFontSizeLabel
             // 
-            this.lblTitleFontSize.AutoSize = true;
-            this.lblTitleFontSize.Location = new System.Drawing.Point(6, 89);
-            this.lblTitleFontSize.Name = "lblTitleFontSize";
-            this.lblTitleFontSize.Size = new System.Drawing.Size(77, 13);
-            this.lblTitleFontSize.TabIndex = 6;
-            this.lblTitleFontSize.Text = "Title Font Size:";
+            this.TitleFontSizeLabel.AutoSize = true;
+            this.TitleFontSizeLabel.Location = new System.Drawing.Point(6, 77);
+            this.TitleFontSizeLabel.Name = "TitleFontSizeLabel";
+            this.TitleFontSizeLabel.Size = new System.Drawing.Size(82, 13);
+            this.TitleFontSizeLabel.TabIndex = 6;
+            this.TitleFontSizeLabel.Text = "Title Font Size:";
             // 
-            // chkCreateFiles
+            // CreateFilesCheckBox
             // 
-            this.chkCreateFiles.AutoSize = true;
-            this.chkCreateFiles.Location = new System.Drawing.Point(10, 19);
-            this.chkCreateFiles.Name = "chkCreateFiles";
-            this.chkCreateFiles.Size = new System.Drawing.Size(78, 17);
-            this.chkCreateFiles.TabIndex = 8;
-            this.chkCreateFiles.Text = "Create files";
-            this.chkCreateFiles.UseVisualStyleBackColor = true;
+            this.CreateFilesCheckBox.AutoSize = true;
+            this.CreateFilesCheckBox.Location = new System.Drawing.Point(10, 19);
+            this.CreateFilesCheckBox.Name = "CreateFilesCheckBox";
+            this.CreateFilesCheckBox.Size = new System.Drawing.Size(83, 17);
+            this.CreateFilesCheckBox.TabIndex = 8;
+            this.CreateFilesCheckBox.Text = "Create files";
+            this.CreateFilesCheckBox.UseVisualStyleBackColor = true;
             // 
-            // groupBox2
+            // DataGroup
             // 
-            this.groupBox2.Controls.Add(this.chkCreateFiles);
-            this.groupBox2.Location = new System.Drawing.Point(446, 145);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(214, 45);
-            this.groupBox2.TabIndex = 9;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Data";
+            this.DataGroup.Controls.Add(this.CreateFilesCheckBox);
+            this.DataGroup.Location = new System.Drawing.Point(3, 113);
+            this.DataGroup.Name = "DataGroup";
+            this.DataGroup.Size = new System.Drawing.Size(231, 45);
+            this.DataGroup.TabIndex = 9;
+            this.DataGroup.TabStop = false;
+            this.DataGroup.Text = "Data";
             // 
-            // groupBox3
+            // AutoSplitGroup
             // 
-            this.groupBox3.Controls.Add(this.label8);
-            this.groupBox3.Controls.Add(this.chkAutosplit);
-            this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Controls.Add(this.label2);
-            this.groupBox3.Controls.Add(this.btnTestHotkey);
-            this.groupBox3.Controls.Add(this.label1);
-            this.groupBox3.Controls.Add(this.panel1);
-            this.groupBox3.Controls.Add(this.button1);
-            this.groupBox3.Controls.Add(this.lblAutoSplitHotkey);
-            this.groupBox3.Controls.Add(this.txtAutoSplitHotkey);
-            this.groupBox3.Location = new System.Drawing.Point(12, 14);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(426, 277);
-            this.groupBox3.TabIndex = 10;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Auto-Split";
+            this.AutoSplitGroup.Controls.Add(this.AutoSplitLayout);
+            this.AutoSplitGroup.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.AutoSplitGroup.Location = new System.Drawing.Point(3, 3);
+            this.AutoSplitGroup.Name = "AutoSplitGroup";
+            this.AutoSplitGroup.Size = new System.Drawing.Size(576, 374);
+            this.AutoSplitGroup.TabIndex = 10;
+            this.AutoSplitGroup.TabStop = false;
+            this.AutoSplitGroup.Text = "Auto-Split";
             // 
-            // label8
+            // AutoSplitLayout
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(308, 19);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(47, 13);
-            this.label8.TabIndex = 0;
-            this.label8.Text = "Difficulty";
+            this.AutoSplitLayout.ColumnCount = 1;
+            this.AutoSplitLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.AutoSplitLayout.Controls.Add(this.AutoSplitToolbar, 0, 1);
+            this.AutoSplitLayout.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.AutoSplitLayout.Location = new System.Drawing.Point(3, 16);
+            this.AutoSplitLayout.Name = "AutoSplitLayout";
+            this.AutoSplitLayout.RowCount = 2;
+            this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.AutoSplitLayout.Size = new System.Drawing.Size(570, 355);
+            this.AutoSplitLayout.TabIndex = 21;
             // 
-            // chkAutosplit
+            // AutoSplitToolbar
             // 
-            this.chkAutosplit.AutoSize = true;
-            this.chkAutosplit.Location = new System.Drawing.Point(276, 252);
-            this.chkAutosplit.Name = "chkAutosplit";
-            this.chkAutosplit.Size = new System.Drawing.Size(59, 17);
-            this.chkAutosplit.TabIndex = 1;
-            this.chkAutosplit.Text = "Enable";
-            this.chkAutosplit.UseVisualStyleBackColor = true;
+            this.AutoSplitToolbar.AutoSize = true;
+            this.AutoSplitToolbar.Controls.Add(this.AutoSplitHotkeyLabel);
+            this.AutoSplitToolbar.Controls.Add(this.AutoSplitTestHotkeyButton);
+            this.AutoSplitToolbar.Controls.Add(this.EnableAutosplitCheckBox);
+            this.AutoSplitToolbar.Controls.Add(this.AutoSplitHotkeyText);
+            this.AutoSplitToolbar.Controls.Add(this.AddAutoSplitButton);
+            this.AutoSplitToolbar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.AutoSplitToolbar.Location = new System.Drawing.Point(3, 321);
+            this.AutoSplitToolbar.Name = "AutoSplitToolbar";
+            this.AutoSplitToolbar.Size = new System.Drawing.Size(564, 31);
+            this.AutoSplitToolbar.TabIndex = 20;
             // 
-            // label3
+            // AutoSplitHotkeyLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(161, 19);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(34, 13);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Value";
+            this.AutoSplitHotkeyLabel.AutoSize = true;
+            this.AutoSplitHotkeyLabel.Location = new System.Drawing.Point(3, 10);
+            this.AutoSplitHotkeyLabel.Name = "AutoSplitHotkeyLabel";
+            this.AutoSplitHotkeyLabel.Size = new System.Drawing.Size(71, 13);
+            this.AutoSplitHotkeyLabel.TabIndex = 13;
+            this.AutoSplitHotkeyLabel.Text = "Split-Hotkey:";
             // 
-            // label2
+            // AutoSplitTestHotkeyButton
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(96, 19);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(31, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Type";
+            this.AutoSplitTestHotkeyButton.Location = new System.Drawing.Point(168, 5);
+            this.AutoSplitTestHotkeyButton.Name = "AutoSplitTestHotkeyButton";
+            this.AutoSplitTestHotkeyButton.Size = new System.Drawing.Size(75, 23);
+            this.AutoSplitTestHotkeyButton.TabIndex = 18;
+            this.AutoSplitTestHotkeyButton.Text = "Test Hotkey";
+            this.AutoSplitTestHotkeyButton.UseVisualStyleBackColor = true;
+            this.AutoSplitTestHotkeyButton.Click += new System.EventHandler(this.AutoSplitTestHotkey_Click);
             // 
-            // btnTestHotkey
+            // EnableAutosplitCheckBox
             // 
-            this.btnTestHotkey.Location = new System.Drawing.Point(167, 248);
-            this.btnTestHotkey.Name = "btnTestHotkey";
-            this.btnTestHotkey.Size = new System.Drawing.Size(75, 23);
-            this.btnTestHotkey.TabIndex = 18;
-            this.btnTestHotkey.Text = "Test Hotkey";
-            this.btnTestHotkey.UseVisualStyleBackColor = true;
-            this.btnTestHotkey.Click += new System.EventHandler(this.btnTestHotkey_Click);
+            this.EnableAutosplitCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.EnableAutosplitCheckBox.AutoSize = true;
+            this.EnableAutosplitCheckBox.Location = new System.Drawing.Point(416, 9);
+            this.EnableAutosplitCheckBox.Name = "EnableAutosplitCheckBox";
+            this.EnableAutosplitCheckBox.Size = new System.Drawing.Size(60, 17);
+            this.EnableAutosplitCheckBox.TabIndex = 1;
+            this.EnableAutosplitCheckBox.Text = "Enable";
+            this.EnableAutosplitCheckBox.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // AutoSplitHotkeyText
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(28, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Text";
+            this.AutoSplitHotkeyText.Location = new System.Drawing.Point(80, 7);
+            this.AutoSplitHotkeyText.Name = "AutoSplitHotkeyText";
+            this.AutoSplitHotkeyText.Size = new System.Drawing.Size(82, 20);
+            this.AutoSplitHotkeyText.TabIndex = 12;
+            this.AutoSplitHotkeyText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.AutoSplitHotkeyText_KeyDown);
+            this.AutoSplitHotkeyText.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.AutoSplitHotkeyText_KeyPress);
+            this.AutoSplitHotkeyText.KeyUp += new System.Windows.Forms.KeyEventHandler(this.AutoSplitHotkeyText_KeyUp);
             // 
-            // panel1
+            // AddAutoSplitButton
             // 
-            this.panel1.AutoScroll = true;
-            this.panel1.Location = new System.Drawing.Point(6, 35);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(414, 209);
-            this.panel1.TabIndex = 0;
+            this.AddAutoSplitButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.AddAutoSplitButton.Location = new System.Drawing.Point(482, 5);
+            this.AddAutoSplitButton.Name = "AddAutoSplitButton";
+            this.AddAutoSplitButton.Size = new System.Drawing.Size(79, 23);
+            this.AddAutoSplitButton.TabIndex = 11;
+            this.AddAutoSplitButton.Text = "Add Split";
+            this.AddAutoSplitButton.UseVisualStyleBackColor = true;
+            this.AddAutoSplitButton.Click += new System.EventHandler(this.AddAutoSplitButton_Clicked);
             // 
-            // button1
+            // OtherGroup
             // 
-            this.button1.Location = new System.Drawing.Point(341, 248);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(79, 23);
-            this.button1.TabIndex = 11;
-            this.button1.Text = "Add Split";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.OtherGroup.Controls.Add(this.CheckUpdatesButton);
+            this.OtherGroup.Controls.Add(this.CheckUpdatesCheckBox);
+            this.OtherGroup.Controls.Add(this.ShowDebugWindowCheckBox);
+            this.OtherGroup.Location = new System.Drawing.Point(3, 164);
+            this.OtherGroup.Name = "OtherGroup";
+            this.OtherGroup.Size = new System.Drawing.Size(231, 95);
+            this.OtherGroup.TabIndex = 16;
+            this.OtherGroup.TabStop = false;
+            this.OtherGroup.Text = "Other";
             // 
-            // lblAutoSplitHotkey
+            // CheckUpdatesButton
             // 
-            this.lblAutoSplitHotkey.AutoSize = true;
-            this.lblAutoSplitHotkey.Location = new System.Drawing.Point(6, 253);
-            this.lblAutoSplitHotkey.Name = "lblAutoSplitHotkey";
-            this.lblAutoSplitHotkey.Size = new System.Drawing.Size(67, 13);
-            this.lblAutoSplitHotkey.TabIndex = 13;
-            this.lblAutoSplitHotkey.Text = "Split-Hotkey:";
+            this.CheckUpdatesButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.CheckUpdatesButton.Location = new System.Drawing.Point(6, 66);
+            this.CheckUpdatesButton.Name = "CheckUpdatesButton";
+            this.CheckUpdatesButton.Size = new System.Drawing.Size(219, 23);
+            this.CheckUpdatesButton.TabIndex = 2;
+            this.CheckUpdatesButton.Text = "Check for updates now";
+            this.CheckUpdatesButton.UseVisualStyleBackColor = true;
+            this.CheckUpdatesButton.Click += new System.EventHandler(this.CheckUpdatesButton_Click);
             // 
-            // txtAutoSplitHotkey
+            // CheckUpdatesCheckBox
             // 
-            this.txtAutoSplitHotkey.Location = new System.Drawing.Point(79, 250);
-            this.txtAutoSplitHotkey.Name = "txtAutoSplitHotkey";
-            this.txtAutoSplitHotkey.Size = new System.Drawing.Size(82, 20);
-            this.txtAutoSplitHotkey.TabIndex = 12;
-            this.txtAutoSplitHotkey.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtAutoSplitHotkey_KeyDown);
-            this.txtAutoSplitHotkey.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtAutoSplitHotkey_KeyPress);
-            this.txtAutoSplitHotkey.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtAutoSplitHotkey_KeyUp);
+            this.CheckUpdatesCheckBox.AutoSize = true;
+            this.CheckUpdatesCheckBox.Location = new System.Drawing.Point(10, 43);
+            this.CheckUpdatesCheckBox.Name = "CheckUpdatesCheckBox";
+            this.CheckUpdatesCheckBox.Size = new System.Drawing.Size(153, 17);
+            this.CheckUpdatesCheckBox.TabIndex = 1;
+            this.CheckUpdatesCheckBox.Text = "Check for updates at start";
+            this.CheckUpdatesCheckBox.UseVisualStyleBackColor = true;
             // 
-            // groupBox4
+            // ShowDebugWindowCheckBox
             // 
-            this.groupBox4.Controls.Add(this.button2);
-            this.groupBox4.Controls.Add(this.chkCheckUpdates);
-            this.groupBox4.Controls.Add(this.chkShowDebug);
-            this.groupBox4.Location = new System.Drawing.Point(446, 196);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(214, 95);
-            this.groupBox4.TabIndex = 16;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Other";
+            this.ShowDebugWindowCheckBox.AutoSize = true;
+            this.ShowDebugWindowCheckBox.Location = new System.Drawing.Point(10, 20);
+            this.ShowDebugWindowCheckBox.Name = "ShowDebugWindowCheckBox";
+            this.ShowDebugWindowCheckBox.Size = new System.Drawing.Size(126, 17);
+            this.ShowDebugWindowCheckBox.TabIndex = 0;
+            this.ShowDebugWindowCheckBox.Text = "Show debug window";
+            this.ShowDebugWindowCheckBox.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // VersionGroup
             // 
-            this.button2.Location = new System.Drawing.Point(6, 66);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(202, 23);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "Check for updates now";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.VersionGroup.Controls.Add(this.VersionLabel);
+            this.VersionGroup.Controls.Add(this.VersionComboBox);
+            this.VersionGroup.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.VersionGroup.Location = new System.Drawing.Point(3, 265);
+            this.VersionGroup.Name = "VersionGroup";
+            this.VersionGroup.Size = new System.Drawing.Size(231, 44);
+            this.VersionGroup.TabIndex = 17;
+            this.VersionGroup.TabStop = false;
+            this.VersionGroup.Text = "Diablo 2";
             // 
-            // chkCheckUpdates
+            // VersionLabel
             // 
-            this.chkCheckUpdates.AutoSize = true;
-            this.chkCheckUpdates.Location = new System.Drawing.Point(9, 43);
-            this.chkCheckUpdates.Name = "chkCheckUpdates";
-            this.chkCheckUpdates.Size = new System.Drawing.Size(148, 17);
-            this.chkCheckUpdates.TabIndex = 1;
-            this.chkCheckUpdates.Text = "Check for updates at start";
-            this.chkCheckUpdates.UseVisualStyleBackColor = true;
+            this.VersionLabel.AutoSize = true;
+            this.VersionLabel.Location = new System.Drawing.Point(6, 20);
+            this.VersionLabel.Name = "VersionLabel";
+            this.VersionLabel.Size = new System.Drawing.Size(48, 13);
+            this.VersionLabel.TabIndex = 1;
+            this.VersionLabel.Text = "Version:";
             // 
-            // chkShowDebug
+            // VersionComboBox
             // 
-            this.chkShowDebug.AutoSize = true;
-            this.chkShowDebug.Location = new System.Drawing.Point(10, 20);
-            this.chkShowDebug.Name = "chkShowDebug";
-            this.chkShowDebug.Size = new System.Drawing.Size(125, 17);
-            this.chkShowDebug.TabIndex = 0;
-            this.chkShowDebug.Text = "Show debug window";
-            this.chkShowDebug.UseVisualStyleBackColor = true;
-            // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.label9);
-            this.groupBox5.Controls.Add(this.cmbVersion);
-            this.groupBox5.Location = new System.Drawing.Point(446, 297);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(214, 44);
-            this.groupBox5.TabIndex = 17;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Diablo 2";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 20);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(45, 13);
-            this.label9.TabIndex = 1;
-            this.label9.Text = "Version:";
-            // 
-            // cmbVersion
-            // 
-            this.cmbVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbVersion.FormattingEnabled = true;
-            this.cmbVersion.Items.AddRange(new object[] {
+            this.VersionComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.VersionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.VersionComboBox.FormattingEnabled = true;
+            this.VersionComboBox.Items.AddRange(new object[] {
             "1.14d",
             "1.14c"});
-            this.cmbVersion.Location = new System.Drawing.Point(90, 17);
-            this.cmbVersion.Name = "cmbVersion";
-            this.cmbVersion.Size = new System.Drawing.Size(53, 21);
-            this.cmbVersion.TabIndex = 0;
+            this.VersionComboBox.Location = new System.Drawing.Point(105, 17);
+            this.VersionComboBox.Name = "VersionComboBox";
+            this.VersionComboBox.Size = new System.Drawing.Size(117, 21);
+            this.VersionComboBox.TabIndex = 0;
             // 
-            // grpRunes
+            // RuneDisplayGroup
             // 
-            this.grpRunes.Controls.Add(this.runeDisplayPanel);
-            this.grpRunes.Controls.Add(this.btnAddRune);
-            this.grpRunes.Controls.Add(this.comboBoxRunes);
-            this.grpRunes.Location = new System.Drawing.Point(12, 297);
-            this.grpRunes.Name = "grpRunes";
-            this.grpRunes.Size = new System.Drawing.Size(426, 111);
-            this.grpRunes.TabIndex = 19;
-            this.grpRunes.TabStop = false;
-            this.grpRunes.Text = "Rune Display";
+            this.RuneDisplayGroup.Controls.Add(this.RuneDisplayPanel);
+            this.RuneDisplayGroup.Controls.Add(this.AddRuneButton);
+            this.RuneDisplayGroup.Controls.Add(this.RuneComboBox);
+            this.RuneDisplayGroup.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RuneDisplayGroup.Location = new System.Drawing.Point(3, 383);
+            this.RuneDisplayGroup.Name = "RuneDisplayGroup";
+            this.RuneDisplayGroup.Size = new System.Drawing.Size(576, 110);
+            this.RuneDisplayGroup.TabIndex = 19;
+            this.RuneDisplayGroup.TabStop = false;
+            this.RuneDisplayGroup.Text = "Rune Display";
             // 
-            // runeDisplayPanel
+            // RuneDisplayPanel
             // 
-            this.runeDisplayPanel.AutoScroll = true;
-            this.runeDisplayPanel.Location = new System.Drawing.Point(6, 19);
-            this.runeDisplayPanel.Name = "runeDisplayPanel";
-            this.runeDisplayPanel.Size = new System.Drawing.Size(414, 57);
-            this.runeDisplayPanel.TabIndex = 2;
+            this.RuneDisplayPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.RuneDisplayPanel.AutoScroll = true;
+            this.RuneDisplayPanel.Location = new System.Drawing.Point(6, 19);
+            this.RuneDisplayPanel.Name = "RuneDisplayPanel";
+            this.RuneDisplayPanel.Size = new System.Drawing.Size(561, 57);
+            this.RuneDisplayPanel.TabIndex = 2;
             // 
-            // btnAddRune
+            // AddRuneButton
             // 
-            this.btnAddRune.Location = new System.Drawing.Point(341, 82);
-            this.btnAddRune.Name = "btnAddRune";
-            this.btnAddRune.Size = new System.Drawing.Size(79, 23);
-            this.btnAddRune.TabIndex = 1;
-            this.btnAddRune.Text = "Add Rune";
-            this.btnAddRune.UseVisualStyleBackColor = true;
-            this.btnAddRune.Click += new System.EventHandler(this.btnAddRune_Click);
+            this.AddRuneButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.AddRuneButton.Location = new System.Drawing.Point(488, 81);
+            this.AddRuneButton.Name = "AddRuneButton";
+            this.AddRuneButton.Size = new System.Drawing.Size(79, 23);
+            this.AddRuneButton.TabIndex = 1;
+            this.AddRuneButton.Text = "Add Rune";
+            this.AddRuneButton.UseVisualStyleBackColor = true;
+            this.AddRuneButton.Click += new System.EventHandler(this.AddRuneButton_Click);
             // 
-            // comboBoxRunes
+            // RuneComboBox
             // 
-            this.comboBoxRunes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxRunes.FormattingEnabled = true;
-            this.comboBoxRunes.Items.AddRange(new object[] {
+            this.RuneComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.RuneComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.RuneComboBox.FormattingEnabled = true;
+            this.RuneComboBox.Items.AddRange(new object[] {
             "El",
             "Eld",
             "Tir",
@@ -420,157 +415,203 @@
             "Jah",
             "Cham",
             "Zod"});
-            this.comboBoxRunes.Location = new System.Drawing.Point(276, 83);
-            this.comboBoxRunes.Name = "comboBoxRunes";
-            this.comboBoxRunes.Size = new System.Drawing.Size(59, 21);
-            this.comboBoxRunes.TabIndex = 0;
+            this.RuneComboBox.Location = new System.Drawing.Point(423, 82);
+            this.RuneComboBox.Name = "RuneComboBox";
+            this.RuneComboBox.Size = new System.Drawing.Size(59, 21);
+            this.RuneComboBox.TabIndex = 0;
             // 
-            // menuStrip1
+            // SettingsMenuStrip
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.SettingsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem});
-            this.menuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(672, 24);
-            this.menuStrip1.TabIndex = 21;
-            this.menuStrip1.Text = "menuStrip1";
+            this.SettingsMenuStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            this.SettingsMenuStrip.Location = new System.Drawing.Point(0, 0);
+            this.SettingsMenuStrip.Name = "SettingsMenuStrip";
+            this.SettingsMenuStrip.Size = new System.Drawing.Size(828, 24);
+            this.SettingsMenuStrip.TabIndex = 21;
+            this.SettingsMenuStrip.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadConfigToolStripMenuItem,
-            this.saveAsToolStripMenuItem,
-            this.saveToolStripMenuItem,
+            this.LoadSettingsMenuItem,
+            this.SaveSettingsAsMenuItem,
+            this.SaveSettingsMenuItem,
             this.toolStripSeparator1,
-            this.closeSettingsToolStripMenuItem});
+            this.CloseSettingsMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
-            // loadConfigToolStripMenuItem
+            // LoadSettingsMenuItem
             // 
-            this.loadConfigToolStripMenuItem.Image = global::DiabloInterface.Properties.Resources.folder_explore;
-            this.loadConfigToolStripMenuItem.Name = "loadConfigToolStripMenuItem";
-            this.loadConfigToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
-            this.loadConfigToolStripMenuItem.Text = "Load Config";
-            this.loadConfigToolStripMenuItem.Click += new System.EventHandler(this.loadConfigToolStripMenuItem_Click);
+            this.LoadSettingsMenuItem.Image = global::DiabloInterface.Properties.Resources.folder_explore;
+            this.LoadSettingsMenuItem.Name = "LoadSettingsMenuItem";
+            this.LoadSettingsMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.LoadSettingsMenuItem.Text = "Load Config";
+            this.LoadSettingsMenuItem.Click += new System.EventHandler(this.LoadSettingsMenuItem_Click);
             // 
-            // saveAsToolStripMenuItem
+            // SaveSettingsAsMenuItem
             // 
-            this.saveAsToolStripMenuItem.Image = global::DiabloInterface.Properties.Resources.disk;
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
-            this.saveAsToolStripMenuItem.Text = "Save As";
-            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            this.SaveSettingsAsMenuItem.Image = global::DiabloInterface.Properties.Resources.disk;
+            this.SaveSettingsAsMenuItem.Name = "SaveSettingsAsMenuItem";
+            this.SaveSettingsAsMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.SaveSettingsAsMenuItem.Text = "Save As";
+            this.SaveSettingsAsMenuItem.Click += new System.EventHandler(this.SaveSettingsAsMenuItem_Click);
             // 
-            // saveToolStripMenuItem
+            // SaveSettingsMenuItem
             // 
-            this.saveToolStripMenuItem.Image = global::DiabloInterface.Properties.Resources.disk;
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
-            this.saveToolStripMenuItem.Text = "Save";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            this.SaveSettingsMenuItem.Image = global::DiabloInterface.Properties.Resources.disk;
+            this.SaveSettingsMenuItem.Name = "SaveSettingsMenuItem";
+            this.SaveSettingsMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.SaveSettingsMenuItem.Text = "Save";
+            this.SaveSettingsMenuItem.Click += new System.EventHandler(this.SaveSettingsMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(138, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
-            // closeSettingsToolStripMenuItem
+            // CloseSettingsMenuItem
             // 
-            this.closeSettingsToolStripMenuItem.Image = global::DiabloInterface.Properties.Resources.cross;
-            this.closeSettingsToolStripMenuItem.Name = "closeSettingsToolStripMenuItem";
-            this.closeSettingsToolStripMenuItem.ShowShortcutKeys = false;
-            this.closeSettingsToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
-            this.closeSettingsToolStripMenuItem.Text = "Close Settings";
-            this.closeSettingsToolStripMenuItem.Click += new System.EventHandler(this.closeSettingsToolStripMenuItem_Click);
+            this.CloseSettingsMenuItem.Image = global::DiabloInterface.Properties.Resources.cross;
+            this.CloseSettingsMenuItem.Name = "CloseSettingsMenuItem";
+            this.CloseSettingsMenuItem.ShowShortcutKeys = false;
+            this.CloseSettingsMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.CloseSettingsMenuItem.Text = "Close Settings";
+            this.CloseSettingsMenuItem.Click += new System.EventHandler(this.CloseSettingsMenuItem_Click);
             // 
             // mainPanel
             // 
-            this.mainPanel.Controls.Add(this.groupBox1);
-            this.mainPanel.Controls.Add(this.grpRunes);
-            this.mainPanel.Controls.Add(this.groupBox3);
-            this.mainPanel.Controls.Add(this.groupBox2);
-            this.mainPanel.Controls.Add(this.groupBox5);
-            this.mainPanel.Controls.Add(this.groupBox4);
+            this.mainPanel.Controls.Add(this.VerticalSplitContainer);
             this.mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainPanel.Location = new System.Drawing.Point(0, 24);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(672, 418);
+            this.mainPanel.Size = new System.Drawing.Size(828, 502);
             this.mainPanel.TabIndex = 22;
+            // 
+            // VerticalSplitContainer
+            // 
+            this.VerticalSplitContainer.ColumnCount = 2;
+            this.VerticalSplitContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.VerticalSplitContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 240F));
+            this.VerticalSplitContainer.Controls.Add(this.HorizontalSplitContainer, 0, 0);
+            this.VerticalSplitContainer.Controls.Add(this.RightPanelLayout, 1, 0);
+            this.VerticalSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.VerticalSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this.VerticalSplitContainer.Name = "VerticalSplitContainer";
+            this.VerticalSplitContainer.RowCount = 1;
+            this.VerticalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.VerticalSplitContainer.Size = new System.Drawing.Size(828, 502);
+            this.VerticalSplitContainer.TabIndex = 20;
+            // 
+            // HorizontalSplitContainer
+            // 
+            this.HorizontalSplitContainer.ColumnCount = 1;
+            this.HorizontalSplitContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.HorizontalSplitContainer.Controls.Add(this.AutoSplitGroup, 0, 0);
+            this.HorizontalSplitContainer.Controls.Add(this.RuneDisplayGroup, 0, 1);
+            this.HorizontalSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.HorizontalSplitContainer.Location = new System.Drawing.Point(3, 3);
+            this.HorizontalSplitContainer.Name = "HorizontalSplitContainer";
+            this.HorizontalSplitContainer.RowCount = 2;
+            this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.HorizontalSplitContainer.Size = new System.Drawing.Size(582, 496);
+            this.HorizontalSplitContainer.TabIndex = 0;
+            // 
+            // RightPanelLayout
+            // 
+            this.RightPanelLayout.Controls.Add(this.FontGroup);
+            this.RightPanelLayout.Controls.Add(this.DataGroup);
+            this.RightPanelLayout.Controls.Add(this.OtherGroup);
+            this.RightPanelLayout.Controls.Add(this.VersionGroup);
+            this.RightPanelLayout.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RightPanelLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.RightPanelLayout.Location = new System.Drawing.Point(591, 3);
+            this.RightPanelLayout.Name = "RightPanelLayout";
+            this.RightPanelLayout.Size = new System.Drawing.Size(234, 496);
+            this.RightPanelLayout.TabIndex = 1;
             // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(672, 442);
+            this.ClientSize = new System.Drawing.Size(828, 526);
             this.Controls.Add(this.mainPanel);
-            this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.SettingsMenuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MainMenuStrip = this.menuStrip1;
+            this.MainMenuStrip = this.SettingsMenuStrip;
+            this.MinimumSize = new System.Drawing.Size(700, 400);
             this.Name = "SettingsWindow";
             this.Text = "Settings";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SettingsWindow_FormClosing);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            this.grpRunes.ResumeLayout(false);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            this.Shown += new System.EventHandler(this.SettingsWindow_Shown);
+            this.FontGroup.ResumeLayout(false);
+            this.FontGroup.PerformLayout();
+            this.DataGroup.ResumeLayout(false);
+            this.DataGroup.PerformLayout();
+            this.AutoSplitGroup.ResumeLayout(false);
+            this.AutoSplitLayout.ResumeLayout(false);
+            this.AutoSplitLayout.PerformLayout();
+            this.AutoSplitToolbar.ResumeLayout(false);
+            this.AutoSplitToolbar.PerformLayout();
+            this.OtherGroup.ResumeLayout(false);
+            this.OtherGroup.PerformLayout();
+            this.VersionGroup.ResumeLayout(false);
+            this.VersionGroup.PerformLayout();
+            this.RuneDisplayGroup.ResumeLayout(false);
+            this.SettingsMenuStrip.ResumeLayout(false);
+            this.SettingsMenuStrip.PerformLayout();
             this.mainPanel.ResumeLayout(false);
+            this.VerticalSplitContainer.ResumeLayout(false);
+            this.HorizontalSplitContainer.ResumeLayout(false);
+            this.RightPanelLayout.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.Label lblSelectedFont;
-        private System.Windows.Forms.TextBox txtTitleFontSize;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label lblTitleFontSize;
-        private System.Windows.Forms.TextBox txtFontSize;
-        private System.Windows.Forms.Label lblFontSize;
-        private System.Windows.Forms.CheckBox chkCreateFiles;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox chkAutosplit;
-        private System.Windows.Forms.TextBox txtAutoSplitHotkey;
-        private System.Windows.Forms.Label lblAutoSplitHotkey;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.CheckBox chkShowDebug;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.ComboBox cmbVersion;
-        private System.Windows.Forms.Button btnTestHotkey;
-        private System.Windows.Forms.GroupBox grpRunes;
-        private System.Windows.Forms.Button btnAddRune;
-        private System.Windows.Forms.ComboBox comboBoxRunes;
-        private System.Windows.Forms.Panel runeDisplayPanel;
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.Label FontLabel;
+        private System.Windows.Forms.TextBox TitleFontSizeText;
+        private System.Windows.Forms.GroupBox FontGroup;
+        private System.Windows.Forms.Label TitleFontSizeLabel;
+        private System.Windows.Forms.TextBox FontSizeText;
+        private System.Windows.Forms.Label FontSizeLabel;
+        private System.Windows.Forms.CheckBox CreateFilesCheckBox;
+        private System.Windows.Forms.GroupBox DataGroup;
+        private System.Windows.Forms.GroupBox AutoSplitGroup;
+        private System.Windows.Forms.Button AddAutoSplitButton;
+        private System.Windows.Forms.CheckBox EnableAutosplitCheckBox;
+        private System.Windows.Forms.TextBox AutoSplitHotkeyText;
+        private System.Windows.Forms.Label AutoSplitHotkeyLabel;
+        private System.Windows.Forms.GroupBox OtherGroup;
+        private System.Windows.Forms.CheckBox ShowDebugWindowCheckBox;
+        private System.Windows.Forms.GroupBox VersionGroup;
+        private System.Windows.Forms.Label VersionLabel;
+        private System.Windows.Forms.ComboBox VersionComboBox;
+        private System.Windows.Forms.Button AutoSplitTestHotkeyButton;
+        private System.Windows.Forms.GroupBox RuneDisplayGroup;
+        private System.Windows.Forms.Button AddRuneButton;
+        private System.Windows.Forms.ComboBox RuneComboBox;
+        private System.Windows.Forms.Panel RuneDisplayPanel;
+        private System.Windows.Forms.MenuStrip SettingsMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem loadConfigToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem LoadSettingsMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem SaveSettingsAsMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem SaveSettingsMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem closeSettingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem CloseSettingsMenuItem;
         private System.Windows.Forms.Panel mainPanel;
-        private System.Windows.Forms.CheckBox chkCheckUpdates;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ComboBox cmbFonts;
+        private System.Windows.Forms.CheckBox CheckUpdatesCheckBox;
+        private System.Windows.Forms.Button CheckUpdatesButton;
+        private System.Windows.Forms.ComboBox FontComboBox;
+        private System.Windows.Forms.TableLayoutPanel VerticalSplitContainer;
+        private System.Windows.Forms.TableLayoutPanel HorizontalSplitContainer;
+        private System.Windows.Forms.TableLayoutPanel AutoSplitLayout;
+        private System.Windows.Forms.Panel AutoSplitToolbar;
+        private System.Windows.Forms.FlowLayoutPanel RightPanelLayout;
     }
 }

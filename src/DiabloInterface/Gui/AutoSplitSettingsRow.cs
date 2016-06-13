@@ -1,12 +1,11 @@
-﻿using DiabloInterface.D2;
-using System;
+﻿using System;
 using System.Windows.Forms;
 
 namespace DiabloInterface
 {
     public partial class AutoSplitSettingsRow : UserControl
     {
-        private static string LABEL_CHAR_LEVEL = "Char Level";
+        private static string LABEL_CHAR_LEVEL = "Level";
         private static string LABEL_AREA = "Area";
         private static string LABEL_ITEM = "Item";
         private static string LABEL_QUEST = "Quest";
@@ -48,13 +47,16 @@ namespace DiabloInterface
             }
         }
 
-        AutoSplit autosplit;
-        SettingsWindow settingsWindow;
-        public AutoSplitSettingsRow( AutoSplit autosplit, SettingsWindow w )
+        public event Action<AutoSplitSettingsRow> OnDelete;
+        public bool IsDirty { get; private set; }
+
+        public AutoSplit AutoSplit { get; private set; }
+
+        public AutoSplitSettingsRow(AutoSplit autosplit)
         {
             InitializeComponent();
-            this.autosplit = autosplit;
-            this.settingsWindow = w;
+
+            AutoSplit = autosplit;
 
             txtName.Text = autosplit.Name;
 
@@ -65,7 +67,7 @@ namespace DiabloInterface
             cmbType.Items.Add(new Item(LABEL_SPECIAL, (int)AutoSplit.SplitType.Special));
             cmbType.SelectedIndex = (int)autosplit.Type;
 
-            fillComboBoxes();
+            FillComboBoxes();
 
             cmbDifficulty.SelectedIndex = (int)autosplit.Difficulty;
 
@@ -80,12 +82,11 @@ namespace DiabloInterface
                 i++;
             }
         }
-        private void fillComboBoxes ()
+
+        private void FillComboBoxes()
         {
-
-
             cmbDifficulty.Items.Clear();
-            switch (autosplit.Type)
+            switch (AutoSplit.Type)
             {
                 case AutoSplit.SplitType.Area:
                 case AutoSplit.SplitType.Item:
@@ -93,7 +94,7 @@ namespace DiabloInterface
                     cmbDifficulty.Items.Add(new Item(LABEL_NORMAL, 0));
                     cmbDifficulty.Items.Add(new Item(LABEL_NIGHTMARE, 1));
                     cmbDifficulty.Items.Add(new Item(LABEL_HELL, 2));
-                    cmbDifficulty.SelectedIndex = autosplit.Difficulty;
+                    cmbDifficulty.SelectedIndex = AutoSplit.Difficulty;
                     cmbDifficulty.Show();
                     break;
                 case AutoSplit.SplitType.CharLevel:
@@ -106,7 +107,7 @@ namespace DiabloInterface
             }
 
             cmbValue.Items.Clear();
-            switch (autosplit.Type)
+            switch (AutoSplit.Type)
             {
                 case AutoSplit.SplitType.CharLevel:
                     for (int i = 1; i < 100; i++)
@@ -143,12 +144,19 @@ namespace DiabloInterface
             }
         }
 
+        public void MarkClean()
+        {
+            IsDirty = false;
+        }
+
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
             Item selectedItem = (Item)comboBox.SelectedItem;
-            autosplit.Type = (AutoSplit.SplitType)selectedItem.Value;
-            fillComboBoxes();
+            AutoSplit.Type = (AutoSplit.SplitType)selectedItem.Value;
+            FillComboBoxes();
+
+            IsDirty = true;
         }
 
         private void cmbValue_SelectedIndexChanged(object sender, EventArgs e)
@@ -156,16 +164,18 @@ namespace DiabloInterface
             Item selectedValueItem = (Item)cmbValue.SelectedItem;
             if (selectedValueItem != null)
             {
-                autosplit.Value = (short)selectedValueItem.Value;
-                if (autosplit.Name == "")
+                AutoSplit.Value = (short)selectedValueItem.Value;
+                if (AutoSplit.Name == "")
                 {
                     txtName.Text = selectedValueItem.Name;
                 }
             }
             else
             {
-                autosplit.Value = -1;
+                AutoSplit.Value = -1;
             }
+
+            IsDirty = true;
         }
 
         private void cmbDifficulty_SelectedIndexChanged(object sender, EventArgs e)
@@ -173,28 +183,29 @@ namespace DiabloInterface
             Item selectedValueItem = (Item)cmbDifficulty.SelectedItem;
             if (selectedValueItem != null)
             {
-                autosplit.Difficulty = (short)selectedValueItem.Value;
+                AutoSplit.Difficulty = (short)selectedValueItem.Value;
             }
             else
             {
-                autosplit.Difficulty = -1;
+                AutoSplit.Difficulty = -1;
             }
+
+            IsDirty = true;
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
-            autosplit.Name = txtName.Text;
+            AutoSplit.Name = txtName.Text;
+
+            IsDirty = true;
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            autosplit.Deleted = true;
-            foreach (Control c in this.Controls )
+            if (OnDelete != null)
             {
-                c.Enabled = false;
+                OnDelete(this);
             }
-            this.Hide();
-            settingsWindow.relayout();
         }
     }
 }

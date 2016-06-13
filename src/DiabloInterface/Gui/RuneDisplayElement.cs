@@ -126,7 +126,7 @@ namespace DiabloInterface.Gui
             this.Hide();
             if (settingsWindow != null)
             {
-                settingsWindow.relayout();
+                settingsWindow.LayoutControls();
             }
             if (mainWindow != null)
             {
