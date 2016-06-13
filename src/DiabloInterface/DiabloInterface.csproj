@@ -222,6 +222,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\bug.png" />
     <Content Include="Resources\Diablo II_101.ico" />
     <EmbeddedResource Include="Resources\ItemStatCost.txt" />
     <EmbeddedResource Include="Resources\Images\Runes\runes.png" />

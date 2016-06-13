@@ -45,13 +45,13 @@
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.debugMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.frwLabel = new System.Windows.Forms.Label();
             this.fcrLabel = new System.Windows.Forms.Label();
             this.fhrLabel = new System.Windows.Forms.Label();
             this.iasLabel = new System.Windows.Forms.Label();
             this.runeDisplayPanel = new System.Windows.Forms.Panel();
-            this.debugMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -213,6 +213,14 @@
             this.resetToolStripMenuItem.Text = "Reset";
             this.resetToolStripMenuItem.Click += new System.EventHandler(this.button2_Click);
             // 
+            // debugMenuItem
+            // 
+            this.debugMenuItem.Image = global::DiabloInterface.Properties.Resources.bug;
+            this.debugMenuItem.Name = "debugMenuItem";
+            this.debugMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.debugMenuItem.Text = "Debug";
+            this.debugMenuItem.Click += new System.EventHandler(this.debugMenuItem_Click);
+            // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Image = global::DiabloInterface.Properties.Resources.cross;
@@ -271,13 +279,6 @@
             this.runeDisplayPanel.Name = "runeDisplayPanel";
             this.runeDisplayPanel.Size = new System.Drawing.Size(248, 41);
             this.runeDisplayPanel.TabIndex = 18;
-            // 
-            // debugMenuItem
-            // 
-            this.debugMenuItem.Name = "debugMenuItem";
-            this.debugMenuItem.Size = new System.Drawing.Size(171, 22);
-            this.debugMenuItem.Text = "Debug";
-            this.debugMenuItem.Click += new System.EventHandler(this.debugMenuItem_Click);
             // 
             // MainWindow
             // 
