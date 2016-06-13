@@ -347,7 +347,7 @@ namespace DiabloInterface
         {
             foreach (AutoSplit autosplit in main.Settings.Autosplits)
             {
-                if (!autosplit.Reached && autosplit.Type == AutoSplit.SplitType.Special && autosplit.Value == (int)AutoSplit.Special.GAMESTART)
+                if (!autosplit.IsReached && autosplit.Type == AutoSplit.SplitType.Special && autosplit.Value == (int)AutoSplit.Special.GameStart)
                 {
                     CompleteAutoSplit(autosplit, character);
                 }
@@ -360,7 +360,7 @@ namespace DiabloInterface
 
             foreach (AutoSplit autosplit in main.Settings.Autosplits)
             {
-                if (autosplit.Reached || autosplit.Difficulty != gameInfo.Game.Difficulty)
+                if (autosplit.IsReached || autosplit.Difficulty != gameInfo.Game.Difficulty)
                 {
                     continue;
                 }
@@ -405,7 +405,7 @@ namespace DiabloInterface
 
             foreach (AutoSplit autosplit in main.Settings.Autosplits)
             {
-                if (autosplit.Reached || autosplit.Difficulty != gameInfo.Game.Difficulty)
+                if (autosplit.IsReached || autosplit.Difficulty != gameInfo.Game.Difficulty)
                 {
                     continue;
                 }
@@ -443,12 +443,12 @@ namespace DiabloInterface
         void CompleteAutoSplit(AutoSplit autosplit, Character character)
         {
             // Autosplit already reached.
-            if (autosplit.Reached)
+            if (autosplit.IsReached)
             {
                 return;
             }
 
-            autosplit.Reached = true;
+            autosplit.IsReached = true;
             main.triggerAutosplit(character);
 
             int autoSplitIndex = main.Settings.Autosplits.IndexOf(autosplit);

@@ -139,7 +139,7 @@ namespace DiabloInterface
                     cmbValue.Items.Add(new Item(LABEL_BAAL, (int)D2Data.Quest.A5Q6));
                     break;
                 case AutoSplit.SplitType.Special:
-                    cmbValue.Items.Add(new Item(LABEL_GAME_START, (int)AutoSplit.Special.GAMESTART));
+                    cmbValue.Items.Add(new Item(LABEL_GAME_START, (int)AutoSplit.Special.GameStart));
                     break;
             }
         }

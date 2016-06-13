@@ -75,7 +75,7 @@ namespace DiabloInterface
         {
             foreach (AutoSplit autosplit in Settings.Autosplits)
             {
-                autosplit.Reached = false;
+                autosplit.IsReached = false;
             }
             if (runeDisplayPanel.Controls.Count > 0)
             {

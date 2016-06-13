@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
+﻿using System;
 
 namespace DiabloInterface
 {
@@ -17,7 +16,7 @@ namespace DiabloInterface
 
         public enum Special
         {
-            GAMESTART = 1,
+            GameStart = 1,
         }
 
         private class Item
@@ -35,43 +34,45 @@ namespace DiabloInterface
             }
         }
 
-        private Control control;
+        /// <summary>
+        /// Called when the split has been reached.
+        /// </summary>
+        public event Action<AutoSplit> Reached;
+        /// <summary>
+        /// Called when the split has been reset.
+        /// </summary>
+        public event Action<AutoSplit> Reset;
 
         public short Difficulty { get; set; }
         public SplitType Type { get; set; }
         public short Value { get; set; }
         public string Name { get; set; }
 
-        private bool _reached = false;
-        public bool Reached
+        private bool isReached = false;
+        /// <summary>
+        /// Get or set wether the split has been reached.
+        /// The Reached event is called when the split is reached.
+        /// </summary>
+        public bool IsReached
         {
-            get { return _reached; }
-            set { _reached = value; updateControl(); }
-        }
-
-        public void updateControl()
-        {
-            if (control == null)
+            get { return isReached; }
+            set
             {
-                return;
-            }
+                bool wasChanged = isReached != value;
+                isReached = value;
 
-            control.Text = Name;
-
-            if (_reached)
-            {
-                control.ForeColor = Color.Green;
+                if (wasChanged)
+                {
+                    if (isReached)
+                    {
+                        OnReached();
+                    }
+                    else
+                    {
+                        OnReset();
+                    }
+                }
             }
-            else
-            {
-                control.ForeColor = Color.Red;
-            }
-        }
-
-        public void bindControl(Control control)
-        {
-            this.control = control;
-            updateControl();
         }
 
         public AutoSplit()
@@ -96,6 +97,30 @@ namespace DiabloInterface
             Type = type;
             Value = value;
             Difficulty = difficulty;
+        }
+
+        /// <summary>
+        /// Trigger the reached event.
+        /// </summary>
+        void OnReached()
+        {
+            var reachedEvent = Reached;
+            if (reachedEvent != null)
+            {
+                reachedEvent(this);
+            }
+        }
+
+        /// <summary>
+        /// Trigger the reset event.
+        /// </summary>
+        void OnReset()
+        {
+            var resetEvent = Reset;
+            if (resetEvent != null)
+            {
+                resetEvent(this);
+            }
         }
     }
 }

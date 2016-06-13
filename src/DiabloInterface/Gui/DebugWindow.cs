@@ -11,6 +11,44 @@ namespace DiabloInterface
 {
     public partial class DebugWindow : Form
     {
+        /// <summary>
+        /// Helper class for binding/unbinding autosplit event handlers.
+        /// </summary>
+        class AutosplitBinding
+        {
+            bool didUnbind;
+            AutoSplit autoSplit;
+            Action<AutoSplit> reachedHandler;
+            Action<AutoSplit> resetHandler;
+
+            public AutosplitBinding(AutoSplit autoSplit, Action<AutoSplit> reachedHandler, Action<AutoSplit> resetHandler)
+            {
+                this.autoSplit = autoSplit;
+                this.reachedHandler = reachedHandler;
+                this.resetHandler = resetHandler;
+
+                this.autoSplit.Reached += reachedHandler;
+                this.autoSplit.Reset += resetHandler;
+            }
+
+            ~AutosplitBinding()
+            {
+                Unbind();
+            }
+
+            /// <summary>
+            /// Unbding the autosplit handlers.
+            /// </summary>
+            public void Unbind()
+            {
+                if (didUnbind) return;
+
+                didUnbind = true;
+                autoSplit.Reached -= reachedHandler;
+                autoSplit.Reset -= resetHandler;
+            }
+        }
+
         Label[] ActLabelsNormal;
         Label[] ActLabelsNightmare;
         Label[] ActLabelsHell;
@@ -18,6 +56,8 @@ namespace DiabloInterface
         QuestDebugRow[,] QuestRowsNormal;
         QuestDebugRow[,] QuestRowsNightmare;
         QuestDebugRow[,] QuestRowsHell;
+
+        List<AutosplitBinding> autoSplitBindings;
 
         public DebugWindow()
         {
@@ -86,26 +126,48 @@ namespace DiabloInterface
             }
         }
 
-        public void UpdateAutosplits(List<AutoSplit> autosplits)
+        void ClearAutoSplitBindings()
         {
+            if (autoSplitBindings == null)
+            {
+                autoSplitBindings = new List<AutosplitBinding>();
+            }
+
+            foreach (var binding in autoSplitBindings)
+            {
+                binding.Unbind();
+            }
+
+            autoSplitBindings.Clear();
+        }
+
+        public void UpdateAutosplits(List<AutoSplit> autoSplits)
+        {
+            // Unbinds and clears the binding list.
+            ClearAutoSplitBindings();
+
             int y = 0;
             autosplitPanel.Controls.Clear();
-            foreach (AutoSplit autosplit in autosplits)
+            foreach (AutoSplit autoSplit in autoSplits)
             {
-                Label lbl = new Label();
-                lbl.SetBounds(0, y, autosplitPanel.Bounds.Width, 16);
-                autosplitPanel.Controls.Add(lbl);
-                autosplit.bindControl(lbl);
+                Label splitLabel = new Label();
+                splitLabel.SetBounds(0, y, autosplitPanel.Bounds.Width, 16);
+                splitLabel.Text = autoSplit.Name;
+                splitLabel.ForeColor = autoSplit.IsReached ? Color.Green : Color.Red;
+
+                Action<AutoSplit> splitReached = s => splitLabel.ForeColor = Color.Green;
+                Action<AutoSplit> splitReset = s => splitLabel.ForeColor = Color.Red;
+
+                // Bind autosplit events.
+                var binding = new AutosplitBinding(autoSplit, splitReached, splitReset);
+                autoSplitBindings.Add(binding);
+
+                autosplitPanel.Controls.Add(splitLabel);
                 y += 16;
             }
         }
 
-        private bool IsBitSet(ushort value, int bit)
-        {
-            return (value & (1 << bit)) != 0;
-        }
-
-        private void LoadQuests( Label[] actLabels, QuestDebugRow[,] questRows, TabPage tabPage )
+        private void LoadQuests(Label[] actLabels, QuestDebugRow[,] questRows, TabPage tabPage)
         {
             int y;
             for (int i = 0; i < 5; i++)
@@ -138,11 +200,6 @@ namespace DiabloInterface
             ActLabelsHell = new Label[5];
             QuestRowsHell = new QuestDebugRow[5, 6];
             LoadQuests(ActLabelsHell, QuestRowsHell, tabPage3);
-        }
-
-        private void DebugWindow_FormClosing(object sender, FormClosingEventArgs e)
-        {
-
         }
 
         public void UpdateItemStats(ProcessMemoryReader r, D2MemoryTable memory, D2Unit pl)
