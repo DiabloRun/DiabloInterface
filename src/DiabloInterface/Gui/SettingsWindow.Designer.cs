@@ -46,10 +46,9 @@
             this.EnableAutosplitCheckBox = new System.Windows.Forms.CheckBox();
             this.AutoSplitHotkeyText = new System.Windows.Forms.TextBox();
             this.AddAutoSplitButton = new System.Windows.Forms.Button();
-            this.OtherGroup = new System.Windows.Forms.GroupBox();
+            this.UpdateGroup = new System.Windows.Forms.GroupBox();
             this.CheckUpdatesButton = new System.Windows.Forms.Button();
             this.CheckUpdatesCheckBox = new System.Windows.Forms.CheckBox();
-            this.ShowDebugWindowCheckBox = new System.Windows.Forms.CheckBox();
             this.VersionGroup = new System.Windows.Forms.GroupBox();
             this.VersionLabel = new System.Windows.Forms.Label();
             this.VersionComboBox = new System.Windows.Forms.ComboBox();
@@ -73,7 +72,7 @@
             this.AutoSplitGroup.SuspendLayout();
             this.AutoSplitLayout.SuspendLayout();
             this.AutoSplitToolbar.SuspendLayout();
-            this.OtherGroup.SuspendLayout();
+            this.UpdateGroup.SuspendLayout();
             this.VersionGroup.SuspendLayout();
             this.RuneDisplayGroup.SuspendLayout();
             this.SettingsMenuStrip.SuspendLayout();
@@ -264,23 +263,22 @@
             this.AddAutoSplitButton.UseVisualStyleBackColor = true;
             this.AddAutoSplitButton.Click += new System.EventHandler(this.AddAutoSplitButton_Clicked);
             // 
-            // OtherGroup
+            // UpdateGroup
             // 
-            this.OtherGroup.Controls.Add(this.CheckUpdatesButton);
-            this.OtherGroup.Controls.Add(this.CheckUpdatesCheckBox);
-            this.OtherGroup.Controls.Add(this.ShowDebugWindowCheckBox);
-            this.OtherGroup.Location = new System.Drawing.Point(3, 164);
-            this.OtherGroup.Name = "OtherGroup";
-            this.OtherGroup.Size = new System.Drawing.Size(231, 95);
-            this.OtherGroup.TabIndex = 16;
-            this.OtherGroup.TabStop = false;
-            this.OtherGroup.Text = "Other";
+            this.UpdateGroup.Controls.Add(this.CheckUpdatesButton);
+            this.UpdateGroup.Controls.Add(this.CheckUpdatesCheckBox);
+            this.UpdateGroup.Location = new System.Drawing.Point(3, 164);
+            this.UpdateGroup.Name = "UpdateGroup";
+            this.UpdateGroup.Size = new System.Drawing.Size(231, 70);
+            this.UpdateGroup.TabIndex = 16;
+            this.UpdateGroup.TabStop = false;
+            this.UpdateGroup.Text = "Updates";
             // 
             // CheckUpdatesButton
             // 
             this.CheckUpdatesButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.CheckUpdatesButton.Location = new System.Drawing.Point(6, 66);
+            this.CheckUpdatesButton.Location = new System.Drawing.Point(6, 42);
             this.CheckUpdatesButton.Name = "CheckUpdatesButton";
             this.CheckUpdatesButton.Size = new System.Drawing.Size(219, 23);
             this.CheckUpdatesButton.TabIndex = 2;
@@ -291,29 +289,19 @@
             // CheckUpdatesCheckBox
             // 
             this.CheckUpdatesCheckBox.AutoSize = true;
-            this.CheckUpdatesCheckBox.Location = new System.Drawing.Point(10, 43);
+            this.CheckUpdatesCheckBox.Location = new System.Drawing.Point(10, 19);
             this.CheckUpdatesCheckBox.Name = "CheckUpdatesCheckBox";
             this.CheckUpdatesCheckBox.Size = new System.Drawing.Size(153, 17);
             this.CheckUpdatesCheckBox.TabIndex = 1;
             this.CheckUpdatesCheckBox.Text = "Check for updates at start";
             this.CheckUpdatesCheckBox.UseVisualStyleBackColor = true;
             // 
-            // ShowDebugWindowCheckBox
-            // 
-            this.ShowDebugWindowCheckBox.AutoSize = true;
-            this.ShowDebugWindowCheckBox.Location = new System.Drawing.Point(10, 20);
-            this.ShowDebugWindowCheckBox.Name = "ShowDebugWindowCheckBox";
-            this.ShowDebugWindowCheckBox.Size = new System.Drawing.Size(126, 17);
-            this.ShowDebugWindowCheckBox.TabIndex = 0;
-            this.ShowDebugWindowCheckBox.Text = "Show debug window";
-            this.ShowDebugWindowCheckBox.UseVisualStyleBackColor = true;
-            // 
             // VersionGroup
             // 
             this.VersionGroup.Controls.Add(this.VersionLabel);
             this.VersionGroup.Controls.Add(this.VersionComboBox);
             this.VersionGroup.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.VersionGroup.Location = new System.Drawing.Point(3, 265);
+            this.VersionGroup.Location = new System.Drawing.Point(3, 240);
             this.VersionGroup.Name = "VersionGroup";
             this.VersionGroup.Size = new System.Drawing.Size(231, 44);
             this.VersionGroup.TabIndex = 17;
@@ -525,7 +513,7 @@
             // 
             this.RightPanelLayout.Controls.Add(this.FontGroup);
             this.RightPanelLayout.Controls.Add(this.DataGroup);
-            this.RightPanelLayout.Controls.Add(this.OtherGroup);
+            this.RightPanelLayout.Controls.Add(this.UpdateGroup);
             this.RightPanelLayout.Controls.Add(this.VersionGroup);
             this.RightPanelLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RightPanelLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
@@ -557,8 +545,8 @@
             this.AutoSplitLayout.PerformLayout();
             this.AutoSplitToolbar.ResumeLayout(false);
             this.AutoSplitToolbar.PerformLayout();
-            this.OtherGroup.ResumeLayout(false);
-            this.OtherGroup.PerformLayout();
+            this.UpdateGroup.ResumeLayout(false);
+            this.UpdateGroup.PerformLayout();
             this.VersionGroup.ResumeLayout(false);
             this.VersionGroup.PerformLayout();
             this.RuneDisplayGroup.ResumeLayout(false);
@@ -587,8 +575,7 @@
         private System.Windows.Forms.CheckBox EnableAutosplitCheckBox;
         private System.Windows.Forms.TextBox AutoSplitHotkeyText;
         private System.Windows.Forms.Label AutoSplitHotkeyLabel;
-        private System.Windows.Forms.GroupBox OtherGroup;
-        private System.Windows.Forms.CheckBox ShowDebugWindowCheckBox;
+        private System.Windows.Forms.GroupBox UpdateGroup;
         private System.Windows.Forms.GroupBox VersionGroup;
         private System.Windows.Forms.Label VersionLabel;
         private System.Windows.Forms.ComboBox VersionComboBox;
