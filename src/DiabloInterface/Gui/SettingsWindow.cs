@@ -24,8 +24,8 @@ namespace DiabloInterface
                 return dirty
                     || (autoSplitTable != null && autoSplitTable.IsDirty)
                     || settings.FontName != FontComboBox.SelectedItem.ToString()
-                    || settings.FontSize != int.Parse(FontSizeText.Text)
-                    || settings.FontSizeTitle != int.Parse(TitleFontSizeText.Text)
+                    || settings.FontSize != (int)fontSizeNumeric.Value
+                    || settings.FontSizeTitle != (int)titleFontSizeNumeric.Value
                     || settings.CreateFiles != CreateFilesCheckBox.Checked
                     || settings.CheckUpdates != CheckUpdatesCheckBox.Checked
                     || settings.D2Version != VersionComboBox.SelectedItem.ToString()
@@ -51,6 +51,9 @@ namespace DiabloInterface
             {
                 FontComboBox.Items.Add(font.Name);
             }
+
+            // Select first rune (don't leave combo box empty).
+            RuneComboBox.SelectedIndex = 0;
 
             InitializeSettings();
 
@@ -99,8 +102,8 @@ namespace DiabloInterface
                 }
             }
 
-            FontSizeText.Text = settings.FontSize.ToString();
-            TitleFontSizeText.Text = settings.FontSizeTitle.ToString();
+            fontSizeNumeric.Value = settings.FontSize;
+            titleFontSizeNumeric.Value = settings.FontSizeTitle;
             CreateFilesCheckBox.Checked = settings.CreateFiles;
             EnableAutosplitCheckBox.Checked = settings.DoAutosplit;
             AutoSplitHotkeyText.Text = settings.TriggerKeys;
@@ -162,8 +165,8 @@ namespace DiabloInterface
             settings.CheckUpdates = CheckUpdatesCheckBox.Checked;
             settings.DoAutosplit = EnableAutosplitCheckBox.Checked;
             settings.TriggerKeys = AutoSplitHotkeyText.Text;
-            settings.FontSize = Int32.Parse(FontSizeText.Text);
-            settings.FontSizeTitle = Int32.Parse(TitleFontSizeText.Text);
+            settings.FontSize = (int)fontSizeNumeric.Value;
+            settings.FontSizeTitle = (int)titleFontSizeNumeric.Value;
             settings.FontName = FontComboBox.SelectedItem.ToString();
             settings.D2Version = (string)VersionComboBox.SelectedItem;
 
