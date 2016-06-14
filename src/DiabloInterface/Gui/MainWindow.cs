@@ -7,6 +7,7 @@ using System.Drawing;
 using DiabloInterface.Server;
 using DiabloInterface.Gui;
 using DiabloInterface.Logging;
+using System.Text;
 
 namespace DiabloInterface
 {
@@ -343,6 +344,26 @@ namespace DiabloInterface
             {
                 debugWindow.UpdateAutosplits(Settings.Autosplits);
             }
+
+            LogAutoSplits();
+        }
+
+        void LogAutoSplits()
+        {
+            var logMessage = new StringBuilder();
+            logMessage.Append("Configured autosplits:");
+
+            for (int i = 0; i < Settings.Autosplits.Count; ++i)
+            {
+                var split = Settings.Autosplits[i];
+
+                logMessage.AppendLine();
+                logMessage.Append("  ");
+                logMessage.AppendFormat("#{0} [{2}, {3}, {4}] \"{1}\"", i,
+                    split.Name, split.Type, split.Value, split.Difficulty);
+            }
+
+            Logger.Instance.WriteLine(logMessage.ToString());
         }
 
         public int relayout(bool checkVisible = true)
