@@ -67,6 +67,16 @@
             this.VerticalSplitContainer = new System.Windows.Forms.TableLayoutPanel();
             this.HorizontalSplitContainer = new System.Windows.Forms.TableLayoutPanel();
             this.RightPanelLayout = new System.Windows.Forms.FlowLayoutPanel();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkDisplayAdvancedStats = new System.Windows.Forms.CheckBox();
+            this.chkDisplayLevel = new System.Windows.Forms.CheckBox();
+            this.chkDisplayGold = new System.Windows.Forms.CheckBox();
+            this.chkDisplayResistances = new System.Windows.Forms.CheckBox();
+            this.chkDisplayBaseStats = new System.Windows.Forms.CheckBox();
+            this.chkDisplayDeathCounter = new System.Windows.Forms.CheckBox();
+            this.chkDisplayName = new System.Windows.Forms.CheckBox();
+            this.chkDisplayRunes = new System.Windows.Forms.CheckBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.FontGroup.SuspendLayout();
             this.DataGroup.SuspendLayout();
             this.AutoSplitGroup.SuspendLayout();
@@ -80,6 +90,7 @@
             this.VerticalSplitContainer.SuspendLayout();
             this.HorizontalSplitContainer.SuspendLayout();
             this.RightPanelLayout.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // FontLabel
@@ -87,7 +98,7 @@
             this.FontLabel.AutoSize = true;
             this.FontLabel.Location = new System.Drawing.Point(6, 24);
             this.FontLabel.Name = "FontLabel";
-            this.FontLabel.Size = new System.Drawing.Size(32, 13);
+            this.FontLabel.Size = new System.Drawing.Size(31, 13);
             this.FontLabel.TabIndex = 2;
             this.FontLabel.Text = "Font:";
             // 
@@ -140,7 +151,7 @@
             this.FontSizeLabel.AutoSize = true;
             this.FontSizeLabel.Location = new System.Drawing.Point(6, 51);
             this.FontSizeLabel.Name = "FontSizeLabel";
-            this.FontSizeLabel.Size = new System.Drawing.Size(57, 13);
+            this.FontSizeLabel.Size = new System.Drawing.Size(54, 13);
             this.FontSizeLabel.TabIndex = 7;
             this.FontSizeLabel.Text = "Font Size:";
             // 
@@ -149,7 +160,7 @@
             this.TitleFontSizeLabel.AutoSize = true;
             this.TitleFontSizeLabel.Location = new System.Drawing.Point(6, 77);
             this.TitleFontSizeLabel.Name = "TitleFontSizeLabel";
-            this.TitleFontSizeLabel.Size = new System.Drawing.Size(82, 13);
+            this.TitleFontSizeLabel.Size = new System.Drawing.Size(77, 13);
             this.TitleFontSizeLabel.TabIndex = 6;
             this.TitleFontSizeLabel.Text = "Title Font Size:";
             // 
@@ -158,7 +169,7 @@
             this.CreateFilesCheckBox.AutoSize = true;
             this.CreateFilesCheckBox.Location = new System.Drawing.Point(10, 19);
             this.CreateFilesCheckBox.Name = "CreateFilesCheckBox";
-            this.CreateFilesCheckBox.Size = new System.Drawing.Size(83, 17);
+            this.CreateFilesCheckBox.Size = new System.Drawing.Size(78, 17);
             this.CreateFilesCheckBox.TabIndex = 8;
             this.CreateFilesCheckBox.Text = "Create files";
             this.CreateFilesCheckBox.UseVisualStyleBackColor = true;
@@ -179,7 +190,7 @@
             this.AutoSplitGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AutoSplitGroup.Location = new System.Drawing.Point(3, 3);
             this.AutoSplitGroup.Name = "AutoSplitGroup";
-            this.AutoSplitGroup.Size = new System.Drawing.Size(576, 374);
+            this.AutoSplitGroup.Size = new System.Drawing.Size(526, 334);
             this.AutoSplitGroup.TabIndex = 10;
             this.AutoSplitGroup.TabStop = false;
             this.AutoSplitGroup.Text = "Auto-Split";
@@ -195,7 +206,7 @@
             this.AutoSplitLayout.RowCount = 2;
             this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.AutoSplitLayout.Size = new System.Drawing.Size(570, 355);
+            this.AutoSplitLayout.Size = new System.Drawing.Size(520, 315);
             this.AutoSplitLayout.TabIndex = 21;
             // 
             // AutoSplitToolbar
@@ -207,9 +218,9 @@
             this.AutoSplitToolbar.Controls.Add(this.AutoSplitHotkeyText);
             this.AutoSplitToolbar.Controls.Add(this.AddAutoSplitButton);
             this.AutoSplitToolbar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AutoSplitToolbar.Location = new System.Drawing.Point(3, 321);
+            this.AutoSplitToolbar.Location = new System.Drawing.Point(3, 281);
             this.AutoSplitToolbar.Name = "AutoSplitToolbar";
-            this.AutoSplitToolbar.Size = new System.Drawing.Size(564, 31);
+            this.AutoSplitToolbar.Size = new System.Drawing.Size(514, 31);
             this.AutoSplitToolbar.TabIndex = 20;
             // 
             // AutoSplitHotkeyLabel
@@ -217,7 +228,7 @@
             this.AutoSplitHotkeyLabel.AutoSize = true;
             this.AutoSplitHotkeyLabel.Location = new System.Drawing.Point(3, 10);
             this.AutoSplitHotkeyLabel.Name = "AutoSplitHotkeyLabel";
-            this.AutoSplitHotkeyLabel.Size = new System.Drawing.Size(71, 13);
+            this.AutoSplitHotkeyLabel.Size = new System.Drawing.Size(67, 13);
             this.AutoSplitHotkeyLabel.TabIndex = 13;
             this.AutoSplitHotkeyLabel.Text = "Split-Hotkey:";
             // 
@@ -235,9 +246,9 @@
             // 
             this.EnableAutosplitCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.EnableAutosplitCheckBox.AutoSize = true;
-            this.EnableAutosplitCheckBox.Location = new System.Drawing.Point(416, 9);
+            this.EnableAutosplitCheckBox.Location = new System.Drawing.Point(367, 9);
             this.EnableAutosplitCheckBox.Name = "EnableAutosplitCheckBox";
-            this.EnableAutosplitCheckBox.Size = new System.Drawing.Size(60, 17);
+            this.EnableAutosplitCheckBox.Size = new System.Drawing.Size(59, 17);
             this.EnableAutosplitCheckBox.TabIndex = 1;
             this.EnableAutosplitCheckBox.Text = "Enable";
             this.EnableAutosplitCheckBox.UseVisualStyleBackColor = true;
@@ -255,7 +266,7 @@
             // AddAutoSplitButton
             // 
             this.AddAutoSplitButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddAutoSplitButton.Location = new System.Drawing.Point(482, 5);
+            this.AddAutoSplitButton.Location = new System.Drawing.Point(432, 5);
             this.AddAutoSplitButton.Name = "AddAutoSplitButton";
             this.AddAutoSplitButton.Size = new System.Drawing.Size(79, 23);
             this.AddAutoSplitButton.TabIndex = 11;
@@ -291,7 +302,7 @@
             this.CheckUpdatesCheckBox.AutoSize = true;
             this.CheckUpdatesCheckBox.Location = new System.Drawing.Point(10, 19);
             this.CheckUpdatesCheckBox.Name = "CheckUpdatesCheckBox";
-            this.CheckUpdatesCheckBox.Size = new System.Drawing.Size(153, 17);
+            this.CheckUpdatesCheckBox.Size = new System.Drawing.Size(148, 17);
             this.CheckUpdatesCheckBox.TabIndex = 1;
             this.CheckUpdatesCheckBox.Text = "Check for updates at start";
             this.CheckUpdatesCheckBox.UseVisualStyleBackColor = true;
@@ -303,7 +314,7 @@
             this.VersionGroup.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.VersionGroup.Location = new System.Drawing.Point(3, 240);
             this.VersionGroup.Name = "VersionGroup";
-            this.VersionGroup.Size = new System.Drawing.Size(231, 44);
+            this.VersionGroup.Size = new System.Drawing.Size(231, 49);
             this.VersionGroup.TabIndex = 17;
             this.VersionGroup.TabStop = false;
             this.VersionGroup.Text = "Diablo 2";
@@ -313,7 +324,7 @@
             this.VersionLabel.AutoSize = true;
             this.VersionLabel.Location = new System.Drawing.Point(6, 20);
             this.VersionLabel.Name = "VersionLabel";
-            this.VersionLabel.Size = new System.Drawing.Size(48, 13);
+            this.VersionLabel.Size = new System.Drawing.Size(45, 13);
             this.VersionLabel.TabIndex = 1;
             this.VersionLabel.Text = "Version:";
             // 
@@ -336,9 +347,9 @@
             this.RuneDisplayGroup.Controls.Add(this.AddRuneButton);
             this.RuneDisplayGroup.Controls.Add(this.RuneComboBox);
             this.RuneDisplayGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RuneDisplayGroup.Location = new System.Drawing.Point(3, 383);
+            this.RuneDisplayGroup.Location = new System.Drawing.Point(3, 343);
             this.RuneDisplayGroup.Name = "RuneDisplayGroup";
-            this.RuneDisplayGroup.Size = new System.Drawing.Size(576, 110);
+            this.RuneDisplayGroup.Size = new System.Drawing.Size(526, 110);
             this.RuneDisplayGroup.TabIndex = 19;
             this.RuneDisplayGroup.TabStop = false;
             this.RuneDisplayGroup.Text = "Rune Display";
@@ -350,13 +361,13 @@
             this.RuneDisplayPanel.AutoScroll = true;
             this.RuneDisplayPanel.Location = new System.Drawing.Point(6, 19);
             this.RuneDisplayPanel.Name = "RuneDisplayPanel";
-            this.RuneDisplayPanel.Size = new System.Drawing.Size(561, 57);
+            this.RuneDisplayPanel.Size = new System.Drawing.Size(511, 57);
             this.RuneDisplayPanel.TabIndex = 2;
             // 
             // AddRuneButton
             // 
             this.AddRuneButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddRuneButton.Location = new System.Drawing.Point(488, 81);
+            this.AddRuneButton.Location = new System.Drawing.Point(438, 81);
             this.AddRuneButton.Name = "AddRuneButton";
             this.AddRuneButton.Size = new System.Drawing.Size(79, 23);
             this.AddRuneButton.TabIndex = 1;
@@ -403,7 +414,7 @@
             "Jah",
             "Cham",
             "Zod"});
-            this.RuneComboBox.Location = new System.Drawing.Point(423, 82);
+            this.RuneComboBox.Location = new System.Drawing.Point(373, 82);
             this.RuneComboBox.Name = "RuneComboBox";
             this.RuneComboBox.Size = new System.Drawing.Size(59, 21);
             this.RuneComboBox.TabIndex = 0;
@@ -415,7 +426,7 @@
             this.SettingsMenuStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.SettingsMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.SettingsMenuStrip.Name = "SettingsMenuStrip";
-            this.SettingsMenuStrip.Size = new System.Drawing.Size(828, 24);
+            this.SettingsMenuStrip.Size = new System.Drawing.Size(778, 24);
             this.SettingsMenuStrip.TabIndex = 21;
             this.SettingsMenuStrip.Text = "menuStrip1";
             // 
@@ -429,14 +440,14 @@
             this.toolStripSeparator1,
             this.CloseSettingsMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // LoadSettingsMenuItem
             // 
             this.LoadSettingsMenuItem.Image = global::DiabloInterface.Properties.Resources.folder_explore;
             this.LoadSettingsMenuItem.Name = "LoadSettingsMenuItem";
-            this.LoadSettingsMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.LoadSettingsMenuItem.Size = new System.Drawing.Size(141, 22);
             this.LoadSettingsMenuItem.Text = "Load Config";
             this.LoadSettingsMenuItem.Click += new System.EventHandler(this.LoadSettingsMenuItem_Click);
             // 
@@ -444,7 +455,7 @@
             // 
             this.SaveSettingsAsMenuItem.Image = global::DiabloInterface.Properties.Resources.disk;
             this.SaveSettingsAsMenuItem.Name = "SaveSettingsAsMenuItem";
-            this.SaveSettingsAsMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.SaveSettingsAsMenuItem.Size = new System.Drawing.Size(141, 22);
             this.SaveSettingsAsMenuItem.Text = "Save As";
             this.SaveSettingsAsMenuItem.Click += new System.EventHandler(this.SaveSettingsAsMenuItem_Click);
             // 
@@ -452,21 +463,21 @@
             // 
             this.SaveSettingsMenuItem.Image = global::DiabloInterface.Properties.Resources.disk;
             this.SaveSettingsMenuItem.Name = "SaveSettingsMenuItem";
-            this.SaveSettingsMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.SaveSettingsMenuItem.Size = new System.Drawing.Size(141, 22);
             this.SaveSettingsMenuItem.Text = "Save";
             this.SaveSettingsMenuItem.Click += new System.EventHandler(this.SaveSettingsMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(138, 6);
             // 
             // CloseSettingsMenuItem
             // 
             this.CloseSettingsMenuItem.Image = global::DiabloInterface.Properties.Resources.cross;
             this.CloseSettingsMenuItem.Name = "CloseSettingsMenuItem";
             this.CloseSettingsMenuItem.ShowShortcutKeys = false;
-            this.CloseSettingsMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.CloseSettingsMenuItem.Size = new System.Drawing.Size(141, 22);
             this.CloseSettingsMenuItem.Text = "Close Settings";
             this.CloseSettingsMenuItem.Click += new System.EventHandler(this.CloseSettingsMenuItem_Click);
             // 
@@ -476,7 +487,7 @@
             this.mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainPanel.Location = new System.Drawing.Point(0, 24);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(828, 502);
+            this.mainPanel.Size = new System.Drawing.Size(778, 462);
             this.mainPanel.TabIndex = 22;
             // 
             // VerticalSplitContainer
@@ -491,7 +502,7 @@
             this.VerticalSplitContainer.Name = "VerticalSplitContainer";
             this.VerticalSplitContainer.RowCount = 1;
             this.VerticalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.VerticalSplitContainer.Size = new System.Drawing.Size(828, 502);
+            this.VerticalSplitContainer.Size = new System.Drawing.Size(778, 462);
             this.VerticalSplitContainer.TabIndex = 20;
             // 
             // HorizontalSplitContainer
@@ -506,7 +517,7 @@
             this.HorizontalSplitContainer.RowCount = 2;
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.HorizontalSplitContainer.Size = new System.Drawing.Size(582, 496);
+            this.HorizontalSplitContainer.Size = new System.Drawing.Size(532, 456);
             this.HorizontalSplitContainer.TabIndex = 0;
             // 
             // RightPanelLayout
@@ -515,23 +526,136 @@
             this.RightPanelLayout.Controls.Add(this.DataGroup);
             this.RightPanelLayout.Controls.Add(this.UpdateGroup);
             this.RightPanelLayout.Controls.Add(this.VersionGroup);
+            this.RightPanelLayout.Controls.Add(this.groupBox1);
             this.RightPanelLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RightPanelLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.RightPanelLayout.Location = new System.Drawing.Point(591, 3);
+            this.RightPanelLayout.Location = new System.Drawing.Point(541, 3);
             this.RightPanelLayout.Name = "RightPanelLayout";
-            this.RightPanelLayout.Size = new System.Drawing.Size(234, 496);
+            this.RightPanelLayout.Size = new System.Drawing.Size(234, 456);
             this.RightPanelLayout.TabIndex = 1;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.chkDisplayRunes);
+            this.groupBox1.Controls.Add(this.chkDisplayAdvancedStats);
+            this.groupBox1.Controls.Add(this.chkDisplayLevel);
+            this.groupBox1.Controls.Add(this.chkDisplayGold);
+            this.groupBox1.Controls.Add(this.chkDisplayResistances);
+            this.groupBox1.Controls.Add(this.chkDisplayBaseStats);
+            this.groupBox1.Controls.Add(this.chkDisplayDeathCounter);
+            this.groupBox1.Controls.Add(this.chkDisplayName);
+            this.groupBox1.Location = new System.Drawing.Point(3, 295);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(231, 155);
+            this.groupBox1.TabIndex = 18;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Display";
+            // 
+            // chkDisplayAdvancedStats
+            // 
+            this.chkDisplayAdvancedStats.AutoSize = true;
+            this.chkDisplayAdvancedStats.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.chkDisplayAdvancedStats.Location = new System.Drawing.Point(10, 88);
+            this.chkDisplayAdvancedStats.Name = "chkDisplayAdvancedStats";
+            this.chkDisplayAdvancedStats.Size = new System.Drawing.Size(117, 17);
+            this.chkDisplayAdvancedStats.TabIndex = 5;
+            this.chkDisplayAdvancedStats.Text = "(!) Fcr, Frw, Fhr, Ias";
+            this.chkDisplayAdvancedStats.UseVisualStyleBackColor = true;
+            // 
+            // chkDisplayLevel
+            // 
+            this.chkDisplayLevel.AutoSize = true;
+            this.chkDisplayLevel.Location = new System.Drawing.Point(141, 42);
+            this.chkDisplayLevel.Name = "chkDisplayLevel";
+            this.chkDisplayLevel.Size = new System.Drawing.Size(52, 17);
+            this.chkDisplayLevel.TabIndex = 4;
+            this.chkDisplayLevel.Text = "Level";
+            this.chkDisplayLevel.UseVisualStyleBackColor = true;
+            // 
+            // chkDisplayGold
+            // 
+            this.chkDisplayGold.AutoSize = true;
+            this.chkDisplayGold.Location = new System.Drawing.Point(10, 42);
+            this.chkDisplayGold.Name = "chkDisplayGold";
+            this.chkDisplayGold.Size = new System.Drawing.Size(48, 17);
+            this.chkDisplayGold.TabIndex = 4;
+            this.chkDisplayGold.Text = "Gold";
+            this.chkDisplayGold.UseVisualStyleBackColor = true;
+            // 
+            // chkDisplayResistances
+            // 
+            this.chkDisplayResistances.AutoSize = true;
+            this.chkDisplayResistances.Location = new System.Drawing.Point(141, 65);
+            this.chkDisplayResistances.Name = "chkDisplayResistances";
+            this.chkDisplayResistances.Size = new System.Drawing.Size(84, 17);
+            this.chkDisplayResistances.TabIndex = 3;
+            this.chkDisplayResistances.Text = "Resistances";
+            this.chkDisplayResistances.UseVisualStyleBackColor = true;
+            // 
+            // chkDisplayBaseStats
+            // 
+            this.chkDisplayBaseStats.AutoSize = true;
+            this.chkDisplayBaseStats.Location = new System.Drawing.Point(10, 65);
+            this.chkDisplayBaseStats.Name = "chkDisplayBaseStats";
+            this.chkDisplayBaseStats.Size = new System.Drawing.Size(107, 17);
+            this.chkDisplayBaseStats.TabIndex = 2;
+            this.chkDisplayBaseStats.Text = "Str, Dex, Vit, Ene";
+            this.chkDisplayBaseStats.UseVisualStyleBackColor = true;
+            // 
+            // chkDisplayDeathCounter
+            // 
+            this.chkDisplayDeathCounter.AutoSize = true;
+            this.chkDisplayDeathCounter.Location = new System.Drawing.Point(141, 19);
+            this.chkDisplayDeathCounter.Name = "chkDisplayDeathCounter";
+            this.chkDisplayDeathCounter.Size = new System.Drawing.Size(60, 17);
+            this.chkDisplayDeathCounter.TabIndex = 1;
+            this.chkDisplayDeathCounter.Text = "Deaths";
+            this.chkDisplayDeathCounter.UseVisualStyleBackColor = true;
+            // 
+            // chkDisplayName
+            // 
+            this.chkDisplayName.AutoSize = true;
+            this.chkDisplayName.Location = new System.Drawing.Point(10, 19);
+            this.chkDisplayName.Name = "chkDisplayName";
+            this.chkDisplayName.Size = new System.Drawing.Size(54, 17);
+            this.chkDisplayName.TabIndex = 0;
+            this.chkDisplayName.Text = "Name";
+            this.chkDisplayName.UseVisualStyleBackColor = true;
+            // 
+            // chkDisplayRunes
+            // 
+            this.chkDisplayRunes.AutoSize = true;
+            this.chkDisplayRunes.Location = new System.Drawing.Point(141, 88);
+            this.chkDisplayRunes.Name = "chkDisplayRunes";
+            this.chkDisplayRunes.Size = new System.Drawing.Size(57, 17);
+            this.chkDisplayRunes.TabIndex = 6;
+            this.chkDisplayRunes.Text = "Runes";
+            this.chkDisplayRunes.UseVisualStyleBackColor = true;
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox1.ForeColor = System.Drawing.Color.DarkRed;
+            this.textBox1.Location = new System.Drawing.Point(9, 111);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(216, 44);
+            this.textBox1.TabIndex = 7;
+            this.textBox1.Text = "(!) Enabling this may result in your run getting rejected by speedrun sites. Use " +
+    "for fun runs only.";
             // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(828, 526);
+            this.ClientSize = new System.Drawing.Size(778, 486);
             this.Controls.Add(this.mainPanel);
             this.Controls.Add(this.SettingsMenuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.SettingsMenuStrip;
-            this.MinimumSize = new System.Drawing.Size(700, 400);
+            this.MinimumSize = new System.Drawing.Size(794, 525);
             this.Name = "SettingsWindow";
             this.Text = "Settings";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SettingsWindow_FormClosing);
@@ -556,6 +680,8 @@
             this.VerticalSplitContainer.ResumeLayout(false);
             this.HorizontalSplitContainer.ResumeLayout(false);
             this.RightPanelLayout.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -600,5 +726,15 @@
         private System.Windows.Forms.TableLayoutPanel AutoSplitLayout;
         private System.Windows.Forms.Panel AutoSplitToolbar;
         private System.Windows.Forms.FlowLayoutPanel RightPanelLayout;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox chkDisplayName;
+        private System.Windows.Forms.CheckBox chkDisplayDeathCounter;
+        private System.Windows.Forms.CheckBox chkDisplayAdvancedStats;
+        private System.Windows.Forms.CheckBox chkDisplayGold;
+        private System.Windows.Forms.CheckBox chkDisplayResistances;
+        private System.Windows.Forms.CheckBox chkDisplayBaseStats;
+        private System.Windows.Forms.CheckBox chkDisplayLevel;
+        private System.Windows.Forms.CheckBox chkDisplayRunes;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }

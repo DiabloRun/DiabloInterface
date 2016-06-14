@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 
 namespace DiabloInterface
@@ -12,11 +13,19 @@ namespace DiabloInterface
         private const string DEFAULT_FONT_NAME = "Courier New";
         private const string DEFAULT_D2_VERSION = "";
         private const int DEFAULT_FONT_SIZE = 10;
-        private const int DEFAULT_TITLE_FONT_SIZE = 18;
+        private const int DEFAULT_FONT_SIZE_TITLE = 18;
         private const bool DEFAULT_CREATE_FILES = false;
         private const bool DEFAULT_DO_AUTOSPLIT = false;
         private const bool DEFAULT_CHECK_UPDATES = false;
         private const string DEFAULT_TRIGGER_KEYS = "";
+        private const bool DEFAULT_DISPLAY_NAME = true;
+        private const bool DEFAULT_DISPLAY_LEVEL = true;
+        private const bool DEFAULT_DISPLAY_DEATH_COUNTER = true;
+        private const bool DEFAULT_DISPLAY_GOLD = true;
+        private const bool DEFAULT_DISPLAY_RESISTANCES = true;
+        private const bool DEFAULT_DISPLAY_BASE_STATS = true;
+        private const bool DEFAULT_DISPLAY_RUNES = true;
+        private const bool DEFAULT_DISPLAY_ADVANCED_STATS = false;
         #endregion
 
         public const string DefaultSettingsFile = "settings.conf";
@@ -25,13 +34,21 @@ namespace DiabloInterface
         public string FontName;
         public string D2Version;
         public int FontSize;
-        public int TitleFontSize;
+        public int FontSizeTitle;
         public bool CreateFiles;
         public bool DoAutosplit;
         public bool CheckUpdates;
         public string TriggerKeys;
         public List<AutoSplit> Autosplits;
         public List<int> Runes;
+        public bool DisplayName;
+        public bool DisplayLevel;
+        public bool DisplayDeathCounter;
+        public bool DisplayGold;
+        public bool DisplayResistances;
+        public bool DisplayBaseStats;
+        public bool DisplayRunes;
+        public bool DisplayAdvancedStats;
 
         public SettingsHolder ()
         {
@@ -44,11 +61,19 @@ namespace DiabloInterface
             FontName = DEFAULT_FONT_NAME;
             D2Version = DEFAULT_D2_VERSION;
             FontSize = DEFAULT_FONT_SIZE;
-            TitleFontSize = DEFAULT_TITLE_FONT_SIZE;
+            FontSizeTitle = DEFAULT_FONT_SIZE_TITLE;
             CreateFiles = DEFAULT_CREATE_FILES;
             DoAutosplit = DEFAULT_DO_AUTOSPLIT;
             CheckUpdates = DEFAULT_CHECK_UPDATES;
             TriggerKeys = DEFAULT_TRIGGER_KEYS;
+            DisplayName = DEFAULT_DISPLAY_NAME;
+            DisplayLevel = DEFAULT_DISPLAY_LEVEL;
+            DisplayDeathCounter = DEFAULT_DISPLAY_DEATH_COUNTER;
+            DisplayGold = DEFAULT_DISPLAY_GOLD;
+            DisplayResistances = DEFAULT_DISPLAY_RESISTANCES;
+            DisplayBaseStats = DEFAULT_DISPLAY_BASE_STATS;
+            DisplayAdvancedStats = DEFAULT_DISPLAY_ADVANCED_STATS;
+            DisplayRunes = DEFAULT_DISPLAY_RUNES;
             Autosplits = new List<AutoSplit>();
             Runes = new List<int>();
         }
@@ -71,12 +96,22 @@ namespace DiabloInterface
             {
                 Font = FontName,
                 FontSize = FontSize,
-                FontSizeTitle = TitleFontSize,
+                FontSizeTitle = FontSizeTitle,
                 CreateFiles = CreateFiles,
                 DoAutosplit = DoAutosplit,
                 CheckUpdates = CheckUpdates,
                 TriggerKeys = TriggerKeys,
                 D2Version = D2Version,
+
+                DisplayName = DisplayName,
+                DisplayLevel = DisplayLevel,
+                DisplayDeathCounter = DisplayDeathCounter,
+                DisplayGold = DisplayGold,
+                DisplayResistances = DisplayResistances,
+                DisplayBaseStats = DisplayResistances,
+                DisplayAdvancedStats = DisplayAdvancedStats,
+                DisplayRunes = DisplayRunes,
+
                 AutoSplits = autosplits,
                 Runes = Runes,
             };
@@ -85,18 +120,6 @@ namespace DiabloInterface
 
             Properties.Settings.Default.SettingsFile = file;
             Properties.Settings.Default.Save();
-        }
-
-        private bool propExists(dynamic dyn, string prop)
-        {
-            try
-            {
-                var x = dyn[prop];
-                return true;
-            } catch (RuntimeBinderException)
-            {
-                return false;
-            }
         }
 
         /// <summary>
@@ -130,10 +153,10 @@ namespace DiabloInterface
                     case "FontSizeTitle":
                         try
                         {
-                            TitleFontSize = Int32.Parse(parts[1]);
-                            if (TitleFontSize == 0) { TitleFontSize = 10; }
+                            FontSizeTitle = Int32.Parse(parts[1]);
+                            if (FontSizeTitle == 0) { FontSizeTitle = 10; }
                         }
-                        catch { TitleFontSize = 10; }
+                        catch { FontSizeTitle = 10; }
                         break;
                     case "AutoSplit":
                         parts2 = parts[1].Split(new string[] { "|" }, 4, StringSplitOptions.None);
@@ -185,34 +208,48 @@ namespace DiabloInterface
                 return;
             }
 
-            if (propExists(json, "Font")) FontName = (string)json.Font;
-            if (propExists(json, "FontSize")) FontSize = (int)json.FontSize;
-            if (propExists(json, "FontSizeTitle")) TitleFontSize = (int)json.FontSizeTitle;
-            if (propExists(json, "CreateFiles")) CreateFiles = (bool)json.CreateFiles;
-            if (propExists(json, "DoAutosplit")) DoAutosplit = (bool)json.DoAutosplit;
-            if (propExists(json, "CheckUpdates")) CheckUpdates = (bool)json.CheckUpdates;
-            if (propExists(json, "TriggerKeys")) TriggerKeys = (string)json.TriggerKeys;
-            if (propExists(json, "D2Version")) D2Version = (string)json.D2Version;
+            try { FontName = (string)json.Font; } catch (RuntimeBinderException) { }
+            try { FontSize = (int)json.FontSize; } catch (RuntimeBinderException) { }
+            try { FontSizeTitle = (int)json.FontSizeTitle; } catch (RuntimeBinderException) { }
+            try { CreateFiles = (bool)json.CreateFiles; } catch (RuntimeBinderException) { }
+            try { DoAutosplit = (bool)json.DoAutosplit; } catch (RuntimeBinderException) { }
+            try { CheckUpdates = (bool)json.CheckUpdates; } catch (RuntimeBinderException) { }
+            try { TriggerKeys = (string)json.TriggerKeys; } catch (RuntimeBinderException) { }
+            try { D2Version = (string)json.D2Version; } catch (RuntimeBinderException) { }
 
-            if (propExists(json, "AutoSplits"))
+            try { DisplayName = (bool)json.DisplayName; } catch (RuntimeBinderException) { }
+            try { DisplayLevel = (bool)json.DisplayLevel; } catch (RuntimeBinderException) { }
+            try { DisplayDeathCounter = (bool)json.DisplayDeathCounter; } catch (RuntimeBinderException) { }
+            try { DisplayGold = (bool)json.DisplayGold; } catch (RuntimeBinderException) { }
+            try { DisplayResistances = (bool)json.DisplayResistances; } catch (RuntimeBinderException) { }
+            try { DisplayBaseStats = (bool)json.DisplayBaseStats; } catch (RuntimeBinderException) { }
+            try { DisplayAdvancedStats = (bool)json.DisplayAdvancedStats; } catch (RuntimeBinderException) { }
+            try { DisplayRunes = (bool)json.DisplayRunes; } catch (RuntimeBinderException) { }
+
+            try
             {
                 foreach (dynamic autosplit in json.AutoSplits)
                 {
-                    Autosplits.Add(new AutoSplit(
-                        propExists(json, "Name") ? (string)autosplit.Name : "",
-                        propExists(json, "Type") ? (AutoSplit.SplitType)autosplit.Type : AutoSplit.SplitType.None,
-                        propExists(json, "Value") ? (short)autosplit.Value : (short)0,
-                        propExists(json, "Difficulty") ? (short)autosplit.Difficulty : (short)0
-                    ));
+                    string n = "";
+                    AutoSplit.SplitType t = AutoSplit.SplitType.None;
+                    short v = 0;
+                    short d = 0;
+                    try { n = (string)autosplit.Name; } catch (RuntimeBinderException) {}
+                    try { t = (AutoSplit.SplitType)autosplit.Type; } catch (RuntimeBinderException) {}
+                    try { v = (short)autosplit.Value; } catch (RuntimeBinderException) {}
+                    try { d = (short)autosplit.Difficulty; } catch (RuntimeBinderException) {}
+                    Autosplits.Add(new AutoSplit(n, t, v, d));
                 }
-            }
-            if (propExists(json, "Runes"))
+            } catch (RuntimeBinderException) { }
+
+            try
             {
                 foreach (int rune in json.Runes)
                 {
                     Runes.Add(rune);
                 }
             }
+            catch (RuntimeBinderException) { }
         }
 
         private string getSettingsFileName()

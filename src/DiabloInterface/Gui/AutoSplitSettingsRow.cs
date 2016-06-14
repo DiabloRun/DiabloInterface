@@ -165,7 +165,7 @@ namespace DiabloInterface
             if (selectedValueItem != null)
             {
                 AutoSplit.Value = (short)selectedValueItem.Value;
-                if (AutoSplit.Name == "")
+                if (AutoSplit.Name == "" || AutoSplit.Name == "Unnamed")
                 {
                     txtName.Text = selectedValueItem.Name;
                 }

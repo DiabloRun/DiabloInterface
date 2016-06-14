@@ -25,10 +25,19 @@ namespace DiabloInterface
                     || (autoSplitTable != null && autoSplitTable.IsDirty)
                     || settings.FontName != FontComboBox.SelectedItem.ToString()
                     || settings.FontSize != int.Parse(FontSizeText.Text)
-                    || settings.TitleFontSize != int.Parse(TitleFontSizeText.Text)
+                    || settings.FontSizeTitle != int.Parse(TitleFontSizeText.Text)
                     || settings.CreateFiles != CreateFilesCheckBox.Checked
                     || settings.CheckUpdates != CheckUpdatesCheckBox.Checked
-                    || settings.D2Version != VersionComboBox.SelectedItem.ToString();
+                    || settings.D2Version != VersionComboBox.SelectedItem.ToString()
+                    || settings.DisplayName != chkDisplayName.Checked
+                    || settings.DisplayGold != chkDisplayGold.Checked
+                    || settings.DisplayDeathCounter != chkDisplayDeathCounter.Checked
+                    || settings.DisplayLevel != chkDisplayLevel.Checked
+                    || settings.DisplayResistances != chkDisplayResistances.Checked
+                    || settings.DisplayBaseStats != chkDisplayBaseStats.Checked
+                    || settings.DisplayAdvancedStats != chkDisplayAdvancedStats.Checked
+                    || settings.DisplayRunes != chkDisplayRunes.Checked
+                ;
             }
         }
 
@@ -91,11 +100,19 @@ namespace DiabloInterface
             }
 
             FontSizeText.Text = settings.FontSize.ToString();
-            TitleFontSizeText.Text = settings.TitleFontSize.ToString();
+            TitleFontSizeText.Text = settings.FontSizeTitle.ToString();
             CreateFilesCheckBox.Checked = settings.CreateFiles;
             EnableAutosplitCheckBox.Checked = settings.DoAutosplit;
             AutoSplitHotkeyText.Text = settings.TriggerKeys;
             CheckUpdatesCheckBox.Checked = settings.CheckUpdates;
+            chkDisplayName.Checked = settings.DisplayName;
+            chkDisplayGold.Checked = settings.DisplayGold;
+            chkDisplayDeathCounter.Checked = settings.DisplayDeathCounter;
+            chkDisplayLevel.Checked = settings.DisplayLevel;
+            chkDisplayResistances.Checked = settings.DisplayResistances;
+            chkDisplayBaseStats.Checked = settings.DisplayBaseStats;
+            chkDisplayAdvancedStats.Checked = settings.DisplayAdvancedStats;
+            chkDisplayRunes.Checked = settings.DisplayRunes;
 
             // Show the selected diablo version.
             int versionIndex = this.VersionComboBox.FindString(settings.D2Version);
@@ -146,9 +163,19 @@ namespace DiabloInterface
             settings.DoAutosplit = EnableAutosplitCheckBox.Checked;
             settings.TriggerKeys = AutoSplitHotkeyText.Text;
             settings.FontSize = Int32.Parse(FontSizeText.Text);
-            settings.TitleFontSize = Int32.Parse(TitleFontSizeText.Text);
+            settings.FontSizeTitle = Int32.Parse(TitleFontSizeText.Text);
             settings.FontName = FontComboBox.SelectedItem.ToString();
             settings.D2Version = (string)VersionComboBox.SelectedItem;
+
+            settings.DisplayName = chkDisplayName.Checked;
+            settings.DisplayGold = chkDisplayGold.Checked;
+            settings.DisplayDeathCounter = chkDisplayDeathCounter.Checked;
+            settings.DisplayLevel = chkDisplayLevel.Checked;
+            settings.DisplayResistances = chkDisplayResistances.Checked;
+            settings.DisplayBaseStats = chkDisplayBaseStats.Checked;
+            settings.DisplayAdvancedStats = chkDisplayAdvancedStats.Checked;
+            settings.DisplayRunes = chkDisplayRunes.Checked;
+
         }
 
         private void AddAutoSplitButton_Clicked(object sender, EventArgs e)

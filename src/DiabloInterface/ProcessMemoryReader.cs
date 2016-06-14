@@ -51,14 +51,23 @@ namespace DiabloInterface
 
             Process[] processes = Process.GetProcessesByName(processName);
 
-            foreach (var process in processes) {
-                foreach (ProcessModule module in process.Modules) {
-                    if (module.ModuleName == moduleName) {
-                        foundModule = true;
-                        foundProcessId = (uint)process.Id;
-                        foundBaseAddress = module.BaseAddress;
+            try
+            {
+                foreach (var process in processes)
+                {
+                    foreach (ProcessModule module in process.Modules)
+                    {
+                        if (module.ModuleName == moduleName)
+                        {
+                            foundModule = true;
+                            foundProcessId = (uint)process.Id;
+                            foundBaseAddress = module.BaseAddress;
+                        }
                     }
                 }
+            } catch
+            {
+                throw new ProcessNotFoundException(processName, moduleName);
             }
 
             // Throw if the module cannot be found.

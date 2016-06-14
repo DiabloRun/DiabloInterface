@@ -77,9 +77,9 @@ namespace DiabloInterface
             {
                 autosplit.IsReached = false;
             }
-            if (runeDisplayPanel.Controls.Count > 0)
+            if (panelRuneDisplay.Controls.Count > 0)
             {
-                foreach (RuneDisplayElement c in runeDisplayPanel.Controls)
+                foreach (RuneDisplayElement c in panelRuneDisplay.Controls)
                 {
                     c.setHaveRune(false);
                 }
@@ -216,13 +216,13 @@ namespace DiabloInterface
 
             goldLabel.Invoke(new Action(delegate () { goldLabel.Text = "GOLD: " + (player.Gold + player.GoldStash); }));
 
-            deathsLabel.Invoke(new Action(delegate () { deathsLabel.Text = "DEATHS: " + player.Deaths; }));
+            deathsLabel.Invoke(new Action(delegate () { deathsLabel.Text = "RIP: " + player.Deaths; }));
 
-            if (runeDisplayPanel.Controls.Count > 0)
+            if (panelRuneDisplay.Controls.Count > 0)
             {
 
                 Dictionary<int, int> dict = new Dictionary<int, int>(itemClassMap);
-                foreach (RuneDisplayElement c in runeDisplayPanel.Controls)
+                foreach (RuneDisplayElement c in panelRuneDisplay.Controls)
                 {
                     int eClass = (int)c.getRune() + 610;
                     if (dict.ContainsKey(eClass) && dict[eClass] > 0)
@@ -271,9 +271,19 @@ namespace DiabloInterface
 
         }
 
+        private void ChangeVisibility(Control c, bool visible)
+        {
+            if (visible)
+            {
+                c.Show();
+            } else
+            {
+                c.Hide();
+            }
+        }
         public void ApplySettings()
         {
-            Font fBig = new Font(this.Settings.FontName, this.Settings.TitleFontSize);
+            Font fBig = new Font(this.Settings.FontName, this.Settings.FontSizeTitle);
             Font fSmall = new Font(this.Settings.FontName, this.Settings.FontSize);
 
             nameLabel.Font = fBig;
@@ -295,27 +305,38 @@ namespace DiabloInterface
             goldLabel.Font = fSmall;
             deathsLabel.Font = fSmall;
 
+            int c = (Settings.DisplayResistances ? 1 : 0)
+                + (Settings.DisplayBaseStats ? 1 : 0)
+                + (Settings.DisplayAdvancedStats ? 1 : 0);
+            int w = 270/c;
+            panelBaseStats.Width = w == 90 ? 85 : w;
+            panelAdvancedStats.Width = w == 90 ? 85 : w;
+            panelResistances.Width = w == 90 ? 100 : w;
+
+            ChangeVisibility(nameLabel, Settings.DisplayName);
+            ChangeVisibility(goldLabel, Settings.DisplayGold);
+            ChangeVisibility(lvlLabel, Settings.DisplayLevel);
+            ChangeVisibility(panelResistances, Settings.DisplayResistances);
+            ChangeVisibility(panelBaseStats, Settings.DisplayBaseStats);
+            ChangeVisibility(panelAdvancedStats, Settings.DisplayAdvancedStats);
+            ChangeVisibility(deathsLabel, Settings.DisplayDeathCounter);
+
             var memoryTable = GetVersionMemoryTable(Settings.D2Version);
             dataReader.SetNextMemoryTable(memoryTable);
 
-            runeDisplayPanel.Controls.Clear();
+            panelRuneDisplay.Controls.Clear();
             if ( Settings.Runes.Count > 0 )
             {
-                int extraheight = 0;
                 foreach (int r in Settings.Runes)
                 {
                     RuneDisplayElement element = new RuneDisplayElement((Rune)r, null, this);
                     element.setRemovable(false);
                     element.setHaveRune(false);
-                    runeDisplayPanel.Controls.Add(element);
-                    extraheight = relayout();
+                    panelRuneDisplay.Controls.Add(element);
                 }
-
-                Height = OriginalHeight + extraheight + 8;
-            } else
-            {
-                Height = OriginalHeight;
             }
+            ChangeVisibility(panelRuneDisplay, Settings.DisplayRunes && Settings.Runes.Count > 0);
+            relayout();
 
             // Update debug window.
             if (debugWindow != null && debugWindow.Visible)
@@ -329,8 +350,8 @@ namespace DiabloInterface
             int y = 0;
             int x = 0;
             int height = -1;
-            int scroll = runeDisplayPanel.VerticalScroll.Value;
-            foreach (Control c in runeDisplayPanel.Controls)
+            int scroll = panelRuneDisplay.VerticalScroll.Value;
+            foreach (Control c in panelRuneDisplay.Controls)
             {
                 if (c is RuneDisplayElement && (!checkVisible || c.Visible))
                 {
@@ -338,7 +359,7 @@ namespace DiabloInterface
                     {
                         height = c.Height;
                     }
-                    if (x + c.Width > runeDisplayPanel.Width && runeDisplayPanel.Width >= c.Width)
+                    if (x + c.Width > panelRuneDisplay.Width && panelRuneDisplay.Width >= c.Width)
                     {
                         y += c.Height;
                         x = 0;
@@ -349,7 +370,7 @@ namespace DiabloInterface
                 }
             }
 
-            runeDisplayPanel.Height = height == -1 ? 0 : height;
+            panelRuneDisplay.Height = height == -1 ? 0 : height;
             return height;
 
         }

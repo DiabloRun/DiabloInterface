@@ -278,7 +278,7 @@ namespace DiabloInterface
                 // A brand new character has been started.
                 if (experience == 0 && level == 1)
                 {
-                    Logger.Instance.WriteLine("Enabled autosplits for characater: {0}", character.name);
+                    Logger.Instance.WriteLine("Enabled autosplits for character: {0}", character.name);
 
                     activeCharacter = character;
                     main.Reset();
