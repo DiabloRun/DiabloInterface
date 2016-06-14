@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DiabloInterface.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -36,7 +37,7 @@ namespace DiabloInterface
                 }
             }
         }
-        
+
 
         public static string getUpdateUrl()
         {
@@ -54,14 +55,23 @@ namespace DiabloInterface
                 pre = Convert.ToInt32(verMatch.Groups[4].Value);
             }
 
-            HttpWebRequest r = (HttpWebRequest)WebRequest.Create(ReleasesLatestUrl);
-            r.Method = WebRequestMethods.Http.Head;
-            r.AllowAutoRedirect = false;
-            
-            string location;
-            using (var response = r.GetResponse() as HttpWebResponse)
+            string location = null;
+
+            try
             {
-                location = response.GetResponseHeader("Location");
+                HttpWebRequest r = (HttpWebRequest)WebRequest.Create(ReleasesLatestUrl);
+                r.Method = WebRequestMethods.Http.Head;
+                r.AllowAutoRedirect = false;
+
+                using (var response = r.GetResponse() as HttpWebResponse)
+                {
+                    location = response.GetResponseHeader("Location");
+                }
+            }
+            catch (WebException e)
+            {
+                Logger.Instance.WriteLine("VersionChecker Error: {0}", e.Message);
+                return null;
             }
 
             Match tagMatch = Regex.Match(location, @"/releases/tag/v(\d+)\.(\d+)\.(\d+)$");
@@ -74,7 +84,7 @@ namespace DiabloInterface
             int majorNew = Convert.ToInt32(tagMatch.Groups[1].Value);
             int minorNew = Convert.ToInt32(tagMatch.Groups[2].Value);
             int patchNew = Convert.ToInt32(tagMatch.Groups[3].Value);
-            
+
             // version compare.
 
             if (majorNew > major)
@@ -107,7 +117,7 @@ namespace DiabloInterface
             {
                 return null;
             }
-            
+
         }
     }
 }
