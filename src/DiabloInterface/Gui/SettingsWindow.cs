@@ -183,7 +183,10 @@ namespace DiabloInterface
 
         private void AddAutoSplitButton_Clicked(object sender, EventArgs e)
         {
-            AddAutoSplit(new AutoSplit());
+            var splits = autoSplitTable.AutoSplits;
+            var factory = new AutoSplitFactory();
+
+            AddAutoSplit(factory.CreateSequential(splits.LastOrDefault()));
         }
 
         private void AddAutoSplit(AutoSplit autosplit)
