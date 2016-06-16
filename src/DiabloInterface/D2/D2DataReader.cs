@@ -1,5 +1,6 @@
 ﻿using DiabloInterface.D2.Readers;
 using DiabloInterface.D2.Struct;
+using DiabloInterface.Gui;
 using DiabloInterface.Logging;
 using System;
 using System.Collections.Generic;

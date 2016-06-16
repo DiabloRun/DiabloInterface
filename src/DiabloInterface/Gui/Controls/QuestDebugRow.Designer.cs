@@ -1,4 +1,4 @@
-﻿namespace DiabloInterface.Gui
+﻿namespace DiabloInterface.Gui.Controls
 {
     partial class QuestDebugRow
     {

@@ -1,13 +1,13 @@
 ﻿using DiabloInterface.D2.Readers;
 using DiabloInterface.D2.Struct;
-using DiabloInterface.Gui;
+using DiabloInterface.Gui.Controls;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace DiabloInterface
+namespace DiabloInterface.Gui
 {
     public partial class DebugWindow : Form
     {

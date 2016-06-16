@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace DiabloInterface.Gui
+namespace DiabloInterface.Gui.Controls
 {
     public partial class QuestDebugRow : UserControl
     {

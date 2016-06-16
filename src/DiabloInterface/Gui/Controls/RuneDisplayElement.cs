@@ -3,14 +3,14 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
 
-namespace DiabloInterface.Gui
+namespace DiabloInterface.Gui.Controls
 {
     public enum Rune
     {
         El,
         Eld,
         Tir,
-        Nef, 
+        Nef,
         Eth,
         Ith,
         Tal,
@@ -84,7 +84,7 @@ namespace DiabloInterface.Gui
         }
         public void setRune( Rune rune )
         {
-            
+
             this.rune = rune;
 
             image = runesSprite.Clone(new Rectangle(0, (int)rune* runeSize, runeSize, runeSize), runesSprite.PixelFormat);
@@ -131,7 +131,7 @@ namespace DiabloInterface.Gui
             if (mainWindow != null)
             {
                 mainWindow.relayout();
-            } 
+            }
         }
     }
 }

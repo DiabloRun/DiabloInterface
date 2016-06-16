@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace DiabloInterface.Gui
+namespace DiabloInterface.Gui.Controls
 {
     public partial class AutoSplitTable : UserControl
     {

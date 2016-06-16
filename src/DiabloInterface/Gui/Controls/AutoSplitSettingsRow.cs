@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace DiabloInterface
+namespace DiabloInterface.Gui.Controls
 {
     public partial class AutoSplitSettingsRow : UserControl
     {

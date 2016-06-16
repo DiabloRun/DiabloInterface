@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using DiabloInterface.Gui;
+using DiabloInterface.Gui.Controls;
 
-namespace DiabloInterface
+namespace DiabloInterface.Gui
 {
     public partial class SettingsWindow : Form
     {
@@ -23,7 +23,7 @@ namespace DiabloInterface
             {
                 return dirty
                     || (autoSplitTable != null && autoSplitTable.IsDirty)
-                    || settings.FontName != FontComboBox.SelectedItem.ToString()
+                    || settings.FontName != fontComboBox.SelectedItem.ToString()
                     || settings.FontSize != (int)fontSizeNumeric.Value
                     || settings.FontSizeTitle != (int)titleFontSizeNumeric.Value
                     || settings.CreateFiles != CreateFilesCheckBox.Checked
@@ -46,11 +46,6 @@ namespace DiabloInterface
             this.settings = settings;
             InitializeComponent();
             InitializeAutoSplitTable();
-
-            foreach (FontFamily font in FontFamily.Families)
-            {
-                FontComboBox.Items.Add(font.Name);
-            }
 
             // Select first rune (don't leave combo box empty).
             RuneComboBox.SelectedIndex = 0;
@@ -94,13 +89,7 @@ namespace DiabloInterface
         {
             UpdateTitle();
 
-            foreach (string item in FontComboBox.Items)
-            {
-                if (item == settings.FontName)
-                {
-                    FontComboBox.SelectedItem = item;
-                }
-            }
+            fontComboBox.SelectedIndex = fontComboBox.Items.IndexOf(settings.FontName);
 
             fontSizeNumeric.Value = settings.FontSize;
             titleFontSizeNumeric.Value = settings.FontSizeTitle;
@@ -167,7 +156,7 @@ namespace DiabloInterface
             settings.TriggerKeys = AutoSplitHotkeyText.Text;
             settings.FontSize = (int)fontSizeNumeric.Value;
             settings.FontSizeTitle = (int)titleFontSizeNumeric.Value;
-            settings.FontName = FontComboBox.SelectedItem.ToString();
+            settings.FontName = fontComboBox.SelectedItem.ToString();
             settings.D2Version = (string)VersionComboBox.SelectedItem;
 
             settings.DisplayName = chkDisplayName.Checked;
@@ -353,28 +342,6 @@ namespace DiabloInterface
         private void CheckUpdatesButton_Click(object sender, EventArgs e)
         {
             VersionChecker.CheckForUpdate(true);
-        }
-
-        private void FontComboBox_DrawItem(object sender, DrawItemEventArgs e)
-        {
-            // Draw the background
-            e.DrawBackground();
-
-            // Get the item text
-            string text = ((ComboBox)sender).Items[e.Index].ToString();
-
-            Font fSender = ((Control)sender).Font;
-            Font f;
-            try
-            {
-                f = new Font(text, 10f, fSender.Style);
-            } catch
-            {
-                f = fSender;
-            }
-
-            // Draw the text
-            e.Graphics.DrawString(text, f, Brushes.Black, e.Bounds.X, e.Bounds.Y);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace DiabloInterface
+﻿namespace DiabloInterface.Gui.Controls
 {
     partial class AutoSplitSettingsRow
     {

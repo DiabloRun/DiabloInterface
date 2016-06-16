@@ -1,4 +1,4 @@
-﻿namespace DiabloInterface
+﻿namespace DiabloInterface.Gui
 {
     partial class MainWindow
     {

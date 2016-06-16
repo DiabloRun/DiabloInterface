@@ -5,11 +5,11 @@ using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
 using DiabloInterface.Server;
-using DiabloInterface.Gui;
 using DiabloInterface.Logging;
 using System.Text;
+using DiabloInterface.Gui.Controls;
 
-namespace DiabloInterface
+namespace DiabloInterface.Gui
 {
     public partial class MainWindow : Form
     {

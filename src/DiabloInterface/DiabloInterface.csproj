@@ -113,20 +113,23 @@
     <Compile Include="D2\Struct\D2UniqueItemDescription.cs" />
     <Compile Include="D2\Struct\D2Unit.cs" />
     <Compile Include="D2\Struct\DataPointer.cs" />
-    <Compile Include="Gui\AutoSplitSettingsRow.cs">
+    <Compile Include="Gui\Controls\AutoSplitSettingsRow.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\AutoSplitSettingsRow.Designer.cs">
+    <Compile Include="Gui\Controls\AutoSplitSettingsRow.Designer.cs">
       <DependentUpon>AutoSplitSettingsRow.cs</DependentUpon>
     </Compile>
     <Compile Include="D2\D2Data.cs" />
     <Compile Include="D2\D2DataReader.cs" />
     <Compile Include="D2\Character.cs" />
-    <Compile Include="Gui\AutoSplitTable.cs">
+    <Compile Include="Gui\Controls\AutoSplitTable.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\AutoSplitTable.Designer.cs">
+    <Compile Include="Gui\Controls\AutoSplitTable.Designer.cs">
       <DependentUpon>AutoSplitTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Controls\FontComboBox.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\DebugWindow.cs">
       <SubType>Form</SubType>
@@ -141,16 +144,16 @@
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="D2\D2Level.cs" />
-    <Compile Include="Gui\QuestDebugRow.cs">
+    <Compile Include="Gui\Controls\QuestDebugRow.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\QuestDebugRow.Designer.cs">
+    <Compile Include="Gui\Controls\QuestDebugRow.Designer.cs">
       <DependentUpon>QuestDebugRow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Gui\RuneDisplayElement.cs">
+    <Compile Include="Gui\Controls\RuneDisplayElement.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\RuneDisplayElement.Designer.cs">
+    <Compile Include="Gui\Controls\RuneDisplayElement.Designer.cs">
       <DependentUpon>RuneDisplayElement.cs</DependentUpon>
     </Compile>
     <Compile Include="KeyManager.cs" />
@@ -174,10 +177,10 @@
       <DependentUpon>SettingsWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="VersionChecker.cs" />
-    <EmbeddedResource Include="Gui\AutoSplitSettingsRow.resx">
+    <EmbeddedResource Include="Gui\Controls\AutoSplitSettingsRow.resx">
       <DependentUpon>AutoSplitSettingsRow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Gui\AutoSplitTable.resx">
+    <EmbeddedResource Include="Gui\Controls\AutoSplitTable.resx">
       <DependentUpon>AutoSplitTable.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\DebugWindow.resx">
@@ -186,10 +189,10 @@
     <EmbeddedResource Include="Gui\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Gui\QuestDebugRow.resx">
+    <EmbeddedResource Include="Gui\Controls\QuestDebugRow.resx">
       <DependentUpon>QuestDebugRow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Gui\RuneDisplayElement.resx">
+    <EmbeddedResource Include="Gui\Controls\RuneDisplayElement.resx">
       <DependentUpon>RuneDisplayElement.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -1,4 +1,4 @@
-﻿namespace DiabloInterface
+﻿namespace DiabloInterface.Gui
 {
     partial class SettingsWindow
     {
@@ -31,7 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsWindow));
             this.FontLabel = new System.Windows.Forms.Label();
             this.FontGroup = new System.Windows.Forms.GroupBox();
-            this.FontComboBox = new System.Windows.Forms.ComboBox();
+            this.titleFontSizeNumeric = new System.Windows.Forms.NumericUpDown();
+            this.fontSizeNumeric = new System.Windows.Forms.NumericUpDown();
             this.FontSizeLabel = new System.Windows.Forms.Label();
             this.TitleFontSizeLabel = new System.Windows.Forms.Label();
             this.CreateFilesCheckBox = new System.Windows.Forms.CheckBox();
@@ -75,9 +76,10 @@
             this.chkDisplayBaseStats = new System.Windows.Forms.CheckBox();
             this.chkDisplayDeathCounter = new System.Windows.Forms.CheckBox();
             this.chkDisplayName = new System.Windows.Forms.CheckBox();
-            this.fontSizeNumeric = new System.Windows.Forms.NumericUpDown();
-            this.titleFontSizeNumeric = new System.Windows.Forms.NumericUpDown();
+            this.fontComboBox = new DiabloInterface.Gui.Controls.FontComboBox();
             this.FontGroup.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
             this.DataGroup.SuspendLayout();
             this.AutoSplitGroup.SuspendLayout();
             this.AutoSplitLayout.SuspendLayout();
@@ -91,8 +93,6 @@
             this.HorizontalSplitContainer.SuspendLayout();
             this.RightPanelLayout.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
             this.SuspendLayout();
             // 
             // FontLabel
@@ -106,9 +106,9 @@
             // 
             // FontGroup
             // 
+            this.FontGroup.Controls.Add(this.fontComboBox);
             this.FontGroup.Controls.Add(this.titleFontSizeNumeric);
             this.FontGroup.Controls.Add(this.fontSizeNumeric);
-            this.FontGroup.Controls.Add(this.FontComboBox);
             this.FontGroup.Controls.Add(this.FontSizeLabel);
             this.FontGroup.Controls.Add(this.TitleFontSizeLabel);
             this.FontGroup.Controls.Add(this.FontLabel);
@@ -119,18 +119,40 @@
             this.FontGroup.TabStop = false;
             this.FontGroup.Text = "Font";
             // 
-            // FontComboBox
+            // titleFontSizeNumeric
             // 
-            this.FontComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.FontComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.FontComboBox.DropDownWidth = 250;
-            this.FontComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.FontComboBox.FormattingEnabled = true;
-            this.FontComboBox.Location = new System.Drawing.Point(105, 21);
-            this.FontComboBox.Name = "FontComboBox";
-            this.FontComboBox.Size = new System.Drawing.Size(117, 21);
-            this.FontComboBox.TabIndex = 9;
-            this.FontComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.FontComboBox_DrawItem);
+            this.titleFontSizeNumeric.Location = new System.Drawing.Point(105, 74);
+            this.titleFontSizeNumeric.Minimum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.titleFontSizeNumeric.Name = "titleFontSizeNumeric";
+            this.titleFontSizeNumeric.Size = new System.Drawing.Size(117, 20);
+            this.titleFontSizeNumeric.TabIndex = 11;
+            this.titleFontSizeNumeric.Value = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            // 
+            // fontSizeNumeric
+            // 
+            this.fontSizeNumeric.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.fontSizeNumeric.Location = new System.Drawing.Point(105, 48);
+            this.fontSizeNumeric.Minimum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.fontSizeNumeric.Name = "fontSizeNumeric";
+            this.fontSizeNumeric.Size = new System.Drawing.Size(117, 20);
+            this.fontSizeNumeric.TabIndex = 10;
+            this.fontSizeNumeric.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             // 
             // FontSizeLabel
             // 
@@ -632,40 +654,16 @@
             this.chkDisplayName.Text = "Name";
             this.chkDisplayName.UseVisualStyleBackColor = true;
             // 
-            // fontSizeNumeric
+            // fontComboBox
             // 
-            this.fontSizeNumeric.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.fontSizeNumeric.Location = new System.Drawing.Point(105, 48);
-            this.fontSizeNumeric.Minimum = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            this.fontSizeNumeric.Name = "fontSizeNumeric";
-            this.fontSizeNumeric.Size = new System.Drawing.Size(117, 20);
-            this.fontSizeNumeric.TabIndex = 10;
-            this.fontSizeNumeric.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            // 
-            // titleFontSizeNumeric
-            // 
-            this.titleFontSizeNumeric.Location = new System.Drawing.Point(105, 74);
-            this.titleFontSizeNumeric.Minimum = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            this.titleFontSizeNumeric.Name = "titleFontSizeNumeric";
-            this.titleFontSizeNumeric.Size = new System.Drawing.Size(117, 20);
-            this.titleFontSizeNumeric.TabIndex = 11;
-            this.titleFontSizeNumeric.Value = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
+            this.fontComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.fontComboBox.DropDownWidth = 250;
+            this.fontComboBox.FormattingEnabled = true;
+            this.fontComboBox.Location = new System.Drawing.Point(105, 21);
+            this.fontComboBox.Name = "fontComboBox";
+            this.fontComboBox.Size = new System.Drawing.Size(117, 21);
+            this.fontComboBox.Sorted = true;
+            this.fontComboBox.TabIndex = 12;
             // 
             // SettingsWindow
             // 
@@ -683,6 +681,8 @@
             this.Shown += new System.EventHandler(this.SettingsWindow_Shown);
             this.FontGroup.ResumeLayout(false);
             this.FontGroup.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).EndInit();
             this.DataGroup.ResumeLayout(false);
             this.DataGroup.PerformLayout();
             this.AutoSplitGroup.ResumeLayout(false);
@@ -703,8 +703,6 @@
             this.RightPanelLayout.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -741,7 +739,6 @@
         private System.Windows.Forms.Panel mainPanel;
         private System.Windows.Forms.CheckBox CheckUpdatesCheckBox;
         private System.Windows.Forms.Button CheckUpdatesButton;
-        private System.Windows.Forms.ComboBox FontComboBox;
         private System.Windows.Forms.TableLayoutPanel VerticalSplitContainer;
         private System.Windows.Forms.TableLayoutPanel HorizontalSplitContainer;
         private System.Windows.Forms.TableLayoutPanel AutoSplitLayout;
@@ -759,5 +756,6 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.NumericUpDown fontSizeNumeric;
         private System.Windows.Forms.NumericUpDown titleFontSizeNumeric;
+        private Gui.Controls.FontComboBox fontComboBox;
     }
 }
