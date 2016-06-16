@@ -131,6 +131,9 @@
     <Compile Include="Gui\Controls\FontComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Gui\Controls\HotkeyControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Gui\DebugWindow.cs">
       <SubType>Form</SubType>
     </Compile>

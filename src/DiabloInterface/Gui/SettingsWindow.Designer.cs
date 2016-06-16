@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsWindow));
             this.FontLabel = new System.Windows.Forms.Label();
             this.FontGroup = new System.Windows.Forms.GroupBox();
+            this.fontComboBox = new DiabloInterface.Gui.Controls.FontComboBox();
             this.titleFontSizeNumeric = new System.Windows.Forms.NumericUpDown();
             this.fontSizeNumeric = new System.Windows.Forms.NumericUpDown();
             this.FontSizeLabel = new System.Windows.Forms.Label();
@@ -40,10 +41,10 @@
             this.AutoSplitGroup = new System.Windows.Forms.GroupBox();
             this.AutoSplitLayout = new System.Windows.Forms.TableLayoutPanel();
             this.AutoSplitToolbar = new System.Windows.Forms.Panel();
+            this.autoSplitHotkeyControl = new DiabloInterface.Gui.Controls.HotkeyControl();
             this.AutoSplitHotkeyLabel = new System.Windows.Forms.Label();
             this.AutoSplitTestHotkeyButton = new System.Windows.Forms.Button();
             this.EnableAutosplitCheckBox = new System.Windows.Forms.CheckBox();
-            this.AutoSplitHotkeyText = new System.Windows.Forms.TextBox();
             this.AddAutoSplitButton = new System.Windows.Forms.Button();
             this.UpdateGroup = new System.Windows.Forms.GroupBox();
             this.CheckUpdatesButton = new System.Windows.Forms.Button();
@@ -76,7 +77,6 @@
             this.chkDisplayBaseStats = new System.Windows.Forms.CheckBox();
             this.chkDisplayDeathCounter = new System.Windows.Forms.CheckBox();
             this.chkDisplayName = new System.Windows.Forms.CheckBox();
-            this.fontComboBox = new DiabloInterface.Gui.Controls.FontComboBox();
             this.FontGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
@@ -118,6 +118,17 @@
             this.FontGroup.TabIndex = 5;
             this.FontGroup.TabStop = false;
             this.FontGroup.Text = "Font";
+            // 
+            // fontComboBox
+            // 
+            this.fontComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.fontComboBox.DropDownWidth = 250;
+            this.fontComboBox.FormattingEnabled = true;
+            this.fontComboBox.Location = new System.Drawing.Point(105, 21);
+            this.fontComboBox.Name = "fontComboBox";
+            this.fontComboBox.Size = new System.Drawing.Size(117, 21);
+            this.fontComboBox.Sorted = true;
+            this.fontComboBox.TabIndex = 12;
             // 
             // titleFontSizeNumeric
             // 
@@ -220,16 +231,26 @@
             // AutoSplitToolbar
             // 
             this.AutoSplitToolbar.AutoSize = true;
+            this.AutoSplitToolbar.Controls.Add(this.autoSplitHotkeyControl);
             this.AutoSplitToolbar.Controls.Add(this.AutoSplitHotkeyLabel);
             this.AutoSplitToolbar.Controls.Add(this.AutoSplitTestHotkeyButton);
             this.AutoSplitToolbar.Controls.Add(this.EnableAutosplitCheckBox);
-            this.AutoSplitToolbar.Controls.Add(this.AutoSplitHotkeyText);
             this.AutoSplitToolbar.Controls.Add(this.AddAutoSplitButton);
             this.AutoSplitToolbar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AutoSplitToolbar.Location = new System.Drawing.Point(3, 282);
             this.AutoSplitToolbar.Name = "AutoSplitToolbar";
             this.AutoSplitToolbar.Size = new System.Drawing.Size(514, 31);
             this.AutoSplitToolbar.TabIndex = 20;
+            // 
+            // autoSplitHotkeyControl
+            // 
+            this.autoSplitHotkeyControl.Hotkey = System.Windows.Forms.Keys.None;
+            this.autoSplitHotkeyControl.Location = new System.Drawing.Point(80, 7);
+            this.autoSplitHotkeyControl.Name = "autoSplitHotkeyControl";
+            this.autoSplitHotkeyControl.Size = new System.Drawing.Size(82, 20);
+            this.autoSplitHotkeyControl.TabIndex = 3;
+            this.autoSplitHotkeyControl.Text = "None";
+            this.autoSplitHotkeyControl.UseKeyWhitelist = true;
             // 
             // AutoSplitHotkeyLabel
             // 
@@ -260,16 +281,6 @@
             this.EnableAutosplitCheckBox.TabIndex = 1;
             this.EnableAutosplitCheckBox.Text = "Enable";
             this.EnableAutosplitCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // AutoSplitHotkeyText
-            // 
-            this.AutoSplitHotkeyText.Location = new System.Drawing.Point(80, 7);
-            this.AutoSplitHotkeyText.Name = "AutoSplitHotkeyText";
-            this.AutoSplitHotkeyText.Size = new System.Drawing.Size(82, 20);
-            this.AutoSplitHotkeyText.TabIndex = 12;
-            this.AutoSplitHotkeyText.KeyDown += new System.Windows.Forms.KeyEventHandler(this.AutoSplitHotkeyText_KeyDown);
-            this.AutoSplitHotkeyText.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.AutoSplitHotkeyText_KeyPress);
-            this.AutoSplitHotkeyText.KeyUp += new System.Windows.Forms.KeyEventHandler(this.AutoSplitHotkeyText_KeyUp);
             // 
             // AddAutoSplitButton
             // 
@@ -654,17 +665,6 @@
             this.chkDisplayName.Text = "Name";
             this.chkDisplayName.UseVisualStyleBackColor = true;
             // 
-            // fontComboBox
-            // 
-            this.fontComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.fontComboBox.DropDownWidth = 250;
-            this.fontComboBox.FormattingEnabled = true;
-            this.fontComboBox.Location = new System.Drawing.Point(105, 21);
-            this.fontComboBox.Name = "fontComboBox";
-            this.fontComboBox.Size = new System.Drawing.Size(117, 21);
-            this.fontComboBox.Sorted = true;
-            this.fontComboBox.TabIndex = 12;
-            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -718,7 +718,6 @@
         private System.Windows.Forms.GroupBox AutoSplitGroup;
         private System.Windows.Forms.Button AddAutoSplitButton;
         private System.Windows.Forms.CheckBox EnableAutosplitCheckBox;
-        private System.Windows.Forms.TextBox AutoSplitHotkeyText;
         private System.Windows.Forms.Label AutoSplitHotkeyLabel;
         private System.Windows.Forms.GroupBox UpdateGroup;
         private System.Windows.Forms.GroupBox VersionGroup;
@@ -757,5 +756,6 @@
         private System.Windows.Forms.NumericUpDown fontSizeNumeric;
         private System.Windows.Forms.NumericUpDown titleFontSizeNumeric;
         private Gui.Controls.FontComboBox fontComboBox;
+        private Controls.HotkeyControl autoSplitHotkeyControl;
     }
 }

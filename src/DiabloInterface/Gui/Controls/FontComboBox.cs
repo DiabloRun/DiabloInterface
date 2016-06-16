@@ -28,6 +28,11 @@ namespace DiabloInterface.Gui.Controls
 
             CalculateItemHeight();
 
+            HandleCreated += FontComboBox_HandleCreated;
+        }
+
+        private void FontComboBox_HandleCreated(object sender, EventArgs e)
+        {
             if (!DesignMode)
             {
                 // Only initialize fonts during runtime.

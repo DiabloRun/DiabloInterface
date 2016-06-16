@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
+using System.Windows.Forms;
 
 namespace DiabloInterface
 {
@@ -38,7 +39,7 @@ namespace DiabloInterface
         public bool CreateFiles;
         public bool DoAutosplit;
         public bool CheckUpdates;
-        public string TriggerKeys;
+        public Keys AutosplitHotkey { get; set; } = Keys.None;
         public List<AutoSplit> Autosplits;
         public List<int> Runes;
         public bool DisplayName;
@@ -65,7 +66,6 @@ namespace DiabloInterface
             CreateFiles = DEFAULT_CREATE_FILES;
             DoAutosplit = DEFAULT_DO_AUTOSPLIT;
             CheckUpdates = DEFAULT_CHECK_UPDATES;
-            TriggerKeys = DEFAULT_TRIGGER_KEYS;
             DisplayName = DEFAULT_DISPLAY_NAME;
             DisplayLevel = DEFAULT_DISPLAY_LEVEL;
             DisplayDeathCounter = DEFAULT_DISPLAY_DEATH_COUNTER;
@@ -77,7 +77,7 @@ namespace DiabloInterface
             Autosplits = new List<AutoSplit>();
             Runes = new List<int>();
         }
-        
+
         public void saveAs(string file)
         {
             List<dynamic> autosplits = new List<dynamic>();
@@ -100,7 +100,7 @@ namespace DiabloInterface
                 CreateFiles = CreateFiles,
                 DoAutosplit = DoAutosplit,
                 CheckUpdates = CheckUpdates,
-                TriggerKeys = TriggerKeys,
+                AutosplitHotkey = AutosplitHotkey,
                 D2Version = D2Version,
 
                 DisplayName = DisplayName,
@@ -127,19 +127,18 @@ namespace DiabloInterface
         /// </summary>
         private void loadFromLegacy(string[] conf)
         {
-            string[] parts;
-            string[] parts2;
-            
+            string triggerKeys = null;
+
             foreach (string line in conf)
             {
-                parts = line.Split(new string[] { ": " }, 2, StringSplitOptions.None);
+                string[] parts = line.Split(new string[] { ": " }, 2, StringSplitOptions.None);
                 switch (parts[0])
                 {
                     case "Font": FontName = parts[1]; break;
                     case "CheckUpdates": CheckUpdates = (parts[1] == "1"); break;
                     case "CreateFiles": CreateFiles = (parts[1] == "1"); break;
                     case "D2Version": D2Version = parts[1]; break;
-                    case "TriggerKeys": TriggerKeys = parts[1]; break;
+                    case "TriggerKeys": triggerKeys = parts[1]; break;
                     case "DoAutosplit": DoAutosplit = (parts[1] == "1"); break;
                     case "Rune": Runes.Add(Convert.ToInt32(parts[1])); break;
                     case "FontSize":
@@ -159,7 +158,7 @@ namespace DiabloInterface
                         catch { FontSizeTitle = 10; }
                         break;
                     case "AutoSplit":
-                        parts2 = parts[1].Split(new string[] { "|" }, 4, StringSplitOptions.None);
+                        string[] parts2 = parts[1].Split(new string[] { "|" }, 4, StringSplitOptions.None);
                         if (parts2.Length == 3)
                         {
                             AutoSplit autosplit = new AutoSplit(
@@ -183,6 +182,9 @@ namespace DiabloInterface
                         break;
                 }
             }
+
+            // Handle legacy hotkeys.
+            AutosplitHotkey = KeyManager.LegacyStringToKey(triggerKeys);
         }
 
         public void loadFrom(string file)
@@ -214,8 +216,17 @@ namespace DiabloInterface
             try { CreateFiles = (bool)json.CreateFiles; } catch (RuntimeBinderException) { }
             try { DoAutosplit = (bool)json.DoAutosplit; } catch (RuntimeBinderException) { }
             try { CheckUpdates = (bool)json.CheckUpdates; } catch (RuntimeBinderException) { }
-            try { TriggerKeys = (string)json.TriggerKeys; } catch (RuntimeBinderException) { }
             try { D2Version = (string)json.D2Version; } catch (RuntimeBinderException) { }
+
+            // First try loading hotkeys normally.
+            try { AutosplitHotkey = json.AutosplitHotkey; }
+            catch (RuntimeBinderException)
+            {
+                // Revert to trying legacy hotkeys.
+                try { AutosplitHotkey = KeyManager.LegacyStringToKey((string)json.TriggerKeys); }
+                // If all else fails, assume there is no hotkey.
+                catch (RuntimeBinderException) { AutosplitHotkey = Keys.None; }
+            }
 
             try { DisplayName = (bool)json.DisplayName; } catch (RuntimeBinderException) { }
             try { DisplayLevel = (bool)json.DisplayLevel; } catch (RuntimeBinderException) { }

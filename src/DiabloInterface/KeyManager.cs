@@ -27,60 +27,64 @@ namespace DiabloInterface
             }
         }
 
-        public static string KeyEventArgsToKeyString(KeyEventArgs e)
+        public static Keys LegacyStringToKey(string triggerKeys)
         {
-            //ok keys
-            List<string> keys = new List<string>();
-            if (e.Control)
+            if (string.IsNullOrEmpty(triggerKeys))
             {
-                keys.Add("Ctrl");
+                return Keys.None;
             }
-            if (e.Shift)
+            else
             {
-                keys.Add("Shift");
-            }
-            if (e.Alt)
-            {
-                keys.Add("Alt");
-            }
-            keys.Add(KeyToString(e.KeyCode));
-            return string.Join("+", keys.ToArray());
-        }
+                Keys hotkey = Keys.None;
+                string[] keys = triggerKeys.Split('+');
+                foreach (string keyString in keys)
+                {
+                    string keyValue = keyString;
 
-        public static string KeyToString(Keys key)
-        {
-            string c = "";
-            if ((key >= Keys.D0) && (key <= Keys.D9))
-            {
-                c = ((char)('0' + key - Keys.D0)).ToString();
-            } else {
-                c = key.ToString();
-            }
+                    // Legacy system uses single character for digit keys.
+                    if (keyString.Length == 1 && keyString[0] >= '0' && keyString[0] <= '9')
+                    {
+                        keyValue = "D" + keyValue;
+                    }
 
-            return c.ToString();
-        }
-
-        public static void sendKeys(string keys)
-        {
-            string[] keyArr = keys.Split('+');
-            List<VirtualKeyCode> modifiers = new List<VirtualKeyCode>();
-            VirtualKeyCode key = 0;
-
-            foreach ( string k in keyArr )
-            {
-                string kLower = k.ToLower();
-                if (kLower == "shift") { modifiers.Add(VirtualKeyCode.SHIFT); }
-                else if (kLower == "ctrl") { modifiers.Add(VirtualKeyCode.CONTROL); }
-                else if (kLower == "alt") { modifiers.Add(VirtualKeyCode.MENU); }
-                else if (k.Length == 1) { key = (VirtualKeyCode)(int)k[0]; }
-                else if (
-                    kLower == "f1" || kLower == "f2" || kLower == "f3" || kLower == "f4"
-                    || kLower == "f5" || kLower == "f6" || kLower == "f7" || kLower == "f8"
-                    || kLower == "f9" || kLower == "f10" || kLower == "f11" || kLower == "f12"
-                    || kLower.Substring(0, 6) == "numpad"
-                    ) {
-                    key = (VirtualKeyCode)Enum.Parse(typeof(VirtualKeyCode), kLower.ToUpper());
+                    // Combine modifiers and key.
+                    Keys key = Keys.None;
+                    if (Enum.TryParse(keyValue, true, out key))
+                    {
+                        hotkey |= key;
+                    }
                 }
+
+                return hotkey;
+            }
+        }
+
+        public static void TriggerHotkey(Keys key)
+        {
+            if (key == Keys.None)
+            {
+                return;
+            }
+
+            VirtualKeyCode virtualKey = (VirtualKeyCode)(key & Keys.KeyCode);
+
+            // Construct modifier list.
+            List<VirtualKeyCode> modifiers = new List<VirtualKeyCode>();
+            if (key.HasFlag(Keys.Control))
+                modifiers.Add(VirtualKeyCode.CONTROL);
+            if (key.HasFlag(Keys.Shift))
+                modifiers.Add(VirtualKeyCode.SHIFT);
+            if (key.HasFlag(Keys.Alt))
+                modifiers.Add(VirtualKeyCode.MENU);
+
+            TriggerHotkey(modifiers, virtualKey);
+        }
+
+        public static void TriggerHotkey(IEnumerable<VirtualKeyCode> modifiers, VirtualKeyCode key)
+        {
+            if (modifiers == null)
+            {
+                modifiers = new List<VirtualKeyCode>();
             }
 
             if (key == 0)
@@ -90,15 +94,16 @@ namespace DiabloInterface
 
             // Unpress untanted modifier keys, the user have to repress them.
             var invalidModifiers = BuildInvalidModifiers(modifiers);
-            foreach (var modifier in invalidModifiers) {
+            foreach (var modifier in invalidModifiers)
+            {
                 Simulator.Keyboard.KeyUp(modifier);
             }
 
-            // Trigger split.
+            // Trigger hotkey.
             Simulator.Keyboard.ModifiedKeyStroke(modifiers, key);
         }
 
-        static IEnumerable<VirtualKeyCode> BuildInvalidModifiers(List<VirtualKeyCode> keys)
+        static IEnumerable<VirtualKeyCode> BuildInvalidModifiers(IEnumerable<VirtualKeyCode> keys)
         {
             List<VirtualKeyCode> modifiers = new List<VirtualKeyCode>() {
                 VirtualKeyCode.CONTROL,

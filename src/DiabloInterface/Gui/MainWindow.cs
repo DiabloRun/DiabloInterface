@@ -237,9 +237,9 @@ namespace DiabloInterface.Gui
 
         public void triggerAutosplit(Character player)
         {
-            if (Settings.DoAutosplit && Settings.TriggerKeys != "")
+            if (Settings.DoAutosplit && Settings.AutosplitHotkey != Keys.None)
             {
-                KeyManager.sendKeys(Settings.TriggerKeys);
+                KeyManager.TriggerHotkey(Settings.AutosplitHotkey);
             }
         }
 

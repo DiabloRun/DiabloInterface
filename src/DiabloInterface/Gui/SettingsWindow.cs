@@ -23,7 +23,7 @@ namespace DiabloInterface.Gui
             {
                 return dirty
                     || (autoSplitTable != null && autoSplitTable.IsDirty)
-                    || settings.FontName != fontComboBox.SelectedItem.ToString()
+                    || settings.FontName != fontComboBox.SelectedItem as string
                     || settings.FontSize != (int)fontSizeNumeric.Value
                     || settings.FontSizeTitle != (int)titleFontSizeNumeric.Value
                     || settings.CreateFiles != CreateFilesCheckBox.Checked
@@ -37,6 +37,7 @@ namespace DiabloInterface.Gui
                     || settings.DisplayBaseStats != chkDisplayBaseStats.Checked
                     || settings.DisplayAdvancedStats != chkDisplayAdvancedStats.Checked
                     || settings.DisplayRunes != chkDisplayRunes.Checked
+                    || settings.AutosplitHotkey != autoSplitHotkeyControl.Hotkey
                 ;
             }
         }
@@ -95,7 +96,7 @@ namespace DiabloInterface.Gui
             titleFontSizeNumeric.Value = settings.FontSizeTitle;
             CreateFilesCheckBox.Checked = settings.CreateFiles;
             EnableAutosplitCheckBox.Checked = settings.DoAutosplit;
-            AutoSplitHotkeyText.Text = settings.TriggerKeys;
+            autoSplitHotkeyControl.Hotkey = settings.AutosplitHotkey;
             CheckUpdatesCheckBox.Checked = settings.CheckUpdates;
             chkDisplayName.Checked = settings.DisplayName;
             chkDisplayGold.Checked = settings.DisplayGold;
@@ -153,7 +154,7 @@ namespace DiabloInterface.Gui
             settings.CreateFiles = CreateFilesCheckBox.Checked;
             settings.CheckUpdates = CheckUpdatesCheckBox.Checked;
             settings.DoAutosplit = EnableAutosplitCheckBox.Checked;
-            settings.TriggerKeys = AutoSplitHotkeyText.Text;
+            settings.AutosplitHotkey = autoSplitHotkeyControl.Hotkey;
             settings.FontSize = (int)fontSizeNumeric.Value;
             settings.FontSizeTitle = (int)titleFontSizeNumeric.Value;
             settings.FontName = fontComboBox.SelectedItem.ToString();
@@ -213,31 +214,6 @@ namespace DiabloInterface.Gui
             }
         }
 
-        private void AutoSplitHotkeyText_KeyDown(object sender, KeyEventArgs e)
-        {
-            e.Handled = true;
-        }
-
-        private void AutoSplitHotkeyText_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9
-                || e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.NumPad9
-                || e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z
-                || e.KeyCode >= Keys.F1 && e.KeyCode <= Keys.F12)
-            {
-                AutoSplitHotkeyText.Text = KeyManager.KeyEventArgsToKeyString(e);
-            } else if (e.KeyCode == Keys.Escape)
-            {
-                AutoSplitHotkeyText.Text = "";
-            }
-            e.Handled = true;
-        }
-
-        private void AutoSplitHotkeyText_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            e.Handled = true;
-        }
-
         private void SettingsWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing && IsDirty)
@@ -264,10 +240,7 @@ namespace DiabloInterface.Gui
 
         private void AutoSplitTestHotkey_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(AutoSplitHotkeyText.Text))
-            {
-                KeyManager.sendKeys(AutoSplitHotkeyText.Text);
-            }
+            KeyManager.TriggerHotkey(autoSplitHotkeyControl.Hotkey);
         }
 
         private void AddRuneButton_Click(object sender, EventArgs e)
