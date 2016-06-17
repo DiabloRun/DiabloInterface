@@ -3,7 +3,6 @@ using System.Windows.Forms;
 using System.Linq;
 using WindowsInput;
 using WindowsInput.Native;
-using System;
 
 namespace DiabloInterface
 {
@@ -24,38 +23,6 @@ namespace DiabloInterface
                 }
 
                 return simulatorInstance;
-            }
-        }
-
-        public static Keys LegacyStringToKey(string triggerKeys)
-        {
-            if (string.IsNullOrEmpty(triggerKeys))
-            {
-                return Keys.None;
-            }
-            else
-            {
-                Keys hotkey = Keys.None;
-                string[] keys = triggerKeys.Split('+');
-                foreach (string keyString in keys)
-                {
-                    string keyValue = keyString;
-
-                    // Legacy system uses single character for digit keys.
-                    if (keyString.Length == 1 && keyString[0] >= '0' && keyString[0] <= '9')
-                    {
-                        keyValue = "D" + keyValue;
-                    }
-
-                    // Combine modifiers and key.
-                    Keys key = Keys.None;
-                    if (Enum.TryParse(keyValue, true, out key))
-                    {
-                        hotkey |= key;
-                    }
-                }
-
-                return hotkey;
             }
         }
 

@@ -13,12 +13,11 @@ namespace DiabloInterface.Gui
 {
     public partial class MainWindow : Form
     {
-
         private const int OriginalHeight = 200;
         private const string ItemServerPipeName = "DiabloInterfaceItems";
         private const string WindowTitleFormat = "Diablo Interface v{0}"; // {0} => Application.ProductVersion
 
-        public SettingsHolder Settings;
+        public ApplicationSettings Settings;
 
         Thread dataReaderThread;
 
@@ -169,10 +168,38 @@ namespace DiabloInterface.Gui
             return memoryTable;
         }
 
+        ApplicationSettings LoadSettings()
+        {
+            var persistence = new SettingsPersistence();
+            var settings = persistence.Load();
+
+            if (settings == null)
+            {
+                Logger.Instance.WriteLine("Loaded default settings.");
+
+                // Return default settings.
+                return new ApplicationSettings();
+            }
+
+            return settings;
+        }
+
         private void initialize()
         {
-            Settings = new SettingsHolder();
-            Settings.load();
+            try
+            {
+                Settings = LoadSettings();
+            }
+            catch (Exception e)
+            {
+                // Log error and show error message.
+                Logger.Instance.WriteLine("Unhandled Settings Error:\n{0}", e.ToString());
+                MessageBox.Show("An unhandled exception was caught trying to load the settings.\nPlease report the error and include the log found in the log folder.",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                // Rethrow current exception.
+                throw;
+            }
 
             if (dataReader == null)
             {

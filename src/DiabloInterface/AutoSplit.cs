@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 
 namespace DiabloInterface
 {
@@ -44,6 +46,7 @@ namespace DiabloInterface
         public event Action<AutoSplit> Reset;
 
         public short Difficulty { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public SplitType Type { get; set; }
         public short Value { get; set; }
         public string Name { get; set; }
@@ -53,6 +56,7 @@ namespace DiabloInterface
         /// Get or set wether the split has been reached.
         /// The Reached event is called when the split is reached.
         /// </summary>
+        [JsonIgnore]
         public bool IsReached
         {
             get { return isReached; }

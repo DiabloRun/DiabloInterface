@@ -159,11 +159,20 @@
     <Compile Include="Gui\Controls\RuneDisplayElement.Designer.cs">
       <DependentUpon>RuneDisplayElement.cs</DependentUpon>
     </Compile>
+    <Compile Include="Serialization\DefaultLegacySettingsResolver.cs" />
+    <Compile Include="Serialization\ILegacySettingsObject.cs" />
+    <Compile Include="Serialization\ILegacySettingsResolver.cs" />
+    <Compile Include="Serialization\ISettingsReader.cs" />
     <Compile Include="KeyManager.cs" />
     <Compile Include="Logging\ConsoleLogWriter.cs" />
     <Compile Include="Logging\FileLogWriter.cs" />
     <Compile Include="Logging\ILogWriter.cs" />
     <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Serialization\ISettingsWriter.cs" />
+    <Compile Include="Serialization\JsonLegacySettings.cs" />
+    <Compile Include="Serialization\LegacySettingsObject.cs" />
+    <Compile Include="Serialization\LegacySettingsReader.cs" />
+    <Compile Include="Serialization\JsonSettingsWriter.cs" />
     <Compile Include="Server\QueryRequest.cs" />
     <Compile Include="Server\QueryResponse.cs" />
     <Compile Include="Server\ItemServer.cs" />
@@ -172,13 +181,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\JsonStreamReader.cs" />
     <Compile Include="Server\JsonStreamWriter.cs" />
-    <Compile Include="SettingsHolder.cs" />
+    <Compile Include="ApplicationSettings.cs" />
     <Compile Include="Gui\SettingsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\SettingsWindow.Designer.cs">
       <DependentUpon>SettingsWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Serialization\JsonSettingsReader.cs" />
+    <Compile Include="SettingsPersistence.cs" />
     <Compile Include="VersionChecker.cs" />
     <EmbeddedResource Include="Gui\Controls\AutoSplitSettingsRow.resx">
       <DependentUpon>AutoSplitSettingsRow.cs</DependentUpon>

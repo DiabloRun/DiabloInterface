@@ -12,9 +12,9 @@ namespace DiabloInterface.Gui
         private const string WindowTitleFormat = "Settings ({0})"; // {0} => Settings File Path
 
         AutoSplitTable autoSplitTable;
-        SettingsHolder settings;
+        ApplicationSettings settings;
 
-        public event Action<SettingsHolder> SettingsUpdated;
+        public event Action<ApplicationSettings> SettingsUpdated;
 
         bool dirty = false;
         public bool IsDirty
@@ -42,7 +42,7 @@ namespace DiabloInterface.Gui
             }
         }
 
-        public SettingsWindow(SettingsHolder settings)
+        public SettingsWindow(ApplicationSettings settings)
         {
             this.settings = settings;
             InitializeComponent();
@@ -227,7 +227,7 @@ namespace DiabloInterface.Gui
                 switch (result)
                 {
                     case DialogResult.Yes:
-                        Save();
+                        SaveSettings();
                         break;
                     case DialogResult.No:
                         break;
@@ -254,27 +254,57 @@ namespace DiabloInterface.Gui
             }
         }
 
-        void Save(string filename = null)
+        void OnSettingsUpdated()
         {
+            var updateEvent = SettingsUpdated;
+            if (updateEvent != null)
+            {
+                updateEvent(settings);
+            }
+        }
+
+        void SaveSettings(string filename = null)
+        {
+            UseWaitCursor = true;
+
             UpdateSettings();
 
-            // Save to current savefile.
+            // Persist settings to file.
+            var persistense = new SettingsPersistence();
             if (string.IsNullOrEmpty(filename))
-            {
-                settings.save();
-            }
-            // Save to selected savefile.
-            else
-            {
-                settings.saveAs(filename);
-                UpdateTitle();
-            }
+                 persistense.Save(settings);
+            else persistense.Save(settings, filename);
 
             MarkClean();
-            if (SettingsUpdated != null)
+            OnSettingsUpdated();
+
+            UseWaitCursor = false;
+        }
+
+        bool LoadSettings(string filename)
+        {
+            UseWaitCursor = true;
+
+            var persistence = new SettingsPersistence();
+            var settings = persistence.Load(filename);
+            if (settings != null)
             {
-                SettingsUpdated(settings);
+                this.settings = settings;
+
+                UpdateTitle();
+                InitializeSettings();
+
+                MarkClean();
+                OnSettingsUpdated();
+
+                UseWaitCursor = false;
+
+                return true;
             }
+
+            // Failed to persist settings.
+            UseWaitCursor = false;
+            return false;
         }
 
         private void LoadSettingsMenuItem_Click(object sender, EventArgs e)
@@ -282,20 +312,17 @@ namespace DiabloInterface.Gui
             OpenFileDialog d = new OpenFileDialog();
             if (d.ShowDialog() == DialogResult.OK)
             {
-                settings.loadFrom(d.FileName);
-                UpdateTitle();
-                InitializeSettings();
-
-                if (SettingsUpdated != null)
+                if (!LoadSettings(d.FileName))
                 {
-                    SettingsUpdated(settings);
+                    MessageBox.Show("Failed to open settings file, make sure it is a valid settings file.",
+                        "Settings Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
         private void SaveSettingsMenuItem_Click(object sender, EventArgs e)
         {
-            Save();
+            SaveSettings();
         }
 
         private void SaveSettingsAsMenuItem_Click(object sender, EventArgs e)
@@ -303,7 +330,7 @@ namespace DiabloInterface.Gui
             SaveFileDialog d = new SaveFileDialog();
             if (d.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(d.FileName))
             {
-                Save(d.FileName);
+                SaveSettings(d.FileName);
             }
         }
 
@@ -324,12 +351,12 @@ namespace DiabloInterface.Gui
 
         private void btnApply_Click(object sender, EventArgs e)
         {
-            Save();
+            SaveSettings();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            Save();
+            SaveSettings();
             Close();
         }
     }
