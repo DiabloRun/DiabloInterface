@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsWindow));
             this.FontLabel = new System.Windows.Forms.Label();
             this.FontGroup = new System.Windows.Forms.GroupBox();
+            this.fontComboBox = new DiabloInterface.Gui.Controls.FontComboBox();
             this.titleFontSizeNumeric = new System.Windows.Forms.NumericUpDown();
             this.fontSizeNumeric = new System.Windows.Forms.NumericUpDown();
             this.FontSizeLabel = new System.Windows.Forms.Label();
@@ -40,6 +41,7 @@
             this.AutoSplitGroup = new System.Windows.Forms.GroupBox();
             this.AutoSplitLayout = new System.Windows.Forms.TableLayoutPanel();
             this.AutoSplitToolbar = new System.Windows.Forms.Panel();
+            this.autoSplitHotkeyControl = new DiabloInterface.Gui.Controls.HotkeyControl();
             this.AutoSplitHotkeyLabel = new System.Windows.Forms.Label();
             this.AutoSplitTestHotkeyButton = new System.Windows.Forms.Button();
             this.EnableAutosplitCheckBox = new System.Windows.Forms.CheckBox();
@@ -75,12 +77,10 @@
             this.chkDisplayDeathCounter = new System.Windows.Forms.CheckBox();
             this.chkDisplayName = new System.Windows.Forms.CheckBox();
             this.mainPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.autoSplitHotkeyControl = new DiabloInterface.Gui.Controls.HotkeyControl();
-            this.fontComboBox = new DiabloInterface.Gui.Controls.FontComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.btnApply = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.btnApply = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
             this.FontGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
@@ -123,6 +123,17 @@
             this.FontGroup.TabIndex = 5;
             this.FontGroup.TabStop = false;
             this.FontGroup.Text = "Font";
+            // 
+            // fontComboBox
+            // 
+            this.fontComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.fontComboBox.DropDownWidth = 250;
+            this.fontComboBox.FormattingEnabled = true;
+            this.fontComboBox.Location = new System.Drawing.Point(105, 21);
+            this.fontComboBox.Name = "fontComboBox";
+            this.fontComboBox.Size = new System.Drawing.Size(117, 21);
+            this.fontComboBox.Sorted = true;
+            this.fontComboBox.TabIndex = 12;
             // 
             // titleFontSizeNumeric
             // 
@@ -235,6 +246,16 @@
             this.AutoSplitToolbar.Name = "AutoSplitToolbar";
             this.AutoSplitToolbar.Size = new System.Drawing.Size(514, 31);
             this.AutoSplitToolbar.TabIndex = 20;
+            // 
+            // autoSplitHotkeyControl
+            // 
+            this.autoSplitHotkeyControl.Hotkey = System.Windows.Forms.Keys.None;
+            this.autoSplitHotkeyControl.Location = new System.Drawing.Point(80, 7);
+            this.autoSplitHotkeyControl.Name = "autoSplitHotkeyControl";
+            this.autoSplitHotkeyControl.Size = new System.Drawing.Size(82, 20);
+            this.autoSplitHotkeyControl.TabIndex = 3;
+            this.autoSplitHotkeyControl.Text = "None";
+            this.autoSplitHotkeyControl.UseKeyWhitelist = true;
             // 
             // AutoSplitHotkeyLabel
             // 
@@ -657,301 +678,6 @@
             this.mainPanel.Size = new System.Drawing.Size(778, 492);
             this.mainPanel.TabIndex = 23;
             // 
-            // autoSplitHotkeyControl
-            // 
-            this.autoSplitHotkeyControl.Hotkey = System.Windows.Forms.Keys.None;
-            this.autoSplitHotkeyControl.Location = new System.Drawing.Point(80, 7);
-            this.autoSplitHotkeyControl.Name = "autoSplitHotkeyControl";
-            this.autoSplitHotkeyControl.Size = new System.Drawing.Size(82, 20);
-            this.autoSplitHotkeyControl.TabIndex = 3;
-            this.autoSplitHotkeyControl.Text = "None";
-            this.autoSplitHotkeyControl.UseKeyWhitelist = true;
-            // 
-            // fontComboBox
-            // 
-            this.fontComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.fontComboBox.DropDownWidth = 250;
-            this.fontComboBox.FormattingEnabled = true;
-            this.fontComboBox.Items.AddRange(new object[] {
-            "Adobe Caslon Pro",
-            "Adobe Caslon Pro Bold",
-            "Adobe Fangsong Std R",
-            "Adobe Garamond Pro",
-            "Adobe Garamond Pro Bold",
-            "Adobe Heiti Std R",
-            "Adobe Kaiti Std R",
-            "Adobe Ming Std L",
-            "Adobe Myungjo Std M",
-            "Adobe Song Std L",
-            "Agency FB",
-            "Algerian",
-            "Arial",
-            "Arial Black",
-            "Arial Narrow",
-            "Arial Rounded MT Bold",
-            "Arial Unicode MS",
-            "BankGothic Lt BT",
-            "Baskerville Old Face",
-            "Bauhaus 93",
-            "Bell Gothic Std Black",
-            "Bell Gothic Std Light",
-            "Bell MT",
-            "Berlin Sans FB",
-            "Berlin Sans FB Demi",
-            "Bernard MT Condensed",
-            "Birch Std",
-            "Blackadder ITC",
-            "Blackoak Std",
-            "Bodoni MT",
-            "Bodoni MT Black",
-            "Bodoni MT Condensed",
-            "Bodoni MT Poster Compressed",
-            "Book Antiqua",
-            "Bookman Old Style",
-            "Bookshelf Symbol 7",
-            "Bradley Hand ITC",
-            "Britannic Bold",
-            "Broadway",
-            "Broadway BT",
-            "Brush Script MT",
-            "Brush Script Std",
-            "Calibri",
-            "Calibri Light",
-            "Californian FB",
-            "Calisto MT",
-            "Cambria",
-            "Cambria Math",
-            "Candara",
-            "Castellar",
-            "Centaur",
-            "Century",
-            "Century Gothic",
-            "Century Schoolbook",
-            "Chaparral Pro",
-            "Charlemagne Std",
-            "Chiller",
-            "Colonna MT",
-            "Comic Sans MS",
-            "Consolas",
-            "Constantia",
-            "Cooper Black",
-            "Cooper Std Black",
-            "Copperplate Gothic Bold",
-            "Copperplate Gothic Light",
-            "Corbel",
-            "Courier New",
-            "Curlz MT",
-            "Diablo",
-            "Ebrima",
-            "Eccentric Std",
-            "Edwardian Script ITC",
-            "Elephant",
-            "Engravers MT",
-            "Eras Bold ITC",
-            "Eras Demi ITC",
-            "Eras Light ITC",
-            "Eras Medium ITC",
-            "Felix Titling",
-            "Footlight MT Light",
-            "Forte",
-            "Franklin Gothic Book",
-            "Franklin Gothic Demi",
-            "Franklin Gothic Demi Cond",
-            "Franklin Gothic Heavy",
-            "Franklin Gothic Medium",
-            "Franklin Gothic Medium Cond",
-            "Freestyle Script",
-            "French Script MT",
-            "Gabriola",
-            "Gadugi",
-            "Garamond",
-            "Georgia",
-            "Giddyup Std",
-            "Gigi",
-            "Gill Sans MT",
-            "Gill Sans MT Condensed",
-            "Gill Sans MT Ext Condensed Bold",
-            "Gill Sans Ultra Bold",
-            "Gill Sans Ultra Bold Condensed",
-            "Gloucester MT Extra Condensed",
-            "Goudy Old Style",
-            "Goudy Stout",
-            "Haettenschweiler",
-            "Harlow Solid Italic",
-            "Harrington",
-            "High Tower Text",
-            "Hobo Std",
-            "Impact",
-            "Imprint MT Shadow",
-            "Informal Roman",
-            "Javanese Text",
-            "Jokerman",
-            "Juice ITC",
-            "Kozuka Gothic Pro B",
-            "Kozuka Gothic Pro EL",
-            "Kozuka Gothic Pro H",
-            "Kozuka Gothic Pro L",
-            "Kozuka Gothic Pro M",
-            "Kozuka Gothic Pro R",
-            "Kozuka Mincho Pro B",
-            "Kozuka Mincho Pro EL",
-            "Kozuka Mincho Pro H",
-            "Kozuka Mincho Pro L",
-            "Kozuka Mincho Pro M",
-            "Kozuka Mincho Pro R",
-            "Kristen ITC",
-            "Kunstler Script",
-            "Leelawadee UI",
-            "Leelawadee UI Semilight",
-            "Letter Gothic Std",
-            "Lithos Pro Regular",
-            "Lucida Blackletter",
-            "Lucida Bright",
-            "Lucida Calligraphy",
-            "Lucida Console",
-            "Lucida Fax",
-            "Lucida Handwriting",
-            "Lucida Sans",
-            "Lucida Sans Typewriter",
-            "Lucida Sans Unicode",
-            "Magneto",
-            "Maiandra GD",
-            "Malgun Gothic",
-            "Malgun Gothic Semilight",
-            "Marlett",
-            "Matura MT Script Capitals",
-            "Meiryo",
-            "Meiryo UI",
-            "Mesquite Std",
-            "Microsoft Himalaya",
-            "Microsoft JhengHei",
-            "Microsoft JhengHei Light",
-            "Microsoft JhengHei UI",
-            "Microsoft JhengHei UI Light",
-            "Microsoft New Tai Lue",
-            "Microsoft PhagsPa",
-            "Microsoft Sans Serif",
-            "Microsoft Tai Le",
-            "Microsoft YaHei",
-            "Microsoft YaHei Light",
-            "Microsoft YaHei UI",
-            "Microsoft YaHei UI Light",
-            "Microsoft Yi Baiti",
-            "MingLiU-ExtB",
-            "MingLiU_HKSCS-ExtB",
-            "Minion Pro",
-            "Minion Pro Cond",
-            "Minion Pro Med",
-            "Minion Pro SmBd",
-            "Mistral",
-            "Modern No. 20",
-            "Mongolian Baiti",
-            "Monotype Corsiva",
-            "MS Gothic",
-            "MS Mincho",
-            "MS Outlook",
-            "MS PGothic",
-            "MS PMincho",
-            "MS Reference Sans Serif",
-            "MS Reference Specialty",
-            "MS UI Gothic",
-            "MT Extra",
-            "MV Boli",
-            "Myanmar Text",
-            "Myriad Pro",
-            "Myriad Pro Cond",
-            "Myriad Pro Light",
-            "Niagara Engraved",
-            "Niagara Solid",
-            "Nirmala UI",
-            "Nirmala UI Semilight",
-            "NSimSun",
-            "Nueva Std Cond",
-            "OCR A Extended",
-            "OCR A Std",
-            "Old English Text MT",
-            "Onyx",
-            "Orator Std",
-            "Palace Script MT",
-            "Palatino Linotype",
-            "Papyrus",
-            "Parchment",
-            "Perpetua",
-            "Perpetua Titling MT",
-            "Playbill",
-            "PMingLiU-ExtB",
-            "Poor Richard",
-            "Poplar Std",
-            "Prestige Elite Std",
-            "Pristina",
-            "Rage Italic",
-            "Ravie",
-            "Rockwell",
-            "Rockwell Condensed",
-            "Rockwell Extra Bold",
-            "Rosewood Std Regular",
-            "Script MT Bold",
-            "Segoe MDL2 Assets",
-            "Segoe Print",
-            "Segoe Script",
-            "Segoe UI",
-            "Segoe UI Black",
-            "Segoe UI Emoji",
-            "Segoe UI Historic",
-            "Segoe UI Light",
-            "Segoe UI Semibold",
-            "Segoe UI Semilight",
-            "Segoe UI Symbol",
-            "Showcard Gothic",
-            "SimSun",
-            "SimSun-ExtB",
-            "Sitka Banner",
-            "Sitka Display",
-            "Sitka Heading",
-            "Sitka Small",
-            "Sitka Subheading",
-            "Sitka Text",
-            "Snap ITC",
-            "Stencil",
-            "Stencil Std",
-            "Sylfaen",
-            "Symbol",
-            "Tahoma",
-            "Tekton Pro",
-            "Tekton Pro Cond",
-            "Tekton Pro Ext",
-            "Tempus Sans ITC",
-            "Times New Roman",
-            "Trajan Pro",
-            "Trebuchet MS",
-            "Tw Cen MT",
-            "Tw Cen MT Condensed",
-            "Tw Cen MT Condensed Extra Bold",
-            "Verdana",
-            "Viner Hand ITC",
-            "Vivaldi",
-            "Vladimir Script",
-            "Webdings",
-            "Wide Latin",
-            "Wingdings",
-            "Wingdings 2",
-            "Wingdings 3",
-            "Yu Gothic",
-            "Yu Gothic Light",
-            "Yu Gothic Medium",
-            "Yu Gothic UI",
-            "Yu Gothic UI Light",
-            "Yu Gothic UI Semibold",
-            "Yu Gothic UI Semilight",
-            "Yu Mincho",
-            "Yu Mincho Demibold",
-            "Yu Mincho Light"});
-            this.fontComboBox.Location = new System.Drawing.Point(105, 21);
-            this.fontComboBox.Name = "fontComboBox";
-            this.fontComboBox.Size = new System.Drawing.Size(117, 21);
-            this.fontComboBox.Sorted = true;
-            this.fontComboBox.TabIndex = 12;
-            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.btnCancel);
@@ -964,15 +690,15 @@
             this.panel1.Size = new System.Drawing.Size(778, 32);
             this.panel1.TabIndex = 21;
             // 
-            // btnSave
+            // btnCancel
             // 
-            this.btnSave.Location = new System.Drawing.Point(694, 4);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 0;
-            this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnCancel.Location = new System.Drawing.Point(527, 4);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 0;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnApply
             // 
@@ -984,15 +710,15 @@
             this.btnApply.UseVisualStyleBackColor = true;
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
-            // btnCancel
+            // btnSave
             // 
-            this.btnCancel.Location = new System.Drawing.Point(527, 4);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 0;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnSave.Location = new System.Drawing.Point(694, 4);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 0;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // SettingsWindow
             // 

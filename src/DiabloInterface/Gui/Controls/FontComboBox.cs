@@ -27,8 +27,13 @@ namespace DiabloInterface.Gui.Controls
             stringFormat.LineAlignment = StringAlignment.Center;
             
             CalculateItemHeight();
-            // Fonts are initialized immediately. if done at handlecreated there is a huge white space at bottom of dropdown
-            if (!DesignMode)
+
+            // Fonts are initialized only if not in designmode 
+            // instead of only DesignMode property @see http://stackoverflow.com/questions/1166226/detecting-design-mode-from-a-controls-constructor
+            bool inDesigner = DesignMode
+                || (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+                || (System.Diagnostics.Process.GetCurrentProcess().ProcessName == "devenv");
+            if (!inDesigner)
             {
                 PopulateFonts();
             }
