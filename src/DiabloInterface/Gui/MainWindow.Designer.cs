@@ -53,19 +53,18 @@
             this.iasLabel = new System.Windows.Forms.Label();
             this.panelRuneDisplay = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.panelSpacer = new System.Windows.Forms.Panel();
-            this.panelSimpleStats = new System.Windows.Forms.FlowLayoutPanel();
             this.panelStats = new System.Windows.Forms.FlowLayoutPanel();
             this.panelBaseStats = new System.Windows.Forms.TableLayoutPanel();
             this.panelAdvancedStats = new System.Windows.Forms.TableLayoutPanel();
             this.panelResistances = new System.Windows.Forms.TableLayoutPanel();
+            this.panelSimpleStats = new System.Windows.Forms.TableLayoutPanel();
             this.contextMenu.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
-            this.panelSimpleStats.SuspendLayout();
             this.panelStats.SuspendLayout();
             this.panelBaseStats.SuspendLayout();
             this.panelAdvancedStats.SuspendLayout();
             this.panelResistances.SuspendLayout();
+            this.panelSimpleStats.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvlLabel
@@ -73,7 +72,8 @@
             this.lvlLabel.AutoSize = true;
             this.lvlLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lvlLabel.ForeColor = System.Drawing.Color.White;
-            this.lvlLabel.Location = new System.Drawing.Point(73, 0);
+            this.lvlLabel.Location = new System.Drawing.Point(175, 0);
+            this.lvlLabel.Margin = new System.Windows.Forms.Padding(0);
             this.lvlLabel.Name = "lvlLabel";
             this.lvlLabel.Size = new System.Drawing.Size(56, 16);
             this.lvlLabel.TabIndex = 2;
@@ -84,7 +84,7 @@
             this.nameLabel.AutoSize = true;
             this.nameLabel.Font = new System.Drawing.Font("Courier New", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.nameLabel.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.nameLabel.Location = new System.Drawing.Point(0, 10);
+            this.nameLabel.Location = new System.Drawing.Point(3, 5);
             this.nameLabel.Margin = new System.Windows.Forms.Padding(0);
             this.nameLabel.Name = "nameLabel";
             this.nameLabel.Size = new System.Drawing.Size(138, 27);
@@ -192,7 +192,8 @@
             this.goldLabel.AutoSize = true;
             this.goldLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.goldLabel.ForeColor = System.Drawing.Color.Gold;
-            this.goldLabel.Location = new System.Drawing.Point(3, 0);
+            this.goldLabel.Location = new System.Drawing.Point(0, 0);
+            this.goldLabel.Margin = new System.Windows.Forms.Padding(0);
             this.goldLabel.Name = "goldLabel";
             this.goldLabel.Size = new System.Drawing.Size(64, 16);
             this.goldLabel.TabIndex = 16;
@@ -203,11 +204,11 @@
             this.deathsLabel.AutoSize = true;
             this.deathsLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.deathsLabel.ForeColor = System.Drawing.Color.Snow;
-            this.deathsLabel.Location = new System.Drawing.Point(135, 0);
+            this.deathsLabel.Location = new System.Drawing.Point(6, 32);
             this.deathsLabel.Name = "deathsLabel";
-            this.deathsLabel.Size = new System.Drawing.Size(56, 16);
+            this.deathsLabel.Size = new System.Drawing.Size(80, 16);
             this.deathsLabel.TabIndex = 17;
-            this.deathsLabel.Text = "RIP: -";
+            this.deathsLabel.Text = "DEATHS: -";
             // 
             // contextMenu
             // 
@@ -304,7 +305,7 @@
             // panelRuneDisplay
             // 
             this.panelRuneDisplay.AutoSize = true;
-            this.panelRuneDisplay.Location = new System.Drawing.Point(3, 134);
+            this.panelRuneDisplay.Location = new System.Drawing.Point(6, 151);
             this.panelRuneDisplay.MaximumSize = new System.Drawing.Size(300, 0);
             this.panelRuneDisplay.MinimumSize = new System.Drawing.Size(200, 28);
             this.panelRuneDisplay.Name = "panelRuneDisplay";
@@ -314,38 +315,19 @@
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.AutoSize = true;
-            this.flowLayoutPanel1.Controls.Add(this.panelSpacer);
             this.flowLayoutPanel1.Controls.Add(this.nameLabel);
+            this.flowLayoutPanel1.Controls.Add(this.deathsLabel);
             this.flowLayoutPanel1.Controls.Add(this.panelSimpleStats);
             this.flowLayoutPanel1.Controls.Add(this.panelStats);
             this.flowLayoutPanel1.Controls.Add(this.panelRuneDisplay);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(284, 175);
+            this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(284, 192);
             this.flowLayoutPanel1.TabIndex = 20;
-            // 
-            // panelSpacer
-            // 
-            this.panelSpacer.Location = new System.Drawing.Point(0, 0);
-            this.panelSpacer.Margin = new System.Windows.Forms.Padding(0);
-            this.panelSpacer.Name = "panelSpacer";
-            this.panelSpacer.Size = new System.Drawing.Size(278, 10);
-            this.panelSpacer.TabIndex = 25;
-            // 
-            // panelSimpleStats
-            // 
-            this.panelSimpleStats.AutoSize = true;
-            this.panelSimpleStats.Controls.Add(this.goldLabel);
-            this.panelSimpleStats.Controls.Add(this.lvlLabel);
-            this.panelSimpleStats.Controls.Add(this.deathsLabel);
-            this.panelSimpleStats.Location = new System.Drawing.Point(0, 37);
-            this.panelSimpleStats.Margin = new System.Windows.Forms.Padding(0);
-            this.panelSimpleStats.MaximumSize = new System.Drawing.Size(300, 0);
-            this.panelSimpleStats.Name = "panelSimpleStats";
-            this.panelSimpleStats.Size = new System.Drawing.Size(194, 16);
-            this.panelSimpleStats.TabIndex = 26;
             // 
             // panelStats
             // 
@@ -354,9 +336,9 @@
             this.panelStats.Controls.Add(this.panelAdvancedStats);
             this.panelStats.Controls.Add(this.panelResistances);
             this.panelStats.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelStats.Location = new System.Drawing.Point(3, 56);
+            this.panelStats.Location = new System.Drawing.Point(6, 73);
             this.panelStats.Name = "panelStats";
-            this.panelStats.Size = new System.Drawing.Size(272, 72);
+            this.panelStats.Size = new System.Drawing.Size(270, 72);
             this.panelStats.TabIndex = 27;
             // 
             // panelBaseStats
@@ -418,6 +400,21 @@
             this.panelResistances.Size = new System.Drawing.Size(100, 72);
             this.panelResistances.TabIndex = 28;
             // 
+            // panelSimpleStats
+            // 
+            this.panelSimpleStats.ColumnCount = 2;
+            this.panelSimpleStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65F));
+            this.panelSimpleStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
+            this.panelSimpleStats.Controls.Add(this.goldLabel, 0, 0);
+            this.panelSimpleStats.Controls.Add(this.lvlLabel, 1, 0);
+            this.panelSimpleStats.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelSimpleStats.Location = new System.Drawing.Point(6, 51);
+            this.panelSimpleStats.Name = "panelSimpleStats";
+            this.panelSimpleStats.RowCount = 1;
+            this.panelSimpleStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.panelSimpleStats.Size = new System.Drawing.Size(270, 16);
+            this.panelSimpleStats.TabIndex = 28;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -425,7 +422,7 @@
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(284, 175);
+            this.ClientSize = new System.Drawing.Size(284, 192);
             this.ContextMenuStrip = this.contextMenu;
             this.Controls.Add(this.flowLayoutPanel1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
@@ -433,7 +430,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(300, 0);
+            this.MinimumSize = new System.Drawing.Size(300, 39);
             this.Name = "MainWindow";
             this.Text = "DiabloInterface";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
@@ -441,8 +438,6 @@
             this.contextMenu.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
-            this.panelSimpleStats.ResumeLayout(false);
-            this.panelSimpleStats.PerformLayout();
             this.panelStats.ResumeLayout(false);
             this.panelBaseStats.ResumeLayout(false);
             this.panelBaseStats.PerformLayout();
@@ -450,6 +445,8 @@
             this.panelAdvancedStats.PerformLayout();
             this.panelResistances.ResumeLayout(false);
             this.panelResistances.PerformLayout();
+            this.panelSimpleStats.ResumeLayout(false);
+            this.panelSimpleStats.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -479,12 +476,11 @@
         private System.Windows.Forms.Panel panelRuneDisplay;
         private System.Windows.Forms.ToolStripMenuItem debugMenuItem;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.Panel panelSpacer;
-        private System.Windows.Forms.FlowLayoutPanel panelSimpleStats;
         private System.Windows.Forms.FlowLayoutPanel panelStats;
         private System.Windows.Forms.TableLayoutPanel panelBaseStats;
         private System.Windows.Forms.TableLayoutPanel panelAdvancedStats;
         private System.Windows.Forms.TableLayoutPanel panelResistances;
+        private System.Windows.Forms.TableLayoutPanel panelSimpleStats;
     }
 }
 

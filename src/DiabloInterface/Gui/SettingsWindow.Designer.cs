@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsWindow));
             this.FontLabel = new System.Windows.Forms.Label();
             this.FontGroup = new System.Windows.Forms.GroupBox();
-            this.fontComboBox = new DiabloInterface.Gui.Controls.FontComboBox();
             this.titleFontSizeNumeric = new System.Windows.Forms.NumericUpDown();
             this.fontSizeNumeric = new System.Windows.Forms.NumericUpDown();
             this.FontSizeLabel = new System.Windows.Forms.Label();
@@ -41,7 +40,6 @@
             this.AutoSplitGroup = new System.Windows.Forms.GroupBox();
             this.AutoSplitLayout = new System.Windows.Forms.TableLayoutPanel();
             this.AutoSplitToolbar = new System.Windows.Forms.Panel();
-            this.autoSplitHotkeyControl = new DiabloInterface.Gui.Controls.HotkeyControl();
             this.AutoSplitHotkeyLabel = new System.Windows.Forms.Label();
             this.AutoSplitTestHotkeyButton = new System.Windows.Forms.Button();
             this.EnableAutosplitCheckBox = new System.Windows.Forms.CheckBox();
@@ -63,7 +61,6 @@
             this.SaveSettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.CloseSettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mainPanel = new System.Windows.Forms.Panel();
             this.VerticalSplitContainer = new System.Windows.Forms.TableLayoutPanel();
             this.HorizontalSplitContainer = new System.Windows.Forms.TableLayoutPanel();
             this.RightPanelLayout = new System.Windows.Forms.FlowLayoutPanel();
@@ -77,6 +74,13 @@
             this.chkDisplayBaseStats = new System.Windows.Forms.CheckBox();
             this.chkDisplayDeathCounter = new System.Windows.Forms.CheckBox();
             this.chkDisplayName = new System.Windows.Forms.CheckBox();
+            this.mainPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.autoSplitHotkeyControl = new DiabloInterface.Gui.Controls.HotkeyControl();
+            this.fontComboBox = new DiabloInterface.Gui.Controls.FontComboBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnApply = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.FontGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
@@ -88,11 +92,12 @@
             this.VersionGroup.SuspendLayout();
             this.RuneDisplayGroup.SuspendLayout();
             this.SettingsMenuStrip.SuspendLayout();
-            this.mainPanel.SuspendLayout();
             this.VerticalSplitContainer.SuspendLayout();
             this.HorizontalSplitContainer.SuspendLayout();
             this.RightPanelLayout.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.mainPanel.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // FontLabel
@@ -100,7 +105,7 @@
             this.FontLabel.AutoSize = true;
             this.FontLabel.Location = new System.Drawing.Point(6, 24);
             this.FontLabel.Name = "FontLabel";
-            this.FontLabel.Size = new System.Drawing.Size(32, 13);
+            this.FontLabel.Size = new System.Drawing.Size(31, 13);
             this.FontLabel.TabIndex = 2;
             this.FontLabel.Text = "Font:";
             // 
@@ -118,17 +123,6 @@
             this.FontGroup.TabIndex = 5;
             this.FontGroup.TabStop = false;
             this.FontGroup.Text = "Font";
-            // 
-            // fontComboBox
-            // 
-            this.fontComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.fontComboBox.DropDownWidth = 250;
-            this.fontComboBox.FormattingEnabled = true;
-            this.fontComboBox.Location = new System.Drawing.Point(105, 21);
-            this.fontComboBox.Name = "fontComboBox";
-            this.fontComboBox.Size = new System.Drawing.Size(117, 21);
-            this.fontComboBox.Sorted = true;
-            this.fontComboBox.TabIndex = 12;
             // 
             // titleFontSizeNumeric
             // 
@@ -170,7 +164,7 @@
             this.FontSizeLabel.AutoSize = true;
             this.FontSizeLabel.Location = new System.Drawing.Point(6, 51);
             this.FontSizeLabel.Name = "FontSizeLabel";
-            this.FontSizeLabel.Size = new System.Drawing.Size(57, 13);
+            this.FontSizeLabel.Size = new System.Drawing.Size(54, 13);
             this.FontSizeLabel.TabIndex = 7;
             this.FontSizeLabel.Text = "Font Size:";
             // 
@@ -179,7 +173,7 @@
             this.TitleFontSizeLabel.AutoSize = true;
             this.TitleFontSizeLabel.Location = new System.Drawing.Point(6, 77);
             this.TitleFontSizeLabel.Name = "TitleFontSizeLabel";
-            this.TitleFontSizeLabel.Size = new System.Drawing.Size(82, 13);
+            this.TitleFontSizeLabel.Size = new System.Drawing.Size(77, 13);
             this.TitleFontSizeLabel.TabIndex = 6;
             this.TitleFontSizeLabel.Text = "Title Font Size:";
             // 
@@ -188,7 +182,7 @@
             this.CreateFilesCheckBox.AutoSize = true;
             this.CreateFilesCheckBox.Location = new System.Drawing.Point(10, 19);
             this.CreateFilesCheckBox.Name = "CreateFilesCheckBox";
-            this.CreateFilesCheckBox.Size = new System.Drawing.Size(83, 17);
+            this.CreateFilesCheckBox.Size = new System.Drawing.Size(78, 17);
             this.CreateFilesCheckBox.TabIndex = 8;
             this.CreateFilesCheckBox.Text = "Create files";
             this.CreateFilesCheckBox.UseVisualStyleBackColor = true;
@@ -209,7 +203,7 @@
             this.AutoSplitGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AutoSplitGroup.Location = new System.Drawing.Point(3, 3);
             this.AutoSplitGroup.Name = "AutoSplitGroup";
-            this.AutoSplitGroup.Size = new System.Drawing.Size(526, 335);
+            this.AutoSplitGroup.Size = new System.Drawing.Size(526, 332);
             this.AutoSplitGroup.TabIndex = 10;
             this.AutoSplitGroup.TabStop = false;
             this.AutoSplitGroup.Text = "Auto-Split";
@@ -225,7 +219,7 @@
             this.AutoSplitLayout.RowCount = 2;
             this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.AutoSplitLayout.Size = new System.Drawing.Size(520, 316);
+            this.AutoSplitLayout.Size = new System.Drawing.Size(520, 313);
             this.AutoSplitLayout.TabIndex = 21;
             // 
             // AutoSplitToolbar
@@ -237,27 +231,17 @@
             this.AutoSplitToolbar.Controls.Add(this.EnableAutosplitCheckBox);
             this.AutoSplitToolbar.Controls.Add(this.AddAutoSplitButton);
             this.AutoSplitToolbar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AutoSplitToolbar.Location = new System.Drawing.Point(3, 282);
+            this.AutoSplitToolbar.Location = new System.Drawing.Point(3, 279);
             this.AutoSplitToolbar.Name = "AutoSplitToolbar";
             this.AutoSplitToolbar.Size = new System.Drawing.Size(514, 31);
             this.AutoSplitToolbar.TabIndex = 20;
-            // 
-            // autoSplitHotkeyControl
-            // 
-            this.autoSplitHotkeyControl.Hotkey = System.Windows.Forms.Keys.None;
-            this.autoSplitHotkeyControl.Location = new System.Drawing.Point(80, 7);
-            this.autoSplitHotkeyControl.Name = "autoSplitHotkeyControl";
-            this.autoSplitHotkeyControl.Size = new System.Drawing.Size(82, 20);
-            this.autoSplitHotkeyControl.TabIndex = 3;
-            this.autoSplitHotkeyControl.Text = "None";
-            this.autoSplitHotkeyControl.UseKeyWhitelist = true;
             // 
             // AutoSplitHotkeyLabel
             // 
             this.AutoSplitHotkeyLabel.AutoSize = true;
             this.AutoSplitHotkeyLabel.Location = new System.Drawing.Point(3, 10);
             this.AutoSplitHotkeyLabel.Name = "AutoSplitHotkeyLabel";
-            this.AutoSplitHotkeyLabel.Size = new System.Drawing.Size(71, 13);
+            this.AutoSplitHotkeyLabel.Size = new System.Drawing.Size(67, 13);
             this.AutoSplitHotkeyLabel.TabIndex = 13;
             this.AutoSplitHotkeyLabel.Text = "Split-Hotkey:";
             // 
@@ -275,9 +259,9 @@
             // 
             this.EnableAutosplitCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.EnableAutosplitCheckBox.AutoSize = true;
-            this.EnableAutosplitCheckBox.Location = new System.Drawing.Point(366, 9);
+            this.EnableAutosplitCheckBox.Location = new System.Drawing.Point(367, 9);
             this.EnableAutosplitCheckBox.Name = "EnableAutosplitCheckBox";
-            this.EnableAutosplitCheckBox.Size = new System.Drawing.Size(60, 17);
+            this.EnableAutosplitCheckBox.Size = new System.Drawing.Size(59, 17);
             this.EnableAutosplitCheckBox.TabIndex = 1;
             this.EnableAutosplitCheckBox.Text = "Enable";
             this.EnableAutosplitCheckBox.UseVisualStyleBackColor = true;
@@ -321,7 +305,7 @@
             this.CheckUpdatesCheckBox.AutoSize = true;
             this.CheckUpdatesCheckBox.Location = new System.Drawing.Point(10, 19);
             this.CheckUpdatesCheckBox.Name = "CheckUpdatesCheckBox";
-            this.CheckUpdatesCheckBox.Size = new System.Drawing.Size(153, 17);
+            this.CheckUpdatesCheckBox.Size = new System.Drawing.Size(148, 17);
             this.CheckUpdatesCheckBox.TabIndex = 1;
             this.CheckUpdatesCheckBox.Text = "Check for updates at start";
             this.CheckUpdatesCheckBox.UseVisualStyleBackColor = true;
@@ -343,7 +327,7 @@
             this.VersionLabel.AutoSize = true;
             this.VersionLabel.Location = new System.Drawing.Point(6, 20);
             this.VersionLabel.Name = "VersionLabel";
-            this.VersionLabel.Size = new System.Drawing.Size(48, 13);
+            this.VersionLabel.Size = new System.Drawing.Size(45, 13);
             this.VersionLabel.TabIndex = 1;
             this.VersionLabel.Text = "Version:";
             // 
@@ -366,7 +350,7 @@
             this.RuneDisplayGroup.Controls.Add(this.AddRuneButton);
             this.RuneDisplayGroup.Controls.Add(this.RuneComboBox);
             this.RuneDisplayGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RuneDisplayGroup.Location = new System.Drawing.Point(3, 344);
+            this.RuneDisplayGroup.Location = new System.Drawing.Point(3, 341);
             this.RuneDisplayGroup.Name = "RuneDisplayGroup";
             this.RuneDisplayGroup.Size = new System.Drawing.Size(526, 110);
             this.RuneDisplayGroup.TabIndex = 19;
@@ -459,14 +443,14 @@
             this.toolStripSeparator1,
             this.CloseSettingsMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // LoadSettingsMenuItem
             // 
             this.LoadSettingsMenuItem.Image = global::DiabloInterface.Properties.Resources.folder_explore;
             this.LoadSettingsMenuItem.Name = "LoadSettingsMenuItem";
-            this.LoadSettingsMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.LoadSettingsMenuItem.Size = new System.Drawing.Size(141, 22);
             this.LoadSettingsMenuItem.Text = "Load Config";
             this.LoadSettingsMenuItem.Click += new System.EventHandler(this.LoadSettingsMenuItem_Click);
             // 
@@ -474,7 +458,7 @@
             // 
             this.SaveSettingsAsMenuItem.Image = global::DiabloInterface.Properties.Resources.disk;
             this.SaveSettingsAsMenuItem.Name = "SaveSettingsAsMenuItem";
-            this.SaveSettingsAsMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.SaveSettingsAsMenuItem.Size = new System.Drawing.Size(141, 22);
             this.SaveSettingsAsMenuItem.Text = "Save As";
             this.SaveSettingsAsMenuItem.Click += new System.EventHandler(this.SaveSettingsAsMenuItem_Click);
             // 
@@ -482,32 +466,23 @@
             // 
             this.SaveSettingsMenuItem.Image = global::DiabloInterface.Properties.Resources.disk;
             this.SaveSettingsMenuItem.Name = "SaveSettingsMenuItem";
-            this.SaveSettingsMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.SaveSettingsMenuItem.Size = new System.Drawing.Size(141, 22);
             this.SaveSettingsMenuItem.Text = "Save";
             this.SaveSettingsMenuItem.Click += new System.EventHandler(this.SaveSettingsMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(138, 6);
             // 
             // CloseSettingsMenuItem
             // 
             this.CloseSettingsMenuItem.Image = global::DiabloInterface.Properties.Resources.cross;
             this.CloseSettingsMenuItem.Name = "CloseSettingsMenuItem";
             this.CloseSettingsMenuItem.ShowShortcutKeys = false;
-            this.CloseSettingsMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.CloseSettingsMenuItem.Size = new System.Drawing.Size(141, 22);
             this.CloseSettingsMenuItem.Text = "Close Settings";
             this.CloseSettingsMenuItem.Click += new System.EventHandler(this.CloseSettingsMenuItem_Click);
-            // 
-            // mainPanel
-            // 
-            this.mainPanel.Controls.Add(this.VerticalSplitContainer);
-            this.mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainPanel.Location = new System.Drawing.Point(0, 24);
-            this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(778, 463);
-            this.mainPanel.TabIndex = 22;
             // 
             // VerticalSplitContainer
             // 
@@ -518,10 +493,11 @@
             this.VerticalSplitContainer.Controls.Add(this.RightPanelLayout, 1, 0);
             this.VerticalSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.VerticalSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this.VerticalSplitContainer.Margin = new System.Windows.Forms.Padding(0);
             this.VerticalSplitContainer.Name = "VerticalSplitContainer";
             this.VerticalSplitContainer.RowCount = 1;
             this.VerticalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.VerticalSplitContainer.Size = new System.Drawing.Size(778, 463);
+            this.VerticalSplitContainer.Size = new System.Drawing.Size(778, 460);
             this.VerticalSplitContainer.TabIndex = 20;
             // 
             // HorizontalSplitContainer
@@ -536,7 +512,7 @@
             this.HorizontalSplitContainer.RowCount = 2;
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.HorizontalSplitContainer.Size = new System.Drawing.Size(532, 457);
+            this.HorizontalSplitContainer.Size = new System.Drawing.Size(532, 454);
             this.HorizontalSplitContainer.TabIndex = 0;
             // 
             // RightPanelLayout
@@ -550,7 +526,7 @@
             this.RightPanelLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.RightPanelLayout.Location = new System.Drawing.Point(541, 3);
             this.RightPanelLayout.Name = "RightPanelLayout";
-            this.RightPanelLayout.Size = new System.Drawing.Size(234, 457);
+            this.RightPanelLayout.Size = new System.Drawing.Size(234, 454);
             this.RightPanelLayout.TabIndex = 1;
             // 
             // groupBox1
@@ -589,7 +565,7 @@
             this.chkDisplayRunes.AutoSize = true;
             this.chkDisplayRunes.Location = new System.Drawing.Point(141, 88);
             this.chkDisplayRunes.Name = "chkDisplayRunes";
-            this.chkDisplayRunes.Size = new System.Drawing.Size(58, 17);
+            this.chkDisplayRunes.Size = new System.Drawing.Size(57, 17);
             this.chkDisplayRunes.TabIndex = 6;
             this.chkDisplayRunes.Text = "Runes";
             this.chkDisplayRunes.UseVisualStyleBackColor = true;
@@ -600,7 +576,7 @@
             this.chkDisplayAdvancedStats.ForeColor = System.Drawing.SystemColors.ControlText;
             this.chkDisplayAdvancedStats.Location = new System.Drawing.Point(10, 88);
             this.chkDisplayAdvancedStats.Name = "chkDisplayAdvancedStats";
-            this.chkDisplayAdvancedStats.Size = new System.Drawing.Size(126, 17);
+            this.chkDisplayAdvancedStats.Size = new System.Drawing.Size(117, 17);
             this.chkDisplayAdvancedStats.TabIndex = 5;
             this.chkDisplayAdvancedStats.Text = "(!) Fcr, Frw, Fhr, Ias";
             this.chkDisplayAdvancedStats.UseVisualStyleBackColor = true;
@@ -610,7 +586,7 @@
             this.chkDisplayLevel.AutoSize = true;
             this.chkDisplayLevel.Location = new System.Drawing.Point(141, 42);
             this.chkDisplayLevel.Name = "chkDisplayLevel";
-            this.chkDisplayLevel.Size = new System.Drawing.Size(53, 17);
+            this.chkDisplayLevel.Size = new System.Drawing.Size(52, 17);
             this.chkDisplayLevel.TabIndex = 4;
             this.chkDisplayLevel.Text = "Level";
             this.chkDisplayLevel.UseVisualStyleBackColor = true;
@@ -620,7 +596,7 @@
             this.chkDisplayGold.AutoSize = true;
             this.chkDisplayGold.Location = new System.Drawing.Point(10, 42);
             this.chkDisplayGold.Name = "chkDisplayGold";
-            this.chkDisplayGold.Size = new System.Drawing.Size(50, 17);
+            this.chkDisplayGold.Size = new System.Drawing.Size(48, 17);
             this.chkDisplayGold.TabIndex = 4;
             this.chkDisplayGold.Text = "Gold";
             this.chkDisplayGold.UseVisualStyleBackColor = true;
@@ -630,7 +606,7 @@
             this.chkDisplayResistances.AutoSize = true;
             this.chkDisplayResistances.Location = new System.Drawing.Point(141, 65);
             this.chkDisplayResistances.Name = "chkDisplayResistances";
-            this.chkDisplayResistances.Size = new System.Drawing.Size(88, 17);
+            this.chkDisplayResistances.Size = new System.Drawing.Size(84, 17);
             this.chkDisplayResistances.TabIndex = 3;
             this.chkDisplayResistances.Text = "Resistances";
             this.chkDisplayResistances.UseVisualStyleBackColor = true;
@@ -640,7 +616,7 @@
             this.chkDisplayBaseStats.AutoSize = true;
             this.chkDisplayBaseStats.Location = new System.Drawing.Point(10, 65);
             this.chkDisplayBaseStats.Name = "chkDisplayBaseStats";
-            this.chkDisplayBaseStats.Size = new System.Drawing.Size(110, 17);
+            this.chkDisplayBaseStats.Size = new System.Drawing.Size(107, 17);
             this.chkDisplayBaseStats.TabIndex = 2;
             this.chkDisplayBaseStats.Text = "Str, Dex, Vit, Ene";
             this.chkDisplayBaseStats.UseVisualStyleBackColor = true;
@@ -650,7 +626,7 @@
             this.chkDisplayDeathCounter.AutoSize = true;
             this.chkDisplayDeathCounter.Location = new System.Drawing.Point(141, 19);
             this.chkDisplayDeathCounter.Name = "chkDisplayDeathCounter";
-            this.chkDisplayDeathCounter.Size = new System.Drawing.Size(61, 17);
+            this.chkDisplayDeathCounter.Size = new System.Drawing.Size(60, 17);
             this.chkDisplayDeathCounter.TabIndex = 1;
             this.chkDisplayDeathCounter.Text = "Deaths";
             this.chkDisplayDeathCounter.UseVisualStyleBackColor = true;
@@ -660,21 +636,374 @@
             this.chkDisplayName.AutoSize = true;
             this.chkDisplayName.Location = new System.Drawing.Point(10, 19);
             this.chkDisplayName.Name = "chkDisplayName";
-            this.chkDisplayName.Size = new System.Drawing.Size(55, 17);
+            this.chkDisplayName.Size = new System.Drawing.Size(54, 17);
             this.chkDisplayName.TabIndex = 0;
             this.chkDisplayName.Text = "Name";
             this.chkDisplayName.UseVisualStyleBackColor = true;
+            // 
+            // mainPanel
+            // 
+            this.mainPanel.ColumnCount = 1;
+            this.mainPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.mainPanel.Controls.Add(this.VerticalSplitContainer, 0, 0);
+            this.mainPanel.Controls.Add(this.panel1, 0, 1);
+            this.mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainPanel.Location = new System.Drawing.Point(0, 24);
+            this.mainPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.mainPanel.Name = "mainPanel";
+            this.mainPanel.RowCount = 2;
+            this.mainPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.mainPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
+            this.mainPanel.Size = new System.Drawing.Size(778, 492);
+            this.mainPanel.TabIndex = 23;
+            // 
+            // autoSplitHotkeyControl
+            // 
+            this.autoSplitHotkeyControl.Hotkey = System.Windows.Forms.Keys.None;
+            this.autoSplitHotkeyControl.Location = new System.Drawing.Point(80, 7);
+            this.autoSplitHotkeyControl.Name = "autoSplitHotkeyControl";
+            this.autoSplitHotkeyControl.Size = new System.Drawing.Size(82, 20);
+            this.autoSplitHotkeyControl.TabIndex = 3;
+            this.autoSplitHotkeyControl.Text = "None";
+            this.autoSplitHotkeyControl.UseKeyWhitelist = true;
+            // 
+            // fontComboBox
+            // 
+            this.fontComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.fontComboBox.DropDownWidth = 250;
+            this.fontComboBox.FormattingEnabled = true;
+            this.fontComboBox.Items.AddRange(new object[] {
+            "Adobe Caslon Pro",
+            "Adobe Caslon Pro Bold",
+            "Adobe Fangsong Std R",
+            "Adobe Garamond Pro",
+            "Adobe Garamond Pro Bold",
+            "Adobe Heiti Std R",
+            "Adobe Kaiti Std R",
+            "Adobe Ming Std L",
+            "Adobe Myungjo Std M",
+            "Adobe Song Std L",
+            "Agency FB",
+            "Algerian",
+            "Arial",
+            "Arial Black",
+            "Arial Narrow",
+            "Arial Rounded MT Bold",
+            "Arial Unicode MS",
+            "BankGothic Lt BT",
+            "Baskerville Old Face",
+            "Bauhaus 93",
+            "Bell Gothic Std Black",
+            "Bell Gothic Std Light",
+            "Bell MT",
+            "Berlin Sans FB",
+            "Berlin Sans FB Demi",
+            "Bernard MT Condensed",
+            "Birch Std",
+            "Blackadder ITC",
+            "Blackoak Std",
+            "Bodoni MT",
+            "Bodoni MT Black",
+            "Bodoni MT Condensed",
+            "Bodoni MT Poster Compressed",
+            "Book Antiqua",
+            "Bookman Old Style",
+            "Bookshelf Symbol 7",
+            "Bradley Hand ITC",
+            "Britannic Bold",
+            "Broadway",
+            "Broadway BT",
+            "Brush Script MT",
+            "Brush Script Std",
+            "Calibri",
+            "Calibri Light",
+            "Californian FB",
+            "Calisto MT",
+            "Cambria",
+            "Cambria Math",
+            "Candara",
+            "Castellar",
+            "Centaur",
+            "Century",
+            "Century Gothic",
+            "Century Schoolbook",
+            "Chaparral Pro",
+            "Charlemagne Std",
+            "Chiller",
+            "Colonna MT",
+            "Comic Sans MS",
+            "Consolas",
+            "Constantia",
+            "Cooper Black",
+            "Cooper Std Black",
+            "Copperplate Gothic Bold",
+            "Copperplate Gothic Light",
+            "Corbel",
+            "Courier New",
+            "Curlz MT",
+            "Diablo",
+            "Ebrima",
+            "Eccentric Std",
+            "Edwardian Script ITC",
+            "Elephant",
+            "Engravers MT",
+            "Eras Bold ITC",
+            "Eras Demi ITC",
+            "Eras Light ITC",
+            "Eras Medium ITC",
+            "Felix Titling",
+            "Footlight MT Light",
+            "Forte",
+            "Franklin Gothic Book",
+            "Franklin Gothic Demi",
+            "Franklin Gothic Demi Cond",
+            "Franklin Gothic Heavy",
+            "Franklin Gothic Medium",
+            "Franklin Gothic Medium Cond",
+            "Freestyle Script",
+            "French Script MT",
+            "Gabriola",
+            "Gadugi",
+            "Garamond",
+            "Georgia",
+            "Giddyup Std",
+            "Gigi",
+            "Gill Sans MT",
+            "Gill Sans MT Condensed",
+            "Gill Sans MT Ext Condensed Bold",
+            "Gill Sans Ultra Bold",
+            "Gill Sans Ultra Bold Condensed",
+            "Gloucester MT Extra Condensed",
+            "Goudy Old Style",
+            "Goudy Stout",
+            "Haettenschweiler",
+            "Harlow Solid Italic",
+            "Harrington",
+            "High Tower Text",
+            "Hobo Std",
+            "Impact",
+            "Imprint MT Shadow",
+            "Informal Roman",
+            "Javanese Text",
+            "Jokerman",
+            "Juice ITC",
+            "Kozuka Gothic Pro B",
+            "Kozuka Gothic Pro EL",
+            "Kozuka Gothic Pro H",
+            "Kozuka Gothic Pro L",
+            "Kozuka Gothic Pro M",
+            "Kozuka Gothic Pro R",
+            "Kozuka Mincho Pro B",
+            "Kozuka Mincho Pro EL",
+            "Kozuka Mincho Pro H",
+            "Kozuka Mincho Pro L",
+            "Kozuka Mincho Pro M",
+            "Kozuka Mincho Pro R",
+            "Kristen ITC",
+            "Kunstler Script",
+            "Leelawadee UI",
+            "Leelawadee UI Semilight",
+            "Letter Gothic Std",
+            "Lithos Pro Regular",
+            "Lucida Blackletter",
+            "Lucida Bright",
+            "Lucida Calligraphy",
+            "Lucida Console",
+            "Lucida Fax",
+            "Lucida Handwriting",
+            "Lucida Sans",
+            "Lucida Sans Typewriter",
+            "Lucida Sans Unicode",
+            "Magneto",
+            "Maiandra GD",
+            "Malgun Gothic",
+            "Malgun Gothic Semilight",
+            "Marlett",
+            "Matura MT Script Capitals",
+            "Meiryo",
+            "Meiryo UI",
+            "Mesquite Std",
+            "Microsoft Himalaya",
+            "Microsoft JhengHei",
+            "Microsoft JhengHei Light",
+            "Microsoft JhengHei UI",
+            "Microsoft JhengHei UI Light",
+            "Microsoft New Tai Lue",
+            "Microsoft PhagsPa",
+            "Microsoft Sans Serif",
+            "Microsoft Tai Le",
+            "Microsoft YaHei",
+            "Microsoft YaHei Light",
+            "Microsoft YaHei UI",
+            "Microsoft YaHei UI Light",
+            "Microsoft Yi Baiti",
+            "MingLiU-ExtB",
+            "MingLiU_HKSCS-ExtB",
+            "Minion Pro",
+            "Minion Pro Cond",
+            "Minion Pro Med",
+            "Minion Pro SmBd",
+            "Mistral",
+            "Modern No. 20",
+            "Mongolian Baiti",
+            "Monotype Corsiva",
+            "MS Gothic",
+            "MS Mincho",
+            "MS Outlook",
+            "MS PGothic",
+            "MS PMincho",
+            "MS Reference Sans Serif",
+            "MS Reference Specialty",
+            "MS UI Gothic",
+            "MT Extra",
+            "MV Boli",
+            "Myanmar Text",
+            "Myriad Pro",
+            "Myriad Pro Cond",
+            "Myriad Pro Light",
+            "Niagara Engraved",
+            "Niagara Solid",
+            "Nirmala UI",
+            "Nirmala UI Semilight",
+            "NSimSun",
+            "Nueva Std Cond",
+            "OCR A Extended",
+            "OCR A Std",
+            "Old English Text MT",
+            "Onyx",
+            "Orator Std",
+            "Palace Script MT",
+            "Palatino Linotype",
+            "Papyrus",
+            "Parchment",
+            "Perpetua",
+            "Perpetua Titling MT",
+            "Playbill",
+            "PMingLiU-ExtB",
+            "Poor Richard",
+            "Poplar Std",
+            "Prestige Elite Std",
+            "Pristina",
+            "Rage Italic",
+            "Ravie",
+            "Rockwell",
+            "Rockwell Condensed",
+            "Rockwell Extra Bold",
+            "Rosewood Std Regular",
+            "Script MT Bold",
+            "Segoe MDL2 Assets",
+            "Segoe Print",
+            "Segoe Script",
+            "Segoe UI",
+            "Segoe UI Black",
+            "Segoe UI Emoji",
+            "Segoe UI Historic",
+            "Segoe UI Light",
+            "Segoe UI Semibold",
+            "Segoe UI Semilight",
+            "Segoe UI Symbol",
+            "Showcard Gothic",
+            "SimSun",
+            "SimSun-ExtB",
+            "Sitka Banner",
+            "Sitka Display",
+            "Sitka Heading",
+            "Sitka Small",
+            "Sitka Subheading",
+            "Sitka Text",
+            "Snap ITC",
+            "Stencil",
+            "Stencil Std",
+            "Sylfaen",
+            "Symbol",
+            "Tahoma",
+            "Tekton Pro",
+            "Tekton Pro Cond",
+            "Tekton Pro Ext",
+            "Tempus Sans ITC",
+            "Times New Roman",
+            "Trajan Pro",
+            "Trebuchet MS",
+            "Tw Cen MT",
+            "Tw Cen MT Condensed",
+            "Tw Cen MT Condensed Extra Bold",
+            "Verdana",
+            "Viner Hand ITC",
+            "Vivaldi",
+            "Vladimir Script",
+            "Webdings",
+            "Wide Latin",
+            "Wingdings",
+            "Wingdings 2",
+            "Wingdings 3",
+            "Yu Gothic",
+            "Yu Gothic Light",
+            "Yu Gothic Medium",
+            "Yu Gothic UI",
+            "Yu Gothic UI Light",
+            "Yu Gothic UI Semibold",
+            "Yu Gothic UI Semilight",
+            "Yu Mincho",
+            "Yu Mincho Demibold",
+            "Yu Mincho Light"});
+            this.fontComboBox.Location = new System.Drawing.Point(105, 21);
+            this.fontComboBox.Name = "fontComboBox";
+            this.fontComboBox.Size = new System.Drawing.Size(117, 21);
+            this.fontComboBox.Sorted = true;
+            this.fontComboBox.TabIndex = 12;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.btnCancel);
+            this.panel1.Controls.Add(this.btnApply);
+            this.panel1.Controls.Add(this.btnSave);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 460);
+            this.panel1.Margin = new System.Windows.Forms.Padding(0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(778, 32);
+            this.panel1.TabIndex = 21;
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(694, 4);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 0;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnApply
+            // 
+            this.btnApply.Location = new System.Drawing.Point(610, 4);
+            this.btnApply.Name = "btnApply";
+            this.btnApply.Size = new System.Drawing.Size(75, 23);
+            this.btnApply.TabIndex = 0;
+            this.btnApply.Text = "Apply";
+            this.btnApply.UseVisualStyleBackColor = true;
+            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(527, 4);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 0;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(778, 487);
+            this.ClientSize = new System.Drawing.Size(778, 516);
             this.Controls.Add(this.mainPanel);
             this.Controls.Add(this.SettingsMenuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.SettingsMenuStrip;
-            this.MinimumSize = new System.Drawing.Size(794, 525);
+            this.MinimumSize = new System.Drawing.Size(794, 555);
             this.Name = "SettingsWindow";
             this.Text = "Settings";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SettingsWindow_FormClosing);
@@ -697,12 +1026,13 @@
             this.RuneDisplayGroup.ResumeLayout(false);
             this.SettingsMenuStrip.ResumeLayout(false);
             this.SettingsMenuStrip.PerformLayout();
-            this.mainPanel.ResumeLayout(false);
             this.VerticalSplitContainer.ResumeLayout(false);
             this.HorizontalSplitContainer.ResumeLayout(false);
             this.RightPanelLayout.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.mainPanel.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -735,7 +1065,6 @@
         private System.Windows.Forms.ToolStripMenuItem SaveSettingsMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem CloseSettingsMenuItem;
-        private System.Windows.Forms.Panel mainPanel;
         private System.Windows.Forms.CheckBox CheckUpdatesCheckBox;
         private System.Windows.Forms.Button CheckUpdatesButton;
         private System.Windows.Forms.TableLayoutPanel VerticalSplitContainer;
@@ -757,5 +1086,10 @@
         private System.Windows.Forms.NumericUpDown titleFontSizeNumeric;
         private Gui.Controls.FontComboBox fontComboBox;
         private Controls.HotkeyControl autoSplitHotkeyControl;
+        private System.Windows.Forms.TableLayoutPanel mainPanel;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnApply;
+        private System.Windows.Forms.Button btnSave;
     }
 }

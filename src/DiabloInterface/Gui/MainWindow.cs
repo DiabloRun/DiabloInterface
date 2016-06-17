@@ -217,7 +217,7 @@ namespace DiabloInterface.Gui
 
             goldLabel.Invoke(new Action(delegate () { goldLabel.Text = "GOLD: " + (player.Gold + player.GoldStash); }));
 
-            deathsLabel.Invoke(new Action(delegate () { deathsLabel.Text = "RIP: " + player.Deaths; }));
+            deathsLabel.Invoke(new Action(delegate () { deathsLabel.Text = "DEATHS: " + player.Deaths; }));
 
             if (panelRuneDisplay.Controls.Count > 0)
             {
@@ -387,7 +387,7 @@ namespace DiabloInterface.Gui
                         height = y += c.Height;
                     }
                     c.Location = new Point(x, -scroll + y);
-                    x += c.Width;
+                    x += c.Width + 4; // 4 padding for runes
                 }
             }
 

@@ -25,17 +25,11 @@ namespace DiabloInterface.Gui.Controls
             stringFormat.HotkeyPrefix = System.Drawing.Text.HotkeyPrefix.None;
             stringFormat.Alignment = StringAlignment.Near;
             stringFormat.LineAlignment = StringAlignment.Center;
-
+            
             CalculateItemHeight();
-
-            HandleCreated += FontComboBox_HandleCreated;
-        }
-
-        private void FontComboBox_HandleCreated(object sender, EventArgs e)
-        {
+            // Fonts are initialized immediately. if done at handlecreated there is a huge white space at bottom of dropdown
             if (!DesignMode)
             {
-                // Only initialize fonts during runtime.
                 PopulateFonts();
             }
         }

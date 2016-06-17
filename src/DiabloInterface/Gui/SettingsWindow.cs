@@ -316,5 +316,21 @@ namespace DiabloInterface.Gui
         {
             VersionChecker.CheckForUpdate(true);
         }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void btnApply_Click(object sender, EventArgs e)
+        {
+            Save();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            Save();
+            Close();
+        }
     }
 }
