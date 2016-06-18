@@ -68,7 +68,7 @@ namespace DiabloInterface.Logging
         /// <param name="message">The message to write.</param>
         public void WriteLine(string message)
         {
-            string timestamp = DateTime.Now.ToString("HH:ss:mm");
+            string timestamp = DateTime.Now.ToString("HH:mm:ss");
             WriteLineRaw(string.Format("[{0}]: {1}", timestamp, message));
         }
 
