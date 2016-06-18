@@ -130,7 +130,7 @@ namespace DiabloInterface.Gui.Controls
             }
             if (mainWindow != null)
             {
-                mainWindow.relayout();
+                mainWindow.UpdateLayout();
             }
         }
     }

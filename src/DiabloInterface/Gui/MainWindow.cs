@@ -13,7 +13,6 @@ namespace DiabloInterface.Gui
 {
     public partial class MainWindow : Form
     {
-        private const int OriginalHeight = 200;
         private const string ItemServerPipeName = "DiabloInterfaceItems";
         private const string WindowTitleFormat = "Diablo Interface v{0}"; // {0} => Application.ProductVersion
 
@@ -27,6 +26,8 @@ namespace DiabloInterface.Gui
         D2DataReader dataReader;
         ItemServer itemServer;
 
+        IEnumerable<Label> infoLabels;
+
         public MainWindow()
         {
             // We want to dispose our handles once the window is disposed.
@@ -36,9 +37,22 @@ namespace DiabloInterface.Gui
             WriteLogHeader();
 
             InitializeComponent();
+            InitializeLabels();
 
             // Display current version along with the application name.
             Text = string.Format(WindowTitleFormat, Application.ProductVersion);
+        }
+
+        void InitializeLabels()
+        {
+            infoLabels = new[]
+            {
+                deathsLabel,
+                goldLabel, lvlLabel,
+                strLabel, dexLabel, vitLabel, eneLabel,
+                frwLabel, fhrLabel, fcrLabel, iasLabel,
+                fireLabel, coldLabel, lighLabel, poisLabel
+            };
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -211,6 +225,7 @@ namespace DiabloInterface.Gui
             if (dataReaderThread == null)
             {
                 dataReaderThread = new Thread(dataReader.readDataThreadFunc);
+                dataReaderThread.IsBackground = true;
                 dataReaderThread.Start();
             }
 
@@ -311,36 +326,35 @@ namespace DiabloInterface.Gui
         }
         public void ApplySettings()
         {
-            Font fBig = new Font(this.Settings.FontName, this.Settings.FontSizeTitle);
-            Font fSmall = new Font(this.Settings.FontName, this.Settings.FontSize);
+            ApplyVersionSettings();
+            ApplyLabelSettings();
+            ApplyRuneSettings();
 
-            nameLabel.Font = fBig;
-            lvlLabel.Font = fSmall;
-            strLabel.Font = fSmall;
-            dexLabel.Font = fSmall;
-            vitLabel.Font = fSmall;
-            eneLabel.Font = fSmall;
+            UpdateLayout();
 
-            fcrLabel.Font = fSmall;
-            frwLabel.Font = fSmall;
-            fhrLabel.Font = fSmall;
-            iasLabel.Font = fSmall;
+            // Update debug window.
+            if (debugWindow != null && debugWindow.Visible)
+            {
+                debugWindow.UpdateAutosplits(Settings.Autosplits);
+            }
 
-            fireLabel.Font = fSmall;
-            coldLabel.Font = fSmall;
-            lighLabel.Font = fSmall;
-            poisLabel.Font = fSmall;
-            goldLabel.Font = fSmall;
-            deathsLabel.Font = fSmall;
+            LogAutoSplits();
+        }
 
-            int c = (Settings.DisplayResistances ? 1 : 0)
-                + (Settings.DisplayBaseStats ? 1 : 0)
-                + (Settings.DisplayAdvancedStats ? 1 : 0);
-            int w = 270/c;
-            panelBaseStats.Width = w == 90 ? 85 : w;
-            panelAdvancedStats.Width = w == 90 ? 85 : w;
-            panelResistances.Width = w == 90 ? 100 : w;
+        void ApplyVersionSettings()
+        {
+            var memoryTable = GetVersionMemoryTable(Settings.D2Version);
+            dataReader.SetNextMemoryTable(memoryTable);
+        }
 
+        void ApplyLabelSettings()
+        {
+            nameLabel.Font = new Font(Settings.FontName, Settings.FontSizeTitle);
+            Font infoFont = new Font(Settings.FontName, Settings.FontSize);
+            foreach (Label label in infoLabels)
+                label.Font = infoFont;
+
+            // Hide/show labels wanted labels.
             ChangeVisibility(nameLabel, Settings.DisplayName);
             ChangeVisibility(goldLabel, Settings.DisplayGold);
             ChangeVisibility(lvlLabel, Settings.DisplayLevel);
@@ -348,12 +362,12 @@ namespace DiabloInterface.Gui
             ChangeVisibility(panelBaseStats, Settings.DisplayBaseStats);
             ChangeVisibility(panelAdvancedStats, Settings.DisplayAdvancedStats);
             ChangeVisibility(deathsLabel, Settings.DisplayDeathCounter);
+        }
 
-            var memoryTable = GetVersionMemoryTable(Settings.D2Version);
-            dataReader.SetNextMemoryTable(memoryTable);
-
+        void ApplyRuneSettings()
+        {
             panelRuneDisplay.Controls.Clear();
-            if ( Settings.Runes.Count > 0 )
+            if (Settings.Runes.Count > 0)
             {
                 foreach (int r in Settings.Runes)
                 {
@@ -363,16 +377,8 @@ namespace DiabloInterface.Gui
                     panelRuneDisplay.Controls.Add(element);
                 }
             }
+
             ChangeVisibility(panelRuneDisplay, Settings.DisplayRunes && Settings.Runes.Count > 0);
-            relayout();
-
-            // Update debug window.
-            if (debugWindow != null && debugWindow.Visible)
-            {
-                debugWindow.UpdateAutosplits(Settings.Autosplits);
-            }
-
-            LogAutoSplits();
         }
 
         void LogAutoSplits()
@@ -393,7 +399,33 @@ namespace DiabloInterface.Gui
             Logger.Instance.WriteLine(logMessage.ToString());
         }
 
-        public int relayout(bool checkVisible = true)
+        public void UpdateLayout()
+        {
+            int groupCount = (panelResistances.Visible ? 1 : 0)
+                           + (panelBaseStats.Visible ? 1 : 0)
+                           + (panelAdvancedStats.Visible ? 1 : 0);
+
+            // Calculate maximum sizes that the labels can possible get.
+            Size nameSize = TextRenderer.MeasureText(new string('W', 16), nameLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+            Size statSize = TextRenderer.MeasureText("WWWW: -100", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+            Size panelSize = new Size(statSize.Width, statSize.Height * 4);
+
+            // Recalculate panel size if the title is wider than all panels combined.
+            if (nameSize.Width > panelSize.Width * groupCount)
+            {
+                panelSize.Width = nameSize.Width / (groupCount);
+            }
+
+            nameLabel.Size = nameSize;
+            panelBaseStats.Size = panelSize;
+            panelAdvancedStats.Size = panelSize;
+            panelResistances.Size = panelSize;
+
+            UpdateRuneLayout();
+            Invalidate(true);
+        }
+
+        void UpdateRuneLayout()
         {
             int y = 0;
             int x = 0;
@@ -401,17 +433,17 @@ namespace DiabloInterface.Gui
             int scroll = panelRuneDisplay.VerticalScroll.Value;
             foreach (Control c in panelRuneDisplay.Controls)
             {
-                if (c is RuneDisplayElement && (!checkVisible || c.Visible))
+                if (c is RuneDisplayElement && c.Visible)
                 {
-                    if(height == -1)
+                    if (height == -1)
                     {
                         height = c.Height;
                     }
                     if (x + c.Width > panelRuneDisplay.Width && panelRuneDisplay.Width >= c.Width)
                     {
-                        y += c.Height;
+                        y += c.Height + 4;
                         x = 0;
-                        height = y += c.Height;
+                        height = y + c.Height;
                     }
                     c.Location = new Point(x, -scroll + y);
                     x += c.Width + 4; // 4 padding for runes
@@ -419,28 +451,19 @@ namespace DiabloInterface.Gui
             }
 
             panelRuneDisplay.Height = height == -1 ? 0 : height;
-            return height;
-
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void exitMenuItem_Click(object sender, EventArgs e)
         {
-            dataReaderThread.Abort();
-            Application.Exit();
+            Close();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void resetMenuItem_Click(object sender, EventArgs e)
         {
             initialize();
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            dataReaderThread.Abort();
-            Application.Exit();
-        }
-
-        private void button3_Click(object sender, EventArgs e)
+        private void settingsMenuItem_Click(object sender, EventArgs e)
         {
             if (settingsWindow == null || settingsWindow.IsDisposed)
             {

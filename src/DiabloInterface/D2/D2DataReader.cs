@@ -65,6 +65,8 @@ namespace DiabloInterface
         {
             if (disposing)
             {
+                Logger.Instance.WriteLine("Data reader disposed.");
+
                 this.disposed = true;
 
                 if (reader != null)
@@ -144,6 +146,10 @@ namespace DiabloInterface
                 try
                 {
                     ProcessGameData();
+                }
+                catch (ThreadAbortException)
+                {
+                    throw;
                 }
                 catch (Exception e)
                 {

@@ -21,6 +21,7 @@ namespace DiabloInterface.Server
             this.pipeName = pipeName;
 
             listenThread = new Thread(new ThreadStart(ServerListen));
+            listenThread.IsBackground = true;
             listenThread.Start();
         }
 
