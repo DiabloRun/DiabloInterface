@@ -156,8 +156,21 @@ namespace DiabloInterface.Gui
             settings.DoAutosplit = EnableAutosplitCheckBox.Checked;
             settings.AutosplitHotkey = autoSplitHotkeyControl.Hotkey;
             settings.FontSize = (int)fontSizeNumeric.Value;
-            settings.FontSizeTitle = (int)titleFontSizeNumeric.Value;
-            settings.FontName = fontComboBox.SelectedItem.ToString();
+            settings.FontSizeTitle = (int)titleFontSizeNumeric.Value; 
+            if (fontComboBox.SelectedItem != null)
+            {
+                settings.FontName = fontComboBox.SelectedItem.ToString();
+            } else
+            {
+                foreach (string fontName in fontComboBox.Items)
+                {
+                    if (fontName.Equals(fontComboBox.Text))
+                    {
+                        settings.FontName = fontComboBox.Text;
+                        break;
+                    }
+                }
+            }
             settings.D2Version = (string)VersionComboBox.SelectedItem;
 
             settings.DisplayName = chkDisplayName.Checked;
@@ -275,6 +288,9 @@ namespace DiabloInterface.Gui
                  persistense.Save(settings);
             else persistense.Save(settings, filename);
 
+            // file name may be a different one now
+            UpdateTitle();
+
             MarkClean();
             OnSettingsUpdated();
 
@@ -310,6 +326,7 @@ namespace DiabloInterface.Gui
         private void LoadSettingsMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog d = new OpenFileDialog();
+            d.Filter = SettingsPersistence.FileFilter;
             if (d.ShowDialog() == DialogResult.OK)
             {
                 if (!LoadSettings(d.FileName))
@@ -328,6 +345,7 @@ namespace DiabloInterface.Gui
         private void SaveSettingsAsMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog d = new SaveFileDialog();
+            d.Filter = SettingsPersistence.FileFilter;
             if (d.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(d.FileName))
             {
                 SaveSettings(d.FileName);

@@ -3,12 +3,14 @@ using DiabloInterface.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 
 namespace DiabloInterface
 {
     class SettingsPersistence
     {
         const string DefaultSettingsFile = "settings.conf";
+        public const string FileFilter = "Config Files|*.conf;*.json|All Files|*.*";
 
         public string CurrentSettingsFile
         {
@@ -95,6 +97,21 @@ namespace DiabloInterface
 
         public void Save(ApplicationSettings settings, string filename)
         {
+            // check if directory exists first
+            string directory = new FileInfo(filename).Directory.FullName;
+            if (!Directory.Exists(directory))
+            {
+                SaveFileDialog d = new SaveFileDialog();
+                d.Filter = FileFilter;
+                if (d.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(d.FileName))
+                {
+                    filename = d.FileName;
+                } else
+                {
+                    return;
+                }
+            }
+
             Logger.Instance.WriteLine("Saving settings as \"{0}\".", filename);
 
             using (var writer = new JsonSettingsWriter(filename))

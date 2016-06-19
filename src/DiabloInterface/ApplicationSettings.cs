@@ -12,7 +12,7 @@ namespace DiabloInterface
         public int FontSizeTitle { get; set; } = 18;
         public bool CreateFiles { get; set; }
         public bool DoAutosplit { get; set; }
-        public bool CheckUpdates { get; set; }
+        public bool CheckUpdates { get; set; } = true;
         public Keys AutosplitHotkey { get; set; } = Keys.None;
         public List<AutoSplit> Autosplits { get; set; } = new List<AutoSplit>();
         public List<int> Runes { get; set; } = new List<int>();

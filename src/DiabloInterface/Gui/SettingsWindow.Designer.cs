@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsWindow));
             this.FontLabel = new System.Windows.Forms.Label();
             this.FontGroup = new System.Windows.Forms.GroupBox();
-            this.fontComboBox = new DiabloInterface.Gui.Controls.FontComboBox();
             this.titleFontSizeNumeric = new System.Windows.Forms.NumericUpDown();
             this.fontSizeNumeric = new System.Windows.Forms.NumericUpDown();
             this.FontSizeLabel = new System.Windows.Forms.Label();
@@ -41,7 +40,6 @@
             this.AutoSplitGroup = new System.Windows.Forms.GroupBox();
             this.AutoSplitLayout = new System.Windows.Forms.TableLayoutPanel();
             this.AutoSplitToolbar = new System.Windows.Forms.Panel();
-            this.autoSplitHotkeyControl = new DiabloInterface.Gui.Controls.HotkeyControl();
             this.AutoSplitHotkeyLabel = new System.Windows.Forms.Label();
             this.AutoSplitTestHotkeyButton = new System.Windows.Forms.Button();
             this.EnableAutosplitCheckBox = new System.Windows.Forms.CheckBox();
@@ -67,7 +65,6 @@
             this.HorizontalSplitContainer = new System.Windows.Forms.TableLayoutPanel();
             this.RightPanelLayout = new System.Windows.Forms.FlowLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.chkDisplayRunes = new System.Windows.Forms.CheckBox();
             this.chkDisplayAdvancedStats = new System.Windows.Forms.CheckBox();
             this.chkDisplayLevel = new System.Windows.Forms.CheckBox();
@@ -81,6 +78,8 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnApply = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
+            this.autoSplitHotkeyControl = new DiabloInterface.Gui.Controls.HotkeyControl();
+            this.fontComboBox = new DiabloInterface.Gui.Controls.FontComboBox();
             this.FontGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
@@ -123,17 +122,6 @@
             this.FontGroup.TabIndex = 5;
             this.FontGroup.TabStop = false;
             this.FontGroup.Text = "Font";
-            // 
-            // fontComboBox
-            // 
-            this.fontComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.fontComboBox.DropDownWidth = 250;
-            this.fontComboBox.FormattingEnabled = true;
-            this.fontComboBox.Location = new System.Drawing.Point(105, 21);
-            this.fontComboBox.Name = "fontComboBox";
-            this.fontComboBox.Size = new System.Drawing.Size(117, 21);
-            this.fontComboBox.Sorted = true;
-            this.fontComboBox.TabIndex = 12;
             // 
             // titleFontSizeNumeric
             // 
@@ -246,16 +234,6 @@
             this.AutoSplitToolbar.Name = "AutoSplitToolbar";
             this.AutoSplitToolbar.Size = new System.Drawing.Size(514, 31);
             this.AutoSplitToolbar.TabIndex = 20;
-            // 
-            // autoSplitHotkeyControl
-            // 
-            this.autoSplitHotkeyControl.Hotkey = System.Windows.Forms.Keys.None;
-            this.autoSplitHotkeyControl.Location = new System.Drawing.Point(80, 7);
-            this.autoSplitHotkeyControl.Name = "autoSplitHotkeyControl";
-            this.autoSplitHotkeyControl.Size = new System.Drawing.Size(82, 20);
-            this.autoSplitHotkeyControl.TabIndex = 3;
-            this.autoSplitHotkeyControl.Text = "None";
-            this.autoSplitHotkeyControl.UseKeyWhitelist = true;
             // 
             // AutoSplitHotkeyLabel
             // 
@@ -552,7 +530,6 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Controls.Add(this.chkDisplayRunes);
             this.groupBox1.Controls.Add(this.chkDisplayAdvancedStats);
             this.groupBox1.Controls.Add(this.chkDisplayLevel);
@@ -563,23 +540,10 @@
             this.groupBox1.Controls.Add(this.chkDisplayName);
             this.groupBox1.Location = new System.Drawing.Point(3, 295);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(231, 155);
+            this.groupBox1.Size = new System.Drawing.Size(231, 109);
             this.groupBox1.TabIndex = 18;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Display";
-            // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox1.ForeColor = System.Drawing.Color.DarkRed;
-            this.textBox1.Location = new System.Drawing.Point(9, 111);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(216, 44);
-            this.textBox1.TabIndex = 7;
-            this.textBox1.Text = "(!) Enabling this may result in your run getting rejected by speedrun sites. Use " +
-    "for fun runs only.";
             // 
             // chkDisplayRunes
             // 
@@ -597,9 +561,9 @@
             this.chkDisplayAdvancedStats.ForeColor = System.Drawing.SystemColors.ControlText;
             this.chkDisplayAdvancedStats.Location = new System.Drawing.Point(10, 88);
             this.chkDisplayAdvancedStats.Name = "chkDisplayAdvancedStats";
-            this.chkDisplayAdvancedStats.Size = new System.Drawing.Size(117, 17);
+            this.chkDisplayAdvancedStats.Size = new System.Drawing.Size(105, 17);
             this.chkDisplayAdvancedStats.TabIndex = 5;
-            this.chkDisplayAdvancedStats.Text = "(!) Fcr, Frw, Fhr, Ias";
+            this.chkDisplayAdvancedStats.Text = "Fcr, Frw, Fhr, Ias";
             this.chkDisplayAdvancedStats.UseVisualStyleBackColor = true;
             // 
             // chkDisplayLevel
@@ -720,6 +684,27 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // autoSplitHotkeyControl
+            // 
+            this.autoSplitHotkeyControl.Hotkey = System.Windows.Forms.Keys.None;
+            this.autoSplitHotkeyControl.Location = new System.Drawing.Point(80, 7);
+            this.autoSplitHotkeyControl.Name = "autoSplitHotkeyControl";
+            this.autoSplitHotkeyControl.Size = new System.Drawing.Size(82, 20);
+            this.autoSplitHotkeyControl.TabIndex = 3;
+            this.autoSplitHotkeyControl.Text = "None";
+            this.autoSplitHotkeyControl.UseKeyWhitelist = true;
+            // 
+            // fontComboBox
+            // 
+            this.fontComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            this.fontComboBox.DropDownWidth = 250;
+            this.fontComboBox.FormattingEnabled = true;
+            this.fontComboBox.Location = new System.Drawing.Point(105, 21);
+            this.fontComboBox.Name = "fontComboBox";
+            this.fontComboBox.Size = new System.Drawing.Size(117, 21);
+            this.fontComboBox.Sorted = true;
+            this.fontComboBox.TabIndex = 12;
+            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -807,7 +792,6 @@
         private System.Windows.Forms.CheckBox chkDisplayBaseStats;
         private System.Windows.Forms.CheckBox chkDisplayLevel;
         private System.Windows.Forms.CheckBox chkDisplayRunes;
-        private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.NumericUpDown fontSizeNumeric;
         private System.Windows.Forms.NumericUpDown titleFontSizeNumeric;
         private Gui.Controls.FontComboBox fontComboBox;
