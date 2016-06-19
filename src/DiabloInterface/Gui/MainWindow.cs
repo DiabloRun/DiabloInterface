@@ -311,6 +311,10 @@ namespace DiabloInterface.Gui
             File.WriteAllText(Settings.FileFolder + "/poison_res.txt", player.PoisonResist.ToString());
             File.WriteAllText(Settings.FileFolder + "/gold.txt", (player.Gold + player.GoldStash).ToString());
             File.WriteAllText(Settings.FileFolder + "/deaths.txt", player.Deaths.ToString());
+            File.WriteAllText(Settings.FileFolder + "/fcr.txt", player.FasterCastRate.ToString());
+            File.WriteAllText(Settings.FileFolder + "/frw.txt", player.FasterRunWalk.ToString());
+            File.WriteAllText(Settings.FileFolder + "/fhr.txt", player.FasterHitRecovery.ToString());
+            File.WriteAllText(Settings.FileFolder + "/ias.txt", player.IncreasedAttackSpeed.ToString());
 
         }
 
@@ -405,21 +409,46 @@ namespace DiabloInterface.Gui
                            + (panelBaseStats.Visible ? 1 : 0)
                            + (panelAdvancedStats.Visible ? 1 : 0);
 
+            int padding = 0;
             // Calculate maximum sizes that the labels can possible get.
-            Size nameSize = TextRenderer.MeasureText(new string('W', 16), nameLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-            Size statSize = TextRenderer.MeasureText("WWWW: -100", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-            Size panelSize = new Size(statSize.Width, statSize.Height * 4);
+            Size nameSize = TextRenderer.MeasureText(new string('W', 15), nameLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+
+            // base stats have 3 char label (STR, VIT, ect.) and realistically a max value < 500 (lvl 99*5 + alkor quest... items can increase this tho)
+            // we will assume the "longest" string is 499
+            padding = (panelAdvancedStats.Visible || panelResistances.Visible) ? 8 : 0;
+            Size statSize = TextRenderer.MeasureText("WWW: 499", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+            Size basePanelSize = new Size(statSize.Width + padding, statSize.Height * 4);
+
+            // advanced stats have 3 char label (FCR, FRW, etc.) and realistically a max value < 100
+            // we will assume the "longest" string is 99
+            padding = panelResistances.Visible ? 8 : 0;
+            Size advancedStatSize = TextRenderer.MeasureText("WWW: 99", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+            Size advancedStatPanelSize = new Size(advancedStatSize.Width + padding, advancedStatSize.Height * 4);
+
+            // Panel size for resistances can be negative, so max number of chars are 10 (LABL: -VAL)
+            // resistances never go below -100 (longest possible string for the label) and never go above 95
+            Size resStatSize = TextRenderer.MeasureText("WWWW: -100", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+            Size resPanelSize = new Size(resStatSize.Width, resStatSize.Height * 4);
 
             // Recalculate panel size if the title is wider than all panels combined.
-            if (nameSize.Width > panelSize.Width * groupCount)
+            int statsWidth = (panelResistances.Visible ? resPanelSize.Width : 0)
+                + (panelBaseStats.Visible ? basePanelSize.Width : 0)
+                + (panelAdvancedStats.Visible ? advancedStatPanelSize.Width : 0)
+            ;
+
+            float ratio = (float)nameSize.Width / (float)statsWidth;
+
+            if (ratio > 1.0f)
             {
-                panelSize.Width = nameSize.Width / (groupCount);
+                resPanelSize.Width = (int)(resPanelSize.Width * ratio + .5f);
+                basePanelSize.Width = (int)(basePanelSize.Width * ratio + .5f);
+                advancedStatPanelSize.Width = (int)(advancedStatPanelSize.Width * ratio + .5f);
             }
 
             nameLabel.Size = nameSize;
-            panelBaseStats.Size = panelSize;
-            panelAdvancedStats.Size = panelSize;
-            panelResistances.Size = panelSize;
+            panelBaseStats.Size = basePanelSize;
+            panelAdvancedStats.Size = advancedStatPanelSize;
+            panelResistances.Size = resPanelSize;
 
             UpdateRuneLayout();
             Invalidate(true);

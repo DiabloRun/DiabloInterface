@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -15,6 +16,23 @@ namespace DiabloInterface.Gui.Controls
         [Category("Appearance"), DefaultValue(12)]
         public int DropDownFontSize { get; set; } = 12;
 
+        // Fonts are initialized only if not in designmode 
+        // instead of only DesignMode property @see http://stackoverflow.com/questions/1166226/detecting-design-mode-from-a-controls-constructor
+        private bool IsInDesignMode
+        {
+            get
+            {
+                if (DesignMode || LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+                {
+                    return true;
+                }
+                // disposes handle automatically when leaving 'using'
+                using (var process = Process.GetCurrentProcess())
+                {
+                    return process.ProcessName == "devenv";
+                }
+            }
+        }
         public FontComboBox()
         {
             Sorted = true;
@@ -27,13 +45,8 @@ namespace DiabloInterface.Gui.Controls
             stringFormat.LineAlignment = StringAlignment.Center;
             
             CalculateItemHeight();
-
-            // Fonts are initialized only if not in designmode 
-            // instead of only DesignMode property @see http://stackoverflow.com/questions/1166226/detecting-design-mode-from-a-controls-constructor
-            bool inDesigner = DesignMode
-                || (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
-                || (System.Diagnostics.Process.GetCurrentProcess().ProcessName == "devenv");
-            if (!inDesigner)
+            
+            if (!IsInDesignMode)
             {
                 PopulateFonts();
             }
@@ -148,6 +161,7 @@ namespace DiabloInterface.Gui.Controls
             using (var brush = new SolidBrush(e.ForeColor))
             {
                 string fontFamily = Items[e.Index].ToString();
+
                 e.Graphics.DrawString(fontFamily, GetDisplayFont(fontFamily), brush, e.Bounds, stringFormat);
             }
         }
