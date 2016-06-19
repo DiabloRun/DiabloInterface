@@ -87,9 +87,9 @@
             this.nameLabel.Location = new System.Drawing.Point(3, 5);
             this.nameLabel.Margin = new System.Windows.Forms.Padding(0, 0, 0, 2);
             this.nameLabel.Name = "nameLabel";
-            this.nameLabel.Size = new System.Drawing.Size(222, 27);
+            this.nameLabel.Size = new System.Drawing.Size(68, 27);
             this.nameLabel.TabIndex = 6;
-            this.nameLabel.Text = "CharacterName15";
+            this.nameLabel.Text = "Name";
             // 
             // strLabel
             // 
