@@ -74,7 +74,8 @@ namespace DiabloInterface
         {
             List<VirtualKeyCode> modifiers = new List<VirtualKeyCode>() {
                 VirtualKeyCode.CONTROL,
-                VirtualKeyCode.MENU
+                VirtualKeyCode.MENU,
+                VirtualKeyCode.SHIFT,
             };
 
             List<VirtualKeyCode> invalidModifiers = new List<VirtualKeyCode>();
