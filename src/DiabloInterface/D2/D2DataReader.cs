@@ -230,7 +230,7 @@ namespace DiabloInterface
             character.ParseStats(statsMap, itemStatsMap, gameInfo.Game.Difficulty);
 
             // Update UI.
-            main.updateLabels(character, itemClassMap);
+            main.UpdateLabels(character, itemClassMap);
             main.writeFiles(character);
 
             // Update autosplits only if enabled and the character was a freshly started character.

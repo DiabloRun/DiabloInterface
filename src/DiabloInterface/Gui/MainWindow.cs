@@ -240,46 +240,51 @@ namespace DiabloInterface.Gui
             ApplySettings(Settings);
         }
 
-        private void UpdateMinWidth ( Label[] labels )
+        private void UpdateMinWidth(Label[] labels)
         {
             int w = 0;
-            Size measuredSize;
             foreach (Label label in labels)
             {
-                label.Invoke(new Action(delegate () {
-                    measuredSize = TextRenderer.MeasureText(label.Text, label.Font, Size.Empty, TextFormatFlags.SingleLine);
-                    if (measuredSize.Width > w) w = measuredSize.Width;
-                }));
+                var measuredSize = TextRenderer.MeasureText(label.Text, label.Font, Size.Empty, TextFormatFlags.SingleLine);
+                if (measuredSize.Width > w) w = measuredSize.Width;
             }
+
             foreach (Label label in labels)
             {
-                label.Invoke(new Action(delegate () { label.MinimumSize = new Size(w, 0); }));
+                label.MinimumSize = new Size(w, 0);
             }
         }
 
-        public void updateLabels ( Character player, Dictionary<int, int> itemClassMap )
+        public void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
         {
-            nameLabel.Invoke(new Action(delegate () { nameLabel.Text = player.name; })); // name
-            lvlLabel.Invoke(new Action(delegate () { lvlLabel.Text = "LVL: " + player.Level ; })); // level
-            goldLabel.Invoke(new Action(delegate () { goldLabel.Text = "GOLD: " + (player.Gold + player.GoldStash); }));
-            deathsLabel.Invoke(new Action(delegate () { deathsLabel.Text = "DEATHS: " + player.Deaths; }));
+            if (InvokeRequired)
+            {
+                // Delegate call to UI thread.
+                Invoke((Action)(() => UpdateLabels(player, itemClassMap)));
+                return;
+            }
+
+            nameLabel.Text = player.name;
+            lvlLabel.Text = "LVL: " + player.Level;
+            goldLabel.Text = "GOLD: " + (player.Gold + player.GoldStash);
+            deathsLabel.Text = "DEATHS: " + player.Deaths;
             
-            labelStrVal.Invoke(new Action(delegate () { labelStrVal.Text = "" + player.Strength; }));
-            labelDexVal.Invoke(new Action(delegate () { labelDexVal.Text = "" + player.Dexterity; }));
-            labelVitVal.Invoke(new Action(delegate () { labelVitVal.Text = "" + player.Vitality; }));
-            labelEneVal.Invoke(new Action(delegate () { labelEneVal.Text = "" + player.Energy; }));
+            labelStrVal.Text = "" + player.Strength;
+            labelDexVal.Text = "" + player.Dexterity;
+            labelVitVal.Text = "" + player.Vitality;
+            labelEneVal.Text = "" + player.Energy;
             UpdateMinWidth(new Label[] { labelStrVal, labelDexVal, labelVitVal, labelEneVal });
             
-            labelFrwVal.Invoke(new Action(delegate () { labelFrwVal.Text = "" + player.FasterRunWalk; }));
-            labelFcrVal.Invoke(new Action(delegate () { labelFcrVal.Text = "" + player.FasterCastRate; }));
-            labelFhrVal.Invoke(new Action(delegate () { labelFhrVal.Text = "" + player.FasterHitRecovery; }));
-            labelIasVal.Invoke(new Action(delegate () { labelIasVal.Text = "" + player.IncreasedAttackSpeed; }));
+            labelFrwVal.Text = "" + player.FasterRunWalk;
+            labelFcrVal.Text = "" + player.FasterCastRate;
+            labelFhrVal.Text = "" + player.FasterHitRecovery;
+            labelIasVal.Text = "" + player.IncreasedAttackSpeed;
             UpdateMinWidth(new Label[] { labelFrwVal, labelFcrVal, labelFhrVal, labelIasVal });
             
-            labelFireResVal.Invoke(new Action(delegate () { labelFireResVal.Text = "" + player.FireResist; }));
-            labelColdResVal.Invoke(new Action(delegate () { labelColdResVal.Text = "" + player.ColdResist; }));
-            labelLightResVal.Invoke(new Action(delegate () { labelLightResVal.Text = "" + player.LightningResist; }));
-            labelPoisonResVal.Invoke(new Action(delegate () { labelPoisonResVal.Text = "" + player.PoisonResist; }));
+            labelFireResVal.Text = "" + player.FireResist;
+            labelColdResVal.Text = "" + player.ColdResist;
+            labelLightResVal.Text = "" + player.LightningResist;
+            labelPoisonResVal.Text = "" + player.PoisonResist;
             UpdateMinWidth(new Label[] { labelFireResVal, labelColdResVal, labelLightResVal, labelPoisonResVal });
 
             if (panelRuneDisplay.Controls.Count > 0)
