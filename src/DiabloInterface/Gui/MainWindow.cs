@@ -16,7 +16,7 @@ namespace DiabloInterface.Gui
         private const string ItemServerPipeName = "DiabloInterfaceItems";
         private const string WindowTitleFormat = "Diablo Interface v{0}"; // {0} => Application.ProductVersion
 
-        public ApplicationSettings Settings;
+        public ApplicationSettings Settings { get; private set; }
 
         Thread dataReaderThread;
 
@@ -234,7 +234,7 @@ namespace DiabloInterface.Gui
                 VersionChecker.CheckForUpdate(false);
             }
 
-            ApplySettings();
+            ApplySettings(Settings);
         }
 
         public void updateLabels ( Character player, Dictionary<int, int> itemClassMap )
@@ -328,8 +328,10 @@ namespace DiabloInterface.Gui
                 c.Hide();
             }
         }
-        public void ApplySettings()
+        public void ApplySettings(ApplicationSettings settings)
         {
+            Settings = settings;
+
             ApplyVersionSettings();
             ApplyLabelSettings();
             ApplyRuneSettings();
@@ -497,7 +499,7 @@ namespace DiabloInterface.Gui
             if (settingsWindow == null || settingsWindow.IsDisposed)
             {
                 settingsWindow = new SettingsWindow(Settings);
-                settingsWindow.SettingsUpdated += (settings) => ApplySettings();
+                settingsWindow.SettingsUpdated += (settings) => ApplySettings(settings);
             }
 
             settingsWindow.ShowDialog();

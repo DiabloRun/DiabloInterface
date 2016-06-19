@@ -55,6 +55,13 @@ namespace DiabloInterface
                     if (settings != null)
                     {
                         Logger.Instance.WriteLine("Loaded settings from \"{0}\"", filename);
+
+                        // Update current settings file.
+                        if (CurrentSettingsFile != filename)
+                        {
+                            CurrentSettingsFile = filename;
+                        }
+
                         return settings;
                     }
                 }
