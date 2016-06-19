@@ -480,6 +480,7 @@
             this.labelStrVal.Size = new System.Drawing.Size(16, 16);
             this.labelStrVal.TabIndex = 12;
             this.labelStrVal.Text = "-";
+            this.labelStrVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // labelDexVal
             // 
@@ -492,6 +493,7 @@
             this.labelDexVal.Size = new System.Drawing.Size(16, 16);
             this.labelDexVal.TabIndex = 12;
             this.labelDexVal.Text = "-";
+            this.labelDexVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // labelVitVal
             // 
@@ -504,6 +506,7 @@
             this.labelVitVal.Size = new System.Drawing.Size(16, 16);
             this.labelVitVal.TabIndex = 12;
             this.labelVitVal.Text = "-";
+            this.labelVitVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // labelEneVal
             // 
@@ -516,6 +519,7 @@
             this.labelEneVal.Size = new System.Drawing.Size(16, 16);
             this.labelEneVal.TabIndex = 12;
             this.labelEneVal.Text = "-";
+            this.labelEneVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // labelFrwVal
             // 
@@ -528,6 +532,7 @@
             this.labelFrwVal.Size = new System.Drawing.Size(16, 16);
             this.labelFrwVal.TabIndex = 12;
             this.labelFrwVal.Text = "-";
+            this.labelFrwVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // labelFhrVal
             // 
@@ -540,6 +545,7 @@
             this.labelFhrVal.Size = new System.Drawing.Size(16, 16);
             this.labelFhrVal.TabIndex = 12;
             this.labelFhrVal.Text = "-";
+            this.labelFhrVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // labelFcrVal
             // 
@@ -552,6 +558,7 @@
             this.labelFcrVal.Size = new System.Drawing.Size(16, 16);
             this.labelFcrVal.TabIndex = 12;
             this.labelFcrVal.Text = "-";
+            this.labelFcrVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // labelIasVal
             // 
@@ -564,6 +571,7 @@
             this.labelIasVal.Size = new System.Drawing.Size(16, 16);
             this.labelIasVal.TabIndex = 12;
             this.labelIasVal.Text = "-";
+            this.labelIasVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // labelFireResVal
             // 
@@ -576,6 +584,7 @@
             this.labelFireResVal.Size = new System.Drawing.Size(16, 16);
             this.labelFireResVal.TabIndex = 12;
             this.labelFireResVal.Text = "-";
+            this.labelFireResVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // labelColdResVal
             // 
@@ -588,6 +597,7 @@
             this.labelColdResVal.Size = new System.Drawing.Size(16, 16);
             this.labelColdResVal.TabIndex = 12;
             this.labelColdResVal.Text = "-";
+            this.labelColdResVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // labelLightResVal
             // 
@@ -600,6 +610,7 @@
             this.labelLightResVal.Size = new System.Drawing.Size(16, 16);
             this.labelLightResVal.TabIndex = 12;
             this.labelLightResVal.Text = "-";
+            this.labelLightResVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // labelPoisonResVal
             // 
@@ -612,6 +623,7 @@
             this.labelPoisonResVal.Size = new System.Drawing.Size(16, 16);
             this.labelPoisonResVal.TabIndex = 12;
             this.labelPoisonResVal.Text = "-";
+            this.labelPoisonResVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // MainWindow
             // 
