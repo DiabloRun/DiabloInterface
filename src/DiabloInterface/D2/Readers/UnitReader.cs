@@ -43,9 +43,13 @@ namespace DiabloInterface.D2.Readers
 
             // Build filter to get only equipped items and items in inventory
             Func<D2ItemData, bool> filter = data =>
-               (data.InvPage == InventoryPage.Equipped && data.BodyLoc != BodyLocation.SecondaryLeft && data.BodyLoc != BodyLocation.SecondaryRight)
-               ||
-               (data.InvPage == InventoryPage.Inventory)
+               !data.ItemFlags.HasFlag(ItemFlag.RequirementsNotMet) 
+               && 
+               (
+                   (data.InvPage == InventoryPage.Equipped && data.BodyLoc != BodyLocation.SecondaryLeft && data.BodyLoc != BodyLocation.SecondaryRight)
+                   ||
+                   (data.InvPage == InventoryPage.Inventory)
+               )
             ;
             foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))
             {

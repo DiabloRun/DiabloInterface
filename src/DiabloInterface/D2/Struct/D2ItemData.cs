@@ -20,13 +20,14 @@ namespace DiabloInterface.D2.Struct
     [Flags]
     public enum ItemFlag : uint
     {
-        Identified      = 0x00000010,
-        Socketed        = 0x00000800,
-        Named           = 0x00008000,
-        Inexpensive     = 0x00020000,
-        CompactSave     = 0x00200000,
-        Ethereal        = 0x00400000,
-        Runeword        = 0x04000000
+        Identified         = 0x00000010,
+        Socketed           = 0x00000800,
+        RequirementsNotMet = 0x00004000,
+        Named              = 0x00008000,
+        Inexpensive        = 0x00020000,
+        CompactSave        = 0x00200000,
+        Ethereal           = 0x00400000,
+        Runeword           = 0x04000000
     }
 
     public enum InventoryPage : sbyte

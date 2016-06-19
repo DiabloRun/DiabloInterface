@@ -51,7 +51,10 @@ namespace DiabloInterface.Gui
                 goldLabel, lvlLabel,
                 strLabel, dexLabel, vitLabel, eneLabel,
                 frwLabel, fhrLabel, fcrLabel, iasLabel,
-                fireLabel, coldLabel, lighLabel, poisLabel
+                fireLabel, coldLabel, lighLabel, poisLabel,
+                labelPoisonResVal, labelFireResVal, labelLightResVal, labelColdResVal,
+                labelFhrVal, labelFcrVal, labelFrwVal, labelIasVal,
+                labelStrVal, labelDexVal, labelVitVal, labelEneVal, 
             };
         }
 
@@ -241,25 +244,23 @@ namespace DiabloInterface.Gui
         {
             nameLabel.Invoke(new Action(delegate () { nameLabel.Text = player.name; })); // name
             lvlLabel.Invoke(new Action(delegate () { lvlLabel.Text = "LVL: " + player.Level ; })); // level
-
-            strLabel.Invoke(new Action(delegate () { strLabel.Text = "STR: " + player.Strength; }));
-            dexLabel.Invoke(new Action(delegate () { dexLabel.Text = "DEX: " + player.Dexterity; }));
-            vitLabel.Invoke(new Action(delegate () { vitLabel.Text = "VIT: " + player.Vitality; }));
-            eneLabel.Invoke(new Action(delegate () { eneLabel.Text = "ENE: " + player.Energy; }));
-
-            frwLabel.Invoke(new Action(delegate () { frwLabel.Text = "FRW: " + player.FasterRunWalk; }));
-            fcrLabel.Invoke(new Action(delegate () { fcrLabel.Text = "FCR: " + player.FasterCastRate; }));
-            fhrLabel.Invoke(new Action(delegate () { fhrLabel.Text = "FHR: " + player.FasterHitRecovery; }));
-            iasLabel.Invoke(new Action(delegate () { iasLabel.Text = "IAS: " + player.IncreasedAttackSpeed; }));
-
-            fireLabel.Invoke(new Action(delegate () { fireLabel.Text = "FIRE: " + player.FireResist; }));
-            coldLabel.Invoke(new Action(delegate () { coldLabel.Text = "COLD: " + player.ColdResist; }));
-            lighLabel.Invoke(new Action(delegate () { lighLabel.Text = "LIGH: " + player.LightningResist; }));
-            poisLabel.Invoke(new Action(delegate () { poisLabel.Text = "POIS: " + player.PoisonResist; }));
-
             goldLabel.Invoke(new Action(delegate () { goldLabel.Text = "GOLD: " + (player.Gold + player.GoldStash); }));
-
             deathsLabel.Invoke(new Action(delegate () { deathsLabel.Text = "DEATHS: " + player.Deaths; }));
+
+            labelStrVal.Invoke(new Action(delegate () { labelStrVal.Text = "" + player.Strength; }));
+            labelDexVal.Invoke(new Action(delegate () { labelDexVal.Text = "" + player.Dexterity; }));
+            labelVitVal.Invoke(new Action(delegate () { labelVitVal.Text = "" + player.Vitality; }));
+            labelEneVal.Invoke(new Action(delegate () { labelEneVal.Text = "" + player.Energy; }));
+
+            labelFrwVal.Invoke(new Action(delegate () { labelFrwVal.Text = "" + player.FasterRunWalk; }));
+            labelFcrVal.Invoke(new Action(delegate () { labelFcrVal.Text = "" + player.FasterCastRate; }));
+            labelFhrVal.Invoke(new Action(delegate () { labelFhrVal.Text = "" + player.FasterHitRecovery; }));
+            labelIasVal.Invoke(new Action(delegate () { labelIasVal.Text = "" + player.IncreasedAttackSpeed; }));
+
+            labelFireResVal.Invoke(new Action(delegate () { labelFireResVal.Text = "" + player.FireResist; }));
+            labelColdResVal.Invoke(new Action(delegate () { labelColdResVal.Text = "" + player.ColdResist; }));
+            labelLightResVal.Invoke(new Action(delegate () { labelLightResVal.Text = "" + player.LightningResist; }));
+            labelPoisonResVal.Invoke(new Action(delegate () { labelPoisonResVal.Text = "" + player.PoisonResist; }));
 
             if (panelRuneDisplay.Controls.Count > 0)
             {
@@ -362,12 +363,18 @@ namespace DiabloInterface.Gui
 
             // Hide/show labels wanted labels.
             ChangeVisibility(nameLabel, Settings.DisplayName);
+
             ChangeVisibility(goldLabel, Settings.DisplayGold);
+            ChangeVisibility(panelSimpleStats, Settings.DisplayGold);
+
+            ChangeVisibility(deathsLabel, Settings.DisplayDeathCounter);
             ChangeVisibility(lvlLabel, Settings.DisplayLevel);
+            ChangeVisibility(panelDeathsLvl, Settings.DisplayDeathCounter || Settings.DisplayLevel);
+
             ChangeVisibility(panelResistances, Settings.DisplayResistances);
             ChangeVisibility(panelBaseStats, Settings.DisplayBaseStats);
             ChangeVisibility(panelAdvancedStats, Settings.DisplayAdvancedStats);
-            ChangeVisibility(deathsLabel, Settings.DisplayDeathCounter);
+            ChangeVisibility(panelStats, Settings.DisplayResistances || Settings.DisplayBaseStats || Settings.DisplayAdvancedStats);
         }
 
         void ApplyRuneSettings()
@@ -416,20 +423,21 @@ namespace DiabloInterface.Gui
             Size nameSize = TextRenderer.MeasureText(new string('W', 15), nameLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
 
             // base stats have 3 char label (STR, VIT, ect.) and realistically a max value < 500 (lvl 99*5 + alkor quest... items can increase this tho)
-            // we will assume the "longest" string is 499
+            // we will assume the "longest" string is DEX: 499 (most likely dex or ene will be longest str.)
             padding = (panelAdvancedStats.Visible || panelResistances.Visible) ? 8 : 0;
-            Size statSize = TextRenderer.MeasureText("WWW: 499", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+            Size statSize = TextRenderer.MeasureText("DEX: 499", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
             Size basePanelSize = new Size(statSize.Width + padding, statSize.Height * 4);
 
             // advanced stats have 3 char label (FCR, FRW, etc.) and realistically a max value < 100
-            // we will assume the "longest" string is 99
+            // we will assume the "longest" string is FRW: 99
             padding = panelResistances.Visible ? 8 : 0;
-            Size advancedStatSize = TextRenderer.MeasureText("WWW: 99", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+            Size advancedStatSize = TextRenderer.MeasureText("FRW: 99", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
             Size advancedStatPanelSize = new Size(advancedStatSize.Width + padding, advancedStatSize.Height * 4);
 
             // Panel size for resistances can be negative, so max number of chars are 10 (LABL: -VAL)
             // resistances never go below -100 (longest possible string for the label) and never go above 95
-            Size resStatSize = TextRenderer.MeasureText("WWWW: -100", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+            // we will assume the "longest" string is COLD: -100
+            Size resStatSize = TextRenderer.MeasureText("COLD: -100", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
             Size resPanelSize = new Size(resStatSize.Width, resStatSize.Height * 4);
 
             // Recalculate panel size if the title is wider than all panels combined.
