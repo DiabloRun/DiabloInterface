@@ -49,10 +49,13 @@ namespace DiabloInterface
             int major = Convert.ToInt32(verMatch.Groups[1].Value);
             int minor = Convert.ToInt32(verMatch.Groups[2].Value);
             int patch = Convert.ToInt32(verMatch.Groups[3].Value);
-            int pre = 0;
-            if (verMatch.Groups.Count >= 5)
+            int pre;
+            try
             {
                 pre = Convert.ToInt32(verMatch.Groups[4].Value);
+            }
+            catch {
+                pre = 0;
             }
 
             string location = null;
