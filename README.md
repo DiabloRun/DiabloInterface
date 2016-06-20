@@ -1,6 +1,6 @@
 # DiabloInterface
 
-Diablo 2 Interface for Streamers
+Diablo 2 Interface for streamers/speedrunners
 
 The tool reads memory that is used by Diablo 2 executable and finds information 
 that can be useful to viewers of the stream (because the information is not visible ingame at all times).
@@ -42,11 +42,10 @@ If you just want to use the tool and not mess with source code, use any of the b
 [Latest release](https://github.com/Zutatensuppe/DiabloInterface/releases/latest)   
 [All releases](https://github.com/Zutatensuppe/DiabloInterface/releases)   
 
-**Example config files**    
-Put them into same folder as the exe file and rename to settings.conf.
+**Example config file**    
+Put them into same folder as the exe file and rename to settings.conf, or just load via settings menu.
 
-[settings-simple.conf](https://github.com/Zutatensuppe/DiabloInterface/releases/download/v0.2.3/settings-simple.conf) (basic splits: only game start + bosses)   
-[settings-extended.conf](https://github.com/Zutatensuppe/DiabloInterface/releases/download/v0.2.3/settings-extended.conf) (lots of autosplits based on Slimoleqs splits)   
+[settings.conf](https://github.com/Zutatensuppe/DiabloInterface/releases/download/v0.3.0/settings.conf)
 
 ## Troubleshooting
 
@@ -56,17 +55,22 @@ Put them into same folder as the exe file and rename to settings.conf.
 ## Screenshots
 
 **Main window**  
-![Main tool window](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/mainWindow.png)
-![Main tool window, v0.2.1](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/mainWindow-v0.2.1.png)
+![Main tool window](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/main-win-v0.3.0-1.png)
+![Main tool window with other settings](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/main-win-v0.3.0-2.png)
 
 **Settings window**  
-![Settings tool window](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/settingsWindow.png)
+![Settings tool window](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/settings-win-v0.3.0-1.png)
 
-**Debug window**  
-![Settings tool window](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/debugWindow.png)
-
-**Tool in action ([Slimoleq @ Twitch](https://www.twitch.tv/slimoleq))**  
+**Tool in action**  
+[Slimoleq @ Twitch](https://www.twitch.tv/slimoleq)    
 ![Slimoleq Stream](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/slimoScreen.png)
+
+[Teo1904 @ Twitch](https://www.twitch.tv/teo1904)    
+![Teo1904 Stream](https://github.com/Zutatensuppe/DiabloInterface/raw/master/docs/assets/img/teoScreen.png)
+
+## Use in Battle.net
+
+We discourage the use of DiabloInterface in Battle.net as we do not know, if it is seen as a cheat/hack by Blizzard. Using the tool might possibly result in a ban.
 
 ## Credits
 
@@ -74,4 +78,4 @@ Thank you for using, testing and developing the tool!
 
 [qhris](https://github.com/qhris) ([@twitch](https://www.twitch.tv/queaw)) - A LOT of work on DiabloInterface code + running through D2 ASM    
 [slimoleq](https://www.twitch.tv/slimoleq) - idea + original program    
-[teo1904](https://www.twitch.tv/teo1904) - popular streamer using DiabloInterface + testing    
+[teo1904](https://www.twitch.tv/teo1904) - streamer using DiabloInterface + bug reporting + testing    
