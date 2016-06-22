@@ -113,6 +113,7 @@ namespace DiabloInterface
 
         public void ItemSlotAction(List<BodyLocation> slots, Action<ItemReader, D2Unit> action)
         {
+            if (reader == null) return;
             var inventoryReader = new InventoryReader(reader, memory);
 
             // Add all items found in the slots.
