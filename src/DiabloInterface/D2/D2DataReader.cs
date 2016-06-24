@@ -1,4 +1,5 @@
-﻿using DiabloInterface.D2.Readers;
+﻿using DiabloInterface.D2;
+using DiabloInterface.D2.Readers;
 using DiabloInterface.D2.Struct;
 using DiabloInterface.Gui;
 using DiabloInterface.Logging;
@@ -234,6 +235,15 @@ namespace DiabloInterface
             main.UpdateLabels(character, itemClassMap);
             main.writeFiles(character);
 
+#if DEBUG
+            int count0 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(gameInfo.PlayerData, 0));
+            int count1 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(gameInfo.PlayerData, 1));
+            int count2 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(gameInfo.PlayerData, 2));
+            Console.WriteLine("Normal:    " + count0 + "/" + D2QuestHelper.Quests.Count +" ("+ (count0 * 100.0f / D2QuestHelper.Quests.Count) + "%)" );
+            Console.WriteLine("Nightmare: " + count1 + "/" + D2QuestHelper.Quests.Count + " (" + (count1 * 100.0f / D2QuestHelper.Quests.Count) + "%)");
+            Console.WriteLine("Hell:      " + count2 + "/" + D2QuestHelper.Quests.Count + " (" + (count2 * 100.0f / D2QuestHelper.Quests.Count) + "%)");
+#endif
+
             // Update autosplits only if enabled and the character was a freshly started character.
             if (IsAutosplitCharacter(character) && main.Settings.DoAutosplit)
             {
@@ -333,24 +343,6 @@ namespace DiabloInterface
             return questBuffer;
         }
 
-        bool IsQuestCompleted(GameInfo gameInfo, int questId)
-        {
-            ushort[] questBuffer = GetQuestBuffer(gameInfo.PlayerData, gameInfo.Game.Difficulty);
-            if (questBuffer == null) return false;
-
-            if (questId < 0 || questId >= questBuffer.Length)
-                return false;
-
-            // Make sure one of the completions bits are set.
-            ushort questCompletionBits = (1 << 0) | (1 << 1);
-
-            // Use the "Duriel Killed" for the duriel quest.
-            if ((questId << 1) == (int)D2Data.Quest.A2Q6)
-                questCompletionBits = (1 << 5);
-
-            return (questBuffer[questId] & questCompletionBits) != 0;
-        }
-
         private void UpdateAutoSplits(GameInfo gameInfo, Character character)
         {
             foreach (AutoSplit autosplit in main.Settings.Autosplits)
@@ -411,6 +403,13 @@ namespace DiabloInterface
                 area = reader.ReadByte(memory.Address.Area, AddressingMode.Relative);
             }
 
+            ushort[] questBuffer = null;
+
+            if (haveUnreachedQuestSplits)
+            {
+                questBuffer = GetQuestBuffer(gameInfo.PlayerData, gameInfo.Game.Difficulty);
+            }
+
             foreach (AutoSplit autosplit in main.Settings.Autosplits)
             {
                 if (autosplit.IsReached || autosplit.Difficulty != gameInfo.Game.Difficulty)
@@ -439,8 +438,7 @@ namespace DiabloInterface
                         }
                         break;
                     case AutoSplit.SplitType.Quest:
-                        if (IsQuestCompleted(gameInfo, autosplit.Value >> 1))
-                        {
+                        if ( D2QuestHelper.IsQuestComplete((D2QuestHelper.Quest)autosplit.Value, questBuffer) ) {
                             CompleteAutoSplit(autosplit, character);
                         }
                         break;

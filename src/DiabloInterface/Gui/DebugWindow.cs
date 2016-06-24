@@ -1,4 +1,5 @@
-﻿using DiabloInterface.D2.Readers;
+﻿using DiabloInterface.D2;
+using DiabloInterface.D2.Readers;
 using DiabloInterface.D2.Struct;
 using DiabloInterface.Gui.Controls;
 using System;
@@ -68,7 +69,6 @@ namespace DiabloInterface.Gui
         {
             QuestDebugRow[,] questRows;
             ushort questBits;
-            int act, quest;
 
             switch (difficulty)
             {
@@ -82,46 +82,10 @@ namespace DiabloInterface.Gui
             {
                 questBits = questBuffer[i];
 
-                switch ((D2Data.Quest)(i << 1))
+                D2QuestHelper.D2Quest q = D2QuestHelper.GetByQuestBufferIndex(i);
+                if (q != null)
                 {
-                    case D2Data.Quest.A1Q1: act = 1; quest = 1; break;
-                    case D2Data.Quest.A1Q2: act = 1; quest = 2; break;
-                    case D2Data.Quest.A1Q3: act = 1; quest = 3; break;
-                    case D2Data.Quest.A1Q4: act = 1; quest = 4; break;
-                    case D2Data.Quest.A1Q5: act = 1; quest = 5; break;
-                    case D2Data.Quest.A1Q6: act = 1; quest = 6; break;
-
-                    case D2Data.Quest.A2Q1: act = 2; quest = 1; break;
-                    case D2Data.Quest.A2Q2: act = 2; quest = 2; break;
-                    case D2Data.Quest.A2Q3: act = 2; quest = 3; break;
-                    case D2Data.Quest.A2Q4: act = 2; quest = 4; break;
-                    case D2Data.Quest.A2Q5: act = 2; quest = 5; break;
-                    case D2Data.Quest.A2Q6: act = 2; quest = 6; break;
-
-                    case D2Data.Quest.A3Q1: act = 3; quest = 1; break;
-                    case D2Data.Quest.A3Q2: act = 3; quest = 2; break;
-                    case D2Data.Quest.A3Q3: act = 3; quest = 3; break;
-                    case D2Data.Quest.A3Q4: act = 3; quest = 4; break;
-                    case D2Data.Quest.A3Q5: act = 3; quest = 5; break;
-                    case D2Data.Quest.A3Q6: act = 3; quest = 6; break;
-
-                    case D2Data.Quest.A4Q1: act = 4; quest = 1; break;
-                    case D2Data.Quest.A4Q2: act = 4; quest = 2; break;
-                    case D2Data.Quest.A4Q3: act = 4; quest = 3; break;
-
-                    case D2Data.Quest.A5Q1: act = 5; quest = 1; break;
-                    case D2Data.Quest.A5Q2: act = 5; quest = 2; break;
-                    case D2Data.Quest.A5Q3: act = 5; quest = 3; break;
-                    case D2Data.Quest.A5Q4: act = 5; quest = 4; break;
-                    case D2Data.Quest.A5Q5: act = 5; quest = 5; break;
-                    case D2Data.Quest.A5Q6: act = 5; quest = 6; break;
-
-                    default: act = 0; quest = 0; break;
-                }
-
-                if (act > 0 && quest > 0)
-                {
-                    questRows[act - 1, quest - 1].Update(questBits);
+                    questRows[q.Act - 1, q.Quest - 1].Update(questBits);
                 }
             }
         }
@@ -180,7 +144,7 @@ namespace DiabloInterface.Gui
                 tabPage.Controls.Add(actLabels[i]);
                 for (int j = 0; j < (i == 3 ? 3 : 6); j++)
                 {
-                    questRows[i, j] = new QuestDebugRow(j + 1);
+                    questRows[i, j] = new QuestDebugRow(D2QuestHelper.GetByActAndQuest(i + 1, j + 1));
                     questRows[i, j].Location = new Point(100, y + (j * 16));
                     tabPage.Controls.Add(questRows[i, j]);
                 }

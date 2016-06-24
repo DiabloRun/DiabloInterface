@@ -82,6 +82,7 @@
   <ItemGroup>
     <Compile Include="AutoSplit.cs" />
     <Compile Include="AutoSplitFactory.cs" />
+    <Compile Include="D2\D2QuestHelper.cs" />
     <Compile Include="D2\Readers\RangeStatData.cs" />
     <Compile Include="D2\Readers\UnitReader.cs" />
     <Compile Include="D2\Readers\StringLookupTable.cs" />

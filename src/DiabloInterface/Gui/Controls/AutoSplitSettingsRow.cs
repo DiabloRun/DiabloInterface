@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DiabloInterface.D2;
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace DiabloInterface.Gui.Controls
@@ -21,14 +23,6 @@ namespace DiabloInterface.Gui.Controls
         private static string LABEL_KHALIMS_EYE = "Khalim's Eye";
         private static string LABEL_KHALIMS_HEART = "Khalim's Heart";
         private static string LABEL_KHALIMS_BRAIN = "Khalim's Brain";
-
-        private static string LABEL_DEN_OF_EVIL = "Den of Evil";
-        private static string LABEL_ANDARIEL = "Andariel";
-        private static string LABEL_DURIEL = "Duriel";
-        private static string LABEL_MEPHISTO = "Mephisto";
-        private static string LABEL_DIABLO = "Diablo";
-        private static string LABEL_ANCIENTS = "Ancients";
-        private static string LABEL_BAAL = "Baal";
 
         private static string LABEL_GAME_START = "Game Start";
 
@@ -130,13 +124,10 @@ namespace DiabloInterface.Gui.Controls
                     cmbValue.Items.Add(new Item(LABEL_KHALIMS_BRAIN, (int)D2Data.ItemId.KHALIM_BRAIN));
                     break;
                 case AutoSplit.SplitType.Quest:
-                    cmbValue.Items.Add(new Item(LABEL_DEN_OF_EVIL, (int)D2Data.Quest.A1Q1));
-                    cmbValue.Items.Add(new Item(LABEL_ANDARIEL, (int)D2Data.Quest.A1Q6));
-                    cmbValue.Items.Add(new Item(LABEL_DURIEL, (int)D2Data.Quest.A2Q6));
-                    cmbValue.Items.Add(new Item(LABEL_MEPHISTO, (int)D2Data.Quest.A3Q6));
-                    cmbValue.Items.Add(new Item(LABEL_DIABLO, (int)D2Data.Quest.A4Q2));
-                    cmbValue.Items.Add(new Item(LABEL_ANCIENTS, (int)D2Data.Quest.A5Q5));
-                    cmbValue.Items.Add(new Item(LABEL_BAAL, (int)D2Data.Quest.A5Q6));
+                    foreach ( KeyValuePair<D2QuestHelper.Quest, D2QuestHelper.D2Quest> item in D2QuestHelper.Quests )
+                    {
+                        cmbValue.Items.Add(new Item((item.Value.BossQuest ? "" : ("Act " + item.Value.Act + " - ")) + item.Value.CommonName, (int)item.Key));
+                    }
                     break;
                 case AutoSplit.SplitType.Special:
                     cmbValue.Items.Add(new Item(LABEL_GAME_START, (int)AutoSplit.Special.GameStart));

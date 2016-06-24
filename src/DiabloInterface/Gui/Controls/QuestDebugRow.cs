@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DiabloInterface.D2;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -8,11 +9,11 @@ namespace DiabloInterface.Gui.Controls
     {
         private Label[] labels = new Label[16];
 
-        public QuestDebugRow(int questNumber)
+        public QuestDebugRow(D2QuestHelper.D2Quest quest)
         {
             InitializeComponent();
 
-            lblText.Text = "Quest " + questNumber;
+            lblText.Text = quest.CommonName;
 
             labels[0] = label0;
             labels[1] = label1;
