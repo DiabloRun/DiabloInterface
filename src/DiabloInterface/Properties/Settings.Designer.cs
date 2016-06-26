@@ -34,5 +34,17 @@ namespace DiabloInterface.Properties {
                 this["SettingsFile"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastFoundVersion {
+            get {
+                return ((string)(this["LastFoundVersion"]));
+            }
+            set {
+                this["LastFoundVersion"] = value;
+            }
+        }
     }
 }
