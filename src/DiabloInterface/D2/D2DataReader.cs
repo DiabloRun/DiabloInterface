@@ -230,18 +230,21 @@ namespace DiabloInterface
             // Update character data.
             character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
             character.ParseStats(statsMap, itemStatsMap, gameInfo.Game.Difficulty);
+            int count0 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(gameInfo.PlayerData, 0));
+            int count1 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(gameInfo.PlayerData, 1));
+            int count2 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(gameInfo.PlayerData, 2));
+            character.CompletedQuestCounts[0] = count0;
+            character.CompletedQuestCounts[1] = count1;
+            character.CompletedQuestCounts[2] = count2;
 
             // Update UI.
             main.UpdateLabels(character, itemClassMap);
             main.writeFiles(character);
 
 #if DEBUG
-            int count0 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(gameInfo.PlayerData, 0));
-            int count1 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(gameInfo.PlayerData, 1));
-            int count2 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(gameInfo.PlayerData, 2));
-            Console.WriteLine("Normal:    " + count0 + "/" + D2QuestHelper.Quests.Count +" ("+ (count0 * 100.0f / D2QuestHelper.Quests.Count) + "%)" );
-            Console.WriteLine("Nightmare: " + count1 + "/" + D2QuestHelper.Quests.Count + " (" + (count1 * 100.0f / D2QuestHelper.Quests.Count) + "%)");
-            Console.WriteLine("Hell:      " + count2 + "/" + D2QuestHelper.Quests.Count + " (" + (count2 * 100.0f / D2QuestHelper.Quests.Count) + "%)");
+            Console.WriteLine("Normal:    " + character.CompletedQuestCounts[0] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[0] * 100.0f / D2QuestHelper.Quests.Count) + "%)" );
+            Console.WriteLine("Nightmare: " + character.CompletedQuestCounts[1] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[1] * 100.0f / D2QuestHelper.Quests.Count) + "%)");
+            Console.WriteLine("Hell:      " + character.CompletedQuestCounts[2] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[2] * 100.0f / D2QuestHelper.Quests.Count) + "%)");
 #endif
 
             // Update autosplits only if enabled and the character was a freshly started character.
@@ -347,7 +350,27 @@ namespace DiabloInterface
         {
             foreach (AutoSplit autosplit in main.Settings.Autosplits)
             {
-                if (!autosplit.IsReached && autosplit.Type == AutoSplit.SplitType.Special && autosplit.Value == (int)AutoSplit.Special.GameStart)
+                if (autosplit.IsReached) {
+                    continue;
+                }
+                if (autosplit.Type != AutoSplit.SplitType.Special)
+                {
+                    continue;
+                }
+                if (autosplit.Value == (int)AutoSplit.Special.GameStart)
+                {
+                    CompleteAutoSplit(autosplit, character);
+                }
+                if (autosplit.Value == (int)AutoSplit.Special.Clear100Percent 
+                    && character.CompletedQuestCounts[gameInfo.Game.Difficulty] == D2QuestHelper.Quests.Count 
+                    && autosplit.MatchesDifficulty(gameInfo.Game.Difficulty))
+                {
+                    CompleteAutoSplit(autosplit, character);
+                }
+                if (autosplit.Value == (int)AutoSplit.Special.Clear100PercentAllDifficulties
+                    && character.CompletedQuestCounts[0] == D2QuestHelper.Quests.Count
+                    && character.CompletedQuestCounts[1] == D2QuestHelper.Quests.Count
+                    && character.CompletedQuestCounts[2] == D2QuestHelper.Quests.Count)
                 {
                     CompleteAutoSplit(autosplit, character);
                 }
@@ -360,7 +383,7 @@ namespace DiabloInterface
 
             foreach (AutoSplit autosplit in main.Settings.Autosplits)
             {
-                if (autosplit.IsReached || autosplit.Difficulty != gameInfo.Game.Difficulty)
+                if (autosplit.IsReached || !autosplit.MatchesDifficulty(gameInfo.Game.Difficulty))
                 {
                     continue;
                 }
@@ -412,7 +435,7 @@ namespace DiabloInterface
 
             foreach (AutoSplit autosplit in main.Settings.Autosplits)
             {
-                if (autosplit.IsReached || autosplit.Difficulty != gameInfo.Game.Difficulty)
+                if (autosplit.IsReached || !autosplit.MatchesDifficulty(gameInfo.Game.Difficulty))
                 {
                     continue;
                 }

@@ -78,8 +78,11 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnApply = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
+            this.chkDisplayDifficultyPercents = new System.Windows.Forms.CheckBox();
+            this.chkRuneDisplayRunesHorizontal = new System.Windows.Forms.CheckBox();
             this.autoSplitHotkeyControl = new DiabloInterface.Gui.Controls.HotkeyControl();
             this.fontComboBox = new DiabloInterface.Gui.Controls.FontComboBox();
+            this.chkHighContrastRunes = new System.Windows.Forms.CheckBox();
             this.FontGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
@@ -530,7 +533,10 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkRuneDisplayRunesHorizontal);
+            this.groupBox1.Controls.Add(this.chkHighContrastRunes);
             this.groupBox1.Controls.Add(this.chkDisplayRunes);
+            this.groupBox1.Controls.Add(this.chkDisplayDifficultyPercents);
             this.groupBox1.Controls.Add(this.chkDisplayAdvancedStats);
             this.groupBox1.Controls.Add(this.chkDisplayLevel);
             this.groupBox1.Controls.Add(this.chkDisplayGold);
@@ -540,7 +546,7 @@
             this.groupBox1.Controls.Add(this.chkDisplayName);
             this.groupBox1.Location = new System.Drawing.Point(3, 295);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(231, 109);
+            this.groupBox1.Size = new System.Drawing.Size(231, 156);
             this.groupBox1.TabIndex = 18;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Display";
@@ -548,7 +554,7 @@
             // chkDisplayRunes
             // 
             this.chkDisplayRunes.AutoSize = true;
-            this.chkDisplayRunes.Location = new System.Drawing.Point(141, 88);
+            this.chkDisplayRunes.Location = new System.Drawing.Point(10, 111);
             this.chkDisplayRunes.Name = "chkDisplayRunes";
             this.chkDisplayRunes.Size = new System.Drawing.Size(57, 17);
             this.chkDisplayRunes.TabIndex = 6;
@@ -684,6 +690,27 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // chkDisplayDifficultyPercents
+            // 
+            this.chkDisplayDifficultyPercents.AutoSize = true;
+            this.chkDisplayDifficultyPercents.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.chkDisplayDifficultyPercents.Location = new System.Drawing.Point(141, 88);
+            this.chkDisplayDifficultyPercents.Name = "chkDisplayDifficultyPercents";
+            this.chkDisplayDifficultyPercents.Size = new System.Drawing.Size(77, 17);
+            this.chkDisplayDifficultyPercents.TabIndex = 5;
+            this.chkDisplayDifficultyPercents.Text = "Difficulty %";
+            this.chkDisplayDifficultyPercents.UseVisualStyleBackColor = true;
+            // 
+            // chkRuneDisplayRunesHorizontal
+            // 
+            this.chkRuneDisplayRunesHorizontal.AutoSize = true;
+            this.chkRuneDisplayRunesHorizontal.Location = new System.Drawing.Point(69, 111);
+            this.chkRuneDisplayRunesHorizontal.Name = "chkRuneDisplayRunesHorizontal";
+            this.chkRuneDisplayRunesHorizontal.Size = new System.Drawing.Size(73, 17);
+            this.chkRuneDisplayRunesHorizontal.TabIndex = 6;
+            this.chkRuneDisplayRunesHorizontal.Text = "Horizontal";
+            this.chkRuneDisplayRunesHorizontal.UseVisualStyleBackColor = true;
+            // 
             // autoSplitHotkeyControl
             // 
             this.autoSplitHotkeyControl.Hotkey = System.Windows.Forms.Keys.None;
@@ -704,6 +731,16 @@
             this.fontComboBox.Size = new System.Drawing.Size(117, 21);
             this.fontComboBox.Sorted = true;
             this.fontComboBox.TabIndex = 12;
+            // 
+            // chkHighContrastRunes
+            // 
+            this.chkHighContrastRunes.AutoSize = true;
+            this.chkHighContrastRunes.Location = new System.Drawing.Point(10, 134);
+            this.chkHighContrastRunes.Name = "chkHighContrastRunes";
+            this.chkHighContrastRunes.Size = new System.Drawing.Size(124, 17);
+            this.chkHighContrastRunes.TabIndex = 6;
+            this.chkHighContrastRunes.Text = "High Contrast Runes";
+            this.chkHighContrastRunes.UseVisualStyleBackColor = true;
             // 
             // SettingsWindow
             // 
@@ -801,5 +838,8 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.CheckBox chkDisplayDifficultyPercents;
+        private System.Windows.Forms.CheckBox chkRuneDisplayRunesHorizontal;
+        private System.Windows.Forms.CheckBox chkHighContrastRunes;
     }
 }

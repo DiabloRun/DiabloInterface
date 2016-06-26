@@ -53,32 +53,48 @@
             this.iasLabel = new System.Windows.Forms.Label();
             this.panelRuneDisplay = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.panelDeathsLvl = new System.Windows.Forms.TableLayoutPanel();
             this.panelSimpleStats = new System.Windows.Forms.TableLayoutPanel();
             this.panelStats = new System.Windows.Forms.FlowLayoutPanel();
             this.panelBaseStats = new System.Windows.Forms.TableLayoutPanel();
-            this.panelAdvancedStats = new System.Windows.Forms.TableLayoutPanel();
-            this.panelResistances = new System.Windows.Forms.TableLayoutPanel();
-            this.panelDeathsLvl = new System.Windows.Forms.TableLayoutPanel();
             this.labelStrVal = new System.Windows.Forms.Label();
             this.labelDexVal = new System.Windows.Forms.Label();
             this.labelVitVal = new System.Windows.Forms.Label();
             this.labelEneVal = new System.Windows.Forms.Label();
+            this.panelAdvancedStats = new System.Windows.Forms.TableLayoutPanel();
             this.labelFrwVal = new System.Windows.Forms.Label();
             this.labelFhrVal = new System.Windows.Forms.Label();
             this.labelFcrVal = new System.Windows.Forms.Label();
             this.labelIasVal = new System.Windows.Forms.Label();
+            this.panelResistances = new System.Windows.Forms.TableLayoutPanel();
             this.labelFireResVal = new System.Windows.Forms.Label();
             this.labelColdResVal = new System.Windows.Forms.Label();
             this.labelLightResVal = new System.Windows.Forms.Label();
             this.labelPoisonResVal = new System.Windows.Forms.Label();
+            this.labelNormPerc = new System.Windows.Forms.Label();
+            this.labelNmPerc = new System.Windows.Forms.Label();
+            this.labelHellPerc = new System.Windows.Forms.Label();
+            this.panelDiffPercentages2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.panelDiffPercentages = new System.Windows.Forms.TableLayoutPanel();
+            this.normLabel = new System.Windows.Forms.Label();
+            this.nmLabel = new System.Windows.Forms.Label();
+            this.hellLabel = new System.Windows.Forms.Label();
+            this.normLabelVal = new System.Windows.Forms.Label();
+            this.nmLabelVal = new System.Windows.Forms.Label();
+            this.hellLabelVal = new System.Windows.Forms.Label();
+            this.outerLeftRightPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.panelRuneDisplay2 = new System.Windows.Forms.Panel();
             this.contextMenu.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            this.panelDeathsLvl.SuspendLayout();
             this.panelSimpleStats.SuspendLayout();
             this.panelStats.SuspendLayout();
             this.panelBaseStats.SuspendLayout();
             this.panelAdvancedStats.SuspendLayout();
             this.panelResistances.SuspendLayout();
-            this.panelDeathsLvl.SuspendLayout();
+            this.panelDiffPercentages2.SuspendLayout();
+            this.panelDiffPercentages.SuspendLayout();
+            this.outerLeftRightPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvlLabel
@@ -86,7 +102,7 @@
             this.lvlLabel.AutoSize = true;
             this.lvlLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lvlLabel.ForeColor = System.Drawing.Color.White;
-            this.lvlLabel.Location = new System.Drawing.Point(138, 0);
+            this.lvlLabel.Location = new System.Drawing.Point(186, 0);
             this.lvlLabel.Margin = new System.Windows.Forms.Padding(0);
             this.lvlLabel.Name = "lvlLabel";
             this.lvlLabel.Size = new System.Drawing.Size(56, 16);
@@ -98,7 +114,7 @@
             this.nameLabel.AutoSize = true;
             this.nameLabel.Font = new System.Drawing.Font("Courier New", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.nameLabel.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.nameLabel.Location = new System.Drawing.Point(6, 5);
+            this.nameLabel.Location = new System.Drawing.Point(3, 0);
             this.nameLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
             this.nameLabel.Name = "nameLabel";
             this.nameLabel.Size = new System.Drawing.Size(68, 27);
@@ -324,10 +340,10 @@
             this.panelRuneDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelRuneDisplay.AutoSize = true;
-            this.panelRuneDisplay.Location = new System.Drawing.Point(6, 151);
+            this.panelRuneDisplay.Location = new System.Drawing.Point(3, 168);
             this.panelRuneDisplay.MinimumSize = new System.Drawing.Size(200, 28);
             this.panelRuneDisplay.Name = "panelRuneDisplay";
-            this.panelRuneDisplay.Size = new System.Drawing.Size(270, 28);
+            this.panelRuneDisplay.Size = new System.Drawing.Size(367, 28);
             this.panelRuneDisplay.TabIndex = 18;
             // 
             // flowLayoutPanel1
@@ -337,15 +353,34 @@
             this.flowLayoutPanel1.Controls.Add(this.panelDeathsLvl);
             this.flowLayoutPanel1.Controls.Add(this.panelSimpleStats);
             this.flowLayoutPanel1.Controls.Add(this.panelStats);
+            this.flowLayoutPanel1.Controls.Add(this.panelDiffPercentages2);
             this.flowLayoutPanel1.Controls.Add(this.panelRuneDisplay);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(34, 5);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(284, 192);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(373, 199);
             this.flowLayoutPanel1.TabIndex = 20;
+            this.flowLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.flowLayoutPanel1_Paint);
+            // 
+            // panelDeathsLvl
+            // 
+            this.panelDeathsLvl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelDeathsLvl.AutoSize = true;
+            this.panelDeathsLvl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panelDeathsLvl.ColumnCount = 2;
+            this.panelDeathsLvl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.panelDeathsLvl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.panelDeathsLvl.Controls.Add(this.deathsLabel, 0, 0);
+            this.panelDeathsLvl.Controls.Add(this.lvlLabel, 1, 0);
+            this.panelDeathsLvl.Location = new System.Drawing.Point(0, 30);
+            this.panelDeathsLvl.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
+            this.panelDeathsLvl.Name = "panelDeathsLvl";
+            this.panelDeathsLvl.RowCount = 1;
+            this.panelDeathsLvl.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.panelDeathsLvl.Size = new System.Drawing.Size(373, 16);
+            this.panelDeathsLvl.TabIndex = 29;
             // 
             // panelSimpleStats
             // 
@@ -357,25 +392,28 @@
             this.panelSimpleStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65F));
             this.panelSimpleStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
             this.panelSimpleStats.Controls.Add(this.goldLabel, 0, 0);
-            this.panelSimpleStats.Location = new System.Drawing.Point(3, 54);
+            this.panelSimpleStats.Location = new System.Drawing.Point(0, 49);
             this.panelSimpleStats.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
             this.panelSimpleStats.Name = "panelSimpleStats";
             this.panelSimpleStats.RowCount = 1;
             this.panelSimpleStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.panelSimpleStats.Size = new System.Drawing.Size(276, 16);
+            this.panelSimpleStats.Size = new System.Drawing.Size(373, 16);
             this.panelSimpleStats.TabIndex = 28;
             // 
             // panelStats
             // 
+            this.panelStats.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panelStats.AutoSize = true;
+            this.panelStats.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panelStats.Controls.Add(this.panelBaseStats);
             this.panelStats.Controls.Add(this.panelAdvancedStats);
             this.panelStats.Controls.Add(this.panelResistances);
-            this.panelStats.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelStats.Location = new System.Drawing.Point(6, 73);
+            this.panelStats.Controls.Add(this.panelDiffPercentages);
+            this.panelStats.Location = new System.Drawing.Point(3, 68);
             this.panelStats.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.panelStats.Name = "panelStats";
-            this.panelStats.Size = new System.Drawing.Size(270, 72);
+            this.panelStats.Size = new System.Drawing.Size(367, 72);
             this.panelStats.TabIndex = 27;
             // 
             // panelBaseStats
@@ -401,73 +439,6 @@
             this.panelBaseStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.panelBaseStats.Size = new System.Drawing.Size(85, 72);
             this.panelBaseStats.TabIndex = 28;
-            // 
-            // panelAdvancedStats
-            // 
-            this.panelAdvancedStats.ColumnCount = 2;
-            this.panelAdvancedStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelAdvancedStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelAdvancedStats.Controls.Add(this.iasLabel, 0, 3);
-            this.panelAdvancedStats.Controls.Add(this.frwLabel, 0, 0);
-            this.panelAdvancedStats.Controls.Add(this.fcrLabel, 0, 2);
-            this.panelAdvancedStats.Controls.Add(this.fhrLabel, 0, 1);
-            this.panelAdvancedStats.Controls.Add(this.labelFrwVal, 1, 0);
-            this.panelAdvancedStats.Controls.Add(this.labelFhrVal, 1, 1);
-            this.panelAdvancedStats.Controls.Add(this.labelFcrVal, 1, 2);
-            this.panelAdvancedStats.Controls.Add(this.labelIasVal, 1, 3);
-            this.panelAdvancedStats.Location = new System.Drawing.Point(85, 0);
-            this.panelAdvancedStats.Margin = new System.Windows.Forms.Padding(0);
-            this.panelAdvancedStats.Name = "panelAdvancedStats";
-            this.panelAdvancedStats.RowCount = 4;
-            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelAdvancedStats.Size = new System.Drawing.Size(85, 72);
-            this.panelAdvancedStats.TabIndex = 28;
-            // 
-            // panelResistances
-            // 
-            this.panelResistances.ColumnCount = 2;
-            this.panelResistances.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelResistances.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelResistances.Controls.Add(this.coldLabel, 0, 1);
-            this.panelResistances.Controls.Add(this.lighLabel, 0, 2);
-            this.panelResistances.Controls.Add(this.poisLabel, 0, 3);
-            this.panelResistances.Controls.Add(this.fireLabel, 0, 0);
-            this.panelResistances.Controls.Add(this.labelFireResVal, 1, 0);
-            this.panelResistances.Controls.Add(this.labelColdResVal, 1, 1);
-            this.panelResistances.Controls.Add(this.labelLightResVal, 1, 2);
-            this.panelResistances.Controls.Add(this.labelPoisonResVal, 1, 3);
-            this.panelResistances.Location = new System.Drawing.Point(170, 0);
-            this.panelResistances.Margin = new System.Windows.Forms.Padding(0);
-            this.panelResistances.Name = "panelResistances";
-            this.panelResistances.RowCount = 4;
-            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelResistances.Size = new System.Drawing.Size(100, 72);
-            this.panelResistances.TabIndex = 28;
-            // 
-            // panelDeathsLvl
-            // 
-            this.panelDeathsLvl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelDeathsLvl.AutoSize = true;
-            this.panelDeathsLvl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panelDeathsLvl.ColumnCount = 2;
-            this.panelDeathsLvl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.panelDeathsLvl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.panelDeathsLvl.Controls.Add(this.deathsLabel, 0, 0);
-            this.panelDeathsLvl.Controls.Add(this.lvlLabel, 1, 0);
-            this.panelDeathsLvl.Location = new System.Drawing.Point(3, 35);
-            this.panelDeathsLvl.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
-            this.panelDeathsLvl.Name = "panelDeathsLvl";
-            this.panelDeathsLvl.RowCount = 1;
-            this.panelDeathsLvl.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.panelDeathsLvl.Size = new System.Drawing.Size(276, 16);
-            this.panelDeathsLvl.TabIndex = 29;
             // 
             // labelStrVal
             // 
@@ -521,6 +492,30 @@
             this.labelEneVal.Text = "-";
             this.labelEneVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // panelAdvancedStats
+            // 
+            this.panelAdvancedStats.ColumnCount = 2;
+            this.panelAdvancedStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.panelAdvancedStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.panelAdvancedStats.Controls.Add(this.iasLabel, 0, 3);
+            this.panelAdvancedStats.Controls.Add(this.frwLabel, 0, 0);
+            this.panelAdvancedStats.Controls.Add(this.fcrLabel, 0, 2);
+            this.panelAdvancedStats.Controls.Add(this.fhrLabel, 0, 1);
+            this.panelAdvancedStats.Controls.Add(this.labelFrwVal, 1, 0);
+            this.panelAdvancedStats.Controls.Add(this.labelFhrVal, 1, 1);
+            this.panelAdvancedStats.Controls.Add(this.labelFcrVal, 1, 2);
+            this.panelAdvancedStats.Controls.Add(this.labelIasVal, 1, 3);
+            this.panelAdvancedStats.Location = new System.Drawing.Point(85, 0);
+            this.panelAdvancedStats.Margin = new System.Windows.Forms.Padding(0);
+            this.panelAdvancedStats.Name = "panelAdvancedStats";
+            this.panelAdvancedStats.RowCount = 4;
+            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelAdvancedStats.Size = new System.Drawing.Size(85, 72);
+            this.panelAdvancedStats.TabIndex = 28;
+            // 
             // labelFrwVal
             // 
             this.labelFrwVal.AutoSize = true;
@@ -572,6 +567,30 @@
             this.labelIasVal.TabIndex = 12;
             this.labelIasVal.Text = "-";
             this.labelIasVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // panelResistances
+            // 
+            this.panelResistances.ColumnCount = 2;
+            this.panelResistances.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.panelResistances.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.panelResistances.Controls.Add(this.coldLabel, 0, 1);
+            this.panelResistances.Controls.Add(this.lighLabel, 0, 2);
+            this.panelResistances.Controls.Add(this.poisLabel, 0, 3);
+            this.panelResistances.Controls.Add(this.fireLabel, 0, 0);
+            this.panelResistances.Controls.Add(this.labelFireResVal, 1, 0);
+            this.panelResistances.Controls.Add(this.labelLightResVal, 1, 2);
+            this.panelResistances.Controls.Add(this.labelPoisonResVal, 1, 3);
+            this.panelResistances.Controls.Add(this.labelColdResVal, 1, 1);
+            this.panelResistances.Location = new System.Drawing.Point(170, 0);
+            this.panelResistances.Margin = new System.Windows.Forms.Padding(0);
+            this.panelResistances.Name = "panelResistances";
+            this.panelResistances.RowCount = 4;
+            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelResistances.Size = new System.Drawing.Size(100, 72);
+            this.panelResistances.TabIndex = 28;
             // 
             // labelFireResVal
             // 
@@ -625,6 +644,179 @@
             this.labelPoisonResVal.Text = "-";
             this.labelPoisonResVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // labelNormPerc
+            // 
+            this.labelNormPerc.AutoSize = true;
+            this.labelNormPerc.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.labelNormPerc.ForeColor = System.Drawing.Color.White;
+            this.labelNormPerc.Location = new System.Drawing.Point(0, 0);
+            this.labelNormPerc.Margin = new System.Windows.Forms.Padding(0);
+            this.labelNormPerc.Name = "labelNormPerc";
+            this.labelNormPerc.Size = new System.Drawing.Size(48, 16);
+            this.labelNormPerc.TabIndex = 2;
+            this.labelNormPerc.Text = "NO: -";
+            // 
+            // labelNmPerc
+            // 
+            this.labelNmPerc.AutoSize = true;
+            this.labelNmPerc.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.labelNmPerc.ForeColor = System.Drawing.Color.White;
+            this.labelNmPerc.Location = new System.Drawing.Point(53, 0);
+            this.labelNmPerc.Margin = new System.Windows.Forms.Padding(5, 0, 0, 0);
+            this.labelNmPerc.Name = "labelNmPerc";
+            this.labelNmPerc.Size = new System.Drawing.Size(48, 16);
+            this.labelNmPerc.TabIndex = 2;
+            this.labelNmPerc.Text = "NM: -";
+            // 
+            // labelHellPerc
+            // 
+            this.labelHellPerc.AutoSize = true;
+            this.labelHellPerc.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.labelHellPerc.ForeColor = System.Drawing.Color.White;
+            this.labelHellPerc.Location = new System.Drawing.Point(106, 0);
+            this.labelHellPerc.Margin = new System.Windows.Forms.Padding(5, 0, 0, 0);
+            this.labelHellPerc.Name = "labelHellPerc";
+            this.labelHellPerc.Size = new System.Drawing.Size(48, 16);
+            this.labelHellPerc.TabIndex = 2;
+            this.labelHellPerc.Text = "HE: -";
+            // 
+            // panelDiffPercentages2
+            // 
+            this.panelDiffPercentages2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelDiffPercentages2.AutoSize = true;
+            this.panelDiffPercentages2.Controls.Add(this.labelNormPerc);
+            this.panelDiffPercentages2.Controls.Add(this.labelNmPerc);
+            this.panelDiffPercentages2.Controls.Add(this.labelHellPerc);
+            this.panelDiffPercentages2.Location = new System.Drawing.Point(3, 146);
+            this.panelDiffPercentages2.Name = "panelDiffPercentages2";
+            this.panelDiffPercentages2.Size = new System.Drawing.Size(367, 16);
+            this.panelDiffPercentages2.TabIndex = 33;
+            // 
+            // panelDiffPercentages
+            // 
+            this.panelDiffPercentages.ColumnCount = 2;
+            this.panelDiffPercentages.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.panelDiffPercentages.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.panelDiffPercentages.Controls.Add(this.normLabel, 0, 0);
+            this.panelDiffPercentages.Controls.Add(this.nmLabel, 0, 1);
+            this.panelDiffPercentages.Controls.Add(this.hellLabel, 0, 2);
+            this.panelDiffPercentages.Controls.Add(this.normLabelVal, 1, 0);
+            this.panelDiffPercentages.Controls.Add(this.nmLabelVal, 1, 1);
+            this.panelDiffPercentages.Controls.Add(this.hellLabelVal, 1, 2);
+            this.panelDiffPercentages.Location = new System.Drawing.Point(270, 0);
+            this.panelDiffPercentages.Margin = new System.Windows.Forms.Padding(0);
+            this.panelDiffPercentages.Name = "panelDiffPercentages";
+            this.panelDiffPercentages.RowCount = 4;
+            this.panelDiffPercentages.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelDiffPercentages.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelDiffPercentages.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelDiffPercentages.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelDiffPercentages.Size = new System.Drawing.Size(97, 72);
+            this.panelDiffPercentages.TabIndex = 29;
+            // 
+            // normLabel
+            // 
+            this.normLabel.AutoSize = true;
+            this.normLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.normLabel.ForeColor = System.Drawing.Color.White;
+            this.normLabel.Location = new System.Drawing.Point(0, 0);
+            this.normLabel.Margin = new System.Windows.Forms.Padding(0);
+            this.normLabel.Name = "normLabel";
+            this.normLabel.Size = new System.Drawing.Size(48, 16);
+            this.normLabel.TabIndex = 2;
+            this.normLabel.Text = "NORM:";
+            // 
+            // nmLabel
+            // 
+            this.nmLabel.AutoSize = true;
+            this.nmLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.nmLabel.ForeColor = System.Drawing.Color.White;
+            this.nmLabel.Location = new System.Drawing.Point(0, 18);
+            this.nmLabel.Margin = new System.Windows.Forms.Padding(0);
+            this.nmLabel.Name = "nmLabel";
+            this.nmLabel.Size = new System.Drawing.Size(32, 16);
+            this.nmLabel.TabIndex = 2;
+            this.nmLabel.Text = "NM:";
+            // 
+            // hellLabel
+            // 
+            this.hellLabel.AutoSize = true;
+            this.hellLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.hellLabel.ForeColor = System.Drawing.Color.White;
+            this.hellLabel.Location = new System.Drawing.Point(0, 36);
+            this.hellLabel.Margin = new System.Windows.Forms.Padding(0);
+            this.hellLabel.Name = "hellLabel";
+            this.hellLabel.Size = new System.Drawing.Size(48, 16);
+            this.hellLabel.TabIndex = 2;
+            this.hellLabel.Text = "HELL:";
+            // 
+            // normLabelVal
+            // 
+            this.normLabelVal.AutoSize = true;
+            this.normLabelVal.Font = new System.Drawing.Font("Courier New", 9.75F);
+            this.normLabelVal.ForeColor = System.Drawing.Color.White;
+            this.normLabelVal.Location = new System.Drawing.Point(48, 0);
+            this.normLabelVal.Margin = new System.Windows.Forms.Padding(0);
+            this.normLabelVal.Name = "normLabelVal";
+            this.normLabelVal.Size = new System.Drawing.Size(16, 16);
+            this.normLabelVal.TabIndex = 12;
+            this.normLabelVal.Text = "-";
+            this.normLabelVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // nmLabelVal
+            // 
+            this.nmLabelVal.AutoSize = true;
+            this.nmLabelVal.Font = new System.Drawing.Font("Courier New", 9.75F);
+            this.nmLabelVal.ForeColor = System.Drawing.Color.White;
+            this.nmLabelVal.Location = new System.Drawing.Point(48, 18);
+            this.nmLabelVal.Margin = new System.Windows.Forms.Padding(0);
+            this.nmLabelVal.Name = "nmLabelVal";
+            this.nmLabelVal.Size = new System.Drawing.Size(16, 16);
+            this.nmLabelVal.TabIndex = 12;
+            this.nmLabelVal.Text = "-";
+            this.nmLabelVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // hellLabelVal
+            // 
+            this.hellLabelVal.AutoSize = true;
+            this.hellLabelVal.Font = new System.Drawing.Font("Courier New", 9.75F);
+            this.hellLabelVal.ForeColor = System.Drawing.Color.White;
+            this.hellLabelVal.Location = new System.Drawing.Point(48, 36);
+            this.hellLabelVal.Margin = new System.Windows.Forms.Padding(0);
+            this.hellLabelVal.Name = "hellLabelVal";
+            this.hellLabelVal.Size = new System.Drawing.Size(16, 16);
+            this.hellLabelVal.TabIndex = 12;
+            this.hellLabelVal.Text = "-";
+            this.hellLabelVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // outerLeftRightPanel
+            // 
+            this.outerLeftRightPanel.AutoSize = true;
+            this.outerLeftRightPanel.Controls.Add(this.panelRuneDisplay2);
+            this.outerLeftRightPanel.Controls.Add(this.flowLayoutPanel1);
+            this.outerLeftRightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.outerLeftRightPanel.Location = new System.Drawing.Point(0, 0);
+            this.outerLeftRightPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.outerLeftRightPanel.Name = "outerLeftRightPanel";
+            this.outerLeftRightPanel.Padding = new System.Windows.Forms.Padding(3, 5, 3, 5);
+            this.outerLeftRightPanel.Size = new System.Drawing.Size(425, 222);
+            this.outerLeftRightPanel.TabIndex = 21;
+            // 
+            // panelRuneDisplay2
+            // 
+            this.panelRuneDisplay2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelRuneDisplay2.AutoSize = true;
+            this.panelRuneDisplay2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panelRuneDisplay2.Location = new System.Drawing.Point(6, 5);
+            this.panelRuneDisplay2.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.panelRuneDisplay2.MaximumSize = new System.Drawing.Size(28, 0);
+            this.panelRuneDisplay2.MinimumSize = new System.Drawing.Size(28, 28);
+            this.panelRuneDisplay2.Name = "panelRuneDisplay2";
+            this.panelRuneDisplay2.Size = new System.Drawing.Size(28, 28);
+            this.panelRuneDisplay2.TabIndex = 18;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -632,9 +824,9 @@
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(284, 192);
+            this.ClientSize = new System.Drawing.Size(425, 222);
             this.ContextMenuStrip = this.contextMenu;
-            this.Controls.Add(this.flowLayoutPanel1);
+            this.Controls.Add(this.outerLeftRightPanel);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -646,6 +838,8 @@
             this.contextMenu.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
+            this.panelDeathsLvl.ResumeLayout(false);
+            this.panelDeathsLvl.PerformLayout();
             this.panelSimpleStats.ResumeLayout(false);
             this.panelSimpleStats.PerformLayout();
             this.panelStats.ResumeLayout(false);
@@ -655,8 +849,12 @@
             this.panelAdvancedStats.PerformLayout();
             this.panelResistances.ResumeLayout(false);
             this.panelResistances.PerformLayout();
-            this.panelDeathsLvl.ResumeLayout(false);
-            this.panelDeathsLvl.PerformLayout();
+            this.panelDiffPercentages2.ResumeLayout(false);
+            this.panelDiffPercentages2.PerformLayout();
+            this.panelDiffPercentages.ResumeLayout(false);
+            this.panelDiffPercentages.PerformLayout();
+            this.outerLeftRightPanel.ResumeLayout(false);
+            this.outerLeftRightPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -704,6 +902,19 @@
         private System.Windows.Forms.Label labelColdResVal;
         private System.Windows.Forms.Label labelLightResVal;
         private System.Windows.Forms.Label labelPoisonResVal;
+        private System.Windows.Forms.Label labelNormPerc;
+        private System.Windows.Forms.Label labelNmPerc;
+        private System.Windows.Forms.Label labelHellPerc;
+        private System.Windows.Forms.FlowLayoutPanel panelDiffPercentages2;
+        private System.Windows.Forms.TableLayoutPanel panelDiffPercentages;
+        private System.Windows.Forms.Label normLabel;
+        private System.Windows.Forms.Label nmLabel;
+        private System.Windows.Forms.Label hellLabel;
+        private System.Windows.Forms.Label normLabelVal;
+        private System.Windows.Forms.Label nmLabelVal;
+        private System.Windows.Forms.Label hellLabelVal;
+        private System.Windows.Forms.FlowLayoutPanel outerLeftRightPanel;
+        private System.Windows.Forms.Panel panelRuneDisplay2;
     }
 }
 

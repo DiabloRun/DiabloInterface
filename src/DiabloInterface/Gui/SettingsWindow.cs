@@ -23,7 +23,7 @@ namespace DiabloInterface.Gui
             {
                 return dirty
                     || (autoSplitTable != null && autoSplitTable.IsDirty)
-                    || settings.FontName != fontComboBox.SelectedItem as string
+                    || settings.FontName != GetFontName()
                     || settings.FontSize != (int)fontSizeNumeric.Value
                     || settings.FontSizeTitle != (int)titleFontSizeNumeric.Value
                     || settings.CreateFiles != CreateFilesCheckBox.Checked
@@ -37,7 +37,10 @@ namespace DiabloInterface.Gui
                     || settings.DisplayBaseStats != chkDisplayBaseStats.Checked
                     || settings.DisplayAdvancedStats != chkDisplayAdvancedStats.Checked
                     || settings.DisplayRunes != chkDisplayRunes.Checked
+                    || settings.DisplayRunesHorizontal != chkRuneDisplayRunesHorizontal.Checked
+                    || settings.DisplayRunesHighContrast != chkHighContrastRunes.Checked
                     || settings.AutosplitHotkey != autoSplitHotkeyControl.Hotkey
+                    || settings.DisplayDifficultyPercentages != chkDisplayDifficultyPercents.Checked
                 ;
             }
         }
@@ -106,6 +109,9 @@ namespace DiabloInterface.Gui
             chkDisplayBaseStats.Checked = settings.DisplayBaseStats;
             chkDisplayAdvancedStats.Checked = settings.DisplayAdvancedStats;
             chkDisplayRunes.Checked = settings.DisplayRunes;
+            chkRuneDisplayRunesHorizontal.Checked = settings.DisplayRunesHorizontal;
+            chkDisplayDifficultyPercents.Checked = settings.DisplayDifficultyPercentages;
+            chkHighContrastRunes.Checked = settings.DisplayRunesHighContrast;
 
             // Show the selected diablo version.
             int versionIndex = this.VersionComboBox.FindString(settings.D2Version);
@@ -140,6 +146,27 @@ namespace DiabloInterface.Gui
             }
         }
 
+        private string GetFontName()
+        {
+            string fontName = null;
+            if (fontComboBox.SelectedItem != null)
+            {
+                fontName = fontComboBox.SelectedItem.ToString();
+            }
+            else
+            {
+                foreach (string comboBoxFontName in fontComboBox.Items)
+                {
+                    if (comboBoxFontName.Equals(fontComboBox.Text))
+                    {
+                        fontName = fontComboBox.Text;
+                        break;
+                    }
+                }
+            }
+            return fontName;
+        }
+
         private void UpdateSettings()
         {
             List<int> runesList = new List<int>();
@@ -156,21 +183,8 @@ namespace DiabloInterface.Gui
             settings.DoAutosplit = EnableAutosplitCheckBox.Checked;
             settings.AutosplitHotkey = autoSplitHotkeyControl.Hotkey;
             settings.FontSize = (int)fontSizeNumeric.Value;
-            settings.FontSizeTitle = (int)titleFontSizeNumeric.Value; 
-            if (fontComboBox.SelectedItem != null)
-            {
-                settings.FontName = fontComboBox.SelectedItem.ToString();
-            } else
-            {
-                foreach (string fontName in fontComboBox.Items)
-                {
-                    if (fontName.Equals(fontComboBox.Text))
-                    {
-                        settings.FontName = fontComboBox.Text;
-                        break;
-                    }
-                }
-            }
+            settings.FontSizeTitle = (int)titleFontSizeNumeric.Value;
+            settings.FontName = GetFontName();
             settings.D2Version = (string)VersionComboBox.SelectedItem;
 
             settings.DisplayName = chkDisplayName.Checked;
@@ -180,7 +194,10 @@ namespace DiabloInterface.Gui
             settings.DisplayResistances = chkDisplayResistances.Checked;
             settings.DisplayBaseStats = chkDisplayBaseStats.Checked;
             settings.DisplayAdvancedStats = chkDisplayAdvancedStats.Checked;
+            settings.DisplayDifficultyPercentages = chkDisplayDifficultyPercents.Checked;
             settings.DisplayRunes = chkDisplayRunes.Checked;
+            settings.DisplayRunesHorizontal = chkRuneDisplayRunesHorizontal.Checked;
+            settings.DisplayRunesHighContrast = chkHighContrastRunes.Checked;
 
         }
 

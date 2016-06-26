@@ -85,7 +85,14 @@ namespace DiabloInterface.Gui
                 D2QuestHelper.D2Quest q = D2QuestHelper.GetByQuestBufferIndex(i);
                 if (q != null)
                 {
-                    questRows[q.Act - 1, q.Quest - 1].Update(questBits);
+                    try
+                    {
+                        questRows[q.Act - 1, q.Quest - 1].Update(questBits);
+                    }
+                    catch
+                    {
+                        // System.NullReferenceException
+                    }
                 }
             }
         }

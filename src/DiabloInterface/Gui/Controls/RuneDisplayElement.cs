@@ -52,6 +52,7 @@ namespace DiabloInterface.Gui.Controls
         private bool haveRune = false;
 
         static Bitmap runesSprite;
+        static Bitmap runesSpriteHighContrast;
 
         private Bitmap image;
         private Bitmap imageRed;
@@ -63,35 +64,47 @@ namespace DiabloInterface.Gui.Controls
         {
             InitializeComponent();
 
-            // load the sprite file first
+            var assembly = Assembly.GetExecutingAssembly();
+            // load the sprite files first
             if (runesSprite == null)
             {
-                var resourceName = "DiabloInterface.Resources.Images.Runes.runes.png";
-                var assembly = Assembly.GetExecutingAssembly();
-                runesSprite = new Bitmap(assembly.GetManifestResourceStream(resourceName));
+                runesSprite = new Bitmap(assembly.GetManifestResourceStream("DiabloInterface.Resources.Images.Runes.runes.png"));
+            }
+            if (runesSpriteHighContrast == null)
+            {
+                runesSpriteHighContrast = new Bitmap(assembly.GetManifestResourceStream("DiabloInterface.Resources.Images.Runes.runes-high-contrast.png"));
             }
 
             settingsWindow = w;
             mainWindow = m;
             setRune(rune);
         }
-
-
-
+        
         public Rune getRune()
         {
             return rune;
+        }
+
+        public void SetRuneSprite( bool highContrast )
+        {
+            if (highContrast)
+            {
+                image = runesSpriteHighContrast.Clone(new Rectangle(0, (int)rune * runeSize, runeSize, runeSize), runesSprite.PixelFormat);
+                imageRed = runesSpriteHighContrast.Clone(new Rectangle(runeSize, (int)rune * runeSize, runeSize, runeSize), runesSprite.PixelFormat);
+            } else
+            {
+                image = runesSprite.Clone(new Rectangle(0, (int)rune * runeSize, runeSize, runeSize), runesSprite.PixelFormat);
+                imageRed = runesSprite.Clone(new Rectangle(runeSize, (int)rune * runeSize, runeSize, runeSize), runesSprite.PixelFormat);
+            }
         }
         public void setRune( Rune rune )
         {
 
             this.rune = rune;
-
-            image = runesSprite.Clone(new Rectangle(0, (int)rune* runeSize, runeSize, runeSize), runesSprite.PixelFormat);
-            imageRed = runesSprite.Clone(new Rectangle(runeSize, (int)rune * runeSize, runeSize, runeSize), runesSprite.PixelFormat);
-            setHaveRune(true);
+            SetRuneSprite(false);
+            SetHaveRune(true);
         }
-        public void setRemovable(bool removable)
+        public void SetRemovable(bool removable)
         {
             if (removable)
             {
@@ -101,7 +114,7 @@ namespace DiabloInterface.Gui.Controls
                 this.Width = runeSize;
             }
         }
-        public void setHaveRune(bool haveRune)
+        public void SetHaveRune(bool haveRune)
         {
             this.haveRune = haveRune;
             if (haveRune)

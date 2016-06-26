@@ -19,6 +19,8 @@ namespace DiabloInterface
         public enum Special
         {
             GameStart = 1,
+            Clear100Percent,
+            Clear100PercentAllDifficulties,
         }
 
         private class Item
@@ -101,6 +103,25 @@ namespace DiabloInterface
             Type = type;
             Value = value;
             Difficulty = difficulty;
+        }
+
+        public bool IsDifficultyIgnored()
+        {
+            if (Type == SplitType.CharLevel)
+                return true;
+
+            if (Type == SplitType.Special && (Value == (short)Special.Clear100PercentAllDifficulties || Value == (short)Special.GameStart))
+                return true;
+
+            return false;
+        }
+
+        public bool MatchesDifficulty(short difficulty)
+        {
+            if (IsDifficultyIgnored())
+                return true;
+
+            return Difficulty == difficulty;
         }
 
         /// <summary>

@@ -25,6 +25,8 @@ namespace DiabloInterface.Gui.Controls
         private static string LABEL_KHALIMS_BRAIN = "Khalim's Brain";
 
         private static string LABEL_GAME_START = "Game Start";
+        private static string LABEL_CLEAR_100_PERCENT = "Clear 100%";
+        private static string LABEL_CLEAR_100_PERCENT_ALL = "Clear 100% of all difficulties";
 
         private class Item
         {
@@ -63,7 +65,7 @@ namespace DiabloInterface.Gui.Controls
 
             FillComboBoxes();
 
-            cmbDifficulty.SelectedIndex = (int)autosplit.Difficulty;
+            cmbDifficulty.SelectedIndex = autosplit.Difficulty;
 
             var i = 0;
             foreach (Item item in cmbValue.Items)
@@ -76,28 +78,21 @@ namespace DiabloInterface.Gui.Controls
                 i++;
             }
         }
-
+        
         private void FillComboBoxes()
         {
             cmbDifficulty.Items.Clear();
-            switch (AutoSplit.Type)
+            cmbDifficulty.Items.Add(new Item(LABEL_NORMAL, 0));
+            cmbDifficulty.Items.Add(new Item(LABEL_NIGHTMARE, 1));
+            cmbDifficulty.Items.Add(new Item(LABEL_HELL, 2));
+            cmbDifficulty.SelectedIndex = AutoSplit.Difficulty;
+            cmbDifficulty.Show();
+            if ( AutoSplit.IsDifficultyIgnored() )
             {
-                case AutoSplit.SplitType.Area:
-                case AutoSplit.SplitType.Item:
-                case AutoSplit.SplitType.Quest:
-                    cmbDifficulty.Items.Add(new Item(LABEL_NORMAL, 0));
-                    cmbDifficulty.Items.Add(new Item(LABEL_NIGHTMARE, 1));
-                    cmbDifficulty.Items.Add(new Item(LABEL_HELL, 2));
-                    cmbDifficulty.SelectedIndex = AutoSplit.Difficulty;
-                    cmbDifficulty.Show();
-                    break;
-                case AutoSplit.SplitType.CharLevel:
-                case AutoSplit.SplitType.Special:
-                default:
-                    cmbDifficulty.Items.Add(new Item(LABEL_NORMAL, 0));
-                    cmbDifficulty.SelectedIndex = 0;
-                    cmbDifficulty.Hide();
-                    break;
+                cmbDifficulty.Hide();
+            } else
+            {
+                cmbDifficulty.SelectedIndex = AutoSplit.Difficulty;
             }
 
             cmbValue.Items.Clear();
@@ -131,6 +126,8 @@ namespace DiabloInterface.Gui.Controls
                     break;
                 case AutoSplit.SplitType.Special:
                     cmbValue.Items.Add(new Item(LABEL_GAME_START, (int)AutoSplit.Special.GameStart));
+                    cmbValue.Items.Add(new Item(LABEL_CLEAR_100_PERCENT, (int)AutoSplit.Special.Clear100Percent));
+                    cmbValue.Items.Add(new Item(LABEL_CLEAR_100_PERCENT_ALL, (int)AutoSplit.Special.Clear100PercentAllDifficulties));
                     break;
             }
         }
@@ -159,6 +156,17 @@ namespace DiabloInterface.Gui.Controls
                 if (AutoSplit.Name == "" || AutoSplit.Name == "Unnamed")
                 {
                     txtName.Text = selectedValueItem.Name;
+                }
+                if (AutoSplit.Type == AutoSplit.SplitType.Special)
+                {
+                    if (AutoSplit.Value == (int)AutoSplit.Special.Clear100Percent)
+                    {
+                        cmbDifficulty.Show();
+                    }
+                    else
+                    {
+                        cmbDifficulty.Hide();
+                    }
                 }
             }
             else

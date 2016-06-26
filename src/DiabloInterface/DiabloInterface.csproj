@@ -241,6 +241,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Images\Runes\runes-high-contrast.png" />
     <None Include="Resources\Images\Icons\exclamation.png" />
     <None Include="Resources\Images\Icons\bug.png" />
     <Content Include="Resources\Diablo II_101.ico" />
