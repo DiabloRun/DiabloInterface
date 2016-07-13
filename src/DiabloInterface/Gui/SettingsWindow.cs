@@ -13,6 +13,8 @@ namespace DiabloInterface.Gui
     {
         private const string WindowTitleFormat = "Settings ({0})"; // {0} => Settings File Path
 
+        private string SettingsFilePath = Application.StartupPath + @"\Settings";
+
         AutoSplitTable autoSplitTable;
         ApplicationSettings settings;
 
@@ -50,6 +52,7 @@ namespace DiabloInterface.Gui
             InitializeComponent();
             InitializeAutoSplitTable();
             InitializeRunes();
+            LoadConfigFileList();
 
             // Select first rune (don't leave combo box empty).
             RuneComboBox.SelectedIndex = 0;
@@ -457,6 +460,131 @@ namespace DiabloInterface.Gui
 
             RuneDisplayElement element = new RuneDisplayElement(rune, this, null);
             RuneDisplayPanel.Controls.Add(element);
+        }
+        private void LoadConfigFileList()
+        {
+            lstConfigFiles.Items.Clear();
+
+            DirectoryInfo di = new DirectoryInfo(SettingsFilePath);
+            foreach (FileInfo fi in di.GetFiles("*.conf", SearchOption.AllDirectories))
+            {
+                ConfigEntry ce = new ConfigEntry()
+                {
+                    DisplayName = fi.Name.Substring(0, fi.Name.LastIndexOf('.')),
+                    Path = fi.FullName
+                };
+
+                lstConfigFiles.Items.Add(ce);
+            }
+
+            
+        }
+
+        class ConfigEntry
+        {
+            public string DisplayName { get; set; }
+            public string Path { get; set; }
+
+
+            public override string ToString()
+            {
+                return DisplayName;
+            }
+        }
+
+        private void lstConfigFiles_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            // make sure we actually dbl click an item, not just anywhere in the box.
+            int index = this.lstConfigFiles.IndexFromPoint(e.Location);
+            if (index != System.Windows.Forms.ListBox.NoMatches)
+            {
+                LoadSettings(((ConfigEntry)lstConfigFiles.Items[index]).Path);
+            }
+        }
+
+        private void lstConfigFiles_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                int index = this.lstConfigFiles.IndexFromPoint(e.Location);
+                if (index != System.Windows.Forms.ListBox.NoMatches)
+                {
+                    menuClone.Enabled = true;
+                    menuLoad.Enabled = true;
+                    menuNew.Enabled = true;
+                    menuDelete.Enabled = true;
+                    lstConfigFiles.ContextMenuStrip.Show(lstConfigFiles,new Point(e.X,e.Y));
+                }
+                else
+                {
+                    menuClone.Enabled = false;
+                    menuLoad.Enabled = false;
+                    menuNew.Enabled = true;
+                    menuDelete.Enabled = false;
+                    lstConfigFiles.ContextMenuStrip.Show(lstConfigFiles, new Point(e.X, e.Y));
+                }
+            }
+        }
+
+        private void menuNew_Click(object sender, EventArgs e)
+        {
+
+            SimpleSaveDialog ssd = new SimpleSaveDialog(String.Empty);
+            DialogResult res = ssd.ShowDialog();
+
+            if (res == DialogResult.OK)
+            {
+                NewSettings(Path.Combine(SettingsFilePath, ssd.NewFileName) + ".conf");
+            }
+
+            ssd.Dispose();
+
+            
+        }
+
+        private void NewSettings(string path)
+        {
+            settings = new ApplicationSettings();
+            InitializeSettings();
+            SaveSettings(path);
+            LoadConfigFileList();
+            LoadSettings(path);
+        }
+
+        private void menuLoad_Click(object sender, EventArgs e)
+        {
+            LoadSettings(((ConfigEntry)lstConfigFiles.SelectedItem).Path);
+        }
+
+        private void menuClone_Click(object sender, EventArgs e)
+        {
+            SimpleSaveDialog ssd = new SimpleSaveDialog(String.Empty);
+            DialogResult res = ssd.ShowDialog();
+
+            if (res == DialogResult.OK)
+            {
+                CloneSettings(((ConfigEntry)lstConfigFiles.SelectedItem).Path, Path.Combine(SettingsFilePath,ssd.NewFileName)+".conf");
+            }
+
+            ssd.Dispose();
+        }
+
+        private void CloneSettings(string oldPath, string newPath)
+        {
+            File.Copy(oldPath, newPath);
+            LoadConfigFileList();
+            LoadSettings(newPath);
+        }
+
+        private void menuDelete_Click(object sender, EventArgs e)
+        {
+            DeleteSettings(((ConfigEntry)lstConfigFiles.SelectedItem).Path);
+        }
+
+        private void DeleteSettings(string path)
+        {
+            File.Delete(path);
+            LoadConfigFileList();
         }
     }
 
