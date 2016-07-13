@@ -90,7 +90,7 @@ namespace DiabloInterface.Gui
 
         private void UpdateTitle()
         {
-            Text = string.Format(WindowTitleFormat, Properties.Settings.Default.SettingsFile);
+            Text = string.Format(WindowTitleFormat, Properties.Settings.Default.SettingsFile.Substring(Properties.Settings.Default.SettingsFile.LastIndexOf("\\")+1));
         }
 
         private void InitializeSettings()
@@ -332,41 +332,21 @@ namespace DiabloInterface.Gui
             return false;
         }
 
-        private void LoadSettingsMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog d = new OpenFileDialog();
-            d.Filter = SettingsPersistence.FileFilter;
-            if (d.ShowDialog() == DialogResult.OK)
-            {
-                if (!LoadSettings(d.FileName))
-                {
-                    MessageBox.Show("Failed to open settings file, make sure it is a valid settings file.",
-                        "Settings Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private void SaveSettingsMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveSettings();
-        }
-
         private void SaveSettingsAsMenuItem_Click(object sender, EventArgs e)
         {
-            SaveFileDialog d = new SaveFileDialog();
-            d.Filter = SettingsPersistence.FileFilter;
-            d.InitialDirectory = Application.StartupPath + @"\Settings";
-            if (d.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(d.FileName))
+            SimpleSaveDialog ssd = new SimpleSaveDialog(String.Empty);
+            DialogResult res = ssd.ShowDialog();
+
+            if (res == DialogResult.OK)
             {
-                SaveSettings(d.FileName);
+                SaveSettings(Path.Combine(SettingsFilePath, ssd.NewFileName) + ".conf");
             }
-        }
 
-        private void CloseSettingsMenuItem_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+            ssd.Dispose();
 
+            LoadConfigFileList();
+        }
+   
         private void CheckUpdatesButton_Click(object sender, EventArgs e)
         {
             VersionChecker.CheckForUpdate(true);
@@ -374,18 +354,13 @@ namespace DiabloInterface.Gui
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            Close();
-        }
-
-        private void btnApply_Click(object sender, EventArgs e)
-        {
-            SaveSettings();
+            //todo: should check isdirty, but isdirty not checking runes
+            LoadSettings(Properties.Settings.Default.SettingsFile);
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             SaveSettings();
-            Close();
         }
 
         private void RuneComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -484,8 +459,6 @@ namespace DiabloInterface.Gui
         {
             public string DisplayName { get; set; }
             public string Path { get; set; }
-
-
             public override string ToString()
             {
                 return DisplayName;
@@ -588,7 +561,7 @@ namespace DiabloInterface.Gui
         }
     }
 
-    internal class Runeword
+    public class Runeword
     {
         public string Name { get; set; }
         public List<string> Runes { get; set; }

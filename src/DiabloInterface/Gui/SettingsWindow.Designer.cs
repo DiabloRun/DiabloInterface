@@ -72,8 +72,7 @@
             this.mainPanel = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnSaveAs = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnApply = new System.Windows.Forms.Button();
+            this.btnUndo = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.lstConfigFiles = new System.Windows.Forms.ListBox();
             this.grpConfigFiles = new System.Windows.Forms.GroupBox();
@@ -446,6 +445,7 @@
             this.HorizontalSplitContainer.RowCount = 2;
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.HorizontalSplitContainer.Size = new System.Drawing.Size(642, 479);
             this.HorizontalSplitContainer.TabIndex = 0;
             // 
@@ -580,8 +580,7 @@
             // panel1
             // 
             this.panel1.Controls.Add(this.btnSaveAs);
-            this.panel1.Controls.Add(this.btnCancel);
-            this.panel1.Controls.Add(this.btnApply);
+            this.panel1.Controls.Add(this.btnUndo);
             this.panel1.Controls.Add(this.btnSave);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 485);
@@ -593,7 +592,7 @@
             // btnSaveAs
             // 
             this.btnSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveAs.Location = new System.Drawing.Point(729, 4);
+            this.btnSaveAs.Location = new System.Drawing.Point(893, 6);
             this.btnSaveAs.Name = "btnSaveAs";
             this.btnSaveAs.Size = new System.Drawing.Size(75, 23);
             this.btnSaveAs.TabIndex = 1;
@@ -601,32 +600,21 @@
             this.btnSaveAs.UseVisualStyleBackColor = true;
             this.btnSaveAs.Click += new System.EventHandler(this.SaveSettingsAsMenuItem_Click);
             // 
-            // btnCancel
+            // btnUndo
             // 
-            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(812, 4);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 0;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // btnApply
-            // 
-            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApply.Location = new System.Drawing.Point(895, 4);
-            this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(75, 23);
-            this.btnApply.TabIndex = 0;
-            this.btnApply.Text = "Apply";
-            this.btnApply.UseVisualStyleBackColor = true;
-            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            this.btnUndo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUndo.Location = new System.Drawing.Point(970, 6);
+            this.btnUndo.Name = "btnUndo";
+            this.btnUndo.Size = new System.Drawing.Size(90, 23);
+            this.btnUndo.TabIndex = 0;
+            this.btnUndo.Text = "Undo Changes";
+            this.btnUndo.UseVisualStyleBackColor = true;
+            this.btnUndo.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(979, 4);
+            this.btnSave.Location = new System.Drawing.Point(815, 6);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 0;
@@ -665,33 +653,33 @@
             this.menuClone,
             this.menuDelete});
             this.ctxConfigFileList.Name = "ctxConfigFileList";
-            this.ctxConfigFileList.Size = new System.Drawing.Size(153, 114);
+            this.ctxConfigFileList.Size = new System.Drawing.Size(108, 92);
             // 
             // menuLoad
             // 
             this.menuLoad.Name = "menuLoad";
-            this.menuLoad.Size = new System.Drawing.Size(152, 22);
+            this.menuLoad.Size = new System.Drawing.Size(107, 22);
             this.menuLoad.Text = "Load";
             this.menuLoad.Click += new System.EventHandler(this.menuLoad_Click);
             // 
             // menuClone
             // 
             this.menuClone.Name = "menuClone";
-            this.menuClone.Size = new System.Drawing.Size(152, 22);
+            this.menuClone.Size = new System.Drawing.Size(107, 22);
             this.menuClone.Text = "Clone";
             this.menuClone.Click += new System.EventHandler(this.menuClone_Click);
             // 
             // menuDelete
             // 
             this.menuDelete.Name = "menuDelete";
-            this.menuDelete.Size = new System.Drawing.Size(152, 22);
+            this.menuDelete.Size = new System.Drawing.Size(107, 22);
             this.menuDelete.Text = "Delete";
             this.menuDelete.Click += new System.EventHandler(this.menuDelete_Click);
             // 
             // menuNew
             // 
             this.menuNew.Name = "menuNew";
-            this.menuNew.Size = new System.Drawing.Size(152, 22);
+            this.menuNew.Size = new System.Drawing.Size(107, 22);
             this.menuNew.Text = "New";
             this.menuNew.Click += new System.EventHandler(this.menuNew_Click);
             // 
@@ -799,8 +787,7 @@
         private Controls.HotkeyControl autoSplitHotkeyControl;
         private System.Windows.Forms.TableLayoutPanel mainPanel;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnApply;
+        private System.Windows.Forms.Button btnUndo;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnAddRuneWord;
         private System.Windows.Forms.ComboBox cbRuneWord;
