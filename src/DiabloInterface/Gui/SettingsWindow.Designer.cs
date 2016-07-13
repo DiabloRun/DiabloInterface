@@ -51,6 +51,8 @@
             this.VersionLabel = new System.Windows.Forms.Label();
             this.VersionComboBox = new System.Windows.Forms.ComboBox();
             this.RuneDisplayGroup = new System.Windows.Forms.GroupBox();
+            this.btnAddRuneWord = new System.Windows.Forms.Button();
+            this.cbRuneWord = new System.Windows.Forms.ComboBox();
             this.RuneDisplayPanel = new System.Windows.Forms.Panel();
             this.AddRuneButton = new System.Windows.Forms.Button();
             this.RuneComboBox = new System.Windows.Forms.ComboBox();
@@ -202,7 +204,7 @@
             this.AutoSplitGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AutoSplitGroup.Location = new System.Drawing.Point(3, 3);
             this.AutoSplitGroup.Name = "AutoSplitGroup";
-            this.AutoSplitGroup.Size = new System.Drawing.Size(526, 332);
+            this.AutoSplitGroup.Size = new System.Drawing.Size(526, 333);
             this.AutoSplitGroup.TabIndex = 10;
             this.AutoSplitGroup.TabStop = false;
             this.AutoSplitGroup.Text = "Auto-Split";
@@ -218,7 +220,7 @@
             this.AutoSplitLayout.RowCount = 2;
             this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.AutoSplitLayout.Size = new System.Drawing.Size(520, 313);
+            this.AutoSplitLayout.Size = new System.Drawing.Size(520, 314);
             this.AutoSplitLayout.TabIndex = 21;
             // 
             // AutoSplitToolbar
@@ -230,7 +232,7 @@
             this.AutoSplitToolbar.Controls.Add(this.EnableAutosplitCheckBox);
             this.AutoSplitToolbar.Controls.Add(this.AddAutoSplitButton);
             this.AutoSplitToolbar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AutoSplitToolbar.Location = new System.Drawing.Point(3, 279);
+            this.AutoSplitToolbar.Location = new System.Drawing.Point(3, 280);
             this.AutoSplitToolbar.Name = "AutoSplitToolbar";
             this.AutoSplitToolbar.Size = new System.Drawing.Size(514, 31);
             this.AutoSplitToolbar.TabIndex = 20;
@@ -345,16 +347,39 @@
             // 
             // RuneDisplayGroup
             // 
+            this.RuneDisplayGroup.Controls.Add(this.btnAddRuneWord);
+            this.RuneDisplayGroup.Controls.Add(this.cbRuneWord);
             this.RuneDisplayGroup.Controls.Add(this.RuneDisplayPanel);
             this.RuneDisplayGroup.Controls.Add(this.AddRuneButton);
             this.RuneDisplayGroup.Controls.Add(this.RuneComboBox);
             this.RuneDisplayGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RuneDisplayGroup.Location = new System.Drawing.Point(3, 341);
+            this.RuneDisplayGroup.Location = new System.Drawing.Point(3, 342);
             this.RuneDisplayGroup.Name = "RuneDisplayGroup";
             this.RuneDisplayGroup.Size = new System.Drawing.Size(526, 110);
             this.RuneDisplayGroup.TabIndex = 19;
             this.RuneDisplayGroup.TabStop = false;
             this.RuneDisplayGroup.Text = "Rune Display";
+            // 
+            // btnAddRuneWord
+            // 
+            this.btnAddRuneWord.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddRuneWord.Location = new System.Drawing.Point(421, 82);
+            this.btnAddRuneWord.Name = "btnAddRuneWord";
+            this.btnAddRuneWord.Size = new System.Drawing.Size(96, 23);
+            this.btnAddRuneWord.TabIndex = 4;
+            this.btnAddRuneWord.Text = "Add Runeword";
+            this.btnAddRuneWord.UseVisualStyleBackColor = true;
+            this.btnAddRuneWord.Click += new System.EventHandler(this.btnAddRuneWord_Click);
+            // 
+            // cbRuneWord
+            // 
+            this.cbRuneWord.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbRuneWord.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbRuneWord.FormattingEnabled = true;
+            this.cbRuneWord.Location = new System.Drawing.Point(315, 84);
+            this.cbRuneWord.Name = "cbRuneWord";
+            this.cbRuneWord.Size = new System.Drawing.Size(100, 21);
+            this.cbRuneWord.TabIndex = 3;
             // 
             // RuneDisplayPanel
             // 
@@ -369,7 +394,7 @@
             // AddRuneButton
             // 
             this.AddRuneButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddRuneButton.Location = new System.Drawing.Point(438, 81);
+            this.AddRuneButton.Location = new System.Drawing.Point(230, 83);
             this.AddRuneButton.Name = "AddRuneButton";
             this.AddRuneButton.Size = new System.Drawing.Size(79, 23);
             this.AddRuneButton.TabIndex = 1;
@@ -382,44 +407,11 @@
             this.RuneComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.RuneComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.RuneComboBox.FormattingEnabled = true;
-            this.RuneComboBox.Items.AddRange(new object[] {
-            "El",
-            "Eld",
-            "Tir",
-            "Nef",
-            "Eth",
-            "Ith",
-            "Tal",
-            "Ral",
-            "Ort",
-            "Thul",
-            "Amn",
-            "Sol",
-            "Shael",
-            "Dol",
-            "Hel",
-            "Io",
-            "Lum",
-            "Ko",
-            "Fal",
-            "Lem",
-            "Pul",
-            "Um",
-            "Mal",
-            "Ist",
-            "Gul",
-            "Vex",
-            "Ohm",
-            "Lo",
-            "Sur",
-            "Ber",
-            "Jah",
-            "Cham",
-            "Zod"});
-            this.RuneComboBox.Location = new System.Drawing.Point(373, 82);
+            this.RuneComboBox.Location = new System.Drawing.Point(165, 84);
             this.RuneComboBox.Name = "RuneComboBox";
             this.RuneComboBox.Size = new System.Drawing.Size(59, 21);
             this.RuneComboBox.TabIndex = 0;
+            this.RuneComboBox.SelectedIndexChanged += new System.EventHandler(this.RuneComboBox_SelectedIndexChanged);
             // 
             // SettingsMenuStrip
             // 
@@ -496,7 +488,7 @@
             this.VerticalSplitContainer.Name = "VerticalSplitContainer";
             this.VerticalSplitContainer.RowCount = 1;
             this.VerticalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.VerticalSplitContainer.Size = new System.Drawing.Size(778, 460);
+            this.VerticalSplitContainer.Size = new System.Drawing.Size(778, 461);
             this.VerticalSplitContainer.TabIndex = 20;
             // 
             // HorizontalSplitContainer
@@ -511,7 +503,7 @@
             this.HorizontalSplitContainer.RowCount = 2;
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.HorizontalSplitContainer.Size = new System.Drawing.Size(532, 454);
+            this.HorizontalSplitContainer.Size = new System.Drawing.Size(532, 455);
             this.HorizontalSplitContainer.TabIndex = 0;
             // 
             // RightPanelLayout
@@ -525,7 +517,7 @@
             this.RightPanelLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.RightPanelLayout.Location = new System.Drawing.Point(541, 3);
             this.RightPanelLayout.Name = "RightPanelLayout";
-            this.RightPanelLayout.Size = new System.Drawing.Size(234, 454);
+            this.RightPanelLayout.Size = new System.Drawing.Size(234, 455);
             this.RightPanelLayout.TabIndex = 1;
             // 
             // groupBox1
@@ -639,7 +631,7 @@
             this.mainPanel.RowCount = 2;
             this.mainPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.mainPanel.Size = new System.Drawing.Size(778, 492);
+            this.mainPanel.Size = new System.Drawing.Size(778, 493);
             this.mainPanel.TabIndex = 23;
             // 
             // panel1
@@ -648,7 +640,7 @@
             this.panel1.Controls.Add(this.btnApply);
             this.panel1.Controls.Add(this.btnSave);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 460);
+            this.panel1.Location = new System.Drawing.Point(0, 461);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(778, 32);
@@ -656,6 +648,7 @@
             // 
             // btnCancel
             // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Location = new System.Drawing.Point(527, 4);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -666,6 +659,7 @@
             // 
             // btnApply
             // 
+            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnApply.Location = new System.Drawing.Point(610, 4);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(75, 23);
@@ -676,6 +670,7 @@
             // 
             // btnSave
             // 
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSave.Location = new System.Drawing.Point(694, 4);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
@@ -709,7 +704,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(778, 516);
+            this.ClientSize = new System.Drawing.Size(778, 517);
             this.Controls.Add(this.mainPanel);
             this.Controls.Add(this.SettingsMenuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -801,5 +796,7 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnAddRuneWord;
+        private System.Windows.Forms.ComboBox cbRuneWord;
     }
 }

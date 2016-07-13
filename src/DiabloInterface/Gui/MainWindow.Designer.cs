@@ -47,38 +47,39 @@
             this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadConfigMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.frwLabel = new System.Windows.Forms.Label();
             this.fcrLabel = new System.Windows.Forms.Label();
             this.fhrLabel = new System.Windows.Forms.Label();
             this.iasLabel = new System.Windows.Forms.Label();
             this.panelRuneDisplay = new System.Windows.Forms.Panel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.panelDeathsLvl = new System.Windows.Forms.TableLayoutPanel();
             this.panelSimpleStats = new System.Windows.Forms.TableLayoutPanel();
             this.panelStats = new System.Windows.Forms.FlowLayoutPanel();
             this.panelBaseStats = new System.Windows.Forms.TableLayoutPanel();
-            this.panelAdvancedStats = new System.Windows.Forms.TableLayoutPanel();
-            this.panelResistances = new System.Windows.Forms.TableLayoutPanel();
-            this.panelDeathsLvl = new System.Windows.Forms.TableLayoutPanel();
             this.labelStrVal = new System.Windows.Forms.Label();
             this.labelDexVal = new System.Windows.Forms.Label();
             this.labelVitVal = new System.Windows.Forms.Label();
             this.labelEneVal = new System.Windows.Forms.Label();
+            this.panelAdvancedStats = new System.Windows.Forms.TableLayoutPanel();
             this.labelFrwVal = new System.Windows.Forms.Label();
             this.labelFhrVal = new System.Windows.Forms.Label();
             this.labelFcrVal = new System.Windows.Forms.Label();
             this.labelIasVal = new System.Windows.Forms.Label();
+            this.panelResistances = new System.Windows.Forms.TableLayoutPanel();
             this.labelFireResVal = new System.Windows.Forms.Label();
             this.labelColdResVal = new System.Windows.Forms.Label();
             this.labelLightResVal = new System.Windows.Forms.Label();
             this.labelPoisonResVal = new System.Windows.Forms.Label();
             this.contextMenu.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            this.panelDeathsLvl.SuspendLayout();
             this.panelSimpleStats.SuspendLayout();
             this.panelStats.SuspendLayout();
             this.panelBaseStats.SuspendLayout();
             this.panelAdvancedStats.SuspendLayout();
             this.panelResistances.SuspendLayout();
-            this.panelDeathsLvl.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvlLabel
@@ -231,18 +232,19 @@
             // 
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.settingsToolStripMenuItem,
+            this.loadConfigMenuItem,
             this.resetToolStripMenuItem,
             this.debugMenuItem,
             this.exitToolStripMenuItem});
             this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(161, 92);
+            this.contextMenu.Size = new System.Drawing.Size(159, 136);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Image = global::DiabloInterface.Properties.Resources.wrench_orange;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsMenuItem_Click);
             // 
@@ -251,7 +253,7 @@
             this.resetToolStripMenuItem.Image = global::DiabloInterface.Properties.Resources.arrow_refresh;
             this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
             this.resetToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.resetToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.resetToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.resetToolStripMenuItem.Text = "Reset";
             this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetMenuItem_Click);
             // 
@@ -259,7 +261,7 @@
             // 
             this.debugMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("debugMenuItem.Image")));
             this.debugMenuItem.Name = "debugMenuItem";
-            this.debugMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.debugMenuItem.Size = new System.Drawing.Size(158, 22);
             this.debugMenuItem.Text = "Debug";
             this.debugMenuItem.Click += new System.EventHandler(this.debugMenuItem_Click);
             // 
@@ -267,9 +269,15 @@
             // 
             this.exitToolStripMenuItem.Image = global::DiabloInterface.Properties.Resources.cross;
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitMenuItem_Click);
+            // 
+            // loadConfigMenuItem
+            // 
+            this.loadConfigMenuItem.Name = "loadConfigMenuItem";
+            this.loadConfigMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.loadConfigMenuItem.Text = "Load Config";
             // 
             // frwLabel
             // 
@@ -347,6 +355,25 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(284, 192);
             this.flowLayoutPanel1.TabIndex = 20;
             // 
+            // panelDeathsLvl
+            // 
+            this.panelDeathsLvl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelDeathsLvl.AutoSize = true;
+            this.panelDeathsLvl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panelDeathsLvl.ColumnCount = 2;
+            this.panelDeathsLvl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.panelDeathsLvl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.panelDeathsLvl.Controls.Add(this.deathsLabel, 0, 0);
+            this.panelDeathsLvl.Controls.Add(this.lvlLabel, 1, 0);
+            this.panelDeathsLvl.Location = new System.Drawing.Point(3, 35);
+            this.panelDeathsLvl.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
+            this.panelDeathsLvl.Name = "panelDeathsLvl";
+            this.panelDeathsLvl.RowCount = 1;
+            this.panelDeathsLvl.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.panelDeathsLvl.Size = new System.Drawing.Size(276, 16);
+            this.panelDeathsLvl.TabIndex = 29;
+            // 
             // panelSimpleStats
             // 
             this.panelSimpleStats.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -402,73 +429,6 @@
             this.panelBaseStats.Size = new System.Drawing.Size(85, 72);
             this.panelBaseStats.TabIndex = 28;
             // 
-            // panelAdvancedStats
-            // 
-            this.panelAdvancedStats.ColumnCount = 2;
-            this.panelAdvancedStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelAdvancedStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelAdvancedStats.Controls.Add(this.iasLabel, 0, 3);
-            this.panelAdvancedStats.Controls.Add(this.frwLabel, 0, 0);
-            this.panelAdvancedStats.Controls.Add(this.fcrLabel, 0, 2);
-            this.panelAdvancedStats.Controls.Add(this.fhrLabel, 0, 1);
-            this.panelAdvancedStats.Controls.Add(this.labelFrwVal, 1, 0);
-            this.panelAdvancedStats.Controls.Add(this.labelFhrVal, 1, 1);
-            this.panelAdvancedStats.Controls.Add(this.labelFcrVal, 1, 2);
-            this.panelAdvancedStats.Controls.Add(this.labelIasVal, 1, 3);
-            this.panelAdvancedStats.Location = new System.Drawing.Point(85, 0);
-            this.panelAdvancedStats.Margin = new System.Windows.Forms.Padding(0);
-            this.panelAdvancedStats.Name = "panelAdvancedStats";
-            this.panelAdvancedStats.RowCount = 4;
-            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelAdvancedStats.Size = new System.Drawing.Size(85, 72);
-            this.panelAdvancedStats.TabIndex = 28;
-            // 
-            // panelResistances
-            // 
-            this.panelResistances.ColumnCount = 2;
-            this.panelResistances.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelResistances.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelResistances.Controls.Add(this.coldLabel, 0, 1);
-            this.panelResistances.Controls.Add(this.lighLabel, 0, 2);
-            this.panelResistances.Controls.Add(this.poisLabel, 0, 3);
-            this.panelResistances.Controls.Add(this.fireLabel, 0, 0);
-            this.panelResistances.Controls.Add(this.labelFireResVal, 1, 0);
-            this.panelResistances.Controls.Add(this.labelColdResVal, 1, 1);
-            this.panelResistances.Controls.Add(this.labelLightResVal, 1, 2);
-            this.panelResistances.Controls.Add(this.labelPoisonResVal, 1, 3);
-            this.panelResistances.Location = new System.Drawing.Point(170, 0);
-            this.panelResistances.Margin = new System.Windows.Forms.Padding(0);
-            this.panelResistances.Name = "panelResistances";
-            this.panelResistances.RowCount = 4;
-            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.panelResistances.Size = new System.Drawing.Size(100, 72);
-            this.panelResistances.TabIndex = 28;
-            // 
-            // panelDeathsLvl
-            // 
-            this.panelDeathsLvl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelDeathsLvl.AutoSize = true;
-            this.panelDeathsLvl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panelDeathsLvl.ColumnCount = 2;
-            this.panelDeathsLvl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.panelDeathsLvl.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.panelDeathsLvl.Controls.Add(this.deathsLabel, 0, 0);
-            this.panelDeathsLvl.Controls.Add(this.lvlLabel, 1, 0);
-            this.panelDeathsLvl.Location = new System.Drawing.Point(3, 35);
-            this.panelDeathsLvl.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
-            this.panelDeathsLvl.Name = "panelDeathsLvl";
-            this.panelDeathsLvl.RowCount = 1;
-            this.panelDeathsLvl.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.panelDeathsLvl.Size = new System.Drawing.Size(276, 16);
-            this.panelDeathsLvl.TabIndex = 29;
-            // 
             // labelStrVal
             // 
             this.labelStrVal.AutoSize = true;
@@ -521,6 +481,30 @@
             this.labelEneVal.Text = "-";
             this.labelEneVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // panelAdvancedStats
+            // 
+            this.panelAdvancedStats.ColumnCount = 2;
+            this.panelAdvancedStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.panelAdvancedStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.panelAdvancedStats.Controls.Add(this.iasLabel, 0, 3);
+            this.panelAdvancedStats.Controls.Add(this.frwLabel, 0, 0);
+            this.panelAdvancedStats.Controls.Add(this.fcrLabel, 0, 2);
+            this.panelAdvancedStats.Controls.Add(this.fhrLabel, 0, 1);
+            this.panelAdvancedStats.Controls.Add(this.labelFrwVal, 1, 0);
+            this.panelAdvancedStats.Controls.Add(this.labelFhrVal, 1, 1);
+            this.panelAdvancedStats.Controls.Add(this.labelFcrVal, 1, 2);
+            this.panelAdvancedStats.Controls.Add(this.labelIasVal, 1, 3);
+            this.panelAdvancedStats.Location = new System.Drawing.Point(85, 0);
+            this.panelAdvancedStats.Margin = new System.Windows.Forms.Padding(0);
+            this.panelAdvancedStats.Name = "panelAdvancedStats";
+            this.panelAdvancedStats.RowCount = 4;
+            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelAdvancedStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelAdvancedStats.Size = new System.Drawing.Size(85, 72);
+            this.panelAdvancedStats.TabIndex = 28;
+            // 
             // labelFrwVal
             // 
             this.labelFrwVal.AutoSize = true;
@@ -572,6 +556,30 @@
             this.labelIasVal.TabIndex = 12;
             this.labelIasVal.Text = "-";
             this.labelIasVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // panelResistances
+            // 
+            this.panelResistances.ColumnCount = 2;
+            this.panelResistances.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.panelResistances.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.panelResistances.Controls.Add(this.coldLabel, 0, 1);
+            this.panelResistances.Controls.Add(this.lighLabel, 0, 2);
+            this.panelResistances.Controls.Add(this.poisLabel, 0, 3);
+            this.panelResistances.Controls.Add(this.fireLabel, 0, 0);
+            this.panelResistances.Controls.Add(this.labelFireResVal, 1, 0);
+            this.panelResistances.Controls.Add(this.labelColdResVal, 1, 1);
+            this.panelResistances.Controls.Add(this.labelLightResVal, 1, 2);
+            this.panelResistances.Controls.Add(this.labelPoisonResVal, 1, 3);
+            this.panelResistances.Location = new System.Drawing.Point(170, 0);
+            this.panelResistances.Margin = new System.Windows.Forms.Padding(0);
+            this.panelResistances.Name = "panelResistances";
+            this.panelResistances.RowCount = 4;
+            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelResistances.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.panelResistances.Size = new System.Drawing.Size(100, 72);
+            this.panelResistances.TabIndex = 28;
             // 
             // labelFireResVal
             // 
@@ -646,6 +654,8 @@
             this.contextMenu.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
+            this.panelDeathsLvl.ResumeLayout(false);
+            this.panelDeathsLvl.PerformLayout();
             this.panelSimpleStats.ResumeLayout(false);
             this.panelSimpleStats.PerformLayout();
             this.panelStats.ResumeLayout(false);
@@ -655,8 +665,6 @@
             this.panelAdvancedStats.PerformLayout();
             this.panelResistances.ResumeLayout(false);
             this.panelResistances.PerformLayout();
-            this.panelDeathsLvl.ResumeLayout(false);
-            this.panelDeathsLvl.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -704,6 +712,7 @@
         private System.Windows.Forms.Label labelColdResVal;
         private System.Windows.Forms.Label labelLightResVal;
         private System.Windows.Forms.Label labelPoisonResVal;
+        private System.Windows.Forms.ToolStripMenuItem loadConfigMenuItem;
     }
 }
 

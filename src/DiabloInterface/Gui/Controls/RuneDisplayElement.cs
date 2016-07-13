@@ -75,9 +75,6 @@ namespace DiabloInterface.Gui.Controls
             mainWindow = m;
             setRune(rune);
         }
-
-
-
         public Rune getRune()
         {
             return rune;
@@ -86,7 +83,6 @@ namespace DiabloInterface.Gui.Controls
         {
 
             this.rune = rune;
-
             image = runesSprite.Clone(new Rectangle(0, (int)rune* runeSize, runeSize, runeSize), runesSprite.PixelFormat);
             imageRed = runesSprite.Clone(new Rectangle(runeSize, (int)rune * runeSize, runeSize, runeSize), runesSprite.PixelFormat);
             setHaveRune(true);

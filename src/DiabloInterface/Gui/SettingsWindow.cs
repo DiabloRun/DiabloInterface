@@ -4,6 +4,8 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using DiabloInterface.Gui.Controls;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace DiabloInterface.Gui
 {
@@ -47,9 +49,11 @@ namespace DiabloInterface.Gui
             this.settings = settings;
             InitializeComponent();
             InitializeAutoSplitTable();
+            InitializeRunes();
 
             // Select first rune (don't leave combo box empty).
             RuneComboBox.SelectedIndex = 0;
+            cbRuneWord.SelectedIndex = 0;
 
             InitializeSettings();
 
@@ -208,6 +212,8 @@ namespace DiabloInterface.Gui
 
         public void LayoutControls(bool checkVisible = true)
         {
+            //todo: should use a flow layout here so dont have to fuck around with all this crap for positioning
+
             int x = 0;
             int y = 0;
             int scroll = RuneDisplayPanel.VerticalScroll.Value;
@@ -346,6 +352,7 @@ namespace DiabloInterface.Gui
         {
             SaveFileDialog d = new SaveFileDialog();
             d.Filter = SettingsPersistence.FileFilter;
+            d.InitialDirectory = Application.StartupPath + @"\Settings";
             if (d.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(d.FileName))
             {
                 SaveSettings(d.FileName);
@@ -376,6 +383,96 @@ namespace DiabloInterface.Gui
         {
             SaveSettings();
             Close();
+        }
+
+        private void RuneComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void InitializeRunes()
+        {
+            //todo: Load these from file
+            RuneComboBox.Items.AddRange(new object[] {
+            "El",
+            "Eld",
+            "Tir",
+            "Nef",
+            "Eth",
+            "Ith",
+            "Tal",
+            "Ral",
+            "Ort",
+            "Thul",
+            "Amn",
+            "Sol",
+            "Shael",
+            "Dol",
+            "Hel",
+            "Io",
+            "Lum",
+            "Ko",
+            "Fal",
+            "Lem",
+            "Pul",
+            "Um",
+            "Mal",
+            "Ist",
+            "Gul",
+            "Vex",
+            "Ohm",
+            "Lo",
+            "Sur",
+            "Ber",
+            "Jah",
+            "Cham",
+            "Zod"});
+
+            List<Runeword> runeWords;
+            
+            JsonSerializer serializer = new JsonSerializer();
+            using (StreamReader sr = new StreamReader(@".\Resources\runewords.json"))
+            {
+                using (JsonReader reader = new JsonTextReader(sr))
+                {
+                    runeWords = serializer.Deserialize<List<Runeword>>(reader);
+                }
+            }
+
+            runeWords.ForEach(y => cbRuneWord.Items.Add(y));
+        }
+
+        private void btnAddRuneWord_Click(object sender, EventArgs e)
+        {
+            Runeword rw = (Runeword)cbRuneWord.SelectedItem;
+
+            rw.Runes.ForEach(r => AddIndividualRune(r));
+
+            LayoutControls();
+        }
+
+        private void AddIndividualRune(string runeString)
+        {
+            Rune rune = (Rune)(Enum.Parse(typeof(Rune), runeString));
+
+            RuneDisplayElement element = new RuneDisplayElement(rune, this, null);
+            RuneDisplayPanel.Controls.Add(element);
+        }
+    }
+
+    internal class Runeword
+    {
+        public string Name { get; set; }
+        public List<string> Runes { get; set; }
+
+        public Runeword()
+        {
+            Runes = new List<string>();
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

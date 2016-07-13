@@ -185,10 +185,16 @@ namespace DiabloInterface.Gui
             return memoryTable;
         }
 
-        ApplicationSettings LoadSettings()
+        ApplicationSettings LoadSettings(string fileName)
         {
             var persistence = new SettingsPersistence();
-            var settings = persistence.Load();
+
+            ApplicationSettings settings = null;
+
+            if (fileName == String.Empty)
+                settings = persistence.Load();
+            else
+                settings = persistence.Load(fileName);
 
             if (settings == null)
             {
@@ -205,7 +211,7 @@ namespace DiabloInterface.Gui
         {
             try
             {
-                Settings = LoadSettings();
+                Settings = LoadSettings(String.Empty);
             }
             catch (Exception e)
             {
@@ -238,6 +244,8 @@ namespace DiabloInterface.Gui
             }
 
             ApplySettings(Settings);
+
+            LoadConfigFileList();
         }
 
         private void UpdateMinWidth(Label[] labels)
@@ -370,6 +378,7 @@ namespace DiabloInterface.Gui
                 debugWindow.UpdateAutosplits(Settings.Autosplits);
             }
 
+            LoadConfigFileList();
             LogAutoSplits();
         }
 
@@ -533,6 +542,7 @@ namespace DiabloInterface.Gui
             }
 
             settingsWindow.ShowDialog();
+            settingsWindow.Dispose();
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
@@ -549,6 +559,33 @@ namespace DiabloInterface.Gui
             }
 
             debugWindow.Show();
+        }
+
+        private void LoadConfigFileList()
+        {
+            loadConfigMenuItem.DropDownItems.Clear();
+
+            List<ToolStripItem> items = new List<ToolStripItem>();
+
+            DirectoryInfo di = new DirectoryInfo(@".\Settings");
+            foreach (FileInfo fi in di.GetFiles("*.conf", SearchOption.AllDirectories))
+            {
+                ToolStripMenuItem tsmi = new ToolStripMenuItem();
+                tsmi.Text = fi.Name.Substring(0,fi.Name.LastIndexOf('.'));
+                tsmi.Tag = fi.FullName;
+                tsmi.Click += LoadConfigFile;
+                items.Add(tsmi);
+            }
+           
+            loadConfigMenuItem.DropDownItems.AddRange(items.ToArray());
+        }
+
+        private void LoadConfigFile(object sender, EventArgs e)
+        {
+            var fileName = ((ToolStripMenuItem)sender).Tag.ToString();
+            var settings = LoadSettings(fileName);
+            Properties.Settings.Default.SettingsFile = fileName;
+            ApplySettings(settings);
         }
     }
 }

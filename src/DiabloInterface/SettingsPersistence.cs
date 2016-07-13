@@ -9,7 +9,8 @@ namespace DiabloInterface
 {
     class SettingsPersistence
     {
-        const string DefaultSettingsFile = "settings.conf";
+        //todo:remove the other filetype options, only Di should be writing these so they should all have the right extension
+        const string DefaultSettingsFile = @".\Settings\DefaultSettings.conf";
         public const string FileFilter = "Config Files|*.conf;*.json|All Files|*.*";
 
         public string CurrentSettingsFile
