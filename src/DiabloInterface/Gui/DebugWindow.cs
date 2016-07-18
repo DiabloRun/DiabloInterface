@@ -89,7 +89,7 @@ namespace DiabloInterface.Gui
                     {
                         questRows[q.Act - 1, q.Quest - 1].Update(questBits);
                     }
-                    catch
+                    catch (System.NullReferenceException ex)
                     {
                         // System.NullReferenceException
                     }

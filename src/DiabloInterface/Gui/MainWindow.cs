@@ -169,26 +169,23 @@ namespace DiabloInterface.Gui
                     break;
                 case "1.14d":
                 default:
-                    var off = 0x8f78;
-
                     memoryTable.Address.World       = new IntPtr(0x00483D38);
                     memoryTable.Address.GameId      = new IntPtr(0x00482D0C);
-                    memoryTable.Address.PlayerUnit  = new IntPtr(0x0039CEFC + off);
-                    memoryTable.Address.Area        = new IntPtr(0x0039A1C8 + off);
+                    memoryTable.Address.PlayerUnit  = new IntPtr(0x003A5E74);
+                    memoryTable.Address.Area        = new IntPtr(0x003A3140);
 
                     memoryTable.Address.GlobalData = new IntPtr(0x344304);
                     memoryTable.Address.LowQualityItems = new IntPtr(0x56CC58);
                     memoryTable.Address.ItemDescriptions = new IntPtr(0x56CA58);
                     memoryTable.Address.MagicModifierTable = new IntPtr(0x56CA7C);
                     memoryTable.Address.RareModifierTable = new IntPtr(0x56CAA0);
-
-                    off = 0x4829b4 - 0x479A3C; // 0x4829b4 = new adress
-                    memoryTable.Address.StringIndexerTable = new IntPtr(0x479A3C+ off);
-                    memoryTable.Address.StringAddressTable = new IntPtr(0x479A40 + off);
-                    memoryTable.Address.PatchStringAddressTable = new IntPtr(0x479A44 + off);
-                    memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x479A48 + off);
-                    memoryTable.Address.PatchStringIndexerTable = new IntPtr(0x479A58 + off);
-                    memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(0x479A5C + off);
+                    
+                    memoryTable.Address.StringIndexerTable = new IntPtr(0x4829B4);
+                    memoryTable.Address.StringAddressTable = new IntPtr(0x4829B8);
+                    memoryTable.Address.PatchStringAddressTable = new IntPtr(0x4829BC);
+                    memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x4829C0);
+                    memoryTable.Address.PatchStringIndexerTable = new IntPtr(0x4829D0);
+                    memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(0x4829D4);
 
                     break;
             }
