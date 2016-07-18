@@ -94,6 +94,9 @@ namespace DiabloInterface.Server
         List<BodyLocation> GetItemLocations(QueryRequest request)
         {
             List<BodyLocation> locations = new List<BodyLocation>();
+            if (string.IsNullOrEmpty(request.EquipmentSlot))
+                return locations;
+
             var name = request.EquipmentSlot.ToLowerInvariant();
             switch (name)
             {

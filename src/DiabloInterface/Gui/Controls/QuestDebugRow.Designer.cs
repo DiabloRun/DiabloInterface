@@ -51,7 +51,7 @@
             // 
             this.label0.BackColor = System.Drawing.Color.AliceBlue;
             this.label0.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label0.Location = new System.Drawing.Point(63, 1);
+            this.label0.Location = new System.Drawing.Point(122, 1);
             this.label0.Margin = new System.Windows.Forms.Padding(0);
             this.label0.Name = "label0";
             this.label0.Size = new System.Drawing.Size(18, 14);
@@ -63,7 +63,7 @@
             // 
             this.label1.BackColor = System.Drawing.Color.AliceBlue;
             this.label1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label1.Location = new System.Drawing.Point(85, 1);
+            this.label1.Location = new System.Drawing.Point(144, 1);
             this.label1.Margin = new System.Windows.Forms.Padding(0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(18, 14);
@@ -75,7 +75,7 @@
             // 
             this.label2.BackColor = System.Drawing.Color.AliceBlue;
             this.label2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label2.Location = new System.Drawing.Point(107, 1);
+            this.label2.Location = new System.Drawing.Point(166, 1);
             this.label2.Margin = new System.Windows.Forms.Padding(0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(18, 14);
@@ -87,7 +87,7 @@
             // 
             this.label3.BackColor = System.Drawing.Color.AliceBlue;
             this.label3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label3.Location = new System.Drawing.Point(129, 1);
+            this.label3.Location = new System.Drawing.Point(188, 1);
             this.label3.Margin = new System.Windows.Forms.Padding(0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(18, 14);
@@ -99,7 +99,7 @@
             // 
             this.label4.BackColor = System.Drawing.Color.AliceBlue;
             this.label4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label4.Location = new System.Drawing.Point(151, 1);
+            this.label4.Location = new System.Drawing.Point(210, 1);
             this.label4.Margin = new System.Windows.Forms.Padding(0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(18, 14);
@@ -111,7 +111,7 @@
             // 
             this.label5.BackColor = System.Drawing.Color.AliceBlue;
             this.label5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label5.Location = new System.Drawing.Point(173, 1);
+            this.label5.Location = new System.Drawing.Point(232, 1);
             this.label5.Margin = new System.Windows.Forms.Padding(0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(18, 14);
@@ -123,7 +123,7 @@
             // 
             this.label6.BackColor = System.Drawing.Color.AliceBlue;
             this.label6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label6.Location = new System.Drawing.Point(195, 1);
+            this.label6.Location = new System.Drawing.Point(254, 1);
             this.label6.Margin = new System.Windows.Forms.Padding(0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(18, 14);
@@ -135,7 +135,7 @@
             // 
             this.label7.BackColor = System.Drawing.Color.AliceBlue;
             this.label7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label7.Location = new System.Drawing.Point(217, 1);
+            this.label7.Location = new System.Drawing.Point(276, 1);
             this.label7.Margin = new System.Windows.Forms.Padding(0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(18, 14);
@@ -147,7 +147,7 @@
             // 
             this.label8.BackColor = System.Drawing.Color.AliceBlue;
             this.label8.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label8.Location = new System.Drawing.Point(239, 1);
+            this.label8.Location = new System.Drawing.Point(298, 1);
             this.label8.Margin = new System.Windows.Forms.Padding(0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(18, 14);
@@ -159,7 +159,7 @@
             // 
             this.label9.BackColor = System.Drawing.Color.AliceBlue;
             this.label9.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label9.Location = new System.Drawing.Point(261, 1);
+            this.label9.Location = new System.Drawing.Point(320, 1);
             this.label9.Margin = new System.Windows.Forms.Padding(0);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(18, 14);
@@ -171,7 +171,7 @@
             // 
             this.label10.BackColor = System.Drawing.Color.AliceBlue;
             this.label10.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label10.Location = new System.Drawing.Point(283, 1);
+            this.label10.Location = new System.Drawing.Point(342, 1);
             this.label10.Margin = new System.Windows.Forms.Padding(0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(18, 14);
@@ -183,7 +183,7 @@
             // 
             this.label11.BackColor = System.Drawing.Color.AliceBlue;
             this.label11.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label11.Location = new System.Drawing.Point(305, 1);
+            this.label11.Location = new System.Drawing.Point(364, 1);
             this.label11.Margin = new System.Windows.Forms.Padding(0);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(18, 14);
@@ -195,7 +195,7 @@
             // 
             this.label12.BackColor = System.Drawing.Color.AliceBlue;
             this.label12.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label12.Location = new System.Drawing.Point(327, 1);
+            this.label12.Location = new System.Drawing.Point(386, 1);
             this.label12.Margin = new System.Windows.Forms.Padding(0);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(18, 14);
@@ -207,7 +207,7 @@
             // 
             this.label13.BackColor = System.Drawing.Color.AliceBlue;
             this.label13.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label13.Location = new System.Drawing.Point(349, 1);
+            this.label13.Location = new System.Drawing.Point(408, 1);
             this.label13.Margin = new System.Windows.Forms.Padding(0);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(18, 14);
@@ -219,7 +219,7 @@
             // 
             this.label14.BackColor = System.Drawing.Color.AliceBlue;
             this.label14.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label14.Location = new System.Drawing.Point(371, 1);
+            this.label14.Location = new System.Drawing.Point(430, 1);
             this.label14.Margin = new System.Windows.Forms.Padding(0);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(18, 14);
@@ -231,7 +231,7 @@
             // 
             this.label15.BackColor = System.Drawing.Color.AliceBlue;
             this.label15.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label15.Location = new System.Drawing.Point(393, 1);
+            this.label15.Location = new System.Drawing.Point(452, 1);
             this.label15.Margin = new System.Windows.Forms.Padding(0);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(18, 14);
@@ -273,7 +273,7 @@
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.5F);
             this.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.Name = "QuestDebugRow";
-            this.Size = new System.Drawing.Size(412, 16);
+            this.Size = new System.Drawing.Size(472, 16);
             this.ResumeLayout(false);
             this.PerformLayout();
 

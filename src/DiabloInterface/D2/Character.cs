@@ -36,6 +36,8 @@ namespace DiabloInterface
         public int Gold { get; private set; }
         public int GoldStash { get; private set; }
 
+        public int[] CompletedQuestCounts { get; set; } = new int[3] { 0, 0, 0 };
+
         public short Deaths;
 
         public int Defense { get; private set; }

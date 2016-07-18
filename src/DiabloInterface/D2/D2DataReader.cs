@@ -1,4 +1,5 @@
-﻿using DiabloInterface.D2.Readers;
+﻿using DiabloInterface.D2;
+using DiabloInterface.D2.Readers;
 using DiabloInterface.D2.Struct;
 using DiabloInterface.Gui;
 using DiabloInterface.Logging;
@@ -113,6 +114,7 @@ namespace DiabloInterface
 
         public void ItemSlotAction(List<BodyLocation> slots, Action<ItemReader, D2Unit> action)
         {
+            if (reader == null) return;
             var inventoryReader = new InventoryReader(reader, memory);
 
             // Add all items found in the slots.
@@ -228,10 +230,22 @@ namespace DiabloInterface
             // Update character data.
             character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
             character.ParseStats(statsMap, itemStatsMap, gameInfo.Game.Difficulty);
+            int count0 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(gameInfo.PlayerData, 0));
+            int count1 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(gameInfo.PlayerData, 1));
+            int count2 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(gameInfo.PlayerData, 2));
+            character.CompletedQuestCounts[0] = count0;
+            character.CompletedQuestCounts[1] = count1;
+            character.CompletedQuestCounts[2] = count2;
 
             // Update UI.
             main.UpdateLabels(character, itemClassMap);
             main.writeFiles(character);
+
+#if DEBUG
+            Console.WriteLine("Normal:    " + character.CompletedQuestCounts[0] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[0] * 100.0f / D2QuestHelper.Quests.Count) + "%)" );
+            Console.WriteLine("Nightmare: " + character.CompletedQuestCounts[1] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[1] * 100.0f / D2QuestHelper.Quests.Count) + "%)");
+            Console.WriteLine("Hell:      " + character.CompletedQuestCounts[2] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[2] * 100.0f / D2QuestHelper.Quests.Count) + "%)");
+#endif
 
             // Update autosplits only if enabled and the character was a freshly started character.
             if (IsAutosplitCharacter(character) && main.Settings.DoAutosplit)
@@ -332,29 +346,31 @@ namespace DiabloInterface
             return questBuffer;
         }
 
-        bool IsQuestCompleted(GameInfo gameInfo, int questId)
-        {
-            ushort[] questBuffer = GetQuestBuffer(gameInfo.PlayerData, gameInfo.Game.Difficulty);
-            if (questBuffer == null) return false;
-
-            if (questId < 0 || questId >= questBuffer.Length)
-                return false;
-
-            // Make sure one of the completions bits are set.
-            ushort questCompletionBits = (1 << 0) | (1 << 1);
-
-            // Use the "Duriel Killed" for the duriel quest.
-            if ((questId << 1) == (int)D2Data.Quest.A2Q6)
-                questCompletionBits = (1 << 5);
-
-            return (questBuffer[questId] & questCompletionBits) != 0;
-        }
-
         private void UpdateAutoSplits(GameInfo gameInfo, Character character)
         {
             foreach (AutoSplit autosplit in main.Settings.Autosplits)
             {
-                if (!autosplit.IsReached && autosplit.Type == AutoSplit.SplitType.Special && autosplit.Value == (int)AutoSplit.Special.GameStart)
+                if (autosplit.IsReached) {
+                    continue;
+                }
+                if (autosplit.Type != AutoSplit.SplitType.Special)
+                {
+                    continue;
+                }
+                if (autosplit.Value == (int)AutoSplit.Special.GameStart)
+                {
+                    CompleteAutoSplit(autosplit, character);
+                }
+                if (autosplit.Value == (int)AutoSplit.Special.Clear100Percent 
+                    && character.CompletedQuestCounts[gameInfo.Game.Difficulty] == D2QuestHelper.Quests.Count 
+                    && autosplit.MatchesDifficulty(gameInfo.Game.Difficulty))
+                {
+                    CompleteAutoSplit(autosplit, character);
+                }
+                if (autosplit.Value == (int)AutoSplit.Special.Clear100PercentAllDifficulties
+                    && character.CompletedQuestCounts[0] == D2QuestHelper.Quests.Count
+                    && character.CompletedQuestCounts[1] == D2QuestHelper.Quests.Count
+                    && character.CompletedQuestCounts[2] == D2QuestHelper.Quests.Count)
                 {
                     CompleteAutoSplit(autosplit, character);
                 }
@@ -367,7 +383,7 @@ namespace DiabloInterface
 
             foreach (AutoSplit autosplit in main.Settings.Autosplits)
             {
-                if (autosplit.IsReached || autosplit.Difficulty != gameInfo.Game.Difficulty)
+                if (autosplit.IsReached || !autosplit.MatchesDifficulty(gameInfo.Game.Difficulty))
                 {
                     continue;
                 }
@@ -410,9 +426,16 @@ namespace DiabloInterface
                 area = reader.ReadByte(memory.Address.Area, AddressingMode.Relative);
             }
 
+            ushort[] questBuffer = null;
+
+            if (haveUnreachedQuestSplits)
+            {
+                questBuffer = GetQuestBuffer(gameInfo.PlayerData, gameInfo.Game.Difficulty);
+            }
+
             foreach (AutoSplit autosplit in main.Settings.Autosplits)
             {
-                if (autosplit.IsReached || autosplit.Difficulty != gameInfo.Game.Difficulty)
+                if (autosplit.IsReached || !autosplit.MatchesDifficulty(gameInfo.Game.Difficulty))
                 {
                     continue;
                 }
@@ -438,8 +461,7 @@ namespace DiabloInterface
                         }
                         break;
                     case AutoSplit.SplitType.Quest:
-                        if (IsQuestCompleted(gameInfo, autosplit.Value >> 1))
-                        {
+                        if ( D2QuestHelper.IsQuestComplete((D2QuestHelper.Quest)autosplit.Value, questBuffer) ) {
                             CompleteAutoSplit(autosplit, character);
                         }
                         break;

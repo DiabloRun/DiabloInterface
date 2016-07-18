@@ -82,6 +82,7 @@
   <ItemGroup>
     <Compile Include="AutoSplit.cs" />
     <Compile Include="AutoSplitFactory.cs" />
+    <Compile Include="D2\D2QuestHelper.cs" />
     <Compile Include="D2\Readers\RangeStatData.cs" />
     <Compile Include="D2\Readers\UnitReader.cs" />
     <Compile Include="D2\Readers\StringLookupTable.cs" />
@@ -240,6 +241,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Images\Runes\runes-high-contrast.png" />
     <None Include="Resources\Images\Icons\exclamation.png" />
     <None Include="Resources\Images\Icons\bug.png" />
     <Content Include="Resources\Diablo II_101.ico" />

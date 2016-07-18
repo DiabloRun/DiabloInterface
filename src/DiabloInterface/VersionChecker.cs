@@ -1,11 +1,7 @@
 ﻿using DiabloInterface.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DiabloInterface
@@ -19,14 +15,23 @@ namespace DiabloInterface
         public static void CheckForUpdate( bool userTriggered )
         {
             string updateUrl = getUpdateUrl();
+
             if (updateUrl != null)
             {
-                if (MessageBox.Show("A new version of DiabloInterface is available. Go to download page now?", "New version available",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                    MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                string lastFoundVersion = Properties.Settings.Default.LastFoundVersion;
+                if (updateUrl != lastFoundVersion || userTriggered)
                 {
-                    System.Diagnostics.Process.Start(updateUrl);
+                    Properties.Settings.Default.LastFoundVersion = updateUrl;
+                    Properties.Settings.Default.Save();
+
+                    if (MessageBox.Show("A new version of DiabloInterface is available. Go to download page now?", "New version available",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                    {
+                        System.Diagnostics.Process.Start(updateUrl);
+                    }
                 }
+                
             } else if ( userTriggered )
             {
                 if (MessageBox.Show("No new version is available, but there might be a pre-release. Go to releases overview now?", "No new version available",
