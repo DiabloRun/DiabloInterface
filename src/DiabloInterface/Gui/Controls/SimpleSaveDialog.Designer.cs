@@ -38,7 +38,7 @@
             this.btnSave.Location = new System.Drawing.Point(282, 12);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 20);
-            this.btnSave.TabIndex = 0;
+            this.btnSave.TabIndex = 1;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -48,7 +48,7 @@
             this.txtNewFilename.Location = new System.Drawing.Point(12, 12);
             this.txtNewFilename.Name = "txtNewFilename";
             this.txtNewFilename.Size = new System.Drawing.Size(264, 20);
-            this.txtNewFilename.TabIndex = 1;
+            this.txtNewFilename.TabIndex = 0;
             // 
             // btnCancel
             // 

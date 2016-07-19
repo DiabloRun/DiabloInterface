@@ -335,6 +335,7 @@ namespace DiabloInterface.Gui
         private void SaveSettingsAsMenuItem_Click(object sender, EventArgs e)
         {
             SimpleSaveDialog ssd = new SimpleSaveDialog(String.Empty);
+            ssd.StartPosition = FormStartPosition.CenterParent;
             DialogResult res = ssd.ShowDialog();
 
             if (res == DialogResult.OK)
