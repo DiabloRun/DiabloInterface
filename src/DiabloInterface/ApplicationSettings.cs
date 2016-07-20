@@ -27,5 +27,6 @@ namespace DiabloInterface
         public bool DisplayRunesHighContrast { get; set; } = false;
         public bool DisplayAdvancedStats { get; set; }
         public bool DisplayDifficultyPercentages { get; set; } = false;
+        public bool DisplayLayoutHorizontal { get; set; } = true;
     }
 }

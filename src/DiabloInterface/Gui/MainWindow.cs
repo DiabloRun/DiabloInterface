@@ -27,8 +27,6 @@ namespace DiabloInterface.Gui
         D2DataReader dataReader;
         ItemServer itemServer;
 
-        IEnumerable<Label> infoLabels;
-
         public MainWindow()
         {
             // We want to dispose our handles once the window is disposed.
@@ -38,29 +36,11 @@ namespace DiabloInterface.Gui
             WriteLogHeader();
 
             InitializeComponent();
-            InitializeLabels();
 
             // Display current version along with the application name.
             Text = string.Format(WindowTitleFormat, Application.ProductVersion);
         }
 
-        void InitializeLabels()
-        {
-            infoLabels = new[]
-            {
-                deathsLabel,
-                goldLabel, lvlLabel,
-                strLabel, dexLabel, vitLabel, eneLabel,
-                frwLabel, fhrLabel, fcrLabel, iasLabel,
-                fireLabel, coldLabel, lighLabel, poisLabel,
-                labelPoisonResVal, labelFireResVal, labelLightResVal, labelColdResVal,
-                labelFhrVal, labelFcrVal, labelFrwVal, labelIasVal,
-                labelStrVal, labelDexVal, labelVitVal, labelEneVal, 
-                labelNormPerc, labelNmPerc, labelHellPerc,
-                normLabel, nmLabel, hellLabel,
-                normLabelVal, nmLabelVal, hellLabelVal,
-            };
-        }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
@@ -98,20 +78,8 @@ namespace DiabloInterface.Gui
             {
                 autosplit.IsReached = false;
             }
-            if (panelRuneDisplay.Controls.Count > 0)
-            {
-                foreach (RuneDisplayElement c in panelRuneDisplay.Controls)
-                {
-                    c.SetHaveRune(false);
-                }
-            }
-            if (panelRuneDisplay2.Controls.Count > 0)
-            {
-                foreach (RuneDisplayElement c in panelRuneDisplay2.Controls)
-                {
-                    c.SetHaveRune(false);
-                }
-            }
+            horizontalLayout1.ResetText();
+            verticalLayout2.ResetText();
         }
 
         private void OnWindowDisposed(object sender, EventArgs e)
@@ -248,21 +216,6 @@ namespace DiabloInterface.Gui
             ApplySettings(Settings);
         }
 
-        private void UpdateMinWidth(Label[] labels)
-        {
-            int w = 0;
-            foreach (Label label in labels)
-            {
-                var measuredSize = TextRenderer.MeasureText(label.Text, label.Font, Size.Empty, TextFormatFlags.SingleLine);
-                if (measuredSize.Width > w) w = measuredSize.Width;
-            }
-
-            foreach (Label label in labels)
-            {
-                label.MinimumSize = new Size(w, 0);
-            }
-        }
-
         public void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
         {
             if (InvokeRequired)
@@ -271,70 +224,12 @@ namespace DiabloInterface.Gui
                 Invoke((Action)(() => UpdateLabels(player, itemClassMap)));
                 return;
             }
-
-            nameLabel.Text = player.name;
-            lvlLabel.Text = "LVL: " + player.Level;
-            goldLabel.Text = "GOLD: " + (player.Gold + player.GoldStash);
-            deathsLabel.Text = "DEATHS: " + player.Deaths;
-            
-            labelStrVal.Text = "" + player.Strength;
-            labelDexVal.Text = "" + player.Dexterity;
-            labelVitVal.Text = "" + player.Vitality;
-            labelEneVal.Text = "" + player.Energy;
-            UpdateMinWidth(new Label[] { labelStrVal, labelDexVal, labelVitVal, labelEneVal });
-            
-            labelFrwVal.Text = "" + player.FasterRunWalk;
-            labelFcrVal.Text = "" + player.FasterCastRate;
-            labelFhrVal.Text = "" + player.FasterHitRecovery;
-            labelIasVal.Text = "" + player.IncreasedAttackSpeed;
-            UpdateMinWidth(new Label[] { labelFrwVal, labelFcrVal, labelFhrVal, labelIasVal });
-            
-            labelFireResVal.Text = "" + player.FireResist;
-            labelColdResVal.Text = "" + player.ColdResist;
-            labelLightResVal.Text = "" + player.LightningResist;
-            labelPoisonResVal.Text = "" + player.PoisonResist;
-            UpdateMinWidth(new Label[] { labelFireResVal, labelColdResVal, labelLightResVal, labelPoisonResVal });
-
-            int perc0 = (int)(100.0 * player.CompletedQuestCounts[0] / (float)D2QuestHelper.Quests.Count + .5);
-            int perc1 = (int)(100.0 * player.CompletedQuestCounts[1] / (float)D2QuestHelper.Quests.Count + .5);
-            int perc2 = (int)(100.0 * player.CompletedQuestCounts[2] / (float)D2QuestHelper.Quests.Count + .5);
-
-            normLabelVal.Text = perc0 + "%";
-            nmLabelVal.Text = perc1 + "%";
-            hellLabelVal.Text = perc2 + "%";
-            UpdateMinWidth(new Label[] { normLabelVal, nmLabelVal, hellLabelVal });
-
-            labelNormPerc.Text = "NO: " + perc0 + "%";
-            labelNmPerc.Text = "NM: " + perc1 + "%";
-            labelHellPerc.Text = "HE: " + perc2 + "%";
-
-            if (panelRuneDisplay.Controls.Count > 0)
+            if ( Settings.DisplayLayoutHorizontal )
             {
-
-                Dictionary<int, int> dict = new Dictionary<int, int>(itemClassMap);
-                foreach (RuneDisplayElement c in panelRuneDisplay.Controls)
-                {
-                    int eClass = (int)c.getRune() + 610;
-                    if (dict.ContainsKey(eClass) && dict[eClass] > 0)
-                    {
-                        dict[eClass]--;
-                        c.SetHaveRune(true);
-                    }
-                }
-            }
-            if (panelRuneDisplay2.Controls.Count > 0)
+                horizontalLayout1.UpdateLabels(player, itemClassMap);
+            } else
             {
-
-                Dictionary<int, int> dict = new Dictionary<int, int>(itemClassMap);
-                foreach (RuneDisplayElement c in panelRuneDisplay2.Controls)
-                {
-                    int eClass = (int)c.getRune() + 610;
-                    if (dict.ContainsKey(eClass) && dict[eClass] > 0)
-                    {
-                        dict[eClass]--;
-                        c.SetHaveRune(true);
-                    }
-                }
+                verticalLayout2.UpdateLabels(player, itemClassMap);
             }
         }
 
@@ -379,23 +274,23 @@ namespace DiabloInterface.Gui
 
         }
 
-        private void ChangeVisibility(Control c, bool visible)
-        {
-            if (visible)
-            {
-                c.Show();
-            } else
-            {
-                c.Hide();
-            }
-        }
         public void ApplySettings(ApplicationSettings settings)
         {
             Settings = settings;
 
-            ApplyVersionSettings();
-            ApplyLabelSettings();
-            ApplyRuneSettings();
+            var memoryTable = GetVersionMemoryTable(Settings.D2Version);
+            dataReader.SetNextMemoryTable(memoryTable);
+
+            if (Settings.DisplayLayoutHorizontal)
+            {
+                horizontalLayout1.ApplyLabelSettings(Settings);
+                horizontalLayout1.ApplyRuneSettings(Settings, this);
+            } else
+            {
+                verticalLayout2.ApplyLabelSettings(Settings);
+                verticalLayout2.ApplyRuneSettings(Settings, this);
+            }
+
 
             UpdateLayout();
 
@@ -406,83 +301,6 @@ namespace DiabloInterface.Gui
             }
 
             LogAutoSplits();
-        }
-
-        void ApplyVersionSettings()
-        {
-            var memoryTable = GetVersionMemoryTable(Settings.D2Version);
-            dataReader.SetNextMemoryTable(memoryTable);
-        }
-
-        void ApplyLabelSettings()
-        {
-            nameLabel.Font = new Font(Settings.FontName, Settings.FontSizeTitle);
-            Font infoFont = new Font(Settings.FontName, Settings.FontSize);
-            foreach (Label label in infoLabels)
-                label.Font = infoFont;
-
-            // Hide/show labels wanted labels.
-            ChangeVisibility(nameLabel, Settings.DisplayName);
-
-            ChangeVisibility(goldLabel, Settings.DisplayGold);
-            ChangeVisibility(panelSimpleStats, Settings.DisplayGold);
-
-            ChangeVisibility(deathsLabel, Settings.DisplayDeathCounter);
-            ChangeVisibility(lvlLabel, Settings.DisplayLevel);
-            ChangeVisibility(panelDeathsLvl, Settings.DisplayDeathCounter || Settings.DisplayLevel);
-            
-            ChangeVisibility(panelResistances, Settings.DisplayResistances);
-            ChangeVisibility(panelBaseStats, Settings.DisplayBaseStats);
-            ChangeVisibility(panelAdvancedStats, Settings.DisplayAdvancedStats);
-
-            int count = 0;
-            if (panelResistances.Visible) count++;
-            if (panelBaseStats.Visible) count++;
-            if (panelAdvancedStats.Visible) count++;
-
-            ChangeVisibility(panelDiffPercentages, count < 3 && Settings.DisplayDifficultyPercentages);
-            ChangeVisibility(panelDiffPercentages2, count >= 3 && Settings.DisplayDifficultyPercentages);
-
-            ChangeVisibility(panelStats, 
-                Settings.DisplayResistances 
-                || Settings.DisplayBaseStats 
-                || Settings.DisplayAdvancedStats
-                || Settings.DisplayDifficultyPercentages
-            );
-            
-        }
-
-        void ApplyRuneSettings()
-        {
-            panelRuneDisplay.Controls.Clear();
-            if (Settings.Runes.Count > 0)
-            {
-                foreach (int r in Settings.Runes)
-                {
-                    RuneDisplayElement element = new RuneDisplayElement((Rune)r, null, this);
-                    element.SetRuneSprite(Settings.DisplayRunesHighContrast);
-                    element.SetRemovable(false);
-                    element.SetHaveRune(false);
-                    panelRuneDisplay.Controls.Add(element);
-                }
-            }
-
-            ChangeVisibility(panelRuneDisplay, Settings.DisplayRunes && Settings.DisplayRunesHorizontal && Settings.Runes.Count > 0);
-            
-            panelRuneDisplay2.Controls.Clear();
-            if (Settings.Runes.Count > 0)
-            {
-                foreach (int r in Settings.Runes)
-                {
-                    RuneDisplayElement element = new RuneDisplayElement((Rune)r, null, this);
-                    element.SetRuneSprite(Settings.DisplayRunesHighContrast);
-                    element.SetRemovable(false);
-                    element.SetHaveRune(false);
-                    panelRuneDisplay2.Controls.Add(element);
-                }
-            }
-
-            ChangeVisibility(panelRuneDisplay2, Settings.DisplayRunes && !Settings.DisplayRunesHorizontal && Settings.Runes.Count > 0);
         }
 
         void LogAutoSplits()
@@ -505,133 +323,25 @@ namespace DiabloInterface.Gui
 
         public void UpdateLayout()
         {
-
-            int padding = 0;
-            // Calculate maximum sizes that the labels can possible get.
-            Size nameSize = TextRenderer.MeasureText(new string('W', 15), nameLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-
-            // base stats have 3 char label (STR, VIT, ect.) and realistically a max value < 500 (lvl 99*5 + alkor quest... items can increase this tho)
-            // we will assume the "longest" string is DEX: 499 (most likely dex or ene will be longest str.)
-            padding = (panelAdvancedStats.Visible || panelResistances.Visible) ? 8 : 0;
-            Size statSize = TextRenderer.MeasureText("DEX: 499", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-            Size basePanelSize = new Size(statSize.Width + padding, statSize.Height * 4);
-
-            // advanced stats have 3 char label (FCR, FRW, etc.) and realistically a max value < 100
-            // we will assume the "longest" string is FRW: 99
-            padding = panelResistances.Visible ? 8 : 0;
-            Size advancedStatSize = TextRenderer.MeasureText("FRW: 99", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-            Size advancedStatPanelSize = new Size(advancedStatSize.Width + padding, advancedStatSize.Height * 4);
-
-            // Panel size for resistances can be negative, so max number of chars are 10 (LABL: -VAL)
-            // resistances never go below -100 (longest possible string for the label) and never go above 95
-            // we will assume the "longest" string is COLD: -100
-            Size resStatSize = TextRenderer.MeasureText("COLD: -100", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-            Size resPanelSize = new Size(resStatSize.Width, resStatSize.Height * 4);
+            int layout = Settings.DisplayLayoutHorizontal ? 0 : 1;
+            if (InvokeRequired)
+            {
+                // Delegate call to UI thread.
+                Invoke((Action)(() => UpdateLayout()));
+                return;
+            }
             
-            // we will assume the "longest" string is NORM: 100%
-            Size diffPercStatSize = TextRenderer.MeasureText("NORM: 100%", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-            Size diffPercPanelSize = new Size(diffPercStatSize.Width, diffPercStatSize.Height * 4);
-
-            int count = 0;
-            if (panelResistances.Visible) count++;
-            if (panelBaseStats.Visible) count++;
-            if (panelAdvancedStats.Visible) count++;
-
-            // Recalculate panel size if the title is wider than all panels combined.
-            int statsWidth = (panelResistances.Visible ? resPanelSize.Width : 0)
-                + (panelBaseStats.Visible ? basePanelSize.Width : 0)
-                + (panelAdvancedStats.Visible ? advancedStatPanelSize.Width : 0)
-                + ((count < 3 && panelDiffPercentages.Visible) ? panelDiffPercentages.Width : 0)
-            ;
-
-            float ratio = (float)nameSize.Width / (float)statsWidth;
-
-            if (ratio > 1.0f)
+            if (Settings.DisplayLayoutHorizontal)
             {
-                resPanelSize.Width = (int)(resPanelSize.Width * ratio + .5f);
-                basePanelSize.Width = (int)(basePanelSize.Width * ratio + .5f);
-                advancedStatPanelSize.Width = (int)(advancedStatPanelSize.Width * ratio + .5f);
-                if (count < 3 && panelDiffPercentages.Visible)
-                {
-                    panelDiffPercentages.Width = (int)(diffPercPanelSize.Width * ratio + .5f);
-                }
-            }
-
-            nameLabel.Size = nameSize;
-            panelBaseStats.Size = basePanelSize;
-            panelAdvancedStats.Size = advancedStatPanelSize;
-            panelResistances.Size = resPanelSize;
-            panelDiffPercentages.Size = diffPercPanelSize;
-
-            UpdateRuneLayout();
-            Invalidate(true);
-        }
-
-        void UpdateRuneLayout()
-        {
-            int y;
-            int x;
-            int height;
-            int scroll;
-            
-            if (Settings.DisplayRunesHorizontal)
+                verticalLayout2.Hide();
+                horizontalLayout1.Show();
+                horizontalLayout1.UpdateLayout(Settings);
+            } else
             {
-                y = 0;
-                x = 0;
-                height = -1;
-                scroll = panelRuneDisplay.VerticalScroll.Value;
-                foreach (Control c in panelRuneDisplay.Controls)
-                {
-                    if (c is RuneDisplayElement && c.Visible)
-                    {
-                        if (height == -1)
-                        {
-                            height = c.Height;
-                        }
-                        if (x + c.Width > panelRuneDisplay.Width && panelRuneDisplay.Width >= c.Width)
-                        {
-                            y += c.Height + 4;
-                            x = 0;
-                            height = y + c.Height;
-                        }
-                        c.Location = new Point(x, -scroll + y);
-                        x += c.Width + 4; // 4 padding for runes
-                    }
-                }
-
-                panelRuneDisplay.Height = height == -1 ? 0 : height;
+                horizontalLayout1.Hide();
+                verticalLayout2.Show();
+                verticalLayout2.UpdateLayout(Settings);
             }
-
-
-            if (!Settings.DisplayRunesHorizontal)
-            {
-                y = 0;
-                x = 0;
-                height = -1;
-                scroll = panelRuneDisplay2.VerticalScroll.Value;
-                foreach (Control c in panelRuneDisplay2.Controls)
-                {
-                    if (c is RuneDisplayElement && c.Visible)
-                    {
-                        if (height == -1)
-                        {
-                            height = c.Height;
-                        }
-                        if (x + c.Width > panelRuneDisplay2.Width && panelRuneDisplay2.Width >= c.Width)
-                        {
-                            y += c.Height + 4;
-                            x = 0;
-                            height = y + c.Height;
-                        }
-                        c.Location = new Point(x, -scroll + y);
-                        x += c.Width;
-                    }
-                }
-
-                panelRuneDisplay2.Height = height == -1 ? 0 : height;
-                panelRuneDisplay2.Width = 28;
-            }
-
         }
 
         private void exitMenuItem_Click(object sender, EventArgs e)
@@ -674,6 +384,11 @@ namespace DiabloInterface.Gui
         private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        
+        private void multiViewTabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
         }
     }
 }

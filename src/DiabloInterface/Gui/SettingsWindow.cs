@@ -41,6 +41,7 @@ namespace DiabloInterface.Gui
                     || settings.DisplayRunesHighContrast != chkHighContrastRunes.Checked
                     || settings.AutosplitHotkey != autoSplitHotkeyControl.Hotkey
                     || settings.DisplayDifficultyPercentages != chkDisplayDifficultyPercents.Checked
+                    || settings.DisplayLayoutHorizontal != checkBoxHorizontalLayout.Checked
                 ;
             }
         }
@@ -112,6 +113,7 @@ namespace DiabloInterface.Gui
             chkRuneDisplayRunesHorizontal.Checked = settings.DisplayRunesHorizontal;
             chkDisplayDifficultyPercents.Checked = settings.DisplayDifficultyPercentages;
             chkHighContrastRunes.Checked = settings.DisplayRunesHighContrast;
+            checkBoxHorizontalLayout.Checked = settings.DisplayLayoutHorizontal;
 
             // Show the selected diablo version.
             int versionIndex = this.VersionComboBox.FindString(settings.D2Version);
@@ -198,6 +200,7 @@ namespace DiabloInterface.Gui
             settings.DisplayRunes = chkDisplayRunes.Checked;
             settings.DisplayRunesHorizontal = chkRuneDisplayRunesHorizontal.Checked;
             settings.DisplayRunesHighContrast = chkHighContrastRunes.Checked;
+            settings.DisplayLayoutHorizontal = checkBoxHorizontalLayout.Checked;
 
         }
 
