@@ -263,9 +263,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Resources\runewords.json">
+    <EmbeddedResource Include="Resources\runewords.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </EmbeddedResource>
     <None Include="Settings\DefaultSettings.conf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

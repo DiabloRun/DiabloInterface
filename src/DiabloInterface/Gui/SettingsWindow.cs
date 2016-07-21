@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using DiabloInterface.Gui.Controls;
 using System.IO;
 using Newtonsoft.Json;
+using System.Reflection;
 
 namespace DiabloInterface.Gui
 {
@@ -430,7 +431,10 @@ namespace DiabloInterface.Gui
             List<Runeword> runeWords;
             
             JsonSerializer serializer = new JsonSerializer();
-            using (StreamReader sr = new StreamReader(@".\Resources\runewords.json"))
+
+            var resourceName = "DiabloInterface.Resources.runewords.json";
+            var assembly = Assembly.GetExecutingAssembly();
+            using (StreamReader sr = new StreamReader(assembly.GetManifestResourceStream(resourceName)))
             {
                 using (JsonReader reader = new JsonTextReader(sr))
                 {
