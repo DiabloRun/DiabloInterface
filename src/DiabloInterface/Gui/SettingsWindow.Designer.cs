@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsWindow));
             this.FontLabel = new System.Windows.Forms.Label();
             this.FontGroup = new System.Windows.Forms.GroupBox();
@@ -53,16 +54,11 @@
             this.VersionLabel = new System.Windows.Forms.Label();
             this.VersionComboBox = new System.Windows.Forms.ComboBox();
             this.RuneDisplayGroup = new System.Windows.Forms.GroupBox();
+            this.btnAddRuneWord = new System.Windows.Forms.Button();
+            this.cbRuneWord = new System.Windows.Forms.ComboBox();
             this.RuneDisplayPanel = new System.Windows.Forms.Panel();
             this.AddRuneButton = new System.Windows.Forms.Button();
             this.RuneComboBox = new System.Windows.Forms.ComboBox();
-            this.SettingsMenuStrip = new System.Windows.Forms.MenuStrip();
-            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.LoadSettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.SaveSettingsAsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.SaveSettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.CloseSettingsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.VerticalSplitContainer = new System.Windows.Forms.TableLayoutPanel();
             this.HorizontalSplitContainer = new System.Windows.Forms.TableLayoutPanel();
             this.RightPanelLayout = new System.Windows.Forms.FlowLayoutPanel();
@@ -80,10 +76,19 @@
             this.chkDisplayName = new System.Windows.Forms.CheckBox();
             this.mainPanel = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnApply = new System.Windows.Forms.Button();
+            this.btnSaveAs = new System.Windows.Forms.Button();
+            this.btnUndo = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.checkBoxHorizontalLayout = new System.Windows.Forms.CheckBox();
+            this.lstConfigFiles = new System.Windows.Forms.ListBox();
+            this.grpConfigFiles = new System.Windows.Forms.GroupBox();
+            this.ctxConfigFileList = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuLoad = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuClone = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuNew = new System.Windows.Forms.ToolStripMenuItem();
+            this.autoSplitHotkeyControl = new DiabloInterface.Gui.Controls.HotkeyControl();
+            this.fontComboBox = new DiabloInterface.Gui.Controls.FontComboBox();
             this.FontGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
@@ -94,13 +99,14 @@
             this.UpdateGroup.SuspendLayout();
             this.VersionGroup.SuspendLayout();
             this.RuneDisplayGroup.SuspendLayout();
-            this.SettingsMenuStrip.SuspendLayout();
             this.VerticalSplitContainer.SuspendLayout();
             this.HorizontalSplitContainer.SuspendLayout();
             this.RightPanelLayout.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.mainPanel.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.grpConfigFiles.SuspendLayout();
+            this.ctxConfigFileList.SuspendLayout();
             this.SuspendLayout();
             // 
             // FontLabel
@@ -217,7 +223,7 @@
             this.AutoSplitGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.AutoSplitGroup.Location = new System.Drawing.Point(3, 3);
             this.AutoSplitGroup.Name = "AutoSplitGroup";
-            this.AutoSplitGroup.Size = new System.Drawing.Size(526, 360);
+            this.AutoSplitGroup.Size = new System.Drawing.Size(636, 357);
             this.AutoSplitGroup.TabIndex = 10;
             this.AutoSplitGroup.TabStop = false;
             this.AutoSplitGroup.Text = "Auto-Split";
@@ -233,7 +239,7 @@
             this.AutoSplitLayout.RowCount = 2;
             this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.AutoSplitLayout.Size = new System.Drawing.Size(520, 341);
+            this.AutoSplitLayout.Size = new System.Drawing.Size(630, 338);
             this.AutoSplitLayout.TabIndex = 21;
             // 
             // AutoSplitToolbar
@@ -245,9 +251,9 @@
             this.AutoSplitToolbar.Controls.Add(this.EnableAutosplitCheckBox);
             this.AutoSplitToolbar.Controls.Add(this.AddAutoSplitButton);
             this.AutoSplitToolbar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AutoSplitToolbar.Location = new System.Drawing.Point(3, 307);
+            this.AutoSplitToolbar.Location = new System.Drawing.Point(3, 304);
             this.AutoSplitToolbar.Name = "AutoSplitToolbar";
-            this.AutoSplitToolbar.Size = new System.Drawing.Size(514, 31);
+            this.AutoSplitToolbar.Size = new System.Drawing.Size(624, 31);
             this.AutoSplitToolbar.TabIndex = 20;
             // 
             // autoSplitHotkeyControl
@@ -283,7 +289,7 @@
             // 
             this.EnableAutosplitCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.EnableAutosplitCheckBox.AutoSize = true;
-            this.EnableAutosplitCheckBox.Location = new System.Drawing.Point(367, 9);
+            this.EnableAutosplitCheckBox.Location = new System.Drawing.Point(477, 9);
             this.EnableAutosplitCheckBox.Name = "EnableAutosplitCheckBox";
             this.EnableAutosplitCheckBox.Size = new System.Drawing.Size(59, 17);
             this.EnableAutosplitCheckBox.TabIndex = 1;
@@ -293,7 +299,7 @@
             // AddAutoSplitButton
             // 
             this.AddAutoSplitButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddAutoSplitButton.Location = new System.Drawing.Point(432, 5);
+            this.AddAutoSplitButton.Location = new System.Drawing.Point(542, 5);
             this.AddAutoSplitButton.Name = "AddAutoSplitButton";
             this.AddAutoSplitButton.Size = new System.Drawing.Size(79, 23);
             this.AddAutoSplitButton.TabIndex = 11;
@@ -370,16 +376,39 @@
             // 
             // RuneDisplayGroup
             // 
+            this.RuneDisplayGroup.Controls.Add(this.btnAddRuneWord);
+            this.RuneDisplayGroup.Controls.Add(this.cbRuneWord);
             this.RuneDisplayGroup.Controls.Add(this.RuneDisplayPanel);
             this.RuneDisplayGroup.Controls.Add(this.AddRuneButton);
             this.RuneDisplayGroup.Controls.Add(this.RuneComboBox);
             this.RuneDisplayGroup.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RuneDisplayGroup.Location = new System.Drawing.Point(3, 369);
+            this.RuneDisplayGroup.Location = new System.Drawing.Point(3, 366);
             this.RuneDisplayGroup.Name = "RuneDisplayGroup";
-            this.RuneDisplayGroup.Size = new System.Drawing.Size(526, 110);
+            this.RuneDisplayGroup.Size = new System.Drawing.Size(636, 110);
             this.RuneDisplayGroup.TabIndex = 19;
             this.RuneDisplayGroup.TabStop = false;
             this.RuneDisplayGroup.Text = "Rune Display";
+            // 
+            // btnAddRuneWord
+            // 
+            this.btnAddRuneWord.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddRuneWord.Location = new System.Drawing.Point(531, 82);
+            this.btnAddRuneWord.Name = "btnAddRuneWord";
+            this.btnAddRuneWord.Size = new System.Drawing.Size(96, 23);
+            this.btnAddRuneWord.TabIndex = 4;
+            this.btnAddRuneWord.Text = "Add Runeword";
+            this.btnAddRuneWord.UseVisualStyleBackColor = true;
+            this.btnAddRuneWord.Click += new System.EventHandler(this.btnAddRuneWord_Click);
+            // 
+            // cbRuneWord
+            // 
+            this.cbRuneWord.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbRuneWord.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbRuneWord.FormattingEnabled = true;
+            this.cbRuneWord.Location = new System.Drawing.Point(425, 84);
+            this.cbRuneWord.Name = "cbRuneWord";
+            this.cbRuneWord.Size = new System.Drawing.Size(100, 21);
+            this.cbRuneWord.TabIndex = 3;
             // 
             // RuneDisplayPanel
             // 
@@ -388,13 +417,13 @@
             this.RuneDisplayPanel.AutoScroll = true;
             this.RuneDisplayPanel.Location = new System.Drawing.Point(6, 19);
             this.RuneDisplayPanel.Name = "RuneDisplayPanel";
-            this.RuneDisplayPanel.Size = new System.Drawing.Size(511, 57);
+            this.RuneDisplayPanel.Size = new System.Drawing.Size(621, 57);
             this.RuneDisplayPanel.TabIndex = 2;
             // 
             // AddRuneButton
             // 
             this.AddRuneButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddRuneButton.Location = new System.Drawing.Point(438, 81);
+            this.AddRuneButton.Location = new System.Drawing.Point(340, 83);
             this.AddRuneButton.Name = "AddRuneButton";
             this.AddRuneButton.Size = new System.Drawing.Size(79, 23);
             this.AddRuneButton.TabIndex = 1;
@@ -407,121 +436,28 @@
             this.RuneComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.RuneComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.RuneComboBox.FormattingEnabled = true;
-            this.RuneComboBox.Items.AddRange(new object[] {
-            "El",
-            "Eld",
-            "Tir",
-            "Nef",
-            "Eth",
-            "Ith",
-            "Tal",
-            "Ral",
-            "Ort",
-            "Thul",
-            "Amn",
-            "Sol",
-            "Shael",
-            "Dol",
-            "Hel",
-            "Io",
-            "Lum",
-            "Ko",
-            "Fal",
-            "Lem",
-            "Pul",
-            "Um",
-            "Mal",
-            "Ist",
-            "Gul",
-            "Vex",
-            "Ohm",
-            "Lo",
-            "Sur",
-            "Ber",
-            "Jah",
-            "Cham",
-            "Zod"});
-            this.RuneComboBox.Location = new System.Drawing.Point(373, 82);
+            this.RuneComboBox.Location = new System.Drawing.Point(275, 84);
             this.RuneComboBox.Name = "RuneComboBox";
             this.RuneComboBox.Size = new System.Drawing.Size(59, 21);
             this.RuneComboBox.TabIndex = 0;
-            // 
-            // SettingsMenuStrip
-            // 
-            this.SettingsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
-            this.SettingsMenuStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.SettingsMenuStrip.Location = new System.Drawing.Point(0, 0);
-            this.SettingsMenuStrip.Name = "SettingsMenuStrip";
-            this.SettingsMenuStrip.Size = new System.Drawing.Size(778, 24);
-            this.SettingsMenuStrip.TabIndex = 21;
-            this.SettingsMenuStrip.Text = "menuStrip1";
-            // 
-            // fileToolStripMenuItem
-            // 
-            this.fileToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.LoadSettingsMenuItem,
-            this.SaveSettingsAsMenuItem,
-            this.SaveSettingsMenuItem,
-            this.toolStripSeparator1,
-            this.CloseSettingsMenuItem});
-            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
-            this.fileToolStripMenuItem.Text = "File";
-            // 
-            // LoadSettingsMenuItem
-            // 
-            this.LoadSettingsMenuItem.Image = global::DiabloInterface.Properties.Resources.folder_explore;
-            this.LoadSettingsMenuItem.Name = "LoadSettingsMenuItem";
-            this.LoadSettingsMenuItem.Size = new System.Drawing.Size(141, 22);
-            this.LoadSettingsMenuItem.Text = "Load Config";
-            this.LoadSettingsMenuItem.Click += new System.EventHandler(this.LoadSettingsMenuItem_Click);
-            // 
-            // SaveSettingsAsMenuItem
-            // 
-            this.SaveSettingsAsMenuItem.Image = global::DiabloInterface.Properties.Resources.disk;
-            this.SaveSettingsAsMenuItem.Name = "SaveSettingsAsMenuItem";
-            this.SaveSettingsAsMenuItem.Size = new System.Drawing.Size(141, 22);
-            this.SaveSettingsAsMenuItem.Text = "Save As";
-            this.SaveSettingsAsMenuItem.Click += new System.EventHandler(this.SaveSettingsAsMenuItem_Click);
-            // 
-            // SaveSettingsMenuItem
-            // 
-            this.SaveSettingsMenuItem.Image = global::DiabloInterface.Properties.Resources.disk;
-            this.SaveSettingsMenuItem.Name = "SaveSettingsMenuItem";
-            this.SaveSettingsMenuItem.Size = new System.Drawing.Size(141, 22);
-            this.SaveSettingsMenuItem.Text = "Save";
-            this.SaveSettingsMenuItem.Click += new System.EventHandler(this.SaveSettingsMenuItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(138, 6);
-            // 
-            // CloseSettingsMenuItem
-            // 
-            this.CloseSettingsMenuItem.Image = global::DiabloInterface.Properties.Resources.cross;
-            this.CloseSettingsMenuItem.Name = "CloseSettingsMenuItem";
-            this.CloseSettingsMenuItem.ShowShortcutKeys = false;
-            this.CloseSettingsMenuItem.Size = new System.Drawing.Size(141, 22);
-            this.CloseSettingsMenuItem.Text = "Close Settings";
-            this.CloseSettingsMenuItem.Click += new System.EventHandler(this.CloseSettingsMenuItem_Click);
+            this.RuneComboBox.SelectedIndexChanged += new System.EventHandler(this.RuneComboBox_SelectedIndexChanged);
             // 
             // VerticalSplitContainer
             // 
-            this.VerticalSplitContainer.ColumnCount = 2;
+            this.VerticalSplitContainer.ColumnCount = 3;
+            this.VerticalSplitContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 175F));
             this.VerticalSplitContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.VerticalSplitContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 240F));
-            this.VerticalSplitContainer.Controls.Add(this.HorizontalSplitContainer, 0, 0);
-            this.VerticalSplitContainer.Controls.Add(this.RightPanelLayout, 1, 0);
+            this.VerticalSplitContainer.Controls.Add(this.HorizontalSplitContainer, 1, 0);
+            this.VerticalSplitContainer.Controls.Add(this.RightPanelLayout, 2, 0);
+            this.VerticalSplitContainer.Controls.Add(this.grpConfigFiles, 0, 0);
             this.VerticalSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.VerticalSplitContainer.Location = new System.Drawing.Point(0, 0);
             this.VerticalSplitContainer.Margin = new System.Windows.Forms.Padding(0);
             this.VerticalSplitContainer.Name = "VerticalSplitContainer";
             this.VerticalSplitContainer.RowCount = 1;
             this.VerticalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.VerticalSplitContainer.Size = new System.Drawing.Size(778, 488);
+            this.VerticalSplitContainer.Size = new System.Drawing.Size(1063, 485);
             this.VerticalSplitContainer.TabIndex = 20;
             // 
             // HorizontalSplitContainer
@@ -531,12 +467,13 @@
             this.HorizontalSplitContainer.Controls.Add(this.AutoSplitGroup, 0, 0);
             this.HorizontalSplitContainer.Controls.Add(this.RuneDisplayGroup, 0, 1);
             this.HorizontalSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.HorizontalSplitContainer.Location = new System.Drawing.Point(3, 3);
+            this.HorizontalSplitContainer.Location = new System.Drawing.Point(178, 3);
             this.HorizontalSplitContainer.Name = "HorizontalSplitContainer";
             this.HorizontalSplitContainer.RowCount = 2;
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.HorizontalSplitContainer.Size = new System.Drawing.Size(532, 482);
+            this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.HorizontalSplitContainer.Size = new System.Drawing.Size(642, 479);
             this.HorizontalSplitContainer.TabIndex = 0;
             // 
             // RightPanelLayout
@@ -548,9 +485,9 @@
             this.RightPanelLayout.Controls.Add(this.groupBox1);
             this.RightPanelLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RightPanelLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.RightPanelLayout.Location = new System.Drawing.Point(541, 3);
+            this.RightPanelLayout.Location = new System.Drawing.Point(826, 3);
             this.RightPanelLayout.Name = "RightPanelLayout";
-            this.RightPanelLayout.Size = new System.Drawing.Size(234, 482);
+            this.RightPanelLayout.Size = new System.Drawing.Size(234, 479);
             this.RightPanelLayout.TabIndex = 1;
             // 
             // groupBox1
@@ -693,50 +630,53 @@
             this.mainPanel.Controls.Add(this.VerticalSplitContainer, 0, 0);
             this.mainPanel.Controls.Add(this.panel1, 0, 1);
             this.mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainPanel.Location = new System.Drawing.Point(0, 24);
+            this.mainPanel.Location = new System.Drawing.Point(0, 0);
             this.mainPanel.Margin = new System.Windows.Forms.Padding(0);
             this.mainPanel.Name = "mainPanel";
             this.mainPanel.RowCount = 2;
             this.mainPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.mainPanel.Size = new System.Drawing.Size(778, 520);
+            this.mainPanel.Size = new System.Drawing.Size(1063, 517);
             this.mainPanel.TabIndex = 23;
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.btnCancel);
-            this.panel1.Controls.Add(this.btnApply);
+            this.panel1.Controls.Add(this.btnSaveAs);
+            this.panel1.Controls.Add(this.btnUndo);
             this.panel1.Controls.Add(this.btnSave);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 488);
+            this.panel1.Location = new System.Drawing.Point(0, 485);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(778, 32);
+            this.panel1.Size = new System.Drawing.Size(1063, 32);
             this.panel1.TabIndex = 21;
             // 
-            // btnCancel
+            // btnSaveAs
             // 
-            this.btnCancel.Location = new System.Drawing.Point(527, 4);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 0;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSaveAs.Location = new System.Drawing.Point(893, 6);
+            this.btnSaveAs.Name = "btnSaveAs";
+            this.btnSaveAs.Size = new System.Drawing.Size(75, 23);
+            this.btnSaveAs.TabIndex = 1;
+            this.btnSaveAs.Text = "Save As";
+            this.btnSaveAs.UseVisualStyleBackColor = true;
+            this.btnSaveAs.Click += new System.EventHandler(this.SaveSettingsAsMenuItem_Click);
             // 
-            // btnApply
+            // btnUndo
             // 
-            this.btnApply.Location = new System.Drawing.Point(610, 4);
-            this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(75, 23);
-            this.btnApply.TabIndex = 0;
-            this.btnApply.Text = "Apply";
-            this.btnApply.UseVisualStyleBackColor = true;
-            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            this.btnUndo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUndo.Location = new System.Drawing.Point(970, 6);
+            this.btnUndo.Name = "btnUndo";
+            this.btnUndo.Size = new System.Drawing.Size(90, 23);
+            this.btnUndo.TabIndex = 0;
+            this.btnUndo.Text = "Undo Changes";
+            this.btnUndo.UseVisualStyleBackColor = true;
+            this.btnUndo.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(694, 4);
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(815, 6);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 0;
@@ -744,8 +684,69 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // checkBoxHorizontalLayout
+            // lstConfigFiles
             // 
+            this.lstConfigFiles.ContextMenuStrip = this.ctxConfigFileList;
+            this.lstConfigFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lstConfigFiles.FormattingEnabled = true;
+            this.lstConfigFiles.Location = new System.Drawing.Point(3, 16);
+            this.lstConfigFiles.Name = "lstConfigFiles";
+            this.lstConfigFiles.Size = new System.Drawing.Size(163, 460);
+            this.lstConfigFiles.TabIndex = 2;
+            this.lstConfigFiles.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstConfigFiles_MouseDoubleClick);
+            this.lstConfigFiles.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstConfigFiles_MouseUp);
+            // 
+            // grpConfigFiles
+            // 
+            this.grpConfigFiles.Controls.Add(this.lstConfigFiles);
+            this.grpConfigFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grpConfigFiles.Location = new System.Drawing.Point(3, 3);
+            this.grpConfigFiles.Name = "grpConfigFiles";
+            this.grpConfigFiles.Size = new System.Drawing.Size(169, 479);
+            this.grpConfigFiles.TabIndex = 3;
+            this.grpConfigFiles.TabStop = false;
+            this.grpConfigFiles.Text = "Config Files";
+            // 
+            // ctxConfigFileList
+            // 
+            this.ctxConfigFileList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuNew,
+            this.menuLoad,
+            this.menuClone,
+            this.menuDelete});
+            this.ctxConfigFileList.Name = "ctxConfigFileList";
+            this.ctxConfigFileList.Size = new System.Drawing.Size(108, 92);
+            // 
+            // menuLoad
+            // 
+            this.menuLoad.Name = "menuLoad";
+            this.menuLoad.Size = new System.Drawing.Size(107, 22);
+            this.menuLoad.Text = "Load";
+            this.menuLoad.Click += new System.EventHandler(this.menuLoad_Click);
+            // 
+            // menuClone
+            // 
+            this.menuClone.Name = "menuClone";
+            this.menuClone.Size = new System.Drawing.Size(107, 22);
+            this.menuClone.Text = "Clone";
+            this.menuClone.Click += new System.EventHandler(this.menuClone_Click);
+            // 
+            // menuDelete
+            // 
+            this.menuDelete.Name = "menuDelete";
+            this.menuDelete.Size = new System.Drawing.Size(107, 22);
+            this.menuDelete.Text = "Delete";
+            this.menuDelete.Click += new System.EventHandler(this.menuDelete_Click);
+            // 
+            // menuNew
+            // 
+            this.menuNew.Name = "menuNew";
+            this.menuNew.Size = new System.Drawing.Size(107, 22);
+            this.menuNew.Text = "New";
+            this.menuNew.Click += new System.EventHandler(this.menuNew_Click);
+			//
+            // checkBoxHorizontalLayout
+			//
             this.checkBoxHorizontalLayout.AutoSize = true;
             this.checkBoxHorizontalLayout.Location = new System.Drawing.Point(10, 155);
             this.checkBoxHorizontalLayout.Name = "checkBoxHorizontalLayout";
@@ -754,15 +755,17 @@
             this.checkBoxHorizontalLayout.Text = "Horizontal";
             this.checkBoxHorizontalLayout.UseVisualStyleBackColor = true;
             // 
+            // autoSplitHotkeyControl
+            // 
+            this.autoSplitHotkeyControl.UseKeyWhitelist = true;
+            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(778, 544);
+            this.ClientSize = new System.Drawing.Size(1063, 517);
             this.Controls.Add(this.mainPanel);
-            this.Controls.Add(this.SettingsMenuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MainMenuStrip = this.SettingsMenuStrip;
             this.MinimumSize = new System.Drawing.Size(794, 555);
             this.Name = "SettingsWindow";
             this.Text = "Settings";
@@ -784,8 +787,6 @@
             this.VersionGroup.ResumeLayout(false);
             this.VersionGroup.PerformLayout();
             this.RuneDisplayGroup.ResumeLayout(false);
-            this.SettingsMenuStrip.ResumeLayout(false);
-            this.SettingsMenuStrip.PerformLayout();
             this.VerticalSplitContainer.ResumeLayout(false);
             this.HorizontalSplitContainer.ResumeLayout(false);
             this.RightPanelLayout.ResumeLayout(false);
@@ -793,8 +794,9 @@
             this.groupBox1.PerformLayout();
             this.mainPanel.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.grpConfigFiles.ResumeLayout(false);
+            this.ctxConfigFileList.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -818,13 +820,6 @@
         private System.Windows.Forms.Button AddRuneButton;
         private System.Windows.Forms.ComboBox RuneComboBox;
         private System.Windows.Forms.Panel RuneDisplayPanel;
-        private System.Windows.Forms.MenuStrip SettingsMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem LoadSettingsMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem SaveSettingsAsMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem SaveSettingsMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem CloseSettingsMenuItem;
         private System.Windows.Forms.CheckBox CheckUpdatesCheckBox;
         private System.Windows.Forms.Button CheckUpdatesButton;
         private System.Windows.Forms.TableLayoutPanel VerticalSplitContainer;
@@ -847,12 +842,21 @@
         private Controls.HotkeyControl autoSplitHotkeyControl;
         private System.Windows.Forms.TableLayoutPanel mainPanel;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnApply;
+        private System.Windows.Forms.Button btnUndo;
         private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.CheckBox chkDisplayDifficultyPercents;
+		private System.Windows.Forms.CheckBox chkDisplayDifficultyPercents;
         private System.Windows.Forms.CheckBox chkRuneDisplayRunesHorizontal;
         private System.Windows.Forms.CheckBox chkHighContrastRunes;
         private System.Windows.Forms.CheckBox checkBoxHorizontalLayout;
+        private System.Windows.Forms.Button btnAddRuneWord;
+        private System.Windows.Forms.ComboBox cbRuneWord;
+        private System.Windows.Forms.Button btnSaveAs;
+        private System.Windows.Forms.GroupBox grpConfigFiles;
+        private System.Windows.Forms.ListBox lstConfigFiles;
+        private System.Windows.Forms.ContextMenuStrip ctxConfigFileList;
+        private System.Windows.Forms.ToolStripMenuItem menuLoad;
+        private System.Windows.Forms.ToolStripMenuItem menuClone;
+        private System.Windows.Forms.ToolStripMenuItem menuDelete;
+        private System.Windows.Forms.ToolStripMenuItem menuNew;
     }
 }

@@ -4,12 +4,16 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using DiabloInterface.Gui.Controls;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace DiabloInterface.Gui
 {
     public partial class SettingsWindow : Form
     {
         private const string WindowTitleFormat = "Settings ({0})"; // {0} => Settings File Path
+
+        private string SettingsFilePath = Application.StartupPath + @"\Settings";
 
         AutoSplitTable autoSplitTable;
         ApplicationSettings settings;
@@ -51,9 +55,12 @@ namespace DiabloInterface.Gui
             this.settings = settings;
             InitializeComponent();
             InitializeAutoSplitTable();
+            InitializeRunes();
+            LoadConfigFileList();
 
             // Select first rune (don't leave combo box empty).
             RuneComboBox.SelectedIndex = 0;
+            cbRuneWord.SelectedIndex = 0;
 
             InitializeSettings();
 
@@ -87,7 +94,7 @@ namespace DiabloInterface.Gui
 
         private void UpdateTitle()
         {
-            Text = string.Format(WindowTitleFormat, Properties.Settings.Default.SettingsFile);
+            Text = string.Format(WindowTitleFormat, Properties.Settings.Default.SettingsFile.Substring(Properties.Settings.Default.SettingsFile.LastIndexOf("\\")+1));
         }
 
         private void InitializeSettings()
@@ -228,6 +235,8 @@ namespace DiabloInterface.Gui
 
         public void LayoutControls(bool checkVisible = true)
         {
+            //todo: should use a flow layout here so dont have to fuck around with all this crap for positioning
+
             int x = 0;
             int y = 0;
             int scroll = RuneDisplayPanel.VerticalScroll.Value;
@@ -343,40 +352,22 @@ namespace DiabloInterface.Gui
             return false;
         }
 
-        private void LoadSettingsMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog d = new OpenFileDialog();
-            d.Filter = SettingsPersistence.FileFilter;
-            if (d.ShowDialog() == DialogResult.OK)
-            {
-                if (!LoadSettings(d.FileName))
-                {
-                    MessageBox.Show("Failed to open settings file, make sure it is a valid settings file.",
-                        "Settings Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private void SaveSettingsMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveSettings();
-        }
-
         private void SaveSettingsAsMenuItem_Click(object sender, EventArgs e)
         {
-            SaveFileDialog d = new SaveFileDialog();
-            d.Filter = SettingsPersistence.FileFilter;
-            if (d.ShowDialog() == DialogResult.OK && !string.IsNullOrEmpty(d.FileName))
+            SimpleSaveDialog ssd = new SimpleSaveDialog(String.Empty);
+            ssd.StartPosition = FormStartPosition.CenterParent;
+            DialogResult res = ssd.ShowDialog();
+
+            if (res == DialogResult.OK)
             {
-                SaveSettings(d.FileName);
+                SaveSettings(Path.Combine(SettingsFilePath, ssd.NewFileName) + ".conf");
             }
-        }
 
-        private void CloseSettingsMenuItem_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+            ssd.Dispose();
 
+            LoadConfigFileList();
+        }
+   
         private void CheckUpdatesButton_Click(object sender, EventArgs e)
         {
             VersionChecker.CheckForUpdate(true);
@@ -384,18 +375,226 @@ namespace DiabloInterface.Gui
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            Close();
-        }
-
-        private void btnApply_Click(object sender, EventArgs e)
-        {
-            SaveSettings();
+            //todo: should check isdirty, but isdirty not checking runes
+            LoadSettings(Properties.Settings.Default.SettingsFile);
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             SaveSettings();
-            Close();
+        }
+
+        private void RuneComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void InitializeRunes()
+        {
+            //todo: Load these from file
+            RuneComboBox.Items.AddRange(new object[] {
+            "El",
+            "Eld",
+            "Tir",
+            "Nef",
+            "Eth",
+            "Ith",
+            "Tal",
+            "Ral",
+            "Ort",
+            "Thul",
+            "Amn",
+            "Sol",
+            "Shael",
+            "Dol",
+            "Hel",
+            "Io",
+            "Lum",
+            "Ko",
+            "Fal",
+            "Lem",
+            "Pul",
+            "Um",
+            "Mal",
+            "Ist",
+            "Gul",
+            "Vex",
+            "Ohm",
+            "Lo",
+            "Sur",
+            "Ber",
+            "Jah",
+            "Cham",
+            "Zod"});
+
+            List<Runeword> runeWords;
+            
+            JsonSerializer serializer = new JsonSerializer();
+            using (StreamReader sr = new StreamReader(@".\Resources\runewords.json"))
+            {
+                using (JsonReader reader = new JsonTextReader(sr))
+                {
+                    runeWords = serializer.Deserialize<List<Runeword>>(reader);
+                }
+            }
+
+            runeWords.ForEach(y => cbRuneWord.Items.Add(y));
+        }
+
+        private void btnAddRuneWord_Click(object sender, EventArgs e)
+        {
+            Runeword rw = (Runeword)cbRuneWord.SelectedItem;
+
+            rw.Runes.ForEach(r => AddIndividualRune(r));
+
+            LayoutControls();
+        }
+
+        private void AddIndividualRune(string runeString)
+        {
+            Rune rune = (Rune)(Enum.Parse(typeof(Rune), runeString));
+
+            RuneDisplayElement element = new RuneDisplayElement(rune, this, null);
+            RuneDisplayPanel.Controls.Add(element);
+        }
+        private void LoadConfigFileList()
+        {
+            lstConfigFiles.Items.Clear();
+
+            DirectoryInfo di = new DirectoryInfo(SettingsFilePath);
+            foreach (FileInfo fi in di.GetFiles("*.conf", SearchOption.AllDirectories))
+            {
+                ConfigEntry ce = new ConfigEntry()
+                {
+                    DisplayName = fi.Name.Substring(0, fi.Name.LastIndexOf('.')),
+                    Path = fi.FullName
+                };
+
+                lstConfigFiles.Items.Add(ce);
+            }
+
+            
+        }
+
+        class ConfigEntry
+        {
+            public string DisplayName { get; set; }
+            public string Path { get; set; }
+            public override string ToString()
+            {
+                return DisplayName;
+            }
+        }
+
+        private void lstConfigFiles_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            // make sure we actually dbl click an item, not just anywhere in the box.
+            int index = this.lstConfigFiles.IndexFromPoint(e.Location);
+            if (index != System.Windows.Forms.ListBox.NoMatches)
+            {
+                LoadSettings(((ConfigEntry)lstConfigFiles.Items[index]).Path);
+            }
+        }
+
+        private void lstConfigFiles_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                int index = this.lstConfigFiles.IndexFromPoint(e.Location);
+                if (index != System.Windows.Forms.ListBox.NoMatches)
+                {
+                    menuClone.Enabled = true;
+                    menuLoad.Enabled = true;
+                    menuNew.Enabled = true;
+                    menuDelete.Enabled = true;
+                    lstConfigFiles.ContextMenuStrip.Show(lstConfigFiles,new Point(e.X,e.Y));
+                }
+                else
+                {
+                    menuClone.Enabled = false;
+                    menuLoad.Enabled = false;
+                    menuNew.Enabled = true;
+                    menuDelete.Enabled = false;
+                    lstConfigFiles.ContextMenuStrip.Show(lstConfigFiles, new Point(e.X, e.Y));
+                }
+            }
+        }
+
+        private void menuNew_Click(object sender, EventArgs e)
+        {
+
+            SimpleSaveDialog ssd = new SimpleSaveDialog(String.Empty);
+            DialogResult res = ssd.ShowDialog();
+
+            if (res == DialogResult.OK)
+            {
+                NewSettings(Path.Combine(SettingsFilePath, ssd.NewFileName) + ".conf");
+            }
+
+            ssd.Dispose();
+
+            
+        }
+
+        private void NewSettings(string path)
+        {
+            settings = new ApplicationSettings();
+            InitializeSettings();
+            SaveSettings(path);
+            LoadConfigFileList();
+            LoadSettings(path);
+        }
+
+        private void menuLoad_Click(object sender, EventArgs e)
+        {
+            LoadSettings(((ConfigEntry)lstConfigFiles.SelectedItem).Path);
+        }
+
+        private void menuClone_Click(object sender, EventArgs e)
+        {
+            SimpleSaveDialog ssd = new SimpleSaveDialog(String.Empty);
+            DialogResult res = ssd.ShowDialog();
+
+            if (res == DialogResult.OK)
+            {
+                CloneSettings(((ConfigEntry)lstConfigFiles.SelectedItem).Path, Path.Combine(SettingsFilePath,ssd.NewFileName)+".conf");
+            }
+
+            ssd.Dispose();
+        }
+
+        private void CloneSettings(string oldPath, string newPath)
+        {
+            File.Copy(oldPath, newPath);
+            LoadConfigFileList();
+            LoadSettings(newPath);
+        }
+
+        private void menuDelete_Click(object sender, EventArgs e)
+        {
+            DeleteSettings(((ConfigEntry)lstConfigFiles.SelectedItem).Path);
+        }
+
+        private void DeleteSettings(string path)
+        {
+            File.Delete(path);
+            LoadConfigFileList();
+        }
+    }
+
+    public class Runeword
+    {
+        public string Name { get; set; }
+        public List<string> Runes { get; set; }
+
+        public Runeword()
+        {
+            Runes = new List<string>();
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

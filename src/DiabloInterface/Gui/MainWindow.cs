@@ -381,14 +381,31 @@ namespace DiabloInterface.Gui
             debugWindow.Show();
         }
 
-        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        private void LoadConfigFileList()
         {
+            loadConfigMenuItem.DropDownItems.Clear();
 
+            List<ToolStripItem> items = new List<ToolStripItem>();
+
+            DirectoryInfo di = new DirectoryInfo(@".\Settings");
+            foreach (FileInfo fi in di.GetFiles("*.conf", SearchOption.AllDirectories))
+            {
+                ToolStripMenuItem tsmi = new ToolStripMenuItem();
+                tsmi.Text = fi.Name.Substring(0,fi.Name.LastIndexOf('.'));
+                tsmi.Tag = fi.FullName;
+                tsmi.Click += LoadConfigFile;
+                items.Add(tsmi);
+            }
+           
+            loadConfigMenuItem.DropDownItems.AddRange(items.ToArray());
         }
 
-        
-        private void multiViewTabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        private void LoadConfigFile(object sender, EventArgs e)
         {
+            var fileName = ((ToolStripMenuItem)sender).Tag.ToString();
+            var settings = LoadSettings(fileName);
+            Properties.Settings.Default.SettingsFile = fileName;
+            ApplySettings(settings);
         }
     }
 }

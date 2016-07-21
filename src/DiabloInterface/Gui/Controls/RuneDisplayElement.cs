@@ -63,16 +63,19 @@ namespace DiabloInterface.Gui.Controls
         public RuneDisplayElement(Rune rune, SettingsWindow w, MainWindow m)
         {
             InitializeComponent();
-
-            var assembly = Assembly.GetExecutingAssembly();
             // load the sprite files first
-            if (runesSprite == null)
+            if (runesSprite == null || runesSpriteHighContrast == null)
             {
-                runesSprite = new Bitmap(assembly.GetManifestResourceStream("DiabloInterface.Resources.Images.Runes.runes.png"));
-            }
-            if (runesSpriteHighContrast == null)
-            {
-                runesSpriteHighContrast = new Bitmap(assembly.GetManifestResourceStream("DiabloInterface.Resources.Images.Runes.runes-high-contrast.png"));
+                var assembly = Assembly.GetExecutingAssembly();
+				if (runesSprite == null) {
+
+	                var resourceName = "DiabloInterface.Resources.Images.Runes.runes.png";
+				}
+	            if (runesSpriteHighContrast == null)
+	            {
+	                var resourceName = "DiabloInterface.Resources.Images.Runes.runes-high-contrast.png";
+	                runesSpriteHighContrast = new Bitmap(assembly.GetManifestResourceStream(resourceNameHigh));
+	            }
             }
 
             settingsWindow = w;
@@ -101,9 +104,12 @@ namespace DiabloInterface.Gui.Controls
         {
 
             this.rune = rune;
+
+            image = runesSprite.Clone(new Rectangle(0, (int)rune* runeSize, runeSize, runeSize), runesSprite.PixelFormat);
+            imageRed = runesSprite.Clone(new Rectangle(runeSize, (int)rune * runeSize, runeSize, runeSize), runesSprite.PixelFormat);
             SetRuneSprite(false);
             SetHaveRune(true);
-        }
+		}
         public void SetRemovable(bool removable)
         {
             if (removable)
@@ -113,7 +119,7 @@ namespace DiabloInterface.Gui.Controls
             {
                 this.Width = runeSize;
             }
-        }
+        }'
         public void SetHaveRune(bool haveRune)
         {
             this.haveRune = haveRune;

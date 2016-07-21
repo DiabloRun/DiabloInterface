@@ -83,9 +83,15 @@
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitMenuItem_Click);
+            // loadConfigMenuItem
+            // 
+            this.loadConfigMenuItem.Name = "loadConfigMenuItem";
+            this.loadConfigMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.loadConfigMenuItem.Text = "Load Config";
             // 
             // horizontalLayout1
             // 
+            // horizontalLayout1
             this.horizontalLayout1.AutoSize = true;
             this.horizontalLayout1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.horizontalLayout1.BackColor = System.Drawing.Color.Black;
@@ -98,6 +104,7 @@
             // 
             // verticalLayout2
             // 
+            // verticalLayout2
             this.verticalLayout2.AutoSize = true;
             this.verticalLayout2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.verticalLayout2.BackColor = System.Drawing.Color.Black;
