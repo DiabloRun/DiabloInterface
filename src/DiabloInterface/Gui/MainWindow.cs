@@ -409,8 +409,13 @@ namespace DiabloInterface.Gui
             loadConfigMenuItem.DropDownItems.Clear();
 
             List<ToolStripItem> items = new List<ToolStripItem>();
+            string settingsFolder = @".\Settings";
 
-            DirectoryInfo di = new DirectoryInfo(@".\Settings");
+            if (!Directory.Exists(settingsFolder))
+            {
+                Directory.CreateDirectory(settingsFolder);
+            }
+            DirectoryInfo di = new DirectoryInfo(settingsFolder);
             foreach (FileInfo fi in di.GetFiles("*.conf", SearchOption.AllDirectories))
             {
                 ToolStripMenuItem tsmi = new ToolStripMenuItem();
