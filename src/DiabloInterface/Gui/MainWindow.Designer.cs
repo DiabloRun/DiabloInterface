@@ -35,6 +35,7 @@
             this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadConfigMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.horizontalLayout1 = new DiabloInterface.Gui.Controls.HorizontalLayout();
             this.verticalLayout2 = new DiabloInterface.Gui.Controls.VerticalLayout();
             this.contextMenu.SuspendLayout();
@@ -44,6 +45,7 @@
             // 
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.settingsToolStripMenuItem,
+            this.loadConfigMenuItem,
             this.resetToolStripMenuItem,
             this.debugMenuItem,
             this.exitToolStripMenuItem});
@@ -83,6 +85,7 @@
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitMenuItem_Click);
+            // 
             // loadConfigMenuItem
             // 
             this.loadConfigMenuItem.Name = "loadConfigMenuItem";
@@ -91,7 +94,6 @@
             // 
             // horizontalLayout1
             // 
-            // horizontalLayout1
             this.horizontalLayout1.AutoSize = true;
             this.horizontalLayout1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.horizontalLayout1.BackColor = System.Drawing.Color.Black;
@@ -145,6 +147,8 @@
         private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem debugMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadConfigMenuItem;
+        
         private Controls.VerticalLayout verticalLayout2;
         private Controls.HorizontalLayout horizontalLayout1;
     }

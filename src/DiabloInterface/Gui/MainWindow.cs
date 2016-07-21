@@ -177,6 +177,28 @@ namespace DiabloInterface.Gui
             return settings;
         }
 
+        ApplicationSettings LoadSettings(string fileName)
+        {
+            var persistence = new SettingsPersistence();
+
+            ApplicationSettings settings = null;
+
+            if (fileName == String.Empty)
+                settings = persistence.Load();
+            else
+                settings = persistence.Load(fileName);
+
+            if (settings == null)
+            {
+                Logger.Instance.WriteLine("Loaded default settings.");
+
+                // Return default settings.
+                return new ApplicationSettings();
+            }
+
+            return settings;
+        }
+
         private void initialize()
         {
             try
@@ -300,6 +322,7 @@ namespace DiabloInterface.Gui
                 debugWindow.UpdateAutosplits(Settings.Autosplits);
             }
 
+            LoadConfigFileList();
             LogAutoSplits();
         }
 

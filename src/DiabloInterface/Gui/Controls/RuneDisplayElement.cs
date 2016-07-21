@@ -70,10 +70,11 @@ namespace DiabloInterface.Gui.Controls
 				if (runesSprite == null) {
 
 	                var resourceName = "DiabloInterface.Resources.Images.Runes.runes.png";
-				}
+                    runesSprite = new Bitmap(assembly.GetManifestResourceStream(resourceName));
+                }
 	            if (runesSpriteHighContrast == null)
 	            {
-	                var resourceName = "DiabloInterface.Resources.Images.Runes.runes-high-contrast.png";
+	                var resourceNameHigh = "DiabloInterface.Resources.Images.Runes.runes-high-contrast.png";
 	                runesSpriteHighContrast = new Bitmap(assembly.GetManifestResourceStream(resourceNameHigh));
 	            }
             }
@@ -119,7 +120,7 @@ namespace DiabloInterface.Gui.Controls
             {
                 this.Width = runeSize;
             }
-        }'
+        }
         public void SetHaveRune(bool haveRune)
         {
             this.haveRune = haveRune;
