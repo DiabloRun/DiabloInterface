@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace DiabloInterface
@@ -28,5 +29,21 @@ namespace DiabloInterface
         public bool DisplayAdvancedStats { get; set; }
         public bool DisplayDifficultyPercentages { get; set; } = false;
         public bool DisplayLayoutHorizontal { get; set; } = true;
+
+        public int VerticalLayoutPadding { get; set; } = 5;
+
+        public Color ColorName { get; set; } = Color.RoyalBlue;
+        public Color ColorDeaths { get; set; } = Color.Snow;
+        public Color ColorLevel { get; set; } = Color.Snow;
+        public Color ColorDifficultyPercentages { get; set; } = Color.Snow;
+        public Color ColorGold { get; set; } = Color.Gold;
+        public Color ColorBaseStats { get; set; } = Color.Coral;
+        public Color ColorAdvancedStats { get; set; } = Color.Coral;
+        public Color ColorFireRes { get; set; } = Color.Red;
+        public Color ColorColdRes { get; set; } = Color.DodgerBlue;
+        public Color ColorLightningRes { get; set; } = Color.Yellow;
+        public Color ColorPoisonRes { get; set; } = Color.YellowGreen;
+
+        public Color ColorBackground { get; set; } = Color.Black;
     }
 }

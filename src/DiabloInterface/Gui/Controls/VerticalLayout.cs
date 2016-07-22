@@ -125,15 +125,27 @@ namespace DiabloInterface.Gui.Controls
 
         public void UpdateLayout(ApplicationSettings Settings)
         {
+            bool first = true;
             // Calculate maximum sizes that the labels can possible get.
             if (nameLabel.Visible)
+            {
                 nameLabel.Size = TextRenderer.MeasureText(new string('W', 15), nameLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+            }
             if (goldLabel.Visible)
+            {
                 goldLabel.Size = TextRenderer.MeasureText("GOLD: 2500000", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+                first = false;
+            }
             if (deathsLabel.Visible)
+            {
                 deathsLabel.Size = TextRenderer.MeasureText("DEATHS: 99", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+                first = false;
+            }
             if (lvlLabel.Visible)
+            {
                 lvlLabel.Size = TextRenderer.MeasureText("LVL: 99", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+                first = false;
+            }
 
             // base stats have 3 char label (STR, VIT, ect.) and realistically a max value < 500 (lvl 99*5 + alkor quest... items can increase this tho)
             // we will assume the "longest" string is DEX: 499 (most likely dex or ene will be longest str.)
@@ -141,6 +153,8 @@ namespace DiabloInterface.Gui.Controls
             {
                 Size statSize = TextRenderer.MeasureText("DEX: 499", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
                 panelBaseStats.Size = new Size(statSize.Width, statSize.Height * panelBaseStats.RowCount);
+                panelBaseStats.Margin = new Padding(panelBaseStats.Margin.Left, first ? 0 : Settings.VerticalLayoutPadding, panelBaseStats.Margin.Right, panelBaseStats.Margin.Bottom);
+                first = false;
             }
 
             // advanced stats have 3 char label (FCR, FRW, etc.) and realistically a max value < 100
@@ -149,6 +163,8 @@ namespace DiabloInterface.Gui.Controls
             {
                 Size advancedStatSize = TextRenderer.MeasureText("FRW: 99", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
                 panelAdvancedStats.Size = new Size(advancedStatSize.Width, advancedStatSize.Height * panelAdvancedStats.RowCount);
+                panelAdvancedStats.Margin = new Padding(panelAdvancedStats.Margin.Left, first ? 0 : Settings.VerticalLayoutPadding, panelAdvancedStats.Margin.Right, panelAdvancedStats.Margin.Bottom);
+                first = false;
             }
 
             // Panel size for resistances can be negative, so max number of chars are 10 (LABL: -VAL)
@@ -158,6 +174,8 @@ namespace DiabloInterface.Gui.Controls
             {
                 Size resStatSize = TextRenderer.MeasureText("COLD: -100", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
                 panelResistances.Size = new Size(resStatSize.Width, resStatSize.Height * panelResistances.RowCount);
+                panelResistances.Margin = new Padding(panelResistances.Margin.Left, first ? 0 : Settings.VerticalLayoutPadding, panelResistances.Margin.Right, panelResistances.Margin.Bottom);
+                first = false;
             }
 
             // we will assume the "longest" string is NORM: 100%
@@ -165,6 +183,8 @@ namespace DiabloInterface.Gui.Controls
             {
                 Size diffPercStatSize = TextRenderer.MeasureText("NORM: 100%", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
                 panelDiffPercentages.Size = new Size(diffPercStatSize.Width, diffPercStatSize.Height * panelDiffPercentages.RowCount);
+                panelDiffPercentages.Margin = new Padding(panelDiffPercentages.Margin.Left, first ? 0 : Settings.VerticalLayoutPadding, panelDiffPercentages.Margin.Right, panelDiffPercentages.Margin.Bottom);
+                first = false;
             }
             
             UpdateRuneLayout(Settings);
@@ -191,6 +211,8 @@ namespace DiabloInterface.Gui.Controls
         public void ApplyLabelSettings(ApplicationSettings Settings)
         {
 
+            this.BackColor = Settings.ColorBackground;
+
             nameLabel.Font = new Font(Settings.FontName, Settings.FontSizeTitle);
             Font infoFont = new Font(Settings.FontName, Settings.FontSize);
             foreach (Label label in infoLabels)
@@ -205,6 +227,45 @@ namespace DiabloInterface.Gui.Controls
             ChangeVisibility(panelBaseStats, Settings.DisplayBaseStats);
             ChangeVisibility(panelAdvancedStats, Settings.DisplayAdvancedStats);
             ChangeVisibility(panelDiffPercentages, Settings.DisplayDifficultyPercentages);
+
+            nameLabel.ForeColor = Settings.ColorName;
+            goldLabel.ForeColor = Settings.ColorGold;
+            deathsLabel.ForeColor = Settings.ColorDeaths;
+            lvlLabel.ForeColor = Settings.ColorLevel;
+
+            fireLabel.ForeColor = Settings.ColorFireRes;
+            labelFireResVal.ForeColor = Settings.ColorFireRes;
+            coldLabel.ForeColor = Settings.ColorColdRes;
+            labelColdResVal.ForeColor = Settings.ColorColdRes;
+            lighLabel.ForeColor = Settings.ColorLightningRes;
+            labelLightResVal.ForeColor = Settings.ColorLightningRes;
+            poisLabel.ForeColor = Settings.ColorPoisonRes;
+            labelPoisonResVal.ForeColor = Settings.ColorPoisonRes;
+
+            strLabel.ForeColor = Settings.ColorBaseStats;
+            labelStrVal.ForeColor = Settings.ColorBaseStats;
+            vitLabel.ForeColor = Settings.ColorBaseStats;
+            labelVitVal.ForeColor = Settings.ColorBaseStats;
+            dexLabel.ForeColor = Settings.ColorBaseStats;
+            labelDexVal.ForeColor = Settings.ColorBaseStats;
+            eneLabel.ForeColor = Settings.ColorBaseStats;
+            labelEneVal.ForeColor = Settings.ColorBaseStats;
+
+            fcrLabel.ForeColor = Settings.ColorAdvancedStats;
+            labelFcrVal.ForeColor = Settings.ColorAdvancedStats;
+            fhrLabel.ForeColor = Settings.ColorAdvancedStats;
+            labelFhrVal.ForeColor = Settings.ColorAdvancedStats;
+            iasLabel.ForeColor = Settings.ColorAdvancedStats;
+            labelIasVal.ForeColor = Settings.ColorAdvancedStats;
+            frwLabel.ForeColor = Settings.ColorAdvancedStats;
+            labelFrwVal.ForeColor = Settings.ColorAdvancedStats;
+            
+            normLabel.ForeColor = Settings.ColorDifficultyPercentages;            
+            normLabelVal.ForeColor = Settings.ColorDifficultyPercentages;
+            nmLabel.ForeColor = Settings.ColorDifficultyPercentages;
+            nmLabelVal.ForeColor = Settings.ColorDifficultyPercentages;
+            hellLabel.ForeColor = Settings.ColorDifficultyPercentages;
+            hellLabelVal.ForeColor = Settings.ColorDifficultyPercentages;
         }
 
         void UpdateRuneLayout(ApplicationSettings Settings)

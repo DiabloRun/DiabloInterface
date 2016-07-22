@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.outerLeftRightPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.panelRuneDisplay2 = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.nameLabel = new System.Windows.Forms.Label();
             this.panelDeathsLvl = new System.Windows.Forms.TableLayoutPanel();
@@ -76,7 +77,6 @@
             this.labelNmPerc = new System.Windows.Forms.Label();
             this.labelHellPerc = new System.Windows.Forms.Label();
             this.panelRuneDisplay = new System.Windows.Forms.FlowLayoutPanel();
-            this.panelRuneDisplay2 = new System.Windows.Forms.FlowLayoutPanel();
             this.outerLeftRightPanel.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.panelDeathsLvl.SuspendLayout();
@@ -102,6 +102,20 @@
             this.outerLeftRightPanel.Padding = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.outerLeftRightPanel.Size = new System.Drawing.Size(410, 209);
             this.outerLeftRightPanel.TabIndex = 22;
+            // 
+            // panelRuneDisplay2
+            // 
+            this.panelRuneDisplay2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelRuneDisplay2.AutoSize = true;
+            this.panelRuneDisplay2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panelRuneDisplay2.Location = new System.Drawing.Point(6, 5);
+            this.panelRuneDisplay2.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.panelRuneDisplay2.MaximumSize = new System.Drawing.Size(28, 0);
+            this.panelRuneDisplay2.MinimumSize = new System.Drawing.Size(28, 28);
+            this.panelRuneDisplay2.Name = "panelRuneDisplay2";
+            this.panelRuneDisplay2.Size = new System.Drawing.Size(28, 28);
+            this.panelRuneDisplay2.TabIndex = 21;
             // 
             // flowLayoutPanel1
             // 
@@ -167,8 +181,7 @@
             this.lvlLabel.AutoSize = true;
             this.lvlLabel.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.lvlLabel.ForeColor = System.Drawing.Color.White;
-            this.lvlLabel.Location = new System.Drawing.Point(186, 0);
-            this.lvlLabel.Margin = new System.Windows.Forms.Padding(0);
+            this.lvlLabel.Location = new System.Drawing.Point(189, 0);
             this.lvlLabel.Name = "lvlLabel";
             this.lvlLabel.Size = new System.Drawing.Size(56, 16);
             this.lvlLabel.TabIndex = 2;
@@ -751,20 +764,6 @@
             this.panelRuneDisplay.Name = "panelRuneDisplay";
             this.panelRuneDisplay.Size = new System.Drawing.Size(367, 28);
             this.panelRuneDisplay.TabIndex = 0;
-            // 
-            // panelRuneDisplay2
-            // 
-            this.panelRuneDisplay2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelRuneDisplay2.AutoSize = true;
-            this.panelRuneDisplay2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panelRuneDisplay2.Location = new System.Drawing.Point(6, 5);
-            this.panelRuneDisplay2.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
-            this.panelRuneDisplay2.MaximumSize = new System.Drawing.Size(28, 0);
-            this.panelRuneDisplay2.MinimumSize = new System.Drawing.Size(28, 28);
-            this.panelRuneDisplay2.Name = "panelRuneDisplay2";
-            this.panelRuneDisplay2.Size = new System.Drawing.Size(28, 28);
-            this.panelRuneDisplay2.TabIndex = 21;
             // 
             // HorizontalLayout
             // 

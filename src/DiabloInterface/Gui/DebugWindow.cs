@@ -189,13 +189,13 @@ namespace DiabloInterface.Gui
                 StringBuilder statBuilder = new StringBuilder();
                 statBuilder.Append(inventoryReader.ItemReader.GetFullItemName(item));
 
-                statBuilder.Append("\n");
+                statBuilder.Append(Environment.NewLine);
                 List<string> magicalStrings = inventoryReader.ItemReader.GetMagicalStrings(item);
                 foreach (string str in magicalStrings)
                 {
                     statBuilder.Append("    ");
                     statBuilder.Append(str);
-                    statBuilder.Append("\n");
+                    statBuilder.Append(Environment.NewLine);
                 }
 
                 Control c = null;

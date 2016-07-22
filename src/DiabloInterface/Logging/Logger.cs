@@ -45,7 +45,7 @@ namespace DiabloInterface.Logging
             {
                 foreach (ILogWriter writer in logWriters)
                 {
-                    writer.LogMessage(message + '\n');
+                    writer.LogMessage(message + Environment.NewLine);
                 }
             }
         }

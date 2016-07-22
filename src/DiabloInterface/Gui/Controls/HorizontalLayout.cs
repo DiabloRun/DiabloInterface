@@ -248,6 +248,8 @@ namespace DiabloInterface.Gui.Controls
         public void ApplyLabelSettings(ApplicationSettings Settings)
         {
 
+            this.BackColor = Settings.ColorBackground;
+
             nameLabel.Font = new Font(Settings.FontName, Settings.FontSizeTitle);
             Font infoFont = new Font(Settings.FontName, Settings.FontSize);
             foreach (Label label in infoLabels)
@@ -262,6 +264,20 @@ namespace DiabloInterface.Gui.Controls
             ChangeVisibility(deathsLabel, Settings.DisplayDeathCounter);
             ChangeVisibility(lvlLabel, Settings.DisplayLevel);
             ChangeVisibility(panelDeathsLvl, Settings.DisplayDeathCounter || Settings.DisplayLevel);
+
+            // If only death XOR lvl is to be displayed, set the col width of the non displayed col to 0
+            if ( Settings.DisplayDeathCounter ^ Settings.DisplayLevel )
+            {
+                panelDeathsLvl.ColumnStyles[Settings.DisplayDeathCounter ? 1 : 0].SizeType = SizeType.Absolute;
+                panelDeathsLvl.ColumnStyles[Settings.DisplayDeathCounter ? 1 : 0].Width = 0;
+            } else
+            {
+                // otherwise restore columns to equal width:
+                panelDeathsLvl.ColumnStyles[0].SizeType = SizeType.Percent;
+                panelDeathsLvl.ColumnStyles[0].Width = 50;
+                panelDeathsLvl.ColumnStyles[1].SizeType = SizeType.Percent;
+                panelDeathsLvl.ColumnStyles[1].Width = 50;
+            }
 
             ChangeVisibility(panelResistances, Settings.DisplayResistances);
             ChangeVisibility(panelBaseStats, Settings.DisplayBaseStats);
@@ -281,6 +297,49 @@ namespace DiabloInterface.Gui.Controls
                 || Settings.DisplayAdvancedStats
                 || Settings.DisplayDifficultyPercentages
             );
+
+            nameLabel.ForeColor = Settings.ColorName;
+            goldLabel.ForeColor = Settings.ColorGold;
+            deathsLabel.ForeColor = Settings.ColorDeaths;
+            lvlLabel.ForeColor = Settings.ColorLevel;
+
+            fireLabel.ForeColor = Settings.ColorFireRes;
+            labelFireResVal.ForeColor = Settings.ColorFireRes;
+            coldLabel.ForeColor = Settings.ColorColdRes;
+            labelColdResVal.ForeColor = Settings.ColorColdRes;
+            lighLabel.ForeColor = Settings.ColorLightningRes;
+            labelLightResVal.ForeColor = Settings.ColorLightningRes;
+            poisLabel.ForeColor = Settings.ColorPoisonRes;
+            labelPoisonResVal.ForeColor = Settings.ColorPoisonRes;
+
+            strLabel.ForeColor = Settings.ColorBaseStats;
+            labelStrVal.ForeColor = Settings.ColorBaseStats;
+            vitLabel.ForeColor = Settings.ColorBaseStats;
+            labelVitVal.ForeColor = Settings.ColorBaseStats;
+            dexLabel.ForeColor = Settings.ColorBaseStats;
+            labelDexVal.ForeColor = Settings.ColorBaseStats;
+            eneLabel.ForeColor = Settings.ColorBaseStats;
+            labelEneVal.ForeColor = Settings.ColorBaseStats;
+
+            fcrLabel.ForeColor = Settings.ColorAdvancedStats;
+            labelFcrVal.ForeColor = Settings.ColorAdvancedStats;
+            fhrLabel.ForeColor = Settings.ColorAdvancedStats;
+            labelFhrVal.ForeColor = Settings.ColorAdvancedStats;
+            iasLabel.ForeColor = Settings.ColorAdvancedStats;
+            labelIasVal.ForeColor = Settings.ColorAdvancedStats;
+            frwLabel.ForeColor = Settings.ColorAdvancedStats;
+            labelFrwVal.ForeColor = Settings.ColorAdvancedStats;
+
+            normLabel.ForeColor = Settings.ColorDifficultyPercentages;
+            normLabelVal.ForeColor = Settings.ColorDifficultyPercentages;
+            nmLabel.ForeColor = Settings.ColorDifficultyPercentages;
+            nmLabelVal.ForeColor = Settings.ColorDifficultyPercentages;
+            hellLabel.ForeColor = Settings.ColorDifficultyPercentages;
+            hellLabelVal.ForeColor = Settings.ColorDifficultyPercentages;
+
+            labelNormPerc.ForeColor = Settings.ColorDifficultyPercentages;
+            labelNmPerc.ForeColor = Settings.ColorDifficultyPercentages;
+            labelHellPerc.ForeColor = Settings.ColorDifficultyPercentages;
         }
     }
 }

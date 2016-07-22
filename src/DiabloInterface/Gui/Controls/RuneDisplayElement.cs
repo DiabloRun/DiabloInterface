@@ -72,6 +72,8 @@ namespace DiabloInterface.Gui.Controls
         private Bitmap image;
         private Bitmap imageRed;
 
+        public bool Removed { get; set; }
+
         // size of rune images (width and height are same)
         private const int runeSize = 28;
 
@@ -156,6 +158,7 @@ namespace DiabloInterface.Gui.Controls
                 c.Enabled = false;
             }
             this.Hide();
+            this.Removed = true;
         }
     }
 }

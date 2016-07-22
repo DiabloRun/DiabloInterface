@@ -47,8 +47,23 @@ namespace DiabloInterface.Gui
                     || settings.DisplayRunesHighContrast != chkHighContrastRunes.Checked
                     || settings.AutosplitHotkey != autoSplitHotkeyControl.Hotkey
                     || settings.DisplayDifficultyPercentages != chkDisplayDifficultyPercents.Checked
-                    || settings.DisplayLayoutHorizontal != checkBoxHorizontalLayout.Checked
+                    || settings.DisplayLayoutHorizontal != (comboBoxLayout.SelectedIndex == 0)
                     || !Enumerable.SequenceEqual(settings.Runes, RunesList())
+                    || settings.VerticalLayoutPadding != (int)numericUpDownPaddingInVerticalLayout.Value
+
+                    || btnSetNameColor.ForeColor != settings.ColorName
+                    || btnSetDeathsColor.ForeColor != settings.ColorDeaths
+                    || btnSetLevelColor.ForeColor != settings.ColorLevel
+                    || btnSetDifficultyColor.ForeColor != settings.ColorDifficultyPercentages
+                    || btnSetGoldColor.ForeColor != settings.ColorGold
+                    || btnSetBaseStatsColor.ForeColor != settings.ColorBaseStats
+                    || btnSetAdvancedStatsColor.ForeColor != settings.ColorAdvancedStats
+                    || btnSetFireResColor.ForeColor != settings.ColorFireRes
+                    || btnSetColdResColor.ForeColor != settings.ColorColdRes
+                    || btnSetLightningResColor.ForeColor != settings.ColorLightningRes
+                    || btnSetPoisonResColor.ForeColor != settings.ColorPoisonRes
+
+                    || button2.BackColor != settings.ColorBackground;
                 ;
             }
         }
@@ -108,6 +123,8 @@ namespace DiabloInterface.Gui
 
             fontSizeNumeric.Value = settings.FontSize;
             titleFontSizeNumeric.Value = settings.FontSizeTitle;
+            numericUpDownPaddingInVerticalLayout.Value = settings.VerticalLayoutPadding;
+
             CreateFilesCheckBox.Checked = settings.CreateFiles;
             EnableAutosplitCheckBox.Checked = settings.DoAutosplit;
             autoSplitHotkeyControl.Hotkey = settings.AutosplitHotkey;
@@ -123,7 +140,22 @@ namespace DiabloInterface.Gui
             chkRuneDisplayRunesHorizontal.Checked = settings.DisplayRunesHorizontal;
             chkDisplayDifficultyPercents.Checked = settings.DisplayDifficultyPercentages;
             chkHighContrastRunes.Checked = settings.DisplayRunesHighContrast;
-            checkBoxHorizontalLayout.Checked = settings.DisplayLayoutHorizontal;
+            comboBoxLayout.SelectedIndex = settings.DisplayLayoutHorizontal ? 0 : 1;
+
+            SetBackgroundColor(settings.ColorBackground);
+
+            btnSetNameColor.ForeColor = settings.ColorName;
+            btnSetDeathsColor.ForeColor = settings.ColorDeaths;
+            btnSetLevelColor.ForeColor = settings.ColorLevel;
+            btnSetDifficultyColor.ForeColor = settings.ColorDifficultyPercentages;
+            btnSetGoldColor.ForeColor = settings.ColorGold;
+            btnSetBaseStatsColor.ForeColor = settings.ColorBaseStats;
+            btnSetAdvancedStatsColor.ForeColor = settings.ColorAdvancedStats;
+            btnSetFireResColor.ForeColor = settings.ColorFireRes;
+            btnSetColdResColor.ForeColor = settings.ColorColdRes;
+            btnSetLightningResColor.ForeColor = settings.ColorLightningRes;
+            btnSetPoisonResColor.ForeColor = settings.ColorPoisonRes;
+
 
             // Show the selected diablo version.
             int versionIndex = this.VersionComboBox.FindString(settings.D2Version);
@@ -182,7 +214,7 @@ namespace DiabloInterface.Gui
             List<int> runesList = new List<int>();
             foreach (RuneDisplayElement c in RuneDisplayPanel.Controls)
             {
-                if (!c.Visible) continue;
+                if (c.Removed) continue;
                 runesList.Add((int)c.getRune());
             }
             return runesList;
@@ -198,6 +230,7 @@ namespace DiabloInterface.Gui
             settings.AutosplitHotkey = autoSplitHotkeyControl.Hotkey;
             settings.FontSize = (int)fontSizeNumeric.Value;
             settings.FontSizeTitle = (int)titleFontSizeNumeric.Value;
+            settings.VerticalLayoutPadding = (int)numericUpDownPaddingInVerticalLayout.Value;
             settings.FontName = GetFontName();
             settings.D2Version = (string)VersionComboBox.SelectedItem;
 
@@ -212,7 +245,21 @@ namespace DiabloInterface.Gui
             settings.DisplayRunes = chkDisplayRunes.Checked;
             settings.DisplayRunesHorizontal = chkRuneDisplayRunesHorizontal.Checked;
             settings.DisplayRunesHighContrast = chkHighContrastRunes.Checked;
-            settings.DisplayLayoutHorizontal = checkBoxHorizontalLayout.Checked;
+            settings.DisplayLayoutHorizontal = comboBoxLayout.SelectedIndex == 0;
+
+            settings.ColorName = btnSetNameColor.ForeColor;
+            settings.ColorDeaths = btnSetDeathsColor.ForeColor;
+            settings.ColorLevel = btnSetLevelColor.ForeColor;
+            settings.ColorDifficultyPercentages = btnSetDifficultyColor.ForeColor;
+            settings.ColorGold = btnSetGoldColor.ForeColor;
+            settings.ColorBaseStats = btnSetBaseStatsColor.ForeColor;
+            settings.ColorAdvancedStats = btnSetAdvancedStatsColor.ForeColor;
+            settings.ColorFireRes = btnSetFireResColor.ForeColor;
+            settings.ColorColdRes = btnSetColdResColor.ForeColor;
+            settings.ColorLightningRes = btnSetLightningResColor.ForeColor;
+            settings.ColorPoisonRes = btnSetPoisonResColor.ForeColor;
+
+            settings.ColorBackground = button2.BackColor;
 
         }
 
@@ -511,7 +558,13 @@ namespace DiabloInterface.Gui
 
             ssd.Dispose();
         }
-
+        private void ReneameSettings(string oldPath, string newPath)
+        {
+            File.Copy(oldPath, newPath);
+            File.Delete(oldPath);
+            LoadConfigFileList();
+            LoadSettings(newPath);
+        }
         private void CloneSettings(string oldPath, string newPath)
         {
             File.Copy(oldPath, newPath);
@@ -528,6 +581,124 @@ namespace DiabloInterface.Gui
         {
             File.Delete(path);
             LoadConfigFileList();
+        }
+
+        private void selectColor(object sender)
+        {
+            ColorDialog d = new ColorDialog();
+            if (d.ShowDialog() == DialogResult.OK)
+                ((Control)sender).ForeColor = d.Color;
+        }
+        private void SetBackgroundColor(Color c)
+        {
+            button2.BackColor = c;
+            button2.ForeColor = (384 - c.R - c.G - c.B) > 0 ? Color.White : Color.Black;
+            btnSetNameColor.BackColor = c;
+            btnSetDeathsColor.BackColor = c;
+            btnSetLevelColor.BackColor = c;
+            btnSetDifficultyColor.BackColor = c;
+            btnSetGoldColor.BackColor = c;
+            btnSetBaseStatsColor.BackColor = c;
+            btnSetAdvancedStatsColor.BackColor = c;
+            btnSetFireResColor.BackColor = c;
+            btnSetColdResColor.BackColor = c;
+            btnSetLightningResColor.BackColor = c;
+            btnSetPoisonResColor.BackColor = c;
+        }
+
+        private void btnSetNameColor_Click(object sender, EventArgs e)
+        {
+            selectColor(sender);
+        }
+
+        private void btnSetGoldColor_Click(object sender, EventArgs e)
+        {
+            selectColor(sender);
+        }
+
+        private void btnSetBaseSettingsColor_Click(object sender, EventArgs e)
+        {
+            selectColor(sender);
+        }
+
+        private void btnSetAdvancedStatsColor_Click(object sender, EventArgs e)
+        {
+            selectColor(sender);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            selectColor(sender);
+        }
+
+        private void btnSetLevelColor_Click(object sender, EventArgs e)
+        {
+            selectColor(sender);
+        }
+
+        private void btnSetFireResColor_Click(object sender, EventArgs e)
+        {
+            selectColor(sender);
+        }
+
+        private void btnSetColdResColor_Click(object sender, EventArgs e)
+        {
+            selectColor(sender);
+        }
+
+        private void btnSetLightningResColor_Click(object sender, EventArgs e)
+        {
+            selectColor(sender);
+        }
+
+        private void btnSetPoisonResColor_Click(object sender, EventArgs e)
+        {
+            selectColor(sender);
+        }
+
+        private void btnSetDifficultyColor_Click(object sender, EventArgs e)
+        {
+            selectColor(sender);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            btnSetNameColor.ForeColor = Color.RoyalBlue;
+            btnSetDeathsColor.ForeColor = Color.Snow;
+            btnSetLevelColor.ForeColor = Color.Snow;
+            btnSetDifficultyColor.ForeColor = Color.Snow;
+            btnSetGoldColor.ForeColor = Color.Gold;
+            btnSetBaseStatsColor.ForeColor = Color.Coral;
+            btnSetAdvancedStatsColor.ForeColor = Color.Coral;
+            btnSetFireResColor.ForeColor = Color.Red;
+            btnSetColdResColor.ForeColor = Color.DodgerBlue;
+            btnSetLightningResColor.ForeColor = Color.Yellow;
+            btnSetPoisonResColor.ForeColor = Color.YellowGreen;
+            SetBackgroundColor(Color.Black);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            ColorDialog d = new ColorDialog();
+            if (d.ShowDialog() == DialogResult.OK)
+            {
+                SetBackgroundColor(d.Color);
+            }
+        }
+
+        private void renameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SimpleSaveDialog ssd = new SimpleSaveDialog(String.Empty);
+            DialogResult res = ssd.ShowDialog();
+
+            if (res == DialogResult.OK)
+            {
+                string path = ((ConfigEntry)lstConfigFiles.SelectedItem).Path;
+                string newPath = Path.Combine(SettingsFilePath, ssd.NewFileName) + ".conf";
+                ReneameSettings(path, newPath);
+            }
+
+            ssd.Dispose();
         }
     }
 }

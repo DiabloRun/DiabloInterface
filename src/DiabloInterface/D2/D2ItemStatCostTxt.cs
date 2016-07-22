@@ -57,7 +57,7 @@ namespace DiabloInterface
                     try
                     {
                         list.Add(new D2ItemStatCostTxt(lineArray));
-                        //Console.Write(lineArray[1] + ":" + lineArray[0] + "\n") ;
+                        //Console.Write(lineArray[1] + ":" + lineArray[0] + Environment.NewLine) ;
                     }
                     catch (FormatException e)
                     {

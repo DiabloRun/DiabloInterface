@@ -207,8 +207,10 @@ namespace DiabloInterface.Gui
             catch (Exception e)
             {
                 // Log error and show error message.
-                Logger.Instance.WriteLine("Unhandled Settings Error:\n{0}", e.ToString());
-                MessageBox.Show("An unhandled exception was caught trying to load the settings.\nPlease report the error and include the log found in the log folder.",
+                Logger.Instance.WriteLine("Unhandled Settings Error:{0}{1}", Environment.NewLine, e.ToString());
+                MessageBox.Show(
+                    "An unhandled exception was caught trying to load the settings."+ Environment.NewLine + 
+                    "Please report the error and include the log found in the log folder.",
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 // Rethrow current exception.
