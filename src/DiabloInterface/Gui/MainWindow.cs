@@ -3,17 +3,16 @@ using System.Windows.Forms;
 using System.Threading;
 using System.IO;
 using System.Collections.Generic;
-using System.Drawing;
 using DiabloInterface.Server;
 using DiabloInterface.Logging;
 using System.Text;
 using DiabloInterface.Gui.Controls;
-using DiabloInterface.D2;
 
 namespace DiabloInterface.Gui
 {
-    public partial class MainWindow : Form
+    public partial class MainWindow : WsExCompositedForm
     {
+
         private const string ItemServerPipeName = "DiabloInterfaceItems";
         private const string WindowTitleFormat = "Diablo Interface v{0}"; // {0} => Application.ProductVersion
 
@@ -306,11 +305,11 @@ namespace DiabloInterface.Gui
             if (Settings.DisplayLayoutHorizontal)
             {
                 horizontalLayout1.ApplyLabelSettings(Settings);
-                horizontalLayout1.ApplyRuneSettings(Settings, this);
+                horizontalLayout1.ApplyRuneSettings(Settings);
             } else
             {
                 verticalLayout2.ApplyLabelSettings(Settings);
-                verticalLayout2.ApplyRuneSettings(Settings, this);
+                verticalLayout2.ApplyRuneSettings(Settings);
             }
 
 

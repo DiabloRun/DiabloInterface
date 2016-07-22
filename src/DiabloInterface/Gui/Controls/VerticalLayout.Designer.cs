@@ -29,8 +29,7 @@
         private void InitializeComponent()
         {
             this.outerLeftRightPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.panelRuneDisplay2 = new System.Windows.Forms.Panel();
-            this.nameLabel = new System.Windows.Forms.Label();
+            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.deathsLabel = new System.Windows.Forms.Label();
             this.lvlLabel = new System.Windows.Forms.Label();
             this.goldLabel = new System.Windows.Forms.Label();
@@ -68,14 +67,15 @@
             this.normLabelVal = new System.Windows.Forms.Label();
             this.nmLabelVal = new System.Windows.Forms.Label();
             this.hellLabelVal = new System.Windows.Forms.Label();
-            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.nameLabel = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.panelRuneDisplay2 = new System.Windows.Forms.FlowLayoutPanel();
             this.outerLeftRightPanel.SuspendLayout();
+            this.flowLayoutPanel2.SuspendLayout();
             this.panelBaseStats.SuspendLayout();
             this.panelAdvancedStats.SuspendLayout();
             this.panelResistances.SuspendLayout();
             this.panelDiffPercentages.SuspendLayout();
-            this.flowLayoutPanel2.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -91,31 +91,22 @@
             this.outerLeftRightPanel.Size = new System.Drawing.Size(137, 326);
             this.outerLeftRightPanel.TabIndex = 22;
             // 
-            // panelRuneDisplay2
+            // flowLayoutPanel2
             // 
-            this.panelRuneDisplay2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelRuneDisplay2.AutoSize = true;
-            this.panelRuneDisplay2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panelRuneDisplay2.Location = new System.Drawing.Point(3, 0);
-            this.panelRuneDisplay2.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
-            this.panelRuneDisplay2.MaximumSize = new System.Drawing.Size(28, 0);
-            this.panelRuneDisplay2.MinimumSize = new System.Drawing.Size(28, 28);
-            this.panelRuneDisplay2.Name = "panelRuneDisplay2";
-            this.panelRuneDisplay2.Size = new System.Drawing.Size(28, 28);
-            this.panelRuneDisplay2.TabIndex = 18;
-            // 
-            // nameLabel
-            // 
-            this.nameLabel.AutoSize = true;
-            this.nameLabel.Font = new System.Drawing.Font("Courier New", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.nameLabel.ForeColor = System.Drawing.Color.RoyalBlue;
-            this.nameLabel.Location = new System.Drawing.Point(3, 0);
-            this.nameLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
-            this.nameLabel.Name = "nameLabel";
-            this.nameLabel.Size = new System.Drawing.Size(68, 27);
-            this.nameLabel.TabIndex = 6;
-            this.nameLabel.Text = "Name";
+            this.flowLayoutPanel2.AutoSize = true;
+            this.flowLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel2.Controls.Add(this.deathsLabel);
+            this.flowLayoutPanel2.Controls.Add(this.lvlLabel);
+            this.flowLayoutPanel2.Controls.Add(this.goldLabel);
+            this.flowLayoutPanel2.Controls.Add(this.panelBaseStats);
+            this.flowLayoutPanel2.Controls.Add(this.panelAdvancedStats);
+            this.flowLayoutPanel2.Controls.Add(this.panelResistances);
+            this.flowLayoutPanel2.Controls.Add(this.panelDiffPercentages);
+            this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(34, 3);
+            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(100, 320);
+            this.flowLayoutPanel2.TabIndex = 21;
             // 
             // deathsLabel
             // 
@@ -622,22 +613,17 @@
             this.hellLabelVal.Text = "-";
             this.hellLabelVal.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // flowLayoutPanel2
+            // nameLabel
             // 
-            this.flowLayoutPanel2.AutoSize = true;
-            this.flowLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.flowLayoutPanel2.Controls.Add(this.deathsLabel);
-            this.flowLayoutPanel2.Controls.Add(this.lvlLabel);
-            this.flowLayoutPanel2.Controls.Add(this.goldLabel);
-            this.flowLayoutPanel2.Controls.Add(this.panelBaseStats);
-            this.flowLayoutPanel2.Controls.Add(this.panelAdvancedStats);
-            this.flowLayoutPanel2.Controls.Add(this.panelResistances);
-            this.flowLayoutPanel2.Controls.Add(this.panelDiffPercentages);
-            this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(34, 3);
-            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(100, 320);
-            this.flowLayoutPanel2.TabIndex = 21;
+            this.nameLabel.AutoSize = true;
+            this.nameLabel.Font = new System.Drawing.Font("Courier New", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.nameLabel.ForeColor = System.Drawing.Color.RoyalBlue;
+            this.nameLabel.Location = new System.Drawing.Point(3, 0);
+            this.nameLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
+            this.nameLabel.Name = "nameLabel";
+            this.nameLabel.Size = new System.Drawing.Size(68, 27);
+            this.nameLabel.TabIndex = 6;
+            this.nameLabel.Text = "Name";
             // 
             // flowLayoutPanel1
             // 
@@ -652,6 +638,20 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(137, 356);
             this.flowLayoutPanel1.TabIndex = 23;
             // 
+            // panelRuneDisplay2
+            // 
+            this.panelRuneDisplay2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelRuneDisplay2.AutoSize = true;
+            this.panelRuneDisplay2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panelRuneDisplay2.Location = new System.Drawing.Point(3, 0);
+            this.panelRuneDisplay2.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.panelRuneDisplay2.MaximumSize = new System.Drawing.Size(28, 0);
+            this.panelRuneDisplay2.MinimumSize = new System.Drawing.Size(28, 28);
+            this.panelRuneDisplay2.Name = "panelRuneDisplay2";
+            this.panelRuneDisplay2.Size = new System.Drawing.Size(28, 28);
+            this.panelRuneDisplay2.TabIndex = 22;
+            // 
             // VerticalLayout
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -664,6 +664,7 @@
             this.Size = new System.Drawing.Size(137, 356);
             this.outerLeftRightPanel.ResumeLayout(false);
             this.outerLeftRightPanel.PerformLayout();
+            this.flowLayoutPanel2.ResumeLayout(false);
             this.panelBaseStats.ResumeLayout(false);
             this.panelBaseStats.PerformLayout();
             this.panelAdvancedStats.ResumeLayout(false);
@@ -672,7 +673,6 @@
             this.panelResistances.PerformLayout();
             this.panelDiffPercentages.ResumeLayout(false);
             this.panelDiffPercentages.PerformLayout();
-            this.flowLayoutPanel2.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -684,7 +684,6 @@
 
 
         protected System.Windows.Forms.FlowLayoutPanel outerLeftRightPanel;
-        protected System.Windows.Forms.Panel panelRuneDisplay2;
         protected System.Windows.Forms.Label nameLabel;
         protected System.Windows.Forms.Label deathsLabel;
         protected System.Windows.Forms.Label lvlLabel;
@@ -725,5 +724,6 @@
         protected System.Windows.Forms.Label hellLabelVal;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.FlowLayoutPanel panelRuneDisplay2;
     }
 }

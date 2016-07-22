@@ -66,6 +66,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -153,6 +154,9 @@
     <Compile Include="Gui\Controls\VerticalLayout.Designer.cs">
       <DependentUpon>VerticalLayout.cs</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Controls\WsExCompositedForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Gui\DebugWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -172,9 +176,7 @@
     <Compile Include="Gui\Controls\QuestDebugRow.Designer.cs">
       <DependentUpon>QuestDebugRow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Controls\RuneDisplayElement.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Gui\Controls\RuneDisplayElement.cs" />
     <Compile Include="Gui\Controls\RuneDisplayElement.Designer.cs">
       <DependentUpon>RuneDisplayElement.cs</DependentUpon>
     </Compile>
@@ -266,9 +268,6 @@
     <EmbeddedResource Include="Resources\runewords.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Include="Settings\DefaultSettings.conf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

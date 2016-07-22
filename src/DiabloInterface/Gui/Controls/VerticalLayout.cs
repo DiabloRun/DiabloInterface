@@ -170,14 +170,14 @@ namespace DiabloInterface.Gui.Controls
             UpdateRuneLayout(Settings);
         }
 
-        public void ApplyRuneSettings(ApplicationSettings Settings, MainWindow main)
+        public void ApplyRuneSettings(ApplicationSettings Settings)
         {
             panelRuneDisplay2.Controls.Clear();
             if (Settings.DisplayRunes && Settings.Runes.Count > 0)
             {
                 foreach (int r in Settings.Runes)
                 {
-                    RuneDisplayElement element = new RuneDisplayElement((Rune)r, null, main);
+                    RuneDisplayElement element = new RuneDisplayElement((Rune)r);
                     element.SetRuneSprite(Settings.DisplayRunesHighContrast);
                     element.SetRemovable(false);
                     element.SetHaveRune(false);

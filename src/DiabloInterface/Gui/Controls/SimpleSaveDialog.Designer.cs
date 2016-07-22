@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SimpleSaveDialog));
             this.btnSave = new System.Windows.Forms.Button();
             this.txtNewFilename = new System.Windows.Forms.TextBox();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -68,6 +69,10 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.txtNewFilename);
             this.Controls.Add(this.btnSave);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximumSize = new System.Drawing.Size(461, 81);
+            this.MinimumSize = new System.Drawing.Size(461, 81);
             this.Name = "SimpleSaveDialog";
             this.Text = "SimpleSaveDialog";
             this.ResumeLayout(false);

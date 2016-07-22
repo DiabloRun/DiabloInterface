@@ -10,8 +10,9 @@ using System.Reflection;
 
 namespace DiabloInterface.Gui
 {
-    public partial class SettingsWindow : Form
+    public partial class SettingsWindow : WsExCompositedForm
     {
+
         private const string WindowTitleFormat = "Settings ({0})"; // {0} => Settings File Path
 
         private string SettingsFilePath = Application.StartupPath + @"\Settings";
@@ -47,6 +48,7 @@ namespace DiabloInterface.Gui
                     || settings.AutosplitHotkey != autoSplitHotkeyControl.Hotkey
                     || settings.DisplayDifficultyPercentages != chkDisplayDifficultyPercents.Checked
                     || settings.DisplayLayoutHorizontal != checkBoxHorizontalLayout.Checked
+                    || !Enumerable.SequenceEqual(settings.Runes, RunesList())
                 ;
             }
         }
@@ -139,12 +141,10 @@ namespace DiabloInterface.Gui
             {
                 if (rune >= 0)
                 {
-                    RuneDisplayElement element = new RuneDisplayElement((Rune)rune, this, null);
+                    RuneDisplayElement element = new RuneDisplayElement((Rune)rune);
                     RuneDisplayPanel.Controls.Add(element);
                 }
             }
-
-            LayoutControls(checkVisible: false);
         }
 
         void MarkClean()
@@ -177,7 +177,7 @@ namespace DiabloInterface.Gui
             return fontName;
         }
 
-        private void UpdateSettings()
+        private List<int> RunesList()
         {
             List<int> runesList = new List<int>();
             foreach (RuneDisplayElement c in RuneDisplayPanel.Controls)
@@ -185,8 +185,12 @@ namespace DiabloInterface.Gui
                 if (!c.Visible) continue;
                 runesList.Add((int)c.getRune());
             }
+            return runesList;
+        }
 
-            settings.Runes = runesList;
+        private void UpdateSettings()
+        {
+            settings.Runes = RunesList();
             settings.Autosplits = autoSplitTable.AutoSplits.ToList();
             settings.CreateFiles = CreateFilesCheckBox.Checked;
             settings.CheckUpdates = CheckUpdatesCheckBox.Checked;
@@ -234,29 +238,6 @@ namespace DiabloInterface.Gui
             autoSplitTable.ScrollControlIntoView(row);
         }
 
-        public void LayoutControls(bool checkVisible = true)
-        {
-            //todo: should use a flow layout here so dont have to fuck around with all this crap for positioning
-
-            int x = 0;
-            int y = 0;
-            int scroll = RuneDisplayPanel.VerticalScroll.Value;
-            foreach (Control c in RuneDisplayPanel.Controls)
-            {
-                if (c is RuneDisplayElement && (!checkVisible || c.Visible))
-                {
-
-                    if (x + c.Width > RuneDisplayPanel.Width && RuneDisplayPanel.Width >= c.Width)
-                    {
-                        y += c.Height;
-                        x = 0;
-                    }
-                    c.Location = new Point(x, -scroll + y);
-                    x += c.Width;
-                }
-            }
-        }
-
         private void SettingsWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing && IsDirty)
@@ -291,9 +272,8 @@ namespace DiabloInterface.Gui
             int rune = RuneComboBox.SelectedIndex;
             if (rune >= 0)
             {
-                RuneDisplayElement element = new RuneDisplayElement((Rune)rune, this, null);
+                RuneDisplayElement element = new RuneDisplayElement((Rune)rune);
                 RuneDisplayPanel.Controls.Add(element);
-                LayoutControls();
             }
         }
 
@@ -392,41 +372,10 @@ namespace DiabloInterface.Gui
 
         private void InitializeRunes()
         {
-            //todo: Load these from file
-            RuneComboBox.Items.AddRange(new object[] {
-            "El",
-            "Eld",
-            "Tir",
-            "Nef",
-            "Eth",
-            "Ith",
-            "Tal",
-            "Ral",
-            "Ort",
-            "Thul",
-            "Amn",
-            "Sol",
-            "Shael",
-            "Dol",
-            "Hel",
-            "Io",
-            "Lum",
-            "Ko",
-            "Fal",
-            "Lem",
-            "Pul",
-            "Um",
-            "Mal",
-            "Ist",
-            "Gul",
-            "Vex",
-            "Ohm",
-            "Lo",
-            "Sur",
-            "Ber",
-            "Jah",
-            "Cham",
-            "Zod"});
+            foreach ( Rune r in Enum.GetValues(typeof(Rune)))
+            {
+                RuneComboBox.Items.Add(r.ToString());
+            }
 
             List<Runeword> runeWords;
             
@@ -450,15 +399,11 @@ namespace DiabloInterface.Gui
             Runeword rw = (Runeword)cbRuneWord.SelectedItem;
 
             rw.Runes.ForEach(r => AddIndividualRune(r));
-
-            LayoutControls();
         }
 
-        private void AddIndividualRune(string runeString)
+        private void AddIndividualRune(Rune rune)
         {
-            Rune rune = (Rune)(Enum.Parse(typeof(Rune), runeString));
-
-            RuneDisplayElement element = new RuneDisplayElement(rune, this, null);
+            RuneDisplayElement element = new RuneDisplayElement(rune);
             RuneDisplayPanel.Controls.Add(element);
         }
         private void LoadConfigFileList()
@@ -494,7 +439,7 @@ namespace DiabloInterface.Gui
         {
             // make sure we actually dbl click an item, not just anywhere in the box.
             int index = this.lstConfigFiles.IndexFromPoint(e.Location);
-            if (index != System.Windows.Forms.ListBox.NoMatches)
+            if (index != ListBox.NoMatches)
             {
                 LoadSettings(((ConfigEntry)lstConfigFiles.Items[index]).Path);
             }
@@ -505,7 +450,7 @@ namespace DiabloInterface.Gui
             if (e.Button == MouseButtons.Right)
             {
                 int index = this.lstConfigFiles.IndexFromPoint(e.Location);
-                if (index != System.Windows.Forms.ListBox.NoMatches)
+                if (index != ListBox.NoMatches)
                 {
                     menuClone.Enabled = true;
                     menuLoad.Enabled = true;
@@ -583,22 +528,6 @@ namespace DiabloInterface.Gui
         {
             File.Delete(path);
             LoadConfigFileList();
-        }
-    }
-
-    public class Runeword
-    {
-        public string Name { get; set; }
-        public List<string> Runes { get; set; }
-
-        public Runeword()
-        {
-            Runes = new List<string>();
-        }
-
-        public override string ToString()
-        {
-            return Name;
         }
     }
 }

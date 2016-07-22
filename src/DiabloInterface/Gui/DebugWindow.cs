@@ -10,8 +10,9 @@ using System.Windows.Forms;
 
 namespace DiabloInterface.Gui
 {
-    public partial class DebugWindow : Form
+    public partial class DebugWindow : WsExCompositedForm
     {
+
         /// <summary>
         /// Helper class for binding/unbinding autosplit event handlers.
         /// </summary>

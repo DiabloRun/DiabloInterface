@@ -1,4 +1,5 @@
 ﻿using DiabloInterface.D2;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -207,11 +208,10 @@ namespace DiabloInterface.Gui.Controls
             panelAdvancedStats.Size = advancedStatPanelSize;
             panelResistances.Size = resPanelSize;
             panelDiffPercentages.Size = diffPercPanelSize;
-
-            UpdateRuneLayout(Settings);
+            panelRuneDisplay.MaximumSize = new Size(Math.Max(nameSize.Width, statsWidth), 0);
         }
 
-        public void ApplyRuneSettings(ApplicationSettings Settings, MainWindow main)
+        public void ApplyRuneSettings(ApplicationSettings Settings)
         {
 
             panelRuneDisplay.Controls.Clear();
@@ -219,14 +219,14 @@ namespace DiabloInterface.Gui.Controls
             {
                 foreach (int r in Settings.Runes)
                 {
-                    RuneDisplayElement element = new RuneDisplayElement((Rune)r, null, main);
+                    RuneDisplayElement element = new RuneDisplayElement((Rune)r);
                     element.SetRuneSprite(Settings.DisplayRunesHighContrast);
                     element.SetRemovable(false);
                     element.SetHaveRune(false);
                     panelRuneDisplay.Controls.Add(element);
                 }
             }
-
+            
             ChangeVisibility(panelRuneDisplay, Settings.DisplayRunes && Settings.DisplayRunesHorizontal && Settings.Runes.Count > 0);
 
             panelRuneDisplay2.Controls.Clear();
@@ -234,7 +234,7 @@ namespace DiabloInterface.Gui.Controls
             {
                 foreach (int r in Settings.Runes)
                 {
-                    RuneDisplayElement element = new RuneDisplayElement((Rune)r, null, main);
+                    RuneDisplayElement element = new RuneDisplayElement((Rune)r);
                     element.SetRuneSprite(Settings.DisplayRunesHighContrast);
                     element.SetRemovable(false);
                     element.SetHaveRune(false);
@@ -281,73 +281,6 @@ namespace DiabloInterface.Gui.Controls
                 || Settings.DisplayAdvancedStats
                 || Settings.DisplayDifficultyPercentages
             );
-        }
-
-        void UpdateRuneLayout(ApplicationSettings Settings)
-        {
-            int y;
-            int x;
-            int height;
-            int scroll;
-
-            if (Settings.DisplayRunesHorizontal)
-            {
-                y = 0;
-                x = 0;
-                height = -1;
-                scroll = panelRuneDisplay.VerticalScroll.Value;
-                foreach (Control c in panelRuneDisplay.Controls)
-                {
-                    if (c is RuneDisplayElement && c.Visible)
-                    {
-                        if (height == -1)
-                        {
-                            height = c.Height;
-                        }
-                        if (x + c.Width > panelRuneDisplay.Width && panelRuneDisplay.Width >= c.Width)
-                        {
-                            y += c.Height + 4;
-                            x = 0;
-                            height = y + c.Height;
-                        }
-                        c.Location = new Point(x, -scroll + y);
-                        x += c.Width + 4; // 4 padding for runes
-                    }
-                }
-
-                panelRuneDisplay.Height = height == -1 ? 0 : height;
-            }
-
-
-            if (!Settings.DisplayRunesHorizontal)
-            {
-                y = 0;
-                x = 0;
-                height = -1;
-                scroll = panelRuneDisplay2.VerticalScroll.Value;
-                foreach (Control c in panelRuneDisplay2.Controls)
-                {
-                    if (c is RuneDisplayElement && c.Visible)
-                    {
-                        if (height == -1)
-                        {
-                            height = c.Height;
-                        }
-                        if (x + c.Width > panelRuneDisplay2.Width && panelRuneDisplay2.Width >= c.Width)
-                        {
-                            y += c.Height + 4;
-                            x = 0;
-                            height = y + c.Height;
-                        }
-                        c.Location = new Point(x, -scroll + y);
-                        x += c.Width;
-                    }
-                }
-
-                panelRuneDisplay2.Height = height == -1 ? 0 : height;
-                panelRuneDisplay2.Width = 28;
-            }
-
         }
     }
 }

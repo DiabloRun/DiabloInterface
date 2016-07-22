@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using System.Configuration;
 
 namespace DiabloInterface
 {
@@ -13,13 +14,19 @@ namespace DiabloInterface
         const string DefaultSettingsFile = @".\Settings\DefaultSettings.conf";
         public const string FileFilter = "Config Files|*.conf;*.json|All Files|*.*";
 
+        private string appPropertySettingsPath = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
+
         public string CurrentSettingsFile
         {
             get
             {
                 string filename = Properties.Settings.Default.SettingsFile;
+                Logger.Instance.WriteLine("Current settings file is \"{0}\"", filename);
                 if (string.IsNullOrEmpty(filename))
+                {
                     filename = DefaultSettingsFile;
+                    Logger.Instance.WriteLine("Using Default Config File instead: \"{0}\"", filename);
+                }
 
                 return filename;
             }
@@ -38,6 +45,7 @@ namespace DiabloInterface
 
         public ApplicationSettings Load()
         {
+            Logger.Instance.WriteLine("App Property Settings Path is \"{0}\"", appPropertySettingsPath);
             return Load(CurrentSettingsFile);
         }
 

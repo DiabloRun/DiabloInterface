@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace DiabloInterface.Gui.Controls
 {
@@ -42,12 +43,26 @@ namespace DiabloInterface.Gui.Controls
         Zod,
     };
 
+    public class Runeword
+    {
+        public string Name { get; set; }
+        public List<Rune> Runes { get; set; }
+
+        public Runeword()
+        {
+            Runes = new List<Rune>();
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
+
     public partial class RuneDisplayElement : UserControl
     {
 
         private Rune rune;
-        private SettingsWindow settingsWindow;
-        private MainWindow mainWindow;
 
         private bool haveRune = false;
 
@@ -60,7 +75,7 @@ namespace DiabloInterface.Gui.Controls
         // size of rune images (width and height are same)
         private const int runeSize = 28;
 
-        public RuneDisplayElement(Rune rune, SettingsWindow w, MainWindow m)
+        public RuneDisplayElement(Rune rune)
         {
             InitializeComponent();
             // load the sprite files first
@@ -78,9 +93,6 @@ namespace DiabloInterface.Gui.Controls
 	                runesSpriteHighContrast = new Bitmap(assembly.GetManifestResourceStream(resourceNameHigh));
 	            }
             }
-
-            settingsWindow = w;
-            mainWindow = m;
             setRune(rune);
         }
         
@@ -144,14 +156,6 @@ namespace DiabloInterface.Gui.Controls
                 c.Enabled = false;
             }
             this.Hide();
-            if (settingsWindow != null)
-            {
-                settingsWindow.LayoutControls();
-            }
-            if (mainWindow != null)
-            {
-                mainWindow.UpdateLayout();
-            }
         }
     }
 }
