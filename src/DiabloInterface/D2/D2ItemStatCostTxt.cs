@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-namespace DiabloInterface
+namespace DiabloInterface.D2
 {
     class D2ItemStatCostTxt
     {

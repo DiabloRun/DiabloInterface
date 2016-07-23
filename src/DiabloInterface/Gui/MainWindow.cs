@@ -6,7 +6,8 @@ using System.Collections.Generic;
 using DiabloInterface.Server;
 using DiabloInterface.Logging;
 using System.Text;
-using DiabloInterface.Gui.Controls;
+using DiabloInterface.D2;
+using DiabloInterface.Gui.Forms;
 
 namespace DiabloInterface.Gui
 {

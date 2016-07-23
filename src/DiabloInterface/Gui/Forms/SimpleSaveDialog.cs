@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace DiabloInterface.Gui.Controls
+namespace DiabloInterface.Gui.Forms
 {
     public partial class SimpleSaveDialog : Form
     {
@@ -27,6 +20,7 @@ namespace DiabloInterface.Gui.Controls
             InitializeComponent();
 
             FileName = fileName;
+            txtNewFilename.Text = fileName;
 
             if (FileName == String.Empty)
             {
@@ -39,9 +33,17 @@ namespace DiabloInterface.Gui.Controls
 
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private bool CheckValidFilename()
         {
-            
+            string fileName = txtNewFilename.Text;
+
+            return !string.IsNullOrEmpty(fileName) &&
+                   fileName.IndexOfAny(Path.GetInvalidFileNameChars()) < 0 &&
+                   !File.Exists(Path.Combine(Application.StartupPath + @"\Settings", fileName));
+        }
+
+        private void CheckAndCloseForm()
+        {
             if (CheckValidFilename())
             {
                 DialogResult = DialogResult.OK;
@@ -53,14 +55,22 @@ namespace DiabloInterface.Gui.Controls
             }
         }
 
-        private bool CheckValidFilename()
+        private void btnSave_Click(object sender, EventArgs e)
         {
-            string fileName = txtNewFilename.Text;
-
-            return !string.IsNullOrEmpty(fileName) &&
-                   fileName.IndexOfAny(Path.GetInvalidFileNameChars()) < 0 &&
-                   !File.Exists(Path.Combine(Application.StartupPath + @"\Settings", fileName));
+            CheckAndCloseForm();
         }
 
+        private void txtNewFilename_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == 13)
+            {
+                // enter is pressed:
+                CheckAndCloseForm();
+            } else if ( e.KeyChar == 27)
+            {
+                // esc is pressed
+                this.Close();
+            }
+        }
     }
 }

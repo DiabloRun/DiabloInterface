@@ -344,7 +344,6 @@
             this.RuneComboBox.Name = "RuneComboBox";
             this.RuneComboBox.Size = new System.Drawing.Size(59, 21);
             this.RuneComboBox.TabIndex = 0;
-            this.RuneComboBox.SelectedIndexChanged += new System.EventHandler(this.RuneComboBox_SelectedIndexChanged);
             // 
             // VerticalSplitContainer
             // 

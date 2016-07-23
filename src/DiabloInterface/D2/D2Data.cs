@@ -1,5 +1,5 @@
 ﻿
-namespace DiabloInterface
+namespace DiabloInterface.D2
 {
     public class D2Data
     {

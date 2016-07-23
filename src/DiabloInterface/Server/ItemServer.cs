@@ -1,4 +1,5 @@
-﻿using DiabloInterface.D2.Struct;
+﻿using DiabloInterface.D2;
+using DiabloInterface.D2.Struct;
 using DiabloInterface.Logging;
 using System;
 using System.Collections.Generic;

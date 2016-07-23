@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace DiabloInterface.Gui.Controls
+namespace DiabloInterface.Gui.Forms
 {
     public class WsExCompositedForm : Form
     {

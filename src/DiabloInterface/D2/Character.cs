@@ -2,14 +2,28 @@
 using System;
 using System.Collections.Generic;
 
-namespace DiabloInterface
+namespace DiabloInterface.D2
 {
+    public enum CharacterClass
+    {
+        // Order as found in charstats.txt
+        Amazon,
+        Sorceress,
+        Necromancer,
+        Paladin,
+        Barbarian,
+        Druid,
+        Assassin
+    }
+
     public class Character
     {
         const int MIN_RESIST = -100;
         const int BASE_MAX_RESIST = 75;
 
         public string name;
+
+        public CharacterClass CharClass { get; private set; }
 
         public D2Data.Mode Mode { get; private set; }
 
@@ -47,12 +61,15 @@ namespace DiabloInterface
         /// </summary>
         /// <param name="dict"></param>
         /// <param name="resistancPenalty"></param>
-        public void ParseStats(Dictionary<StatIdentifier, D2Stat> data, Dictionary<StatIdentifier, D2Stat> itemData, int gameDifficulty)
+        internal void ParseStats(Dictionary<StatIdentifier, D2Stat> data, Dictionary<StatIdentifier, D2Stat> itemData, D2GameInfo gameInfo)
         {
             // Don't update stats while dead.
-            if (IsDead) return;
+            if (IsDead)
+                return;
 
-            int penalty = GetResistancePenalty(gameDifficulty);
+            CharClass = (CharacterClass)gameInfo.Player.eClass;
+
+            int penalty = GetResistancePenalty(gameInfo.Game.Difficulty);
             Func<StatIdentifier, int> getStat = statID =>
             {
                 D2Stat stat;

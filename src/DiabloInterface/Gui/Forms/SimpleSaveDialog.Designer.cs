@@ -1,4 +1,4 @@
-﻿namespace DiabloInterface.Gui.Controls
+﻿namespace DiabloInterface.Gui.Forms
 {
     partial class SimpleSaveDialog
     {
@@ -50,6 +50,7 @@
             this.txtNewFilename.Name = "txtNewFilename";
             this.txtNewFilename.Size = new System.Drawing.Size(264, 20);
             this.txtNewFilename.TabIndex = 0;
+            this.txtNewFilename.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtNewFilename_KeyPress);
             // 
             // btnCancel
             // 

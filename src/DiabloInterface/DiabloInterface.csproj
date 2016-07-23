@@ -84,6 +84,7 @@
     <Compile Include="AutoSplit.cs" />
     <Compile Include="AutoSplitFactory.cs" />
     <Compile Include="D2\D2QuestHelper.cs" />
+    <Compile Include="D2\D2GameInfo.cs" />
     <Compile Include="D2\Readers\RangeStatData.cs" />
     <Compile Include="D2\Readers\UnitReader.cs" />
     <Compile Include="D2\Readers\StringLookupTable.cs" />
@@ -136,10 +137,10 @@
     <Compile Include="Gui\Controls\HotkeyControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Gui\Controls\SimpleSaveDialog.cs">
+    <Compile Include="Gui\Forms\SimpleSaveDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Gui\Controls\SimpleSaveDialog.Designer.cs">
+    <Compile Include="Gui\Forms\SimpleSaveDialog.Designer.cs">
       <DependentUpon>SimpleSaveDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Controls\HorizontalLayout.cs">
@@ -154,7 +155,7 @@
     <Compile Include="Gui\Controls\VerticalLayout.Designer.cs">
       <DependentUpon>VerticalLayout.cs</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Controls\WsExCompositedForm.cs">
+    <Compile Include="Gui\Forms\WsExCompositedForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\DebugWindow.cs">
@@ -218,7 +219,7 @@
     <EmbeddedResource Include="Gui\Controls\AutoSplitTable.resx">
       <DependentUpon>AutoSplitTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Controls\SimpleSaveDialog.resx">
+    <EmbeddedResource Include="Gui\Forms\SimpleSaveDialog.resx">
       <DependentUpon>SimpleSaveDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Controls\HorizontalLayout.resx">

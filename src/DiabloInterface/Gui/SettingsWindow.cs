@@ -7,6 +7,7 @@ using DiabloInterface.Gui.Controls;
 using System.IO;
 using Newtonsoft.Json;
 using System.Reflection;
+using DiabloInterface.Gui.Forms;
 
 namespace DiabloInterface.Gui
 {
@@ -403,18 +404,15 @@ namespace DiabloInterface.Gui
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            //todo: should check isdirty, but isdirty not checking runes
-            LoadSettings(Properties.Settings.Default.SettingsFile);
+            if ( IsDirty )
+            {
+                LoadSettings(Properties.Settings.Default.SettingsFile);
+            }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             SaveSettings();
-        }
-
-        private void RuneComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void InitializeRunes()
@@ -688,14 +686,14 @@ namespace DiabloInterface.Gui
 
         private void renameToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SimpleSaveDialog ssd = new SimpleSaveDialog(String.Empty);
+            string current = ((ConfigEntry)lstConfigFiles.SelectedItem).Path;
+            SimpleSaveDialog ssd = new SimpleSaveDialog(Path.GetFileName(current).Replace(".conf", ""));
             DialogResult res = ssd.ShowDialog();
 
             if (res == DialogResult.OK)
             {
-                string path = ((ConfigEntry)lstConfigFiles.SelectedItem).Path;
                 string newPath = Path.Combine(SettingsFilePath, ssd.NewFileName) + ".conf";
-                ReneameSettings(path, newPath);
+                ReneameSettings(current, newPath);
             }
 
             ssd.Dispose();

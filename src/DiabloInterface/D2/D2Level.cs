@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-namespace DiabloInterface
+namespace DiabloInterface.D2
 {
     // from d2exp.mpq/data/excel/Levels.txt
     class D2Level

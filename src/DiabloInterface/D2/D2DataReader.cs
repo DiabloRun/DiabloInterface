@@ -1,5 +1,4 @@
-﻿using DiabloInterface.D2;
-using DiabloInterface.D2.Readers;
+﻿using DiabloInterface.D2.Readers;
 using DiabloInterface.D2.Struct;
 using DiabloInterface.Gui;
 using DiabloInterface.Logging;
@@ -8,26 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace DiabloInterface
+namespace DiabloInterface.D2
 {
     public class D2DataReader : IDisposable
     {
         const string DIABLO_PROCESS_NAME = "game";
         const string DIABLO_MODULE_NAME = "Game.exe";
-
-        class GameInfo
-        {
-            public D2Game Game { get; private set; }
-            public D2Unit Player { get; private set; }
-            public D2PlayerData PlayerData { get; private set; }
-
-            public GameInfo(D2Game game, D2Unit player, D2PlayerData playerData)
-            {
-                Game = game;
-                Player = player;
-                PlayerData = playerData;
-            }
-        }
 
         MainWindow main;
 
@@ -163,7 +148,7 @@ namespace DiabloInterface
             }
         }
 
-        GameInfo GetGameInfo()
+        D2GameInfo GetGameInfo()
         {
             uint gameId = reader.ReadUInt32(memory.Address.GameId, AddressingMode.Relative);
             IntPtr worldPointer = reader.ReadAddress32(memory.Address.World, AddressingMode.Relative);
@@ -200,7 +185,7 @@ namespace DiabloInterface
                 var playerData = player.UnitData.IsNull ?
                     null : reader.Read<D2PlayerData>(player.UnitData);
 
-                return new GameInfo(game, player, playerData);
+                return new D2GameInfo(game, player, playerData);
             }
             catch (ProcessMemoryReadException)
             {
@@ -211,7 +196,7 @@ namespace DiabloInterface
         public void ProcessGameData()
         {
             // Make sure the game is loaded.
-            var gameInfo = GetGameInfo();
+            D2GameInfo gameInfo = GetGameInfo();
             if (gameInfo == null)
             {
                 wasInTitleScreen = true;
@@ -229,7 +214,7 @@ namespace DiabloInterface
 
             // Update character data.
             character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
-            character.ParseStats(statsMap, itemStatsMap, gameInfo.Game.Difficulty);
+            character.ParseStats(statsMap, itemStatsMap, gameInfo);
             int count0 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(gameInfo.PlayerData, 0));
             int count1 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(gameInfo.PlayerData, 1));
             int count2 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(gameInfo.PlayerData, 2));
@@ -259,7 +244,7 @@ namespace DiabloInterface
             return activeCharacter == character;
         }
 
-        Character GetCurrentCharacter(GameInfo gameInfo)
+        Character GetCurrentCharacter(D2GameInfo gameInfo)
         {
             string playerName = gameInfo.PlayerData.PlayerName;
 
@@ -312,7 +297,7 @@ namespace DiabloInterface
             return character;
         }
 
-        void UpdateDebugWindow(GameInfo gameInfo)
+        void UpdateDebugWindow(D2GameInfo gameInfo)
         {
             var debugWindow = main.getDebugWindow();
             if (debugWindow == null) return;
@@ -346,7 +331,7 @@ namespace DiabloInterface
             return questBuffer;
         }
 
-        private void UpdateAutoSplits(GameInfo gameInfo, Character character)
+        private void UpdateAutoSplits(D2GameInfo gameInfo, Character character)
         {
             foreach (AutoSplit autosplit in main.Settings.Autosplits)
             {

@@ -2,6 +2,7 @@
 using DiabloInterface.D2.Readers;
 using DiabloInterface.D2.Struct;
 using DiabloInterface.Gui.Controls;
+using DiabloInterface.Gui.Forms;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
