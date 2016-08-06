@@ -111,6 +111,45 @@ namespace Zutatensuppe.DiabloInterface.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Name	Id	Pal	Act	Layer	SizeX	SizeY	OffsetX	OffsetY	Depend	Rain	Mud	NoPer	LOSDraw	FloorFilter	BlankScreen	DrawEdges	IsInside	DrlgType	LevelType	SubType	SubTheme	SubWaypoint	SubShrine	Vis0	Vis1	Vis2	Vis3	Vis4	Vis5	Vis6	Vis7	Warp0	Warp1	Warp2	Warp3	Warp4	Warp5	Warp6	Warp7	Intensity	Red	Green	Blue	Portal	Position	SaveMonsters	Quest	WarpDist	MonLvl1	MonLvl2	MonLvl3	MonDen	MonUMin	MonUMax	MonWndr	MonSpcWalk	Mtot	M1	M2	M3	M4	M5	M6	M7	M8	M9	M10	M11	M12	M13	M14	M15	M16	M17	M18	M19	M20	M21	M22	M23	M24	M25	S1	S2	S3	S4	 [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        internal static string Levels {
+            get {
+                return ResourceManager.GetString("Levels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap runes {
+            get {
+                object obj = ResourceManager.GetObject("runes", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap runes_high_contrast {
+            get {
+                object obj = ResourceManager.GetObject("runes_high_contrast", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        internal static byte[] runewords {
+            get {
+                object obj = ResourceManager.GetObject("runewords", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap wrench_orange {

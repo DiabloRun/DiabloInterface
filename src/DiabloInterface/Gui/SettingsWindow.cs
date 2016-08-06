@@ -433,13 +433,14 @@ namespace Zutatensuppe.DiabloInterface.Gui
             
             JsonSerializer serializer = new JsonSerializer();
 
-            var resourceName = "Zutatensuppe.DiabloInterface.Resources.runewords.json";
-            var assembly = Assembly.GetExecutingAssembly();
-            using (StreamReader sr = new StreamReader(assembly.GetManifestResourceStream(resourceName)))
+            using ( MemoryStream stream = new MemoryStream(Properties.Resources.runewords))
             {
-                using (JsonReader reader = new JsonTextReader(sr))
+                using (StreamReader sr = new StreamReader(stream))
                 {
-                    runeWords = serializer.Deserialize<List<Runeword>>(reader);
+                    using (JsonReader reader = new JsonTextReader(sr))
+                    {
+                        runeWords = serializer.Deserialize<List<Runeword>>(reader);
+                    }
                 }
             }
 
