@@ -1,8 +1,8 @@
-﻿using DiabloInterface.Gui;
+﻿using Zutatensuppe.DiabloInterface.Gui;
 using System;
 using System.Windows.Forms;
 
-namespace DiabloInterface
+namespace Zutatensuppe.DiabloInterface
 {
     static class Program
     {

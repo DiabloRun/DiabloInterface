@@ -4,7 +4,7 @@ using System.Linq;
 using WindowsInput;
 using WindowsInput.Native;
 
-namespace DiabloInterface
+namespace Zutatensuppe.DiabloInterface
 {
     /// <summary>
     /// ugly with way too much hardcoding. but functional so far

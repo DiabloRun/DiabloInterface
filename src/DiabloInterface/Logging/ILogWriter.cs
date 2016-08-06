@@ -1,4 +1,4 @@
-﻿namespace DiabloInterface.Logging
+﻿namespace Zutatensuppe.DiabloInterface.Logging
 {
     public interface ILogWriter
     {

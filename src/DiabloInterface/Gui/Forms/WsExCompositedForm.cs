@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace DiabloInterface.Gui.Forms
+namespace Zutatensuppe.DiabloInterface.Gui.Forms
 {
     public class WsExCompositedForm : Form
     {

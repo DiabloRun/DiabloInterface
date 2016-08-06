@@ -1,50 +1,22 @@
-﻿using DiabloInterface.D2;
+﻿using Zutatensuppe.D2Reader;
+using Zutatensuppe.DiabloInterface.Settings;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace DiabloInterface.Gui.Controls
+namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
-    public partial class HorizontalLayout : UserControl
+    public partial class HorizontalLayout : AbstractLayout
     {
 
-        IEnumerable<Label> infoLabels;
-
         public HorizontalLayout()
-        {
+        { 
             InitializeComponent();
-            InitializeLabels();
+            InitializeElements();
         }
 
-        private void ChangeVisibility(Control c, bool visible)
-        {
-            if (visible)
-            {
-                c.Show();
-            }
-            else
-            {
-                c.Hide();
-            }
-        }
-
-        private void UpdateMinWidth(Label[] labels)
-        {
-            int w = 0;
-            foreach (Label label in labels)
-            {
-                var measuredSize = TextRenderer.MeasureText(label.Text, label.Font, Size.Empty, TextFormatFlags.SingleLine);
-                if (measuredSize.Width > w) w = measuredSize.Width;
-            }
-
-            foreach (Label label in labels)
-            {
-                label.MinimumSize = new Size(w, 0);
-            }
-        }
-
-        protected void InitializeLabels()
+        override protected void InitializeElements()
         {
             infoLabels = new[]
             {
@@ -60,25 +32,12 @@ namespace DiabloInterface.Gui.Controls
                 normLabel, nmLabel, hellLabel,
                 normLabelVal, nmLabelVal, hellLabelVal,
             };
-        }
 
-        public void Reset()
-        {
-
-            if (panelRuneDisplay.Controls.Count > 0)
+            runePanels = new[] 
             {
-                foreach (RuneDisplayElement c in panelRuneDisplay.Controls)
-                {
-                    c.SetHaveRune(false);
-                }
-            }
-            if (panelRuneDisplay2.Controls.Count > 0)
-            {
-                foreach (RuneDisplayElement c in panelRuneDisplay2.Controls)
-                {
-                    c.SetHaveRune(false);
-                }
-            }
+                panelRuneDisplay,
+                panelRuneDisplay2
+            };
         }
 
         public void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
@@ -95,10 +54,10 @@ namespace DiabloInterface.Gui.Controls
             labelEneVal.Text = "" + player.Energy;
             UpdateMinWidth(new Label[] { labelStrVal, labelDexVal, labelVitVal, labelEneVal });
 
-            labelFrwVal.Text = "" + player.FasterRunWalk;
+            labelFrwVal.Text = "" + (RealFrwIas ? player.RealFRW() : player.FasterRunWalk);
             labelFcrVal.Text = "" + player.FasterCastRate;
             labelFhrVal.Text = "" + player.FasterHitRecovery;
-            labelIasVal.Text = "" + player.IncreasedAttackSpeed;
+            labelIasVal.Text = "" + (RealFrwIas ? player.RealIAS() : player.IncreasedAttackSpeed);
             UpdateMinWidth(new Label[] { labelFrwVal, labelFcrVal, labelFhrVal, labelIasVal });
 
             labelFireResVal.Text = "" + player.FireResist;
@@ -120,34 +79,7 @@ namespace DiabloInterface.Gui.Controls
             labelNmPerc.Text = "NM: " + perc1 + "%";
             labelHellPerc.Text = "HE: " + perc2 + "%";
 
-            if (panelRuneDisplay.Controls.Count > 0)
-            {
-
-                Dictionary<int, int> dict = new Dictionary<int, int>(itemClassMap);
-                foreach (RuneDisplayElement c in panelRuneDisplay.Controls)
-                {
-                    int eClass = (int)c.getRune() + 610;
-                    if (dict.ContainsKey(eClass) && dict[eClass] > 0)
-                    {
-                        dict[eClass]--;
-                        c.SetHaveRune(true);
-                    }
-                }
-            }
-            if (panelRuneDisplay2.Controls.Count > 0)
-            {
-
-                Dictionary<int, int> dict = new Dictionary<int, int>(itemClassMap);
-                foreach (RuneDisplayElement c in panelRuneDisplay2.Controls)
-                {
-                    int eClass = (int)c.getRune() + 610;
-                    if (dict.ContainsKey(eClass) && dict[eClass] > 0)
-                    {
-                        dict[eClass]--;
-                        c.SetHaveRune(true);
-                    }
-                }
-            }
+            UpdateRuneDisplay(itemClassMap);
         }
 
         public void UpdateLayout(ApplicationSettings Settings)
@@ -214,39 +146,33 @@ namespace DiabloInterface.Gui.Controls
         public void ApplyRuneSettings(ApplicationSettings Settings)
         {
 
-            panelRuneDisplay.Controls.Clear();
-            if (Settings.Runes.Count > 0)
+            if (Settings.DisplayRunes && Settings.DisplayRunesHorizontal && Settings.Runes.Count > 0)
             {
-                foreach (int r in Settings.Runes)
-                {
-                    RuneDisplayElement element = new RuneDisplayElement((Rune)r);
-                    element.SetRuneSprite(Settings.DisplayRunesHighContrast);
-                    element.SetRemovable(false);
-                    element.SetHaveRune(false);
-                    panelRuneDisplay.Controls.Add(element);
-                }
+                panelRuneDisplay.Controls.Clear();
+                Settings.Runes.ForEach(r => { panelRuneDisplay.Controls.Add(new RuneDisplayElement((Rune)r, Settings.DisplayRunesHighContrast, false, false)); });
+                ChangeVisibility(panelRuneDisplay, true);
+            } else
+            {
+                ChangeVisibility(panelRuneDisplay, false);
             }
             
-            ChangeVisibility(panelRuneDisplay, Settings.DisplayRunes && Settings.DisplayRunesHorizontal && Settings.Runes.Count > 0);
 
-            panelRuneDisplay2.Controls.Clear();
-            if (Settings.Runes.Count > 0)
+            if (Settings.DisplayRunes && !Settings.DisplayRunesHorizontal && Settings.Runes.Count > 0)
             {
-                foreach (int r in Settings.Runes)
-                {
-                    RuneDisplayElement element = new RuneDisplayElement((Rune)r);
-                    element.SetRuneSprite(Settings.DisplayRunesHighContrast);
-                    element.SetRemovable(false);
-                    element.SetHaveRune(false);
-                    panelRuneDisplay2.Controls.Add(element);
-                }
+                panelRuneDisplay2.Controls.Clear();
+                Settings.Runes.ForEach(r => { panelRuneDisplay.Controls.Add(new RuneDisplayElement((Rune)r, Settings.DisplayRunesHighContrast, false, false)); });
+                ChangeVisibility(panelRuneDisplay2, true);
+            } else
+            {
+                ChangeVisibility(panelRuneDisplay2, false);
             }
 
-            ChangeVisibility(panelRuneDisplay2, Settings.DisplayRunes && !Settings.DisplayRunesHorizontal && Settings.Runes.Count > 0);
         }
 
         public void ApplyLabelSettings(ApplicationSettings Settings)
         {
+
+            RealFrwIas = Settings.DisplayRealFrwIas;
 
             this.BackColor = Settings.ColorBackground;
 

@@ -1,9 +1,9 @@
-﻿using DiabloInterface.D2;
+﻿using Zutatensuppe.D2Reader;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace DiabloInterface.Gui.Controls
+namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
     public partial class QuestDebugRow : UserControl
     {

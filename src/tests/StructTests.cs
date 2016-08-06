@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using DiabloInterface.D2.Struct;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Zutatensuppe.D2Reader.Struct;
 
 namespace tests
 {

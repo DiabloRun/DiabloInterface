@@ -1,4 +1,4 @@
-﻿namespace DiabloInterface.Gui
+﻿namespace Zutatensuppe.DiabloInterface.Gui
 {
     partial class DebugWindow
     {

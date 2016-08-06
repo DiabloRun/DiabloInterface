@@ -3,13 +3,15 @@ using System.Windows.Forms;
 using System.Threading;
 using System.IO;
 using System.Collections.Generic;
-using DiabloInterface.Server;
-using DiabloInterface.Logging;
+using Zutatensuppe.DiabloInterface.Server;
+using Zutatensuppe.DiabloInterface.Logging;
 using System.Text;
-using DiabloInterface.D2;
-using DiabloInterface.Gui.Forms;
+using Zutatensuppe.D2Reader;
+using Zutatensuppe.DiabloInterface.Gui.Forms;
+using Zutatensuppe.DiabloInterface.Autosplit;
+using Zutatensuppe.DiabloInterface.Settings;
 
-namespace DiabloInterface.Gui
+namespace Zutatensuppe.DiabloInterface.Gui
 {
     public partial class MainWindow : WsExCompositedForm
     {
@@ -106,61 +108,6 @@ namespace DiabloInterface.Gui
             Settings.Autosplits.Add(autosplit);
         }
 
-        private D2MemoryTable GetVersionMemoryTable(string version)
-        {
-            D2MemoryTable memoryTable = new D2MemoryTable();
-
-            // Offsets are the same for all versions so far.
-            memoryTable.Offset.Quests = new int[] { 0x264, 0x450, 0x20, 0x00 };
-
-            switch (version)
-            {
-                case "1.14c":
-                    memoryTable.Address.World       = new IntPtr(0x0047ACC0);
-                    memoryTable.Address.GameId      = new IntPtr(0x00479C94);
-                    memoryTable.Address.PlayerUnit  = new IntPtr(0x0039CEFC);//(0x39DAF8);
-                    memoryTable.Address.Area        = new IntPtr(0x0039A1C8);
-
-                    memoryTable.Address.GlobalData                  = new IntPtr(0x33FD78);
-                    memoryTable.Address.LowQualityItems             = new IntPtr(0x563BE0);
-                    memoryTable.Address.ItemDescriptions            = new IntPtr(0x5639E0);
-                    memoryTable.Address.MagicModifierTable          = new IntPtr(0x563A04);
-                    memoryTable.Address.RareModifierTable           = new IntPtr(0x563A28);
-
-                    memoryTable.Address.StringIndexerTable          = new IntPtr(0x479A3C);
-                    memoryTable.Address.StringAddressTable          = new IntPtr(0x479A40);
-                    memoryTable.Address.PatchStringIndexerTable     = new IntPtr(0x479A58);
-                    memoryTable.Address.PatchStringAddressTable     = new IntPtr(0x479A44);
-                    memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(0x479A5C);
-                    memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x479A48);
-
-                    break;
-                case "1.14d":
-                default:
-                    memoryTable.Address.World       = new IntPtr(0x00483D38);
-                    memoryTable.Address.GameId      = new IntPtr(0x00482D0C);
-                    memoryTable.Address.PlayerUnit  = new IntPtr(0x003A5E74);
-                    memoryTable.Address.Area        = new IntPtr(0x003A3140);
-
-                    memoryTable.Address.GlobalData = new IntPtr(0x344304);
-                    memoryTable.Address.LowQualityItems = new IntPtr(0x56CC58);
-                    memoryTable.Address.ItemDescriptions = new IntPtr(0x56CA58);
-                    memoryTable.Address.MagicModifierTable = new IntPtr(0x56CA7C);
-                    memoryTable.Address.RareModifierTable = new IntPtr(0x56CAA0);
-                    
-                    memoryTable.Address.StringIndexerTable = new IntPtr(0x4829B4);
-                    memoryTable.Address.StringAddressTable = new IntPtr(0x4829B8);
-                    memoryTable.Address.PatchStringAddressTable = new IntPtr(0x4829BC);
-                    memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x4829C0);
-                    memoryTable.Address.PatchStringIndexerTable = new IntPtr(0x4829D0);
-                    memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(0x4829D4);
-
-                    break;
-            }
-
-            return memoryTable;
-        }
-
         ApplicationSettings LoadSettings()
         {
             var persistence = new SettingsPersistence();
@@ -220,8 +167,11 @@ namespace DiabloInterface.Gui
 
             if (dataReader == null)
             {
-                var memoryTable = GetVersionMemoryTable(Settings.D2Version);
-                dataReader = new D2DataReader(this, memoryTable);
+                dataReader = new D2DataReader(Settings.D2Version);
+                dataReader.NewCharacter += new NewCharacterCreatedEventHandler(this.d2Reader_NewCharacter);
+                dataReader.DataRead += new DataReadEventHandler(this.d2Reader_DataRead);
+                dataReader.DataReader += new DataReaderEventHandler(this.d2Reader_DataReader);
+
                 itemServer = new ItemServer(dataReader, ItemServerPipeName);
             }
 
@@ -238,6 +188,190 @@ namespace DiabloInterface.Gui
             }
 
             ApplySettings(Settings);
+        }
+
+        private void d2Reader_DataReader(object sender, DataReaderEventArgs e)
+        {
+            Logger.Instance.WriteLine("Generic Data reader event: "+ e.type.ToString());
+        }
+
+        private void d2Reader_DataRead(object sender, DataReadEventArgs e)
+        {
+            this.UpdateLabels(e.Character, e.ItemClassMap);
+            this.writeFiles(e.Character);
+
+            UpdateDebugWindow((D2DataReader)sender);
+
+            // Update autosplits only if enabled and the character was a freshly started character.
+            if (e.IsAutosplitCharacter && this.Settings.DoAutosplit)
+            {
+                UpdateAutoSplits((D2DataReader)sender, e.Character);
+            }
+        }
+        private void d2Reader_NewCharacter(object sender, NewCharacterEventArgs e)
+        {
+            this.Reset();
+            Logger.Instance.WriteLine("A new character was created - autosplits OK for {0}", e.Character);
+        }
+
+
+        void UpdateDebugWindow(D2DataReader dataReader)
+        {
+            var debugWindow = getDebugWindow();
+            if (debugWindow == null) return;
+
+
+            // Fill in quest data.
+            for (int difficulty = 0; difficulty < 3; ++difficulty)
+            {
+                ushort[] questBuffer = dataReader.GetQuestBuffer(difficulty);
+                if (questBuffer != null)
+                {
+                    debugWindow.UpdateQuestData(questBuffer, difficulty);
+                }
+            }
+
+            debugWindow.UpdateItemStats(dataReader);
+        }
+
+        private void UpdateAutoSplits(D2DataReader dataReader, Character character)
+        {
+            var difficulty = dataReader.GetDifficulty();
+            foreach (AutoSplit autosplit in Settings.Autosplits)
+            {
+                if (autosplit.IsReached)
+                {
+                    continue;
+                }
+                if (autosplit.Type != AutoSplit.SplitType.Special)
+                {
+                    continue;
+                }
+                if (autosplit.Value == (int)AutoSplit.Special.GameStart)
+                {
+                    CompleteAutoSplit(autosplit, character);
+                }
+                if (autosplit.Value == (int)AutoSplit.Special.Clear100Percent
+                    && character.CompletedQuestCounts[difficulty] == D2QuestHelper.Quests.Count
+                    && autosplit.MatchesDifficulty(difficulty))
+                {
+                    CompleteAutoSplit(autosplit, character);
+                }
+                if (autosplit.Value == (int)AutoSplit.Special.Clear100PercentAllDifficulties
+                    && character.CompletedQuestCounts[0] == D2QuestHelper.Quests.Count
+                    && character.CompletedQuestCounts[1] == D2QuestHelper.Quests.Count
+                    && character.CompletedQuestCounts[2] == D2QuestHelper.Quests.Count)
+                {
+                    CompleteAutoSplit(autosplit, character);
+                }
+            }
+
+            bool haveUnreachedCharLevelSplits = false;
+            bool haveUnreachedAreaSplits = false;
+            bool haveUnreachedItemSplits = false;
+            bool haveUnreachedQuestSplits = false;
+
+            foreach (AutoSplit autosplit in Settings.Autosplits)
+            {
+                if (autosplit.IsReached || !autosplit.MatchesDifficulty(difficulty))
+                {
+                    continue;
+                }
+                switch (autosplit.Type)
+                {
+                    case AutoSplit.SplitType.CharLevel:
+                        haveUnreachedCharLevelSplits = true;
+                        break;
+                    case AutoSplit.SplitType.Area:
+                        haveUnreachedAreaSplits = true;
+                        break;
+                    case AutoSplit.SplitType.Item:
+                        haveUnreachedItemSplits = true;
+                        break;
+                    case AutoSplit.SplitType.Quest:
+                        haveUnreachedQuestSplits = true;
+                        break;
+                }
+            }
+
+            // if no unreached splits, return
+            if (!(haveUnreachedCharLevelSplits || haveUnreachedAreaSplits || haveUnreachedItemSplits || haveUnreachedQuestSplits))
+            {
+                return;
+            }
+
+            List<int> itemsIds = new List<int>();
+            int area = -1;
+
+            if (haveUnreachedItemSplits)
+            {
+                // Get all item IDs.
+                itemsIds = dataReader.GetItemIds();
+            }
+
+            if (haveUnreachedAreaSplits)
+            {
+                area = dataReader.GetAreaId();
+            }
+
+            ushort[] questBuffer = null;
+
+            if (haveUnreachedQuestSplits)
+            {
+                questBuffer = dataReader.GetQuestBuffer(difficulty);
+            }
+
+            foreach (AutoSplit autosplit in Settings.Autosplits)
+            {
+                if (autosplit.IsReached || !autosplit.MatchesDifficulty(difficulty))
+                {
+                    continue;
+                }
+
+                switch (autosplit.Type)
+                {
+                    case AutoSplit.SplitType.CharLevel:
+                        if (autosplit.Value <= character.Level)
+                        {
+                            CompleteAutoSplit(autosplit, character);
+                        }
+                        break;
+                    case AutoSplit.SplitType.Area:
+                        if (autosplit.Value == area)
+                        {
+                            CompleteAutoSplit(autosplit, character);
+                        }
+                        break;
+                    case AutoSplit.SplitType.Item:
+                        if (itemsIds.Contains(autosplit.Value))
+                        {
+                            CompleteAutoSplit(autosplit, character);
+                        }
+                        break;
+                    case AutoSplit.SplitType.Quest:
+                        if (D2QuestHelper.IsQuestComplete((D2QuestHelper.Quest)autosplit.Value, questBuffer))
+                        {
+                            CompleteAutoSplit(autosplit, character);
+                        }
+                        break;
+                }
+            }
+        }
+
+        void CompleteAutoSplit(AutoSplit autosplit, Character character)
+        {
+            // Autosplit already reached.
+            if (autosplit.IsReached)
+            {
+                return;
+            }
+
+            autosplit.IsReached = true;
+            this.triggerAutosplit(character);
+
+            int autoSplitIndex = this.Settings.Autosplits.IndexOf(autosplit);
+            Logger.Instance.WriteLine("AutoSplit: #{0} ({1}, {2}) Reached.",
+                autoSplitIndex, autosplit.Name, autosplit.Difficulty);
         }
 
         public void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
@@ -302,8 +436,7 @@ namespace DiabloInterface.Gui
         {
             Settings = settings;
 
-            var memoryTable = GetVersionMemoryTable(Settings.D2Version);
-            dataReader.SetNextMemoryTable(memoryTable);
+            dataReader.SetD2Version(Settings.D2Version);
 
             if (Settings.DisplayLayoutHorizontal)
             {

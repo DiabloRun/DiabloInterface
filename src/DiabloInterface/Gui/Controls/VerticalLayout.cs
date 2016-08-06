@@ -1,50 +1,21 @@
-﻿using DiabloInterface.D2;
-using System;
+﻿using Zutatensuppe.DiabloInterface.Settings;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Zutatensuppe.D2Reader;
 
-namespace DiabloInterface.Gui.Controls
+namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
-    public partial class VerticalLayout : UserControl
+    public partial class VerticalLayout : AbstractLayout
     {
-
-        IEnumerable<Label> infoLabels;
 
         public VerticalLayout()
         {
             InitializeComponent();
-            InitializeLabels();
+            InitializeElements();
         }
 
-        private void ChangeVisibility(Control c, bool visible)
-        {
-            if (visible)
-            {
-                c.Show();
-            }
-            else
-            {
-                c.Hide();
-            }
-        }
-
-        private void UpdateMinWidth(Label[] labels)
-        {
-            int w = 0;
-            foreach (Label label in labels)
-            {
-                var measuredSize = TextRenderer.MeasureText(label.Text, label.Font, Size.Empty, TextFormatFlags.SingleLine);
-                if (measuredSize.Width > w) w = measuredSize.Width;
-            }
-
-            foreach (Label label in labels)
-            {
-                label.MinimumSize = new Size(w, 0);
-            }
-        }
-
-        protected void InitializeLabels()
+        override protected void InitializeElements()
         {
             infoLabels = new[]
             {
@@ -59,17 +30,11 @@ namespace DiabloInterface.Gui.Controls
                 normLabel, nmLabel, hellLabel,
                 normLabelVal, nmLabelVal, hellLabelVal,
             };
-        }
 
-        public void Reset()
-        {
-            if (panelRuneDisplay2.Controls.Count > 0)
+            runePanels = new[] 
             {
-                foreach (RuneDisplayElement c in panelRuneDisplay2.Controls)
-                {
-                    c.SetHaveRune(false);
-                }
-            }
+                panelRuneDisplay2
+            };
         }
 
         public void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
@@ -86,10 +51,10 @@ namespace DiabloInterface.Gui.Controls
             labelEneVal.Text = "" + player.Energy;
             UpdateMinWidth(new Label[] { labelStrVal, labelDexVal, labelVitVal, labelEneVal });
 
-            labelFrwVal.Text = "" + player.FasterRunWalk;
+            labelFrwVal.Text = "" + (RealFrwIas ? player.RealFRW() : player.FasterRunWalk);
             labelFcrVal.Text = "" + player.FasterCastRate;
             labelFhrVal.Text = "" + player.FasterHitRecovery;
-            labelIasVal.Text = "" + player.IncreasedAttackSpeed;
+            labelIasVal.Text = "" + (RealFrwIas ? player.RealIAS() : player.IncreasedAttackSpeed);
             UpdateMinWidth(new Label[] { labelFrwVal, labelFcrVal, labelFhrVal, labelIasVal });
 
             labelFireResVal.Text = "" + player.FireResist;
@@ -106,21 +71,8 @@ namespace DiabloInterface.Gui.Controls
             nmLabelVal.Text = perc1 + "%";
             hellLabelVal.Text = perc2 + "%";
             UpdateMinWidth(new Label[] { normLabelVal, nmLabelVal, hellLabelVal });
-            
-            if (panelRuneDisplay2.Controls.Count > 0)
-            {
 
-                Dictionary<int, int> dict = new Dictionary<int, int>(itemClassMap);
-                foreach (RuneDisplayElement c in panelRuneDisplay2.Controls)
-                {
-                    int eClass = (int)c.getRune() + 610;
-                    if (dict.ContainsKey(eClass) && dict[eClass] > 0)
-                    {
-                        dict[eClass]--;
-                        c.SetHaveRune(true);
-                    }
-                }
-            }
+            UpdateRuneDisplay(itemClassMap);
         }
 
         public void UpdateLayout(ApplicationSettings Settings)
@@ -186,26 +138,21 @@ namespace DiabloInterface.Gui.Controls
                 panelDiffPercentages.Margin = new Padding(panelDiffPercentages.Margin.Left, first ? 0 : Settings.VerticalLayoutPadding, panelDiffPercentages.Margin.Right, panelDiffPercentages.Margin.Bottom);
                 first = false;
             }
-            
-            UpdateRuneLayout(Settings);
+
         }
 
         public void ApplyRuneSettings(ApplicationSettings Settings)
         {
-            panelRuneDisplay2.Controls.Clear();
             if (Settings.DisplayRunes && Settings.Runes.Count > 0)
             {
-                foreach (int r in Settings.Runes)
-                {
-                    RuneDisplayElement element = new RuneDisplayElement((Rune)r);
-                    element.SetRuneSprite(Settings.DisplayRunesHighContrast);
-                    element.SetRemovable(false);
-                    element.SetHaveRune(false);
-                    panelRuneDisplay2.Controls.Add(element);
-                }
-            }
+                panelRuneDisplay2.Controls.Clear();
+                Settings.Runes.ForEach(r => { panelRuneDisplay2.Controls.Add(new RuneDisplayElement((Rune)r, Settings.DisplayRunesHighContrast, false, false)); });
 
-            ChangeVisibility(panelRuneDisplay2, Settings.DisplayRunes && Settings.Runes.Count > 0);
+                ChangeVisibility(panelRuneDisplay2, true);
+            } else
+            {
+                ChangeVisibility(panelRuneDisplay2, false);
+            }
         }
 
         public void ApplyLabelSettings(ApplicationSettings Settings)
@@ -227,6 +174,8 @@ namespace DiabloInterface.Gui.Controls
             ChangeVisibility(panelBaseStats, Settings.DisplayBaseStats);
             ChangeVisibility(panelAdvancedStats, Settings.DisplayAdvancedStats);
             ChangeVisibility(panelDiffPercentages, Settings.DisplayDifficultyPercentages);
+
+            RealFrwIas = Settings.DisplayRealFrwIas;
 
             nameLabel.ForeColor = Settings.ColorName;
             goldLabel.ForeColor = Settings.ColorGold;
@@ -267,36 +216,6 @@ namespace DiabloInterface.Gui.Controls
             hellLabel.ForeColor = Settings.ColorDifficultyPercentages;
             hellLabelVal.ForeColor = Settings.ColorDifficultyPercentages;
         }
-
-        void UpdateRuneLayout(ApplicationSettings Settings)
-        {
-            int y = 0;
-            int x = 0 ;
-            int height = -1;
-            int scroll = panelRuneDisplay2.VerticalScroll.Value;
-
-            foreach (Control c in panelRuneDisplay2.Controls)
-            {
-                if (c is RuneDisplayElement && c.Visible)
-                {
-                    if (height == -1)
-                    {
-                        height = c.Height;
-                    }
-                    if (x + c.Width > panelRuneDisplay2.Width && panelRuneDisplay2.Width >= c.Width)
-                    {
-                        y += c.Height + 4;
-                        x = 0;
-                        height = y + c.Height;
-                    }
-                    c.Location = new Point(x, -scroll + y);
-                    x += c.Width;
-                }
-            }
-
-            panelRuneDisplay2.Height = height == -1 ? 0 : height;
-            panelRuneDisplay2.Width = 28;
-
-        }
+        
     }
 }

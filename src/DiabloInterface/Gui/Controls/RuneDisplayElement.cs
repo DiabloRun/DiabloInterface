@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.Collections.Generic;
 
-namespace DiabloInterface.Gui.Controls
+namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
     public enum Rune
     {
@@ -96,6 +96,12 @@ namespace DiabloInterface.Gui.Controls
 	            }
             }
             setRune(rune);
+        }
+        public RuneDisplayElement(Rune rune, bool highContrast, bool removable, bool haveRune) : this(rune)
+        {
+            SetRuneSprite(highContrast);
+            SetRemovable(false);
+            SetHaveRune(false);
         }
         
         public Rune getRune()

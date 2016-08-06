@@ -7,7 +7,7 @@
     <ProjectGuid>{25BB3310-9BD7-4234-AF7D-9F7FB6870A20}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DiabloInterface</RootNamespace>
+    <RootNamespace>Zutatensuppe.DiabloInterface</RootNamespace>
     <AssemblyName>DiabloInterface</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -81,50 +81,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoSplit.cs" />
-    <Compile Include="AutoSplitFactory.cs" />
-    <Compile Include="D2\D2QuestHelper.cs" />
-    <Compile Include="D2\D2GameInfo.cs" />
-    <Compile Include="D2\Readers\RangeStatData.cs" />
-    <Compile Include="D2\Readers\UnitReader.cs" />
-    <Compile Include="D2\Readers\StringLookupTable.cs" />
-    <Compile Include="D2\Readers\InventoryReader.cs" />
-    <Compile Include="D2\Struct\D2CharacterStats.cs" />
-    <Compile Include="D2\Struct\D2Client.cs" />
-    <Compile Include="D2\Struct\D2Game.cs" />
-    <Compile Include="D2\Struct\D2GlobalData.cs" />
-    <Compile Include="D2\Struct\D2ItemModifier.cs" />
-    <Compile Include="D2\D2MemoryTable.cs" />
-    <Compile Include="D2\D2ItemStatCostTxt.cs" />
-    <Compile Include="D2\Readers\ItemReader.cs" />
-    <Compile Include="D2\Struct\D2Inventory.cs" />
-    <Compile Include="D2\Struct\D2ItemData.cs" />
-    <Compile Include="D2\Struct\D2ItemDescription.cs" />
-    <Compile Include="D2\Struct\D2ItemStatCost.cs" />
-    <Compile Include="D2\Struct\D2LowQualityItemDescription.cs" />
-    <Compile Include="D2\Struct\D2PlayerData.cs" />
-    <Compile Include="D2\Struct\D2SetDescription.cs" />
-    <Compile Include="D2\Struct\D2SetItemDescription.cs" />
-    <Compile Include="D2\Struct\D2Skill.cs" />
-    <Compile Include="D2\Struct\D2SkillData.cs" />
-    <Compile Include="D2\Struct\D2World.cs" />
-    <Compile Include="D2\Struct\ExpectOffsetAttribute.cs" />
-    <Compile Include="D2\Struct\StatIdentifier.cs" />
-    <Compile Include="D2\Struct\D2StatList.cs" />
-    <Compile Include="D2\Struct\D2StatListEx.cs" />
-    <Compile Include="D2\Struct\D2StringTableInfo.cs" />
-    <Compile Include="D2\Struct\D2UniqueItemDescription.cs" />
-    <Compile Include="D2\Struct\D2Unit.cs" />
-    <Compile Include="D2\Struct\DataPointer.cs" />
+    <Compile Include="Autosplit\AutoSplit.cs" />
+    <Compile Include="Autosplit\AutoSplitFactory.cs" />
+    <Compile Include="Autosplit\D2Level.cs" />
+    <Compile Include="Gui\Controls\AbstractLayout.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Controls\AbstractLayout.Designer.cs">
+      <DependentUpon>AbstractLayout.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Controls\AutoSplitSettingsRow.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Controls\AutoSplitSettingsRow.Designer.cs">
       <DependentUpon>AutoSplitSettingsRow.cs</DependentUpon>
     </Compile>
-    <Compile Include="D2\D2Data.cs" />
-    <Compile Include="D2\D2DataReader.cs" />
-    <Compile Include="D2\Character.cs" />
     <Compile Include="Gui\Controls\AutoSplitTable.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -170,7 +141,6 @@
     <Compile Include="Gui\MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="D2\D2Level.cs" />
     <Compile Include="Gui\Controls\QuestDebugRow.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -181,20 +151,20 @@
     <Compile Include="Gui\Controls\RuneDisplayElement.Designer.cs">
       <DependentUpon>RuneDisplayElement.cs</DependentUpon>
     </Compile>
-    <Compile Include="Serialization\DefaultLegacySettingsResolver.cs" />
-    <Compile Include="Serialization\ILegacySettingsObject.cs" />
-    <Compile Include="Serialization\ILegacySettingsResolver.cs" />
-    <Compile Include="Serialization\ISettingsReader.cs" />
+    <Compile Include="Settings\DefaultLegacySettingsResolver.cs" />
+    <Compile Include="Settings\ILegacySettingsObject.cs" />
+    <Compile Include="Settings\ILegacySettingsResolver.cs" />
+    <Compile Include="Settings\ISettingsReader.cs" />
     <Compile Include="KeyManager.cs" />
     <Compile Include="Logging\ConsoleLogWriter.cs" />
     <Compile Include="Logging\FileLogWriter.cs" />
     <Compile Include="Logging\ILogWriter.cs" />
     <Compile Include="Logging\Logger.cs" />
-    <Compile Include="Serialization\ISettingsWriter.cs" />
-    <Compile Include="Serialization\JsonLegacySettings.cs" />
-    <Compile Include="Serialization\LegacySettingsObject.cs" />
-    <Compile Include="Serialization\LegacySettingsReader.cs" />
-    <Compile Include="Serialization\JsonSettingsWriter.cs" />
+    <Compile Include="Settings\ISettingsWriter.cs" />
+    <Compile Include="Settings\JsonLegacySettings.cs" />
+    <Compile Include="Settings\LegacySettingsObject.cs" />
+    <Compile Include="Settings\LegacySettingsReader.cs" />
+    <Compile Include="Settings\JsonSettingsWriter.cs" />
     <Compile Include="Server\QueryRequest.cs" />
     <Compile Include="Server\QueryResponse.cs" />
     <Compile Include="Server\ItemServer.cs" />
@@ -203,16 +173,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\JsonStreamReader.cs" />
     <Compile Include="Server\JsonStreamWriter.cs" />
-    <Compile Include="ApplicationSettings.cs" />
+    <Compile Include="Settings\ApplicationSettings.cs" />
     <Compile Include="Gui\SettingsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\SettingsWindow.Designer.cs">
       <DependentUpon>SettingsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Serialization\JsonSettingsReader.cs" />
-    <Compile Include="SettingsPersistence.cs" />
+    <Compile Include="Settings\JsonSettingsReader.cs" />
+    <Compile Include="Settings\SettingsPersistence.cs" />
     <Compile Include="VersionChecker.cs" />
+    <EmbeddedResource Include="Gui\Controls\AbstractLayout.resx">
+      <DependentUpon>AbstractLayout.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Controls\AutoSplitSettingsRow.resx">
       <DependentUpon>AutoSplitSettingsRow.cs</DependentUpon>
     </EmbeddedResource>
@@ -299,7 +272,12 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\D2Reader\D2Reader.csproj">
+      <Project>{c5f081d7-fb83-4934-908f-53ce986ab08c}</Project>
+      <Name>D2Reader</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

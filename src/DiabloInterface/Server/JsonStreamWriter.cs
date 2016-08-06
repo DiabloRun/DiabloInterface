@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace DiabloInterface.Server
+namespace Zutatensuppe.DiabloInterface.Server
 {
     class JsonStreamWriter
     {

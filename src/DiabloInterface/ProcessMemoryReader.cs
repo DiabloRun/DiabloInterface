@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Zutatensuppe.D2Reader.Struct;
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace DiabloInterface
+namespace Zutatensuppe.DiabloInterface
 {
     public enum AddressingMode
     {
@@ -173,6 +174,16 @@ namespace DiabloInterface
             }
 
             return data;
+        }
+
+        public T IndexIntoArray<T>(DataPointer array, int index, uint length) where T : class
+        {
+            // Index out of range.
+            if (index >= length) return null;
+
+            // Indexing is just taking the size of each element added to the base.
+            int offset = index * Marshal.SizeOf<T>();
+            return Read<T>(array.Address + offset);
         }
 
         public T[] ReadArray<T>(IntPtr address, int length, AddressingMode addressingMode = AddressingMode.Absolute)

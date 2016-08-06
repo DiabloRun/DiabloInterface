@@ -1,9 +1,10 @@
-﻿using DiabloInterface.D2;
+﻿using Zutatensuppe.DiabloInterface.Autosplit;
+using Zutatensuppe.D2Reader;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace DiabloInterface.Gui.Controls
+namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
     public partial class AutoSplitSettingsRow : UserControl
     {

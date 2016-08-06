@@ -1,4 +1,4 @@
-﻿namespace DiabloInterface.Gui
+﻿namespace Zutatensuppe.DiabloInterface.Gui
 {
     partial class MainWindow
     {
@@ -36,8 +36,8 @@
             this.debugMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadConfigMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.horizontalLayout1 = new DiabloInterface.Gui.Controls.HorizontalLayout();
-            this.verticalLayout2 = new DiabloInterface.Gui.Controls.VerticalLayout();
+            this.horizontalLayout1 = new Zutatensuppe.DiabloInterface.Gui.Controls.HorizontalLayout();
+            this.verticalLayout2 = new Zutatensuppe.DiabloInterface.Gui.Controls.VerticalLayout();
             this.contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -54,7 +54,7 @@
             // 
             // settingsToolStripMenuItem
             // 
-            this.settingsToolStripMenuItem.Image = global::DiabloInterface.Properties.Resources.wrench_orange;
+            this.settingsToolStripMenuItem.Image = global::Zutatensuppe.DiabloInterface.Properties.Resources.wrench_orange;
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
@@ -63,7 +63,7 @@
             // 
             // resetToolStripMenuItem
             // 
-            this.resetToolStripMenuItem.Image = global::DiabloInterface.Properties.Resources.arrow_refresh;
+            this.resetToolStripMenuItem.Image = global::Zutatensuppe.DiabloInterface.Properties.Resources.arrow_refresh;
             this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
             this.resetToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
             this.resetToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
@@ -80,7 +80,7 @@
             // 
             // exitToolStripMenuItem
             // 
-            this.exitToolStripMenuItem.Image = global::DiabloInterface.Properties.Resources.cross;
+            this.exitToolStripMenuItem.Image = global::Zutatensuppe.DiabloInterface.Properties.Resources.cross;
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.exitToolStripMenuItem.Text = "Exit";

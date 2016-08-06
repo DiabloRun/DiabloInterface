@@ -1,4 +1,4 @@
-﻿namespace DiabloInterface.Gui.Controls
+﻿namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
     partial class AutoSplitSettingsRow
     {

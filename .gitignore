@@ -10,6 +10,11 @@
 /src/tests/bin
 /src/tests/obj
 
+/src/D2Reader/bin
+/src/D2Reader/obj
+
+/src/TestResults
+
 # Recommended ignores for Visual Studio NuGet
 *.nupkg
 **/packages/*

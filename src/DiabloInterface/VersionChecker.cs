@@ -1,10 +1,10 @@
-﻿using DiabloInterface.Logging;
+﻿using Zutatensuppe.DiabloInterface.Logging;
 using System;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
-namespace DiabloInterface
+namespace Zutatensuppe.DiabloInterface
 {
     class VersionChecker
     {

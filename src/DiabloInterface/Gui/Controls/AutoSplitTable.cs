@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Zutatensuppe.DiabloInterface.Autosplit;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace DiabloInterface.Gui.Controls
+namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
     public partial class AutoSplitTable : UserControl
     {

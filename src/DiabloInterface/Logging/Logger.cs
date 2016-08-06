@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DiabloInterface.Logging
+namespace Zutatensuppe.DiabloInterface.Logging
 {
     public class Logger
     {

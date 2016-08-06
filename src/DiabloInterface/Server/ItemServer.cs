@@ -1,6 +1,7 @@
-﻿using DiabloInterface.D2;
-using DiabloInterface.D2.Struct;
-using DiabloInterface.Logging;
+﻿using Zutatensuppe.D2Reader;
+using Zutatensuppe.D2Reader.Struct;
+using Zutatensuppe.D2Reader.Struct.Item;
+using Zutatensuppe.DiabloInterface.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +9,7 @@ using System.IO.Pipes;
 using System.Text;
 using System.Threading;
 
-namespace DiabloInterface.Server
+namespace Zutatensuppe.DiabloInterface.Server
 {
     class ItemServer
     {

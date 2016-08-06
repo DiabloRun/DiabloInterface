@@ -2,7 +2,7 @@
 using System.Text;
 using Newtonsoft.Json;
 
-namespace DiabloInterface.Server
+namespace Zutatensuppe.DiabloInterface.Server
 {
     class JsonStreamReader
     {

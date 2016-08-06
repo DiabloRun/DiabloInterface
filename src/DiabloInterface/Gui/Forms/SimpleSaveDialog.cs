@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 
-namespace DiabloInterface.Gui.Forms
+namespace Zutatensuppe.DiabloInterface.Gui.Forms
 {
     public partial class SimpleSaveDialog : Form
     {

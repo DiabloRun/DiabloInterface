@@ -1,4 +1,4 @@
-﻿namespace DiabloInterface.Gui.Forms
+﻿namespace Zutatensuppe.DiabloInterface.Gui.Forms
 {
     partial class SimpleSaveDialog
     {

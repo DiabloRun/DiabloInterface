@@ -1,4 +1,4 @@
-﻿namespace DiabloInterface.Server
+﻿namespace Zutatensuppe.DiabloInterface.Server
 {
     class QueryRequest
     {

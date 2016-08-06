@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace DiabloInterface.Logging
+namespace Zutatensuppe.DiabloInterface.Logging
 {
     public class FileLogWriter : ILogWriter
     {

@@ -1,15 +1,18 @@
-﻿using DiabloInterface.D2;
-using DiabloInterface.D2.Readers;
-using DiabloInterface.D2.Struct;
-using DiabloInterface.Gui.Controls;
-using DiabloInterface.Gui.Forms;
+﻿using Zutatensuppe.DiabloInterface.Autosplit;
+using Zutatensuppe.D2Reader;
+using Zutatensuppe.D2Reader.Readers;
+using Zutatensuppe.D2Reader.Struct;
+using Zutatensuppe.D2Reader.Struct.Item;
+using Zutatensuppe.D2Reader.Struct.Stat;
+using Zutatensuppe.DiabloInterface.Gui.Controls;
+using Zutatensuppe.DiabloInterface.Gui.Forms;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace DiabloInterface.Gui
+namespace Zutatensuppe.DiabloInterface.Gui
 {
     public partial class DebugWindow : WsExCompositedForm
     {
@@ -175,23 +178,40 @@ namespace DiabloInterface.Gui
             LoadQuests(ActLabelsHell, QuestRowsHell, tabPage3);
         }
 
-        public void UpdateItemStats(ProcessMemoryReader r, D2MemoryTable memory, D2Unit pl)
+        public void UpdateItemStats(D2DataReader reader)
         {
-            InventoryReader inventoryReader = new InventoryReader(r, memory);
-            UnitReader unitReader = new UnitReader(r, memory);
+            IEnumerable<Control> controls = new[] {
+                tabPageHead, tabPageAmulet, tabPageBody,
+                tabPageWeaponRight,tabPageWeaponLeft, tabPageRingRight, tabPageRingLeft,
+                tabPageBelt,tabPageFeet,tabPageHand
+            };
+            foreach ( Control c in controls )
+            {
+                if (c != null)
+                {
+                    if (c.Controls.Count == 0)
+                    {
+                        c.Invoke(new Action(delegate () {
+                            c.Controls.Add(new RichTextBox());
+                            c.Controls[0].Dock = DockStyle.Fill;
+                        }));
+                    }
+                    c.Controls[0].Invoke(new Action(() => c.Controls[0].Text = ""));
+                }
+            }
 
             // Build filter to get only equipped items.
             Func<D2ItemData, bool> filter = data => data.BodyLoc != BodyLocation.None;
-            foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))
+            foreach (D2Unit item in reader.GetInventoryItems(filter))
             {
-                List<D2Stat> itemStats = unitReader.GetStats(item);
+                List<D2Stat> itemStats = reader.GetStats(item);
                 if (itemStats == null) continue;
 
                 StringBuilder statBuilder = new StringBuilder();
-                statBuilder.Append(inventoryReader.ItemReader.GetFullItemName(item));
+                statBuilder.Append(reader.GetFullItemName(item));
 
                 statBuilder.Append(Environment.NewLine);
-                List<string> magicalStrings = inventoryReader.ItemReader.GetMagicalStrings(item);
+                List<string> magicalStrings = reader.GetMagicalItemStrings(item);
                 foreach (string str in magicalStrings)
                 {
                     statBuilder.Append("    ");
@@ -200,7 +220,7 @@ namespace DiabloInterface.Gui
                 }
 
                 Control c = null;
-                D2ItemData itemData = r.Read<D2ItemData>(item.UnitData);
+                D2ItemData itemData = reader.GetItemData(item);
                 switch (itemData.BodyLoc)
                 {
                     case BodyLocation.Head: c = tabPageHead; break;

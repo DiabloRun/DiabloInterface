@@ -3,13 +3,15 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using DiabloInterface.Gui.Controls;
+using Zutatensuppe.DiabloInterface.Gui.Controls;
 using System.IO;
 using Newtonsoft.Json;
 using System.Reflection;
-using DiabloInterface.Gui.Forms;
+using Zutatensuppe.DiabloInterface.Gui.Forms;
+using Zutatensuppe.DiabloInterface.Autosplit;
+using Zutatensuppe.DiabloInterface.Settings;
 
-namespace DiabloInterface.Gui
+namespace Zutatensuppe.DiabloInterface.Gui
 {
     public partial class SettingsWindow : WsExCompositedForm
     {
@@ -44,13 +46,14 @@ namespace DiabloInterface.Gui
                     || settings.DisplayBaseStats != chkDisplayBaseStats.Checked
                     || settings.DisplayAdvancedStats != chkDisplayAdvancedStats.Checked
                     || settings.DisplayRunes != chkDisplayRunes.Checked
-                    || settings.DisplayRunesHorizontal != chkRuneDisplayRunesHorizontal.Checked
+                    || settings.DisplayRunesHorizontal != (comboBoxRunesOrientation.SelectedIndex == 0)
                     || settings.DisplayRunesHighContrast != chkHighContrastRunes.Checked
                     || settings.AutosplitHotkey != autoSplitHotkeyControl.Hotkey
                     || settings.DisplayDifficultyPercentages != chkDisplayDifficultyPercents.Checked
                     || settings.DisplayLayoutHorizontal != (comboBoxLayout.SelectedIndex == 0)
                     || !Enumerable.SequenceEqual(settings.Runes, RunesList())
                     || settings.VerticalLayoutPadding != (int)numericUpDownPaddingInVerticalLayout.Value
+                    || settings.DisplayRealFrwIas != chkShowRealValues.Checked
 
                     || btnSetNameColor.ForeColor != settings.ColorName
                     || btnSetDeathsColor.ForeColor != settings.ColorDeaths
@@ -63,6 +66,7 @@ namespace DiabloInterface.Gui
                     || btnSetColdResColor.ForeColor != settings.ColorColdRes
                     || btnSetLightningResColor.ForeColor != settings.ColorLightningRes
                     || btnSetPoisonResColor.ForeColor != settings.ColorPoisonRes
+
 
                     || button2.BackColor != settings.ColorBackground;
                 ;
@@ -138,10 +142,11 @@ namespace DiabloInterface.Gui
             chkDisplayBaseStats.Checked = settings.DisplayBaseStats;
             chkDisplayAdvancedStats.Checked = settings.DisplayAdvancedStats;
             chkDisplayRunes.Checked = settings.DisplayRunes;
-            chkRuneDisplayRunesHorizontal.Checked = settings.DisplayRunesHorizontal;
+            comboBoxRunesOrientation.SelectedIndex = settings.DisplayRunesHorizontal ? 0 : 1;
             chkDisplayDifficultyPercents.Checked = settings.DisplayDifficultyPercentages;
             chkHighContrastRunes.Checked = settings.DisplayRunesHighContrast;
             comboBoxLayout.SelectedIndex = settings.DisplayLayoutHorizontal ? 0 : 1;
+            chkShowRealValues.Checked = settings.DisplayRealFrwIas;
 
             SetBackgroundColor(settings.ColorBackground);
 
@@ -243,8 +248,10 @@ namespace DiabloInterface.Gui
             settings.DisplayBaseStats = chkDisplayBaseStats.Checked;
             settings.DisplayAdvancedStats = chkDisplayAdvancedStats.Checked;
             settings.DisplayDifficultyPercentages = chkDisplayDifficultyPercents.Checked;
+            settings.DisplayRealFrwIas = chkShowRealValues.Checked;
+
             settings.DisplayRunes = chkDisplayRunes.Checked;
-            settings.DisplayRunesHorizontal = chkRuneDisplayRunesHorizontal.Checked;
+            settings.DisplayRunesHorizontal = comboBoxRunesOrientation.SelectedIndex == 0;
             settings.DisplayRunesHighContrast = chkHighContrastRunes.Checked;
             settings.DisplayLayoutHorizontal = comboBoxLayout.SelectedIndex == 0;
 
@@ -426,7 +433,7 @@ namespace DiabloInterface.Gui
             
             JsonSerializer serializer = new JsonSerializer();
 
-            var resourceName = "DiabloInterface.Resources.runewords.json";
+            var resourceName = "Zutatensuppe.DiabloInterface.Resources.runewords.json";
             var assembly = Assembly.GetExecutingAssembly();
             using (StreamReader sr = new StreamReader(assembly.GetManifestResourceStream(resourceName)))
             {
@@ -697,6 +704,11 @@ namespace DiabloInterface.Gui
             }
 
             ssd.Dispose();
+        }
+
+        private void comboBoxLayout_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            comboBoxRunesOrientation.Enabled = comboBoxLayout.SelectedIndex == 0;
         }
     }
 }

@@ -54,6 +54,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\D2Reader\D2Reader.csproj">
+      <Project>{C5F081D7-FB83-4934-908F-53CE986AB08C}</Project>
+      <Name>D2Reader</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DiabloInterface\DiabloInterface.csproj">
       <Project>{25bb3310-9bd7-4234-af7d-9f7fb6870a20}</Project>
       <Name>DiabloInterface</Name>
