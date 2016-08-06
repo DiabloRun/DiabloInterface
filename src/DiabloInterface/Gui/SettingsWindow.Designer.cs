@@ -68,6 +68,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.comboBoxLayout = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkShowRealValues = new System.Windows.Forms.CheckBox();
             this.chkHighContrastRunes = new System.Windows.Forms.CheckBox();
             this.chkDisplayRunes = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
@@ -110,7 +111,6 @@
             this.btnSaveAs = new System.Windows.Forms.Button();
             this.btnUndo = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
-            this.chkShowRealValues = new System.Windows.Forms.CheckBox();
             this.FontGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
@@ -584,6 +584,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Display";
             // 
+            // chkShowRealValues
+            // 
+            this.chkShowRealValues.AutoSize = true;
+            this.chkShowRealValues.Location = new System.Drawing.Point(207, 120);
+            this.chkShowRealValues.Name = "chkShowRealValues";
+            this.chkShowRealValues.Size = new System.Drawing.Size(170, 17);
+            this.chkShowRealValues.TabIndex = 27;
+            this.chkShowRealValues.Text = "show real values for FRW/IAS";
+            this.chkShowRealValues.UseVisualStyleBackColor = true;
+            // 
             // chkHighContrastRunes
             // 
             this.chkHighContrastRunes.AutoSize = true;
@@ -905,7 +915,7 @@
             this.DataGroup.Location = new System.Drawing.Point(3, 3);
             this.DataGroup.Margin = new System.Windows.Forms.Padding(0);
             this.DataGroup.Name = "DataGroup";
-            this.DataGroup.Size = new System.Drawing.Size(231, 45);
+            this.DataGroup.Size = new System.Drawing.Size(231, 43);
             this.DataGroup.TabIndex = 17;
             this.DataGroup.TabStop = false;
             this.DataGroup.Text = "Data";
@@ -924,7 +934,7 @@
             // 
             this.UpdateGroup.Controls.Add(this.CheckUpdatesButton);
             this.UpdateGroup.Controls.Add(this.CheckUpdatesCheckBox);
-            this.UpdateGroup.Location = new System.Drawing.Point(3, 62);
+            this.UpdateGroup.Location = new System.Drawing.Point(3, 65);
             this.UpdateGroup.Margin = new System.Windows.Forms.Padding(0);
             this.UpdateGroup.Name = "UpdateGroup";
             this.UpdateGroup.Size = new System.Drawing.Size(231, 70);
@@ -934,7 +944,7 @@
             // 
             // CheckUpdatesButton
             // 
-            this.CheckUpdatesButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.CheckUpdatesButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.CheckUpdatesButton.Location = new System.Drawing.Point(6, 42);
             this.CheckUpdatesButton.Name = "CheckUpdatesButton";
@@ -957,7 +967,7 @@
             // 
             this.VersionGroup.Controls.Add(this.VersionLabel);
             this.VersionGroup.Controls.Add(this.VersionComboBox);
-            this.VersionGroup.Location = new System.Drawing.Point(3, 149);
+            this.VersionGroup.Location = new System.Drawing.Point(3, 152);
             this.VersionGroup.Margin = new System.Windows.Forms.Padding(0);
             this.VersionGroup.Name = "VersionGroup";
             this.VersionGroup.Size = new System.Drawing.Size(231, 49);
@@ -1047,16 +1057,6 @@
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // chkShowRealValues
-            // 
-            this.chkShowRealValues.AutoSize = true;
-            this.chkShowRealValues.Location = new System.Drawing.Point(207, 120);
-            this.chkShowRealValues.Name = "chkShowRealValues";
-            this.chkShowRealValues.Size = new System.Drawing.Size(267, 17);
-            this.chkShowRealValues.TabIndex = 27;
-            this.chkShowRealValues.Text = "include modifiers from skills in FRW/IAS calculation";
-            this.chkShowRealValues.UseVisualStyleBackColor = true;
             // 
             // SettingsWindow
             // 

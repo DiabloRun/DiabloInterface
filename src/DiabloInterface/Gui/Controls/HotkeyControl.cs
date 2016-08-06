@@ -113,11 +113,10 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         {
             Func<Keys, Keys, Keys, bool> isKeyInRange = (code, min, max) => code >= min && code <= max;
 
-            if (   isKeyInRange(keyCode, Keys.D0, Keys.D9)
-                || isKeyInRange(keyCode, Keys.NumPad0, Keys.NumPad9)
-                || isKeyInRange(keyCode, Keys.A, Keys.Z)
-                || isKeyInRange(keyCode, Keys.F1, Keys.F12))
-            {
+            if (   isKeyInRange(keyCode, Keys.D0, Keys.D9) // this inclueds numbers
+                || isKeyInRange(keyCode, Keys.A, Keys.Z) // this includes letters
+                || isKeyInRange(keyCode, Keys.NumPad0, Keys.F24) // this includes: numpad0-9, math operators, F-keys
+            ){
                 return true;
             }
             else return false;

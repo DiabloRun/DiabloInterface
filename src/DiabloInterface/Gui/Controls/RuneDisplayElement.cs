@@ -86,12 +86,12 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 var assembly = Assembly.GetExecutingAssembly();
 				if (runesSprite == null) {
 
-	                var resourceName = "DiabloInterface.Resources.Images.Runes.runes.png";
+	                var resourceName = "Zutatensuppe.DiabloInterface.Resources.Images.Runes.runes.png";
                     runesSprite = new Bitmap(assembly.GetManifestResourceStream(resourceName));
                 }
 	            if (runesSpriteHighContrast == null)
 	            {
-	                var resourceNameHigh = "DiabloInterface.Resources.Images.Runes.runes-high-contrast.png";
+	                var resourceNameHigh = "Zutatensuppe.DiabloInterface.Resources.Images.Runes.runes-high-contrast.png";
 	                runesSpriteHighContrast = new Bitmap(assembly.GetManifestResourceStream(resourceNameHigh));
 	            }
             }

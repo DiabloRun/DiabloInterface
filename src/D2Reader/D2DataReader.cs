@@ -397,12 +397,6 @@ namespace Zutatensuppe.D2Reader
 
             // New data was read, update anyone interested:
             OnDataRead(new DataReadEventArgs(character, itemClassMap, IsAutosplitCharacter(character)));
-
-#if DEBUG
-            Console.WriteLine("Normal:    " + character.CompletedQuestCounts[0] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[0] * 100.0f / D2QuestHelper.Quests.Count) + "%)" );
-            Console.WriteLine("Nightmare: " + character.CompletedQuestCounts[1] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[1] * 100.0f / D2QuestHelper.Quests.Count) + "%)");
-            Console.WriteLine("Hell:      " + character.CompletedQuestCounts[2] + "/" + D2QuestHelper.Quests.Count + " (" + (character.CompletedQuestCounts[2] * 100.0f / D2QuestHelper.Quests.Count) + "%)");
-#endif
         }
 
         bool IsAutosplitCharacter(Character character)

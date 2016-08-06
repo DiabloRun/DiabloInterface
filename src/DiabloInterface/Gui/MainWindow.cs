@@ -211,7 +211,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private void d2Reader_NewCharacter(object sender, NewCharacterEventArgs e)
         {
             this.Reset();
-            Logger.Instance.WriteLine("A new character was created - autosplits OK for {0}", e.Character);
+            Logger.Instance.WriteLine("A new character was created - autosplits OK for {0}", e.Character.name);
         }
 
 

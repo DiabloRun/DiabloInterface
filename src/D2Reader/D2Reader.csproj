@@ -44,7 +44,6 @@
     <Compile Include="D2Data.cs" />
     <Compile Include="D2DataReader.cs" />
     <Compile Include="D2GameInfo.cs" />
-    <Compile Include="D2ItemStatCostTxt.cs" />
     <Compile Include="D2MemoryAddressTable.cs" />
     <Compile Include="D2MemoryOffsetTable.cs" />
     <Compile Include="D2MemoryTable.cs" />

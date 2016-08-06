@@ -251,7 +251,6 @@
     <None Include="Resources\Images\Icons\exclamation.png" />
     <None Include="Resources\Images\Icons\bug.png" />
     <Content Include="Resources\Diablo II_101.ico" />
-    <EmbeddedResource Include="Resources\ItemStatCost.txt" />
     <EmbeddedResource Include="Resources\Images\Runes\runes.png" />
     <None Include="Resources\Images\Icons\disk.png" />
     <None Include="Resources\Images\Icons\folder_explore.png" />
