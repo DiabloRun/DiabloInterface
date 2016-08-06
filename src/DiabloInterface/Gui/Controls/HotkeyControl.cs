@@ -61,6 +61,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             KeyPress += HotkeyControl_KeyPress;
             KeyUp += HotkeyControl_KeyUp;
             KeyDown += HotkeyControl_KeyDown;
+            MouseUp += HotkeyControl_MouseUp;
         }
 
         void HotkeyControl_TextChanged(object sender, EventArgs e)
@@ -70,6 +71,22 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             {
                 Text = GetHotkeyString();
             }
+        }
+
+        void HotkeyControl_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+                return;
+            if (e.Button == MouseButtons.Right)
+                return;
+
+            if (e.Button == MouseButtons.Middle)
+                // Hotkey = Keys.MButton; not working with InputSimulator, so not valid hotkey
+                return;
+            else if (e.Button == MouseButtons.XButton1)
+                Hotkey = Keys.XButton1;
+            else if (e.Button == MouseButtons.XButton2)
+                Hotkey = Keys.XButton2;
         }
 
         void HotkeyControl_KeyPress(object sender, KeyPressEventArgs e)

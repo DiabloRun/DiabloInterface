@@ -65,6 +65,7 @@ namespace Zutatensuppe.DiabloInterface
 
         public static void TriggerHotkey(IEnumerable<VirtualKeyCode> modifiers, VirtualKeyCode key)
         {
+
             if (modifiers == null)
             {
                 modifiers = new List<VirtualKeyCode>();
@@ -80,12 +81,25 @@ namespace Zutatensuppe.DiabloInterface
             var invalidModifiers = BuildInvalidModifiers(modifiers);
             foreach (var modifier in invalidModifiers)
             {
-                Logging.Logger.Instance.WriteLine("Keyupping modifier "+ modifier.ToString());
+                Logging.Logger.Instance.WriteLine("Keyupping modifier " + modifier.ToString());
                 Simulator.Keyboard.KeyUp(modifier);
             }
 
-            // Trigger hotkey.
-            Simulator.Keyboard.ModifiedKeyStroke(modifiers, key);
+            if (key == VirtualKeyCode.XBUTTON1 || key == VirtualKeyCode.XBUTTON2)
+            {
+                // livesplit takes the -2 codes. 
+                Simulator.Mouse.XButtonClick((int) key - 2);
+            }
+            else if (key == VirtualKeyCode.MBUTTON)
+            {
+                // todo: make this work
+                // not working yet.. why is InputSimulator not supporting it ? :o
+            }
+            else
+            {
+                // Trigger hotkey.
+                Simulator.Keyboard.ModifiedKeyStroke(modifiers, key);
+            }
         }
 
         static IEnumerable<VirtualKeyCode> BuildInvalidModifiers(IEnumerable<VirtualKeyCode> keys)
