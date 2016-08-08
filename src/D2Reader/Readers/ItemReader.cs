@@ -597,9 +597,9 @@ namespace Zutatensuppe.D2Reader.Readers
                 case 0x00: return null;
                 case 0x01: case 0x06: case 0x0C:
                     if (printPosition == 1)
-                        format = "+{0} {1}";
+                        format = "{0:+#;-#;0} {1}";
                     else if (printPosition == 2)
-                        format = "{1} +{0}";
+                        format = "{1} {0:+#;-#;0}";
                     else return null;
                     break;
                 case 0x02: case 0x07:
