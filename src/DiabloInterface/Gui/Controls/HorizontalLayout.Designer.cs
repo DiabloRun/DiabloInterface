@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.outerLeftRightPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.panelRuneDisplay2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.panelRuneDisplayVertical = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.nameLabel = new System.Windows.Forms.Label();
             this.panelDeathsLvl = new System.Windows.Forms.TableLayoutPanel();
@@ -76,7 +76,7 @@
             this.labelNormPerc = new System.Windows.Forms.Label();
             this.labelNmPerc = new System.Windows.Forms.Label();
             this.labelHellPerc = new System.Windows.Forms.Label();
-            this.panelRuneDisplay = new System.Windows.Forms.FlowLayoutPanel();
+            this.panelRuneDisplayHorizontal = new System.Windows.Forms.FlowLayoutPanel();
             this.outerLeftRightPanel.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.panelDeathsLvl.SuspendLayout();
@@ -93,7 +93,7 @@
             // 
             this.outerLeftRightPanel.AutoSize = true;
             this.outerLeftRightPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.outerLeftRightPanel.Controls.Add(this.panelRuneDisplay2);
+            this.outerLeftRightPanel.Controls.Add(this.panelRuneDisplayVertical);
             this.outerLeftRightPanel.Controls.Add(this.flowLayoutPanel1);
             this.outerLeftRightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.outerLeftRightPanel.Location = new System.Drawing.Point(0, 0);
@@ -103,19 +103,19 @@
             this.outerLeftRightPanel.Size = new System.Drawing.Size(410, 209);
             this.outerLeftRightPanel.TabIndex = 22;
             // 
-            // panelRuneDisplay2
+            // panelRuneDisplayVertical
             // 
-            this.panelRuneDisplay2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.panelRuneDisplayVertical.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelRuneDisplay2.AutoSize = true;
-            this.panelRuneDisplay2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panelRuneDisplay2.Location = new System.Drawing.Point(6, 5);
-            this.panelRuneDisplay2.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
-            this.panelRuneDisplay2.MaximumSize = new System.Drawing.Size(28, 0);
-            this.panelRuneDisplay2.MinimumSize = new System.Drawing.Size(28, 28);
-            this.panelRuneDisplay2.Name = "panelRuneDisplay2";
-            this.panelRuneDisplay2.Size = new System.Drawing.Size(28, 28);
-            this.panelRuneDisplay2.TabIndex = 21;
+            this.panelRuneDisplayVertical.AutoSize = true;
+            this.panelRuneDisplayVertical.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panelRuneDisplayVertical.Location = new System.Drawing.Point(6, 5);
+            this.panelRuneDisplayVertical.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.panelRuneDisplayVertical.MaximumSize = new System.Drawing.Size(28, 0);
+            this.panelRuneDisplayVertical.MinimumSize = new System.Drawing.Size(28, 28);
+            this.panelRuneDisplayVertical.Name = "panelRuneDisplayVertical";
+            this.panelRuneDisplayVertical.Size = new System.Drawing.Size(28, 28);
+            this.panelRuneDisplayVertical.TabIndex = 21;
             // 
             // flowLayoutPanel1
             // 
@@ -125,7 +125,7 @@
             this.flowLayoutPanel1.Controls.Add(this.panelSimpleStats);
             this.flowLayoutPanel1.Controls.Add(this.panelStats);
             this.flowLayoutPanel1.Controls.Add(this.panelDiffPercentages2);
-            this.flowLayoutPanel1.Controls.Add(this.panelRuneDisplay);
+            this.flowLayoutPanel1.Controls.Add(this.panelRuneDisplayHorizontal);
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(34, 5);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -754,16 +754,16 @@
             this.labelHellPerc.TabIndex = 2;
             this.labelHellPerc.Text = "HE: -";
             // 
-            // panelRuneDisplay
+            // panelRuneDisplayHorizontal
             // 
-            this.panelRuneDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.panelRuneDisplayHorizontal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelRuneDisplay.AutoSize = true;
-            this.panelRuneDisplay.Location = new System.Drawing.Point(3, 168);
-            this.panelRuneDisplay.MinimumSize = new System.Drawing.Size(200, 28);
-            this.panelRuneDisplay.Name = "panelRuneDisplay";
-            this.panelRuneDisplay.Size = new System.Drawing.Size(367, 28);
-            this.panelRuneDisplay.TabIndex = 0;
+            this.panelRuneDisplayHorizontal.AutoSize = true;
+            this.panelRuneDisplayHorizontal.Location = new System.Drawing.Point(3, 168);
+            this.panelRuneDisplayHorizontal.MinimumSize = new System.Drawing.Size(200, 28);
+            this.panelRuneDisplayHorizontal.Name = "panelRuneDisplayHorizontal";
+            this.panelRuneDisplayHorizontal.Size = new System.Drawing.Size(367, 28);
+            this.panelRuneDisplayHorizontal.TabIndex = 0;
             // 
             // HorizontalLayout
             // 
@@ -849,7 +849,7 @@
         protected System.Windows.Forms.Label labelNormPerc;
         protected System.Windows.Forms.Label labelNmPerc;
         protected System.Windows.Forms.Label labelHellPerc;
-        private System.Windows.Forms.FlowLayoutPanel panelRuneDisplay;
-        private System.Windows.Forms.FlowLayoutPanel panelRuneDisplay2;
+        private System.Windows.Forms.FlowLayoutPanel panelRuneDisplayHorizontal;
+        private System.Windows.Forms.FlowLayoutPanel panelRuneDisplayVertical;
     }
 }

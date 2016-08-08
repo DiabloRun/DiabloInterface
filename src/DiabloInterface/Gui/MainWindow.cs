@@ -10,6 +10,7 @@ using Zutatensuppe.D2Reader;
 using Zutatensuppe.DiabloInterface.Gui.Forms;
 using Zutatensuppe.DiabloInterface.Autosplit;
 using Zutatensuppe.DiabloInterface.Settings;
+using Zutatensuppe.D2Reader.Struct.Item;
 
 namespace Zutatensuppe.DiabloInterface.Gui
 {
@@ -50,7 +51,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             base.OnFormClosing(e);
         }
 
-        void InitializeLogger()
+        private void InitializeLogger()
         {
             List<ILogWriter> logWriters = new List<ILogWriter>();
 
@@ -67,21 +68,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
             Logger.Instance = new Logger(logWriters);
         }
 
-        void WriteLogHeader()
+        private void WriteLogHeader()
         {
             Logger.Instance.WriteLineRaw("Diablo Interface Version {0}", Application.ProductVersion);
             Logger.Instance.WriteLineRaw("Operating system: {0}", Environment.OSVersion);
             Logger.Instance.WriteLineRaw(new string('-', 40));
-        }
-
-        public void Reset()
-        {
-            foreach (AutoSplit autosplit in Settings.Autosplits)
-            {
-                autosplit.IsReached = false;
-            }
-            horizontalLayout1.ResetText();
-            verticalLayout2.ResetText();
         }
 
         private void OnWindowDisposed(object sender, EventArgs e)
@@ -94,21 +85,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
         }
 
-        public DebugWindow getDebugWindow()
-        {
-            return debugWindow;
-        }
-
-        public List<AutoSplit> getAutosplits()
-        {
-            return Settings.Autosplits;
-        }
-        public void addAutosplit(AutoSplit autosplit)
-        {
-            Settings.Autosplits.Add(autosplit);
-        }
-
-        ApplicationSettings LoadSettings()
+        private ApplicationSettings LoadSettings()
         {
             var persistence = new SettingsPersistence();
             var settings = persistence.Load();
@@ -124,7 +101,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             return settings;
         }
 
-        ApplicationSettings LoadSettings(string fileName)
+        private ApplicationSettings LoadSettings(string fileName)
         {
             var persistence = new SettingsPersistence();
 
@@ -200,43 +177,51 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.UpdateLabels(e.Character, e.ItemClassMap);
             this.writeFiles(e.Character);
 
-            UpdateDebugWindow((D2DataReader)sender);
+            UpdateDebugWindow(e.QuestBuffers, e.ItemStrings);
 
             // Update autosplits only if enabled and the character was a freshly started character.
             if (e.IsAutosplitCharacter && this.Settings.DoAutosplit)
             {
-                UpdateAutoSplits((D2DataReader)sender, e.Character);
+                UpdateAutoSplits(e.QuestBuffers, e.CurrentArea, e.CurrentDifficulty, e.ItemIds, e.Character);
             }
         }
         private void d2Reader_NewCharacter(object sender, NewCharacterEventArgs e)
         {
-            this.Reset();
+            Reset();
             Logger.Instance.WriteLine("A new character was created - autosplits OK for {0}", e.Character.name);
+        }
+        private void Reset()
+        {
+            foreach (AutoSplit autosplit in Settings.Autosplits)
+            {
+                autosplit.IsReached = false;
+            }
+            horizontalLayout1.Reset();
+            verticalLayout2.Reset();
         }
 
 
-        void UpdateDebugWindow(D2DataReader dataReader)
+        private void UpdateDebugWindow(Dictionary<int, ushort[]> questBuffers, Dictionary<BodyLocation, string> itemStrings)
         {
-            var debugWindow = getDebugWindow();
-            if (debugWindow == null) return;
-
+            if (debugWindow == null)
+            {
+                return;
+            }
 
             // Fill in quest data.
             for (int difficulty = 0; difficulty < 3; ++difficulty)
             {
-                ushort[] questBuffer = dataReader.GetQuestBuffer(difficulty);
-                if (questBuffer != null)
+                if (questBuffers.ContainsKey(difficulty))
                 {
-                    debugWindow.UpdateQuestData(questBuffer, difficulty);
+                    debugWindow.UpdateQuestData(questBuffers[difficulty], difficulty);
                 }
             }
 
-            debugWindow.UpdateItemStats(dataReader);
+            debugWindow.UpdateItemStats(itemStrings);
         }
 
-        private void UpdateAutoSplits(D2DataReader dataReader, Character character)
+        private void UpdateAutoSplits(Dictionary<int, ushort[]> questBuffers, int areaId, byte difficulty, List<int> itemIds, Character character)
         {
-            var difficulty = dataReader.GetDifficulty();
             foreach (AutoSplit autosplit in Settings.Autosplits)
             {
                 if (autosplit.IsReached)
@@ -300,25 +285,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 return;
             }
 
-            List<int> itemsIds = new List<int>();
-            int area = -1;
-
-            if (haveUnreachedItemSplits)
-            {
-                // Get all item IDs.
-                itemsIds = dataReader.GetItemIds();
-            }
-
-            if (haveUnreachedAreaSplits)
-            {
-                area = dataReader.GetAreaId();
-            }
-
             ushort[] questBuffer = null;
 
-            if (haveUnreachedQuestSplits)
+            if (haveUnreachedQuestSplits && questBuffers.ContainsKey(difficulty))
             {
-                questBuffer = dataReader.GetQuestBuffer(difficulty);
+                questBuffer = questBuffers[difficulty];
             }
 
             foreach (AutoSplit autosplit in Settings.Autosplits)
@@ -337,13 +308,13 @@ namespace Zutatensuppe.DiabloInterface.Gui
                         }
                         break;
                     case AutoSplit.SplitType.Area:
-                        if (autosplit.Value == area)
+                        if (autosplit.Value == areaId)
                         {
                             CompleteAutoSplit(autosplit, character);
                         }
                         break;
                     case AutoSplit.SplitType.Item:
-                        if (itemsIds.Contains(autosplit.Value))
+                        if (itemIds.Contains(autosplit.Value))
                         {
                             CompleteAutoSplit(autosplit, character);
                         }
@@ -358,7 +329,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
         }
 
-        void CompleteAutoSplit(AutoSplit autosplit, Character character)
+        private void CompleteAutoSplit(AutoSplit autosplit, Character character)
         {
             // Autosplit already reached.
             if (autosplit.IsReached)
@@ -374,7 +345,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 autoSplitIndex, autosplit.Name, autosplit.Difficulty);
         }
 
-        public void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
+        private void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
         {
             if (InvokeRequired)
             {
@@ -391,7 +362,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
         }
 
-        public void triggerAutosplit(Character player)
+        private void triggerAutosplit(Character player)
         {
             if (Settings.DoAutosplit && Settings.AutosplitHotkey != Keys.None)
             {
@@ -399,7 +370,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
         }
 
-        public void writeFiles(Character player)
+        private void writeFiles(Character player)
         {
 
             // todo: only write files if content changed
@@ -432,24 +403,28 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         }
 
-        public void ApplySettings(ApplicationSettings settings)
+        private void ApplySettings(ApplicationSettings settings)
         {
+            if (InvokeRequired)
+            {
+                // Delegate call to UI thread.
+                Invoke((Action)(() => ApplySettings(settings)));
+                return;
+            }
+
             Settings = settings;
 
             dataReader.SetD2Version(Settings.D2Version);
 
             if (Settings.DisplayLayoutHorizontal)
             {
-                horizontalLayout1.ApplyLabelSettings(Settings);
-                horizontalLayout1.ApplyRuneSettings(Settings);
+                verticalLayout2.MakeInactive();
+                horizontalLayout1.MakeActive(Settings);
             } else
             {
-                verticalLayout2.ApplyLabelSettings(Settings);
-                verticalLayout2.ApplyRuneSettings(Settings);
+                horizontalLayout1.MakeInactive();
+                verticalLayout2.MakeActive(Settings);
             }
-
-
-            UpdateLayout();
 
             // Update debug window.
             if (debugWindow != null && debugWindow.Visible)
@@ -460,8 +435,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             LoadConfigFileList();
             LogAutoSplits();
         }
-
-        void LogAutoSplits()
+        
+        private void LogAutoSplits()
         {
             var logMessage = new StringBuilder();
             logMessage.Append("Configured autosplits:");
@@ -479,29 +454,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             Logger.Instance.WriteLine(logMessage.ToString());
         }
 
-        public void UpdateLayout()
-        {
-            int layout = Settings.DisplayLayoutHorizontal ? 0 : 1;
-            if (InvokeRequired)
-            {
-                // Delegate call to UI thread.
-                Invoke((Action)(() => UpdateLayout()));
-                return;
-            }
-            
-            if (Settings.DisplayLayoutHorizontal)
-            {
-                verticalLayout2.Hide();
-                horizontalLayout1.Show();
-                horizontalLayout1.UpdateLayout(Settings);
-            } else
-            {
-                horizontalLayout1.Hide();
-                verticalLayout2.Show();
-                verticalLayout2.UpdateLayout(Settings);
-            }
-        }
-
         private void exitMenuItem_Click(object sender, EventArgs e)
         {
             Close();
@@ -509,7 +461,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         private void resetMenuItem_Click(object sender, EventArgs e)
         {
-            initialize();
+            Reset();
         }
 
         private void settingsMenuItem_Click(object sender, EventArgs e)
@@ -534,9 +486,20 @@ namespace Zutatensuppe.DiabloInterface.Gui
             {
                 debugWindow = new DebugWindow();
                 debugWindow.UpdateAutosplits(Settings.Autosplits);
+
+                dataReader.RequiredData |= D2DataReader.READ_EQUIPPED_ITEM_STRINGS;
+                // dataReader.RequiredData |= D2DataReader.DATA_QUEST_BUFFERS;
+
+                debugWindow.FormClosed += new FormClosedEventHandler(this.DebugWindow_FormClosed);
             }
 
             debugWindow.Show();
+        }
+
+        private void DebugWindow_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            dataReader.RequiredData &= ~D2DataReader.READ_EQUIPPED_ITEM_STRINGS;
+            //dataReader.RequiredData &= ~D2DataReader.DATA_QUEST_BUFFERS;
         }
 
         private void LoadConfigFileList()

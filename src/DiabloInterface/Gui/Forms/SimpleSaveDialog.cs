@@ -6,15 +6,18 @@ namespace Zutatensuppe.DiabloInterface.Gui.Forms
 {
     public partial class SimpleSaveDialog : Form
     {
+        const string CREATE_NEW_FILE = "Create new file";
+        const string CLONE_FILE = "Clone file";
+        const string ENTER_VALID_NAME = "Sorry , please enter a valid name";
+
+
         public string FileName { get; set; }
         public string NewFileName { get { return txtNewFilename.Text; } }
         public SimpleSaveDialog()
         {
             InitializeComponent();
         }
-
-
-
+        
         public SimpleSaveDialog(string fileName)
         {
             InitializeComponent();
@@ -24,11 +27,11 @@ namespace Zutatensuppe.DiabloInterface.Gui.Forms
 
             if (FileName == String.Empty)
             {
-                Text = "Create new file";
+                Text = CREATE_NEW_FILE;
             }
             else
             {
-                Text = "Clone file";
+                Text = CLONE_FILE;
             }
 
         }
@@ -51,7 +54,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Forms
             }
             else
             {
-                MessageBox.Show("Sorry , please enter a valid name");
+                MessageBox.Show(ENTER_VALID_NAME);
             }
         }
 

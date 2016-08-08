@@ -32,10 +32,10 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadConfigMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadConfigMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.horizontalLayout1 = new Zutatensuppe.DiabloInterface.Gui.Controls.HorizontalLayout();
             this.verticalLayout2 = new Zutatensuppe.DiabloInterface.Gui.Controls.VerticalLayout();
             this.contextMenu.SuspendLayout();
@@ -50,7 +50,7 @@
             this.debugMenuItem,
             this.exitToolStripMenuItem});
             this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(161, 92);
+            this.contextMenu.Size = new System.Drawing.Size(161, 114);
             // 
             // settingsToolStripMenuItem
             // 
@@ -60,6 +60,12 @@
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsMenuItem_Click);
+            // 
+            // loadConfigMenuItem
+            // 
+            this.loadConfigMenuItem.Name = "loadConfigMenuItem";
+            this.loadConfigMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.loadConfigMenuItem.Text = "Load Config";
             // 
             // resetToolStripMenuItem
             // 
@@ -86,12 +92,6 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitMenuItem_Click);
             // 
-            // loadConfigMenuItem
-            // 
-            this.loadConfigMenuItem.Name = "loadConfigMenuItem";
-            this.loadConfigMenuItem.Size = new System.Drawing.Size(158, 22);
-            this.loadConfigMenuItem.Text = "Load Config";
-            // 
             // horizontalLayout1
             // 
             this.horizontalLayout1.AutoSize = true;
@@ -106,7 +106,6 @@
             // 
             // verticalLayout2
             // 
-            // verticalLayout2
             this.verticalLayout2.AutoSize = true;
             this.verticalLayout2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.verticalLayout2.BackColor = System.Drawing.Color.Black;

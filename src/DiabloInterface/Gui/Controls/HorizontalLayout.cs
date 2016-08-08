@@ -35,13 +35,59 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
             runePanels = new[] 
             {
-                panelRuneDisplay,
-                panelRuneDisplay2
+                panelRuneDisplayHorizontal,
+                panelRuneDisplayVertical
             };
+
+            IEnumerable<Control> l = new[]
+            {
+                nameLabel, lvlLabel, goldLabel, deathsLabel,
+                labelStrVal, labelDexVal, labelVitVal, labelEneVal,
+                labelFrwVal, labelFcrVal, labelFhrVal, labelIasVal,
+                labelFireResVal, labelColdResVal, labelLightResVal, labelPoisonResVal,
+                normLabelVal, nmLabelVal, hellLabelVal,
+                labelNormPerc, labelNmPerc, labelHellPerc,
+            };
+            defaultTexts = new Dictionary<Control, string>();
+            foreach ( Control c in l )
+            {
+                defaultTexts.Add(c, c.Text);
+            }
+        }
+
+        public void MakeInactive()
+        {
+            if (InvokeRequired)
+            {
+                // Delegate call to UI thread.
+                Invoke((Action)(() => MakeInactive()));
+                return;
+            }
+            Hide();
+        }
+        public void MakeActive(ApplicationSettings Settings)
+        {
+            if (InvokeRequired)
+            {
+                // Delegate call to UI thread.
+                Invoke((Action)(() => MakeActive(Settings)));
+                return;
+            }
+
+            ApplyLabelSettings(Settings);
+            ApplyRuneSettings(Settings);
+            Show();
+            UpdateLayout(Settings);
         }
 
         public void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
         {
+            if (InvokeRequired)
+            {
+                // Delegate call to UI thread.
+                Invoke((Action)(() => UpdateLabels(player, itemClassMap)));
+                return;
+            }
 
             nameLabel.Text = player.name;
             lvlLabel.Text = "LVL: " + player.Level;
@@ -82,7 +128,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             UpdateRuneDisplay(itemClassMap);
         }
 
-        public void UpdateLayout(ApplicationSettings Settings)
+        private void UpdateLayout(ApplicationSettings Settings)
         {
             int padding = 0;
             // Calculate maximum sizes that the labels can possible get.
@@ -140,36 +186,42 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             panelAdvancedStats.Size = advancedStatPanelSize;
             panelResistances.Size = resPanelSize;
             panelDiffPercentages.Size = diffPercPanelSize;
-            panelRuneDisplay.MaximumSize = new Size(Math.Max(nameSize.Width, statsWidth), 0);
+            panelRuneDisplayHorizontal.MaximumSize = new Size(Math.Max(nameSize.Width, statsWidth), 0);
         }
-
-        public void ApplyRuneSettings(ApplicationSettings Settings)
+        
+        private void ApplyRuneSettings(ApplicationSettings Settings)
         {
+            if (InvokeRequired)
+            {
+                // Delegate call to UI thread.
+                Invoke((Action)(() => ApplyRuneSettings(Settings)));
+                return;
+            }
 
             if (Settings.DisplayRunes && Settings.DisplayRunesHorizontal && Settings.Runes.Count > 0)
             {
-                panelRuneDisplay.Controls.Clear();
-                Settings.Runes.ForEach(r => { panelRuneDisplay.Controls.Add(new RuneDisplayElement((Rune)r, Settings.DisplayRunesHighContrast, false, false)); });
-                ChangeVisibility(panelRuneDisplay, true);
+                panelRuneDisplayHorizontal.Controls.Clear();
+                Settings.Runes.ForEach(r => { panelRuneDisplayHorizontal.Controls.Add(new RuneDisplayElement((Rune)r, Settings.DisplayRunesHighContrast, false, false)); });
+                ChangeVisibility(panelRuneDisplayHorizontal, true);
             } else
             {
-                ChangeVisibility(panelRuneDisplay, false);
+                ChangeVisibility(panelRuneDisplayHorizontal, false);
             }
             
 
             if (Settings.DisplayRunes && !Settings.DisplayRunesHorizontal && Settings.Runes.Count > 0)
             {
-                panelRuneDisplay2.Controls.Clear();
-                Settings.Runes.ForEach(r => { panelRuneDisplay.Controls.Add(new RuneDisplayElement((Rune)r, Settings.DisplayRunesHighContrast, false, false)); });
-                ChangeVisibility(panelRuneDisplay2, true);
+                panelRuneDisplayVertical.Controls.Clear();
+                Settings.Runes.ForEach(r => { panelRuneDisplayVertical.Controls.Add(new RuneDisplayElement((Rune)r, Settings.DisplayRunesHighContrast, false, false)); });
+                ChangeVisibility(panelRuneDisplayVertical, true);
             } else
             {
-                ChangeVisibility(panelRuneDisplay2, false);
+                ChangeVisibility(panelRuneDisplayVertical, false);
             }
 
         }
 
-        public void ApplyLabelSettings(ApplicationSettings Settings)
+        private void ApplyLabelSettings(ApplicationSettings Settings)
         {
 
             RealFrwIas = Settings.DisplayRealFrwIas;

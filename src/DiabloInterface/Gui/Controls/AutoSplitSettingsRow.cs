@@ -135,6 +135,12 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         public void MarkClean()
         {
+            if (InvokeRequired)
+            {
+                // Delegate call to UI thread.
+                Invoke((Action)(() => MarkClean()));
+                return;
+            }
             IsDirty = false;
         }
 
@@ -202,10 +208,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (OnDelete != null)
-            {
-                OnDelete(this);
-            }
+            OnDelete?.Invoke(this);
         }
     }
 }

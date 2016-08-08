@@ -10,7 +10,8 @@ namespace Zutatensuppe.DiabloInterface.Gui.Forms
             get
             {
                 CreateParams cp = base.CreateParams;
-                cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
+                if (!DesignMode)
+                    cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
                 return cp;
             }
         }

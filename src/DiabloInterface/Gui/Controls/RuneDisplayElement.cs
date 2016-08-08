@@ -61,107 +61,57 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
     public partial class RuneDisplayElement : UserControl
     {
-
-        private Rune rune;
+        // size of rune images (width and height are same)
+        private const int RUNE_SIZE = 28;
+        
+        public Rune Rune { get; private set; }
 
         private bool haveRune = false;
-
-        static Bitmap runesSprite;
-        static Bitmap runesSpriteHighContrast;
 
         private Bitmap image;
         private Bitmap imageRed;
 
-        public bool Removed { get; set; }
-
-        // size of rune images (width and height are same)
-        private const int runeSize = 28;
-
         public RuneDisplayElement(Rune rune)
         {
+            Initialize(rune);
+        }
+        public RuneDisplayElement(Rune rune, bool highContrast, bool removable, bool haveRune)
+        {
+            Initialize(rune, highContrast, removable, haveRune);
+        }
+
+        private void Initialize(Rune rune, bool highContrast = false, bool removable = true, bool haveRune = true)
+        {
             InitializeComponent();
-            // load the sprite files first
-            if (runesSprite == null || runesSpriteHighContrast == null)
+
+            this.Rune = rune;
+
+            using (Bitmap sprite = (highContrast ? Properties.Resources.runes_high_contrast : Properties.Resources.runes))
             {
-                var assembly = Assembly.GetExecutingAssembly();
-				if (runesSprite == null) {
-                    runesSprite = Properties.Resources.runes;
-                }
-	            if (runesSpriteHighContrast == null)
-                {
-                    runesSpriteHighContrast = Properties.Resources.runes_high_contrast;
-	            }
+                image = sprite.Clone(new Rectangle(0, (int)Rune * RUNE_SIZE, RUNE_SIZE, RUNE_SIZE), sprite.PixelFormat);
+                imageRed = sprite.Clone(new Rectangle(RUNE_SIZE, (int)Rune * RUNE_SIZE, RUNE_SIZE, RUNE_SIZE), sprite.PixelFormat);
             }
-            setRune(rune);
-        }
-        public RuneDisplayElement(Rune rune, bool highContrast, bool removable, bool haveRune) : this(rune)
-        {
-            SetRuneSprite(highContrast);
-            SetRemovable(false);
-            SetHaveRune(false);
-        }
-        
-        public Rune getRune()
-        {
-            return rune;
+            Width = RUNE_SIZE * (removable?2:1); // twice as wide if removable, cause of remove button
+
+            SetHaveRune(haveRune);
         }
 
-        public void SetRuneSprite( bool highContrast )
-        {
-            if (highContrast)
-            {
-                image = runesSpriteHighContrast.Clone(new Rectangle(0, (int)rune * runeSize, runeSize, runeSize), runesSprite.PixelFormat);
-                imageRed = runesSpriteHighContrast.Clone(new Rectangle(runeSize, (int)rune * runeSize, runeSize, runeSize), runesSprite.PixelFormat);
-            } else
-            {
-                image = runesSprite.Clone(new Rectangle(0, (int)rune * runeSize, runeSize, runeSize), runesSprite.PixelFormat);
-                imageRed = runesSprite.Clone(new Rectangle(runeSize, (int)rune * runeSize, runeSize, runeSize), runesSprite.PixelFormat);
-            }
-        }
-        public void setRune( Rune rune )
-        {
-
-            this.rune = rune;
-
-            image = runesSprite.Clone(new Rectangle(0, (int)rune* runeSize, runeSize, runeSize), runesSprite.PixelFormat);
-            imageRed = runesSprite.Clone(new Rectangle(runeSize, (int)rune * runeSize, runeSize, runeSize), runesSprite.PixelFormat);
-            SetRuneSprite(false);
-            SetHaveRune(true);
-		}
-        public void SetRemovable(bool removable)
-        {
-            if (removable)
-            {
-                this.Width = runeSize*2; // twice as wide cause of remove button
-            } else
-            {
-                this.Width = runeSize;
-            }
-        }
         public void SetHaveRune(bool haveRune)
         {
-            this.haveRune = haveRune;
-            if (haveRune)
+            if (InvokeRequired)
             {
-                pictureBox1.BackgroundImage = image;
-            } else
-            {
-                pictureBox1.BackgroundImage = imageRed;
+                // Delegate call to UI thread.
+                Invoke((Action)(() => SetHaveRune(haveRune)));
+                return;
             }
-        }
-        public bool getHaveRune()
-        {
-            return haveRune;
+
+            this.haveRune = haveRune;
+            pictureBox1.BackgroundImage = (haveRune ? image : imageRed);
         }
 
         private void btnRemove_Click(object sender, EventArgs e)
         {
-            foreach (Control c in this.Controls)
-            {
-                c.Enabled = false;
-            }
-            this.Hide();
-            this.Removed = true;
+            Parent.Controls.Remove(this);
         }
     }
 }

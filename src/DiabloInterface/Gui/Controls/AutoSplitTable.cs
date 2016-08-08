@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System;
 
 namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
@@ -16,13 +17,13 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             "Difficulty"
         };
 
-        bool dirty = false;
+        bool Dirty = false;
         public bool IsDirty
         {
             get
             {
                 // Table itself dirty (something added/removed).
-                if (dirty) return true;
+                if (Dirty) return true;
 
                 // Check if any of the rows were changed.
                 foreach (Control control in Controls)
@@ -68,7 +69,14 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         public void MarkClean()
         {
-            dirty = false;
+            if (InvokeRequired)
+            {
+                // Delegate call to UI thread.
+                Invoke((Action)(() => MarkClean()));
+                return;
+            }
+
+            Dirty = false;
             foreach (Control control in Controls)
             {
                 var row = control as AutoSplitSettingsRow;
@@ -85,7 +93,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
             if (e.Control is AutoSplitSettingsRow)
             {
-                dirty = true;
+                Dirty = true;
             }
         }
 
@@ -95,15 +103,14 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
             if (e.Control is AutoSplitSettingsRow)
             {
-                dirty = true;
+                Dirty = true;
             }
         }
 
         private void AutoSplitTable_Layout(object sender, LayoutEventArgs e)
         {
             // Set the scroll bar size.
-            int height = CalculateTotalHeight();
-            AutoScrollMinSize = new Size(0, height);
+            AutoScrollMinSize = new Size(0, CalculateTotalHeight());
 
             Point cursor = new Point(0, -VerticalScroll.Value);
             int width = ClientSize.Width;

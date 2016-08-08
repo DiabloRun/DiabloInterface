@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Zutatensuppe.D2Reader;
+using System;
 
 namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
@@ -35,10 +36,56 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             {
                 panelRuneDisplay2
             };
+
+            IEnumerable<Control> l = new[]
+            {
+                nameLabel, lvlLabel, goldLabel, deathsLabel,
+                labelStrVal, labelDexVal, labelVitVal, labelEneVal,
+                labelFrwVal, labelFcrVal, labelFhrVal, labelIasVal,
+                labelFireResVal, labelColdResVal, labelLightResVal, labelPoisonResVal,
+                normLabelVal, nmLabelVal, hellLabelVal,
+            };
+            defaultTexts = new Dictionary<Control, string>();
+            foreach (Control c in l)
+            {
+                defaultTexts.Add(c, c.Text);
+            }
+        }
+
+        public void MakeInactive()
+        {
+            if (InvokeRequired)
+            {
+                // Delegate call to UI thread.
+                Invoke((Action)(() => MakeInactive()));
+                return;
+            }
+            Hide();
+        }
+
+        public void MakeActive(ApplicationSettings Settings)
+        {
+            if (InvokeRequired)
+            {
+                // Delegate call to UI thread.
+                Invoke((Action)(() => MakeActive(Settings)));
+                return;
+            }
+
+            ApplyLabelSettings(Settings);
+            ApplyRuneSettings(Settings);
+            Show();
+            UpdateLayout(Settings);
         }
 
         public void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
         {
+            if (InvokeRequired)
+            {
+                // Delegate call to UI thread.
+                Invoke((Action)(() => UpdateLabels(player, itemClassMap)));
+                return;
+            }
 
             nameLabel.Text = player.name;
             lvlLabel.Text = "LVL: " + player.Level;
@@ -75,7 +122,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             UpdateRuneDisplay(itemClassMap);
         }
 
-        public void UpdateLayout(ApplicationSettings Settings)
+        private void UpdateLayout(ApplicationSettings Settings)
         {
             bool first = true;
             // Calculate maximum sizes that the labels can possible get.
@@ -141,7 +188,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         }
 
-        public void ApplyRuneSettings(ApplicationSettings Settings)
+        private void ApplyRuneSettings(ApplicationSettings Settings)
         {
             if (Settings.DisplayRunes && Settings.Runes.Count > 0)
             {
@@ -155,10 +202,9 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             }
         }
 
-        public void ApplyLabelSettings(ApplicationSettings Settings)
+        private void ApplyLabelSettings(ApplicationSettings Settings)
         {
-
-            this.BackColor = Settings.ColorBackground;
+            BackColor = Settings.ColorBackground;
 
             nameLabel.Font = new Font(Settings.FontName, Settings.FontSizeTitle);
             Font infoFont = new Font(Settings.FontName, Settings.FontSize);

@@ -36,23 +36,20 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.tabBoxItems = new System.Windows.Forms.TabControl();
-            this.tabPageHead = new System.Windows.Forms.TabPage();
-            this.tabPageAmulet = new System.Windows.Forms.TabPage();
-            this.tabPageWeaponLeft = new System.Windows.Forms.TabPage();
-            this.tabPageWeaponRight = new System.Windows.Forms.TabPage();
-            this.tabPageBody = new System.Windows.Forms.TabPage();
-            this.tabPageHand = new System.Windows.Forms.TabPage();
-            this.tabPageFeet = new System.Windows.Forms.TabPage();
-            this.tabPageRingLeft = new System.Windows.Forms.TabPage();
-            this.tabPageRingRight = new System.Windows.Forms.TabPage();
-            this.tabPageBelt = new System.Windows.Forms.TabPage();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.textItemDesc = new System.Windows.Forms.RichTextBox();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.tabBoxItems.SuspendLayout();
             this.SuspendLayout();
             // 
             // autosplitPanel
@@ -61,7 +58,7 @@
             this.autosplitPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.autosplitPanel.Location = new System.Drawing.Point(3, 16);
             this.autosplitPanel.Name = "autosplitPanel";
-            this.autosplitPanel.Size = new System.Drawing.Size(192, 236);
+            this.autosplitPanel.Size = new System.Drawing.Size(281, 144);
             this.autosplitPanel.TabIndex = 0;
             // 
             // groupBox1
@@ -69,7 +66,7 @@
             this.groupBox1.Controls.Add(this.tabControl1);
             this.groupBox1.Location = new System.Drawing.Point(15, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(644, 555);
+            this.groupBox1.Size = new System.Drawing.Size(555, 555);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Quest-Bits";
@@ -83,7 +80,7 @@
             this.tabControl1.Location = new System.Drawing.Point(3, 16);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(638, 536);
+            this.tabControl1.Size = new System.Drawing.Size(549, 536);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -92,7 +89,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(630, 510);
+            this.tabPage1.Size = new System.Drawing.Size(541, 510);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Normal";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -103,7 +100,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(630, 510);
+            this.tabPage2.Size = new System.Drawing.Size(541, 510);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Nightmare";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -114,7 +111,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(630, 510);
+            this.tabPage3.Size = new System.Drawing.Size(541, 510);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Hell";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -122,148 +119,167 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.autosplitPanel);
-            this.groupBox2.Location = new System.Drawing.Point(665, 4);
+            this.groupBox2.Location = new System.Drawing.Point(576, 4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(198, 255);
+            this.groupBox2.Size = new System.Drawing.Size(287, 163);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Splits";
             // 
-            // groupBox3
+            // label1
             // 
-            this.groupBox3.Controls.Add(this.tabBoxItems);
-            this.groupBox3.Location = new System.Drawing.Point(668, 263);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(192, 296);
-            this.groupBox3.TabIndex = 4;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Last Item";
+            this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.label1.ForeColor = System.Drawing.Color.Aquamarine;
+            this.label1.Location = new System.Drawing.Point(700, 172);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(40, 40);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "Head";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label1.MouseEnter += new System.EventHandler(this.label1_MouseEnter);
+            this.label1.MouseLeave += new System.EventHandler(this.label1_MouseLeave);
             // 
-            // tabBoxItems
+            // label2
             // 
-            this.tabBoxItems.Controls.Add(this.tabPageHead);
-            this.tabBoxItems.Controls.Add(this.tabPageAmulet);
-            this.tabBoxItems.Controls.Add(this.tabPageWeaponLeft);
-            this.tabBoxItems.Controls.Add(this.tabPageWeaponRight);
-            this.tabBoxItems.Controls.Add(this.tabPageBody);
-            this.tabBoxItems.Controls.Add(this.tabPageHand);
-            this.tabBoxItems.Controls.Add(this.tabPageFeet);
-            this.tabBoxItems.Controls.Add(this.tabPageRingLeft);
-            this.tabBoxItems.Controls.Add(this.tabPageRingRight);
-            this.tabBoxItems.Controls.Add(this.tabPageBelt);
-            this.tabBoxItems.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabBoxItems.Location = new System.Drawing.Point(3, 16);
-            this.tabBoxItems.Multiline = true;
-            this.tabBoxItems.Name = "tabBoxItems";
-            this.tabBoxItems.SelectedIndex = 0;
-            this.tabBoxItems.Size = new System.Drawing.Size(186, 277);
-            this.tabBoxItems.TabIndex = 0;
+            this.label2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.label2.ForeColor = System.Drawing.Color.Aquamarine;
+            this.label2.Location = new System.Drawing.Point(628, 202);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(40, 80);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Left Arm";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label2.MouseEnter += new System.EventHandler(this.label2_MouseEnter);
+            this.label2.MouseLeave += new System.EventHandler(this.label2_MouseLeave);
             // 
-            // tabPageHead
+            // label3
             // 
-            this.tabPageHead.Location = new System.Drawing.Point(4, 76);
-            this.tabPageHead.Name = "tabPageHead";
-            this.tabPageHead.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageHead.Size = new System.Drawing.Size(178, 197);
-            this.tabPageHead.TabIndex = 0;
-            this.tabPageHead.Text = "Head";
-            this.tabPageHead.UseVisualStyleBackColor = true;
+            this.label3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.label3.ForeColor = System.Drawing.Color.Aquamarine;
+            this.label3.Location = new System.Drawing.Point(772, 202);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(40, 80);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "Right Arm";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label3.MouseEnter += new System.EventHandler(this.label3_MouseEnter);
+            this.label3.MouseLeave += new System.EventHandler(this.label3_MouseLeave);
             // 
-            // tabPageAmulet
+            // label4
             // 
-            this.tabPageAmulet.Location = new System.Drawing.Point(4, 76);
-            this.tabPageAmulet.Name = "tabPageAmulet";
-            this.tabPageAmulet.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageAmulet.Size = new System.Drawing.Size(178, 197);
-            this.tabPageAmulet.TabIndex = 1;
-            this.tabPageAmulet.Text = "Amulet";
+            this.label4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.label4.ForeColor = System.Drawing.Color.Aquamarine;
+            this.label4.Location = new System.Drawing.Point(700, 222);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(40, 60);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Body";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label4.MouseEnter += new System.EventHandler(this.label4_MouseEnter);
+            this.label4.MouseLeave += new System.EventHandler(this.label4_MouseLeave);
             // 
-            // tabPageWeaponLeft
+            // label5
             // 
-            this.tabPageWeaponLeft.Location = new System.Drawing.Point(4, 76);
-            this.tabPageWeaponLeft.Name = "tabPageWeaponLeft";
-            this.tabPageWeaponLeft.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageWeaponLeft.Size = new System.Drawing.Size(178, 197);
-            this.tabPageWeaponLeft.TabIndex = 2;
-            this.tabPageWeaponLeft.Text = "Weapon-Left";
-            this.tabPageWeaponLeft.UseVisualStyleBackColor = true;
+            this.label5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.label5.ForeColor = System.Drawing.Color.Aquamarine;
+            this.label5.Location = new System.Drawing.Point(628, 294);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(40, 40);
+            this.label5.TabIndex = 9;
+            this.label5.Text = "Gloves";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label5.MouseEnter += new System.EventHandler(this.label5_MouseEnter);
+            this.label5.MouseLeave += new System.EventHandler(this.label5_MouseLeave);
             // 
-            // tabPageWeaponRight
+            // label6
             // 
-            this.tabPageWeaponRight.Location = new System.Drawing.Point(4, 76);
-            this.tabPageWeaponRight.Name = "tabPageWeaponRight";
-            this.tabPageWeaponRight.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageWeaponRight.Size = new System.Drawing.Size(178, 197);
-            this.tabPageWeaponRight.TabIndex = 3;
-            this.tabPageWeaponRight.Text = "Weapon-Right";
-            this.tabPageWeaponRight.UseVisualStyleBackColor = true;
+            this.label6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.label6.ForeColor = System.Drawing.Color.Aquamarine;
+            this.label6.Location = new System.Drawing.Point(700, 294);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(40, 20);
+            this.label6.TabIndex = 10;
+            this.label6.Text = "Belt";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label6.MouseEnter += new System.EventHandler(this.label6_MouseEnter);
+            this.label6.MouseLeave += new System.EventHandler(this.label6_MouseLeave);
             // 
-            // tabPageBody
+            // label7
             // 
-            this.tabPageBody.Location = new System.Drawing.Point(4, 76);
-            this.tabPageBody.Name = "tabPageBody";
-            this.tabPageBody.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBody.Size = new System.Drawing.Size(178, 197);
-            this.tabPageBody.TabIndex = 4;
-            this.tabPageBody.Text = "Body";
-            this.tabPageBody.UseVisualStyleBackColor = true;
+            this.label7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.label7.ForeColor = System.Drawing.Color.Aquamarine;
+            this.label7.Location = new System.Drawing.Point(674, 294);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(20, 20);
+            this.label7.TabIndex = 11;
+            this.label7.Text = "L";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label7.MouseEnter += new System.EventHandler(this.label7_MouseEnter);
+            this.label7.MouseLeave += new System.EventHandler(this.label7_MouseLeave);
             // 
-            // tabPageHand
+            // label8
             // 
-            this.tabPageHand.Location = new System.Drawing.Point(4, 76);
-            this.tabPageHand.Name = "tabPageHand";
-            this.tabPageHand.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageHand.Size = new System.Drawing.Size(178, 197);
-            this.tabPageHand.TabIndex = 5;
-            this.tabPageHand.Text = "Hand";
-            this.tabPageHand.UseVisualStyleBackColor = true;
+            this.label8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.label8.ForeColor = System.Drawing.Color.Aquamarine;
+            this.label8.Location = new System.Drawing.Point(746, 294);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(20, 20);
+            this.label8.TabIndex = 12;
+            this.label8.Text = "R";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label8.MouseEnter += new System.EventHandler(this.label8_MouseEnter);
+            this.label8.MouseLeave += new System.EventHandler(this.label8_MouseLeave);
             // 
-            // tabPageFeet
+            // label9
             // 
-            this.tabPageFeet.Location = new System.Drawing.Point(4, 76);
-            this.tabPageFeet.Name = "tabPageFeet";
-            this.tabPageFeet.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageFeet.Size = new System.Drawing.Size(178, 197);
-            this.tabPageFeet.TabIndex = 6;
-            this.tabPageFeet.Text = "Feet";
-            this.tabPageFeet.UseVisualStyleBackColor = true;
+            this.label9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.label9.ForeColor = System.Drawing.Color.Aquamarine;
+            this.label9.Location = new System.Drawing.Point(772, 294);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(40, 40);
+            this.label9.TabIndex = 13;
+            this.label9.Text = "Boots";
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label9.MouseEnter += new System.EventHandler(this.label9_MouseEnter);
+            this.label9.MouseLeave += new System.EventHandler(this.label9_MouseLeave);
             // 
-            // tabPageRingLeft
+            // label10
             // 
-            this.tabPageRingLeft.Location = new System.Drawing.Point(4, 76);
-            this.tabPageRingLeft.Name = "tabPageRingLeft";
-            this.tabPageRingLeft.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRingLeft.Size = new System.Drawing.Size(178, 197);
-            this.tabPageRingLeft.TabIndex = 7;
-            this.tabPageRingLeft.Text = "Ring-Left";
-            this.tabPageRingLeft.UseVisualStyleBackColor = true;
+            this.label10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.label10.ForeColor = System.Drawing.Color.Aquamarine;
+            this.label10.Location = new System.Drawing.Point(746, 192);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(20, 20);
+            this.label10.TabIndex = 12;
+            this.label10.Text = "A";
+            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label10.MouseEnter += new System.EventHandler(this.label10_MouseEnter);
+            this.label10.MouseLeave += new System.EventHandler(this.label10_MouseLeave);
             // 
-            // tabPageRingRight
+            // textItemDesc
             // 
-            this.tabPageRingRight.Location = new System.Drawing.Point(4, 76);
-            this.tabPageRingRight.Name = "tabPageRingRight";
-            this.tabPageRingRight.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRingRight.Size = new System.Drawing.Size(178, 197);
-            this.tabPageRingRight.TabIndex = 8;
-            this.tabPageRingRight.Text = "Ring-Right";
-            this.tabPageRingRight.UseVisualStyleBackColor = true;
-            // 
-            // tabPageBelt
-            // 
-            this.tabPageBelt.Location = new System.Drawing.Point(4, 76);
-            this.tabPageBelt.Name = "tabPageBelt";
-            this.tabPageBelt.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageBelt.Size = new System.Drawing.Size(178, 197);
-            this.tabPageBelt.TabIndex = 9;
-            this.tabPageBelt.Text = "Belt";
-            this.tabPageBelt.UseVisualStyleBackColor = true;
+            this.textItemDesc.Location = new System.Drawing.Point(579, 337);
+            this.textItemDesc.Name = "textItemDesc";
+            this.textItemDesc.Size = new System.Drawing.Size(284, 222);
+            this.textItemDesc.TabIndex = 14;
+            this.textItemDesc.Text = "";
             // 
             // DebugWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(875, 571);
-            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.textItemDesc);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -274,8 +290,6 @@
             this.groupBox1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.tabBoxItems.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -289,17 +303,16 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.TabControl tabBoxItems;
-        private System.Windows.Forms.TabPage tabPageHead;
-        private System.Windows.Forms.TabPage tabPageAmulet;
-        private System.Windows.Forms.TabPage tabPageWeaponLeft;
-        private System.Windows.Forms.TabPage tabPageWeaponRight;
-        private System.Windows.Forms.TabPage tabPageBody;
-        private System.Windows.Forms.TabPage tabPageHand;
-        private System.Windows.Forms.TabPage tabPageFeet;
-        private System.Windows.Forms.TabPage tabPageRingLeft;
-        private System.Windows.Forms.TabPage tabPageRingRight;
-        private System.Windows.Forms.TabPage tabPageBelt;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.RichTextBox textItemDesc;
     }
 }

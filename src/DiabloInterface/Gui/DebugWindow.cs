@@ -1,15 +1,11 @@
 ﻿using Zutatensuppe.DiabloInterface.Autosplit;
 using Zutatensuppe.D2Reader;
-using Zutatensuppe.D2Reader.Readers;
-using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Item;
-using Zutatensuppe.D2Reader.Struct.Stat;
 using Zutatensuppe.DiabloInterface.Gui.Controls;
 using Zutatensuppe.DiabloInterface.Gui.Forms;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Zutatensuppe.DiabloInterface.Gui
@@ -65,6 +61,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         List<AutosplitBinding> autoSplitBindings;
 
+        Dictionary<BodyLocation, string> itemStrings;
+
         public DebugWindow()
         {
             InitializeComponent();
@@ -119,6 +117,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         public void UpdateAutosplits(List<AutoSplit> autoSplits)
         {
+            if (DesignMode) return;
             // Unbinds and clears the binding list.
             ClearAutoSplitBindings();
 
@@ -151,13 +150,13 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 y = i * 100 - (i > 3 ? 3 * 16 : 0);
                 actLabels[i] = new Label();
                 actLabels[i].Text = "Act " + (i + 1);
-                actLabels[i].Width = 80;
+                actLabels[i].Width = 40;
                 actLabels[i].Location = new Point(20, y);
                 tabPage.Controls.Add(actLabels[i]);
                 for (int j = 0; j < (i == 3 ? 3 : 6); j++)
                 {
                     questRows[i, j] = new QuestDebugRow(D2QuestHelper.GetByActAndQuest(i + 1, j + 1));
-                    questRows[i, j].Location = new Point(100, y + (j * 16));
+                    questRows[i, j].Location = new Point(60, y + (j * 16));
                     tabPage.Controls.Add(questRows[i, j]);
                 }
             }
@@ -165,6 +164,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         private void DebugWindow_Load(object sender, EventArgs e)
         {
+            if (DesignMode) return;
             ActLabelsNormal = new Label[5];
             QuestRowsNormal = new QuestDebugRow[5, 6];
             LoadQuests(ActLabelsNormal, QuestRowsNormal, tabPage1);
@@ -178,76 +178,122 @@ namespace Zutatensuppe.DiabloInterface.Gui
             LoadQuests(ActLabelsHell, QuestRowsHell, tabPage3);
         }
 
-        public void UpdateItemStats(D2DataReader reader)
+        public void UpdateItemStats(Dictionary<BodyLocation, string> itemStrings)
         {
-            IEnumerable<Control> controls = new[] {
-                tabPageHead, tabPageAmulet, tabPageBody,
-                tabPageWeaponRight,tabPageWeaponLeft, tabPageRingRight, tabPageRingLeft,
-                tabPageBelt,tabPageFeet,tabPageHand
-            };
-            foreach ( Control c in controls )
-            {
-                if (c != null)
-                {
-                    if (c.Controls.Count == 0)
-                    {
-                        c.Invoke(new Action(delegate () {
-                            c.Controls.Add(new RichTextBox());
-                            c.Controls[0].Dock = DockStyle.Fill;
-                        }));
-                    }
-                    c.Controls[0].Invoke(new Action(() => c.Controls[0].Text = ""));
-                }
-            }
+            if (DesignMode) return;
 
-            // Build filter to get only equipped items.
-            Func<D2ItemData, bool> filter = data => data.BodyLoc != BodyLocation.None;
-            foreach (D2Unit item in reader.GetInventoryItems(filter))
-            {
-                List<D2Stat> itemStats = reader.GetStats(item);
-                if (itemStats == null) continue;
 
-                StringBuilder statBuilder = new StringBuilder();
-                statBuilder.Append(reader.GetFullItemName(item));
+            this.itemStrings = itemStrings;
+        }
 
-                statBuilder.Append(Environment.NewLine);
-                List<string> magicalStrings = reader.GetMagicalItemStrings(item);
-                foreach (string str in magicalStrings)
-                {
-                    statBuilder.Append("    ");
-                    statBuilder.Append(str);
-                    statBuilder.Append(Environment.NewLine);
-                }
+        private void label1_MouseEnter(object sender, EventArgs e)
+        {
+            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.Head)) return;
+            textItemDesc.Text = itemStrings[BodyLocation.Head];
+        }
 
-                Control c = null;
-                D2ItemData itemData = reader.GetItemData(item);
-                switch (itemData.BodyLoc)
-                {
-                    case BodyLocation.Head: c = tabPageHead; break;
-                    case BodyLocation.Amulet: c = tabPageAmulet; break;
-                    case BodyLocation.BodyArmor: c = tabPageBody; break;
-                    case BodyLocation.PrimaryRight: c = tabPageWeaponRight; break;
-                    case BodyLocation.PrimaryLeft: c = tabPageWeaponLeft; break;
-                    case BodyLocation.RingRight: c = tabPageRingRight; break;
-                    case BodyLocation.RingLeft: c = tabPageRingLeft; break;
-                    //case BodyLocation.SecondaryLeft: c = tabPageRingRight; break;
-                    //case BodyLocation.SecondaryRight: c = tabPageRingLeft; break;
-                    case BodyLocation.Belt: c = tabPageBelt; break;
-                    case BodyLocation.Boots: c = tabPageFeet; break;
-                    case BodyLocation.Gloves: c = tabPageHand; break;
-                }
-                if (c != null)
-                {
-                    if (c.Controls.Count == 0)
-                    {
-                        c.Invoke(new Action(delegate () {
-                            c.Controls.Add(new RichTextBox());
-                            c.Controls[0].Dock = DockStyle.Fill;
-                        }));
-                    }
-                    c.Controls[0].Invoke(new Action(() => c.Controls[0].Text = statBuilder.ToString()));
-                }
-            }
+        private void label1_MouseLeave(object sender, EventArgs e)
+        {
+            textItemDesc.Text = "";
+        }
+
+        private void label10_MouseEnter(object sender, EventArgs e)
+        {
+            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.Amulet)) return;
+            textItemDesc.Text = itemStrings[BodyLocation.Amulet];
+        }
+
+        private void label10_MouseLeave(object sender, EventArgs e)
+        {
+            textItemDesc.Text = "";
+        }
+
+        private void label3_MouseEnter(object sender, EventArgs e)
+        {
+            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.PrimaryRight)) return;
+            textItemDesc.Text = itemStrings[BodyLocation.PrimaryRight];
+        }
+
+        private void label3_MouseLeave(object sender, EventArgs e)
+        {
+            textItemDesc.Text = "";
+        }
+
+        private void label2_MouseEnter(object sender, EventArgs e)
+        {
+            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.PrimaryLeft)) return;
+            textItemDesc.Text = itemStrings[BodyLocation.PrimaryLeft];
+        }
+
+        private void label2_MouseLeave(object sender, EventArgs e)
+        {
+            textItemDesc.Text = "";
+        }
+
+        private void label4_MouseEnter(object sender, EventArgs e)
+        {
+            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.BodyArmor)) return;
+            textItemDesc.Text = itemStrings[BodyLocation.BodyArmor];
+        }
+
+        private void label4_MouseLeave(object sender, EventArgs e)
+        {
+            textItemDesc.Text = "";
+        }
+
+        private void label7_MouseEnter(object sender, EventArgs e)
+        {
+            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.RingLeft)) return;
+            textItemDesc.Text = itemStrings[BodyLocation.RingLeft];
+        }
+
+        private void label7_MouseLeave(object sender, EventArgs e)
+        {
+            textItemDesc.Text = "";
+        }
+
+        private void label8_MouseEnter(object sender, EventArgs e)
+        {
+            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.RingRight)) return;
+            textItemDesc.Text = itemStrings[BodyLocation.RingRight];
+        }
+
+        private void label8_MouseLeave(object sender, EventArgs e)
+        {
+            textItemDesc.Text = "";
+        }
+
+        private void label5_MouseEnter(object sender, EventArgs e)
+        {
+            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.Gloves)) return;
+            textItemDesc.Text = itemStrings[BodyLocation.Gloves];
+        }
+
+        private void label5_MouseLeave(object sender, EventArgs e)
+        {
+            textItemDesc.Text = "";
+        }
+
+        private void label6_MouseEnter(object sender, EventArgs e)
+        {
+            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.Belt)) return;
+            textItemDesc.Text = itemStrings[BodyLocation.Belt];
+        }
+
+        private void label6_MouseLeave(object sender, EventArgs e)
+        {
+            textItemDesc.Text = "";
+        }
+
+        private void label9_MouseEnter(object sender, EventArgs e)
+        {
+            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.Boots)) return;
+            textItemDesc.Text = itemStrings[BodyLocation.Boots];
+        }
+
+        private void label9_MouseLeave(object sender, EventArgs e)
+        {
+            textItemDesc.Text = "";
         }
     }
 }

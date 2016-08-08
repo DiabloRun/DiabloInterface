@@ -35,6 +35,11 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         public void Update(ushort questBits)
         {
+            if (!IsHandleCreated)
+            {
+                return;
+            }
+
             for ( byte i = 0; i < 16; i++ )
             {
                 labels[i].Invoke(new Action(() => { labels[i].BackColor = IsBitSet(questBits, i) ? Color.GreenYellow : Color.AliceBlue; }));

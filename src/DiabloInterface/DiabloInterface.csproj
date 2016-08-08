@@ -51,7 +51,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\Diablo II_101.ico</ApplicationIcon>
+    <ApplicationIcon>di.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>App.manifest</ApplicationManifest>
@@ -239,24 +239,26 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Resources\runewords.json">
+    <None Include="Resources\runewords.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Images\Runes\runes-high-contrast.png" />
+    <None Include="Resources\Images\Runes\runes-high-contrast.png" />
     <None Include="Resources\Images\Icons\bug.png" />
+    <Content Include="di.ico" />
+    <Content Include="Diablo II_101.ico" />
     <Content Include="Resources\Diablo II_101.ico" />
-    <EmbeddedResource Include="Resources\Images\Runes\runes.png" />
+    <None Include="Resources\Images\Runes\runes.png" />
     <None Include="Resources\Images\Icons\disk.png" />
     <None Include="Resources\Images\Icons\folder_explore.png" />
     <None Include="Resources\Images\Icons\cross.png" />
     <None Include="Resources\Images\Icons\wrench_orange.png" />
     <None Include="Resources\Images\Icons\arrow_refresh.png" />
-    <EmbeddedResource Include="Resources\Levels.txt" />
+    <None Include="Resources\Levels.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">

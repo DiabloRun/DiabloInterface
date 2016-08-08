@@ -220,8 +220,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             List<int> runesList = new List<int>();
             foreach (RuneDisplayElement c in RuneDisplayPanel.Controls)
             {
-                if (c.Removed) continue;
-                runesList.Add((int)c.getRune());
+                runesList.Add((int)c.Rune);
             }
             return runesList;
         }

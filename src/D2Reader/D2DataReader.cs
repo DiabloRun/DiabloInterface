@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Text;
 
 namespace Zutatensuppe.D2Reader
 {
@@ -39,14 +40,24 @@ namespace Zutatensuppe.D2Reader
     public class DataReadEventArgs : System.EventArgs
     {
         public Dictionary<int, int> ItemClassMap;
+        public Dictionary<int, ushort[]> QuestBuffers;
         public Character Character;
         public bool IsAutosplitCharacter;
-        
-        public DataReadEventArgs(Character character, Dictionary<int, int> itemClassMap, bool isAutosplitCharacter)
+        public int CurrentArea;
+        public byte CurrentDifficulty;
+        public List<int> ItemIds;
+        public Dictionary<BodyLocation, string> ItemStrings;
+
+        public DataReadEventArgs(Character character, Dictionary<BodyLocation, string> itemStrings, int currentArea, byte currentDifficulty, List<int> itemIds, Dictionary<int, int> itemClassMap, bool isAutosplitCharacter, Dictionary<int, ushort[]> questBuffers)
         {
             ItemClassMap = itemClassMap;
             Character = character;
             IsAutosplitCharacter = isAutosplitCharacter;
+            QuestBuffers = questBuffers;
+            CurrentArea = currentArea;
+            CurrentDifficulty = currentDifficulty;
+            ItemIds = itemIds;
+            ItemStrings = itemStrings;
         }
     }
 
@@ -70,23 +81,52 @@ namespace Zutatensuppe.D2Reader
         InventoryReader inventoryReader;
         D2MemoryTable memory;
         D2MemoryTable nextMemoryTable;
-        
+
+
+
+        int currentArea;
+        byte currentDifficulty;
         bool wasInTitleScreen = false;
         Character activeCharacter = null;
+        Character character = null;
         Dictionary<string, Character> characters;
+        Dictionary<int, ushort[]> questBuffers;
+        Dictionary<BodyLocation, string> itemStrings;
+        List<int> inventoryItemIds;
+        Dictionary<int, int> itemClassMap;
+
+        // flags for data that d2reader must read. 
+        // outside tool can set this from outside and the data will be returned in the OnDataRead event
+        public const int READ_CURRENT_AREA = 1 << 0;
+        public const int READ_CURRENT_DIFFICULTY = 1 << 1;
+        public const int READ_QUEST_BUFFERS = 1 << 2;
+        public const int READ_INVENTORY_ITEM_IDS = 1 << 3;
+        public const int READ_EQUIPPED_ITEM_STRINGS = 1 << 4; // bodyLoc => item name + desc
+        public const int READ_ITEM_CLASS_MAP = 1 << 5;
+
+        public int RequiredData = 
+            READ_CURRENT_AREA 
+            | READ_CURRENT_DIFFICULTY 
+            | READ_ITEM_CLASS_MAP
+            | READ_QUEST_BUFFERS
+            | READ_INVENTORY_ITEM_IDS;
 
         public D2DataReader( string version)
         {
             this.memory = GetVersionMemoryTable(version);
 
             characters = new Dictionary<string, Character>();
+            questBuffers = new Dictionary<int, ushort[]>();
+            itemStrings = new Dictionary<BodyLocation, string>();
+            inventoryItemIds = new List<int>();
+            itemClassMap = new Dictionary<int, int>();
         }
 
         public void SetD2Version(string version)
         {
-            this.memory = GetVersionMemoryTable(version);
+            this.nextMemoryTable = GetVersionMemoryTable(version);
         }
-
+    
 
         private D2MemoryTable GetVersionMemoryTable(string version)
         {
@@ -218,21 +258,6 @@ namespace Zutatensuppe.D2Reader
 
         #endregion
 
-        public Byte GetDifficulty()
-        {
-            D2GameInfo gameInfo = GetGameInfo();
-            return gameInfo.Game.Difficulty;
-        }
-        public List<int> GetItemIds()
-        {
-            return (from item in inventoryReader.EnumerateInventory()
-                        select item.eClass).ToList();
-        }
-        public byte GetAreaId()
-        {
-            return reader.ReadByte(memory.Address.Area, AddressingMode.Relative);
-        }
-
         public bool checkIfD2Running()
         {
             // If a reader already exists but the process is closed, dispose of the reader.
@@ -275,10 +300,7 @@ namespace Zutatensuppe.D2Reader
             Func<D2ItemData, bool> filterSlots = data => slots.FindIndex(x => x == data.BodyLoc) >= 0;
             foreach (var item in inventoryReader.EnumerateInventory(filterSlots))
             {
-                if (action != null)
-                {
-                    action(inventoryReader.ItemReader, item);
-                }
+                action?.Invoke(inventoryReader.ItemReader, item);
             }
         }
 
@@ -375,28 +397,110 @@ namespace Zutatensuppe.D2Reader
             inventoryReader = new InventoryReader(reader, memory);
 
             // Get associated character data.
-            Character character = GetCurrentCharacter(gameInfo);
+            character = GetCurrentCharacter(gameInfo);
 
             IntPtr playerAddress = reader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
 
-
-            var statsMap = unitReader.GetStatsMap(gameInfo.Player);
-            var itemStatsMap = unitReader.GetItemStatsMap(gameInfo.Player);
-            var skillsMap = unitReader.GetSkillMap(gameInfo.Player);
-            Dictionary<int, int> itemClassMap = unitReader.GetItemClassMap(gameInfo.Player);
+            // var skillsMap = unitReader.GetSkillMap(gameInfo.Player);
 
             // Update character data.
             character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
-            character.ParseStats(statsMap, itemStatsMap, gameInfo);
-            int count0 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(0));
-            int count1 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(1));
-            int count2 = D2QuestHelper.GetReallyCompletedQuestCount(GetQuestBuffer(2));
-            character.CompletedQuestCounts[0] = count0;
-            character.CompletedQuestCounts[1] = count1;
-            character.CompletedQuestCounts[2] = count2;
+            character.ParseStats(
+                unitReader.GetStatsMap(gameInfo.Player), 
+                unitReader.GetItemStatsMap(gameInfo.Player), 
+                gameInfo
+            );
+
+
+            itemClassMap.Clear();
+            if ((RequiredData & READ_ITEM_CLASS_MAP) > 0)
+                itemClassMap = unitReader.GetItemClassMap(gameInfo.Player);
+            else
+                itemClassMap.Clear();
+
+            // get quest buffers
+            questBuffers.Clear();
+            if ((RequiredData & READ_QUEST_BUFFERS) > 0)
+            { 
+                for (int i = 0; i < gameInfo.PlayerData.Quests.Length; i++)
+                {
+                    if (gameInfo.PlayerData.Quests[i].IsNull)
+                        continue;
+
+                    // Read quest array as an array of 16 bit values.
+                    D2QuestArray questArray = reader.Read<D2QuestArray>(gameInfo.PlayerData.Quests[i]);
+                    byte[] questBytes = reader.Read(questArray.Buffer, questArray.Length);
+                    ushort[] questBuffer = new ushort[(questBytes.Length + 1) / 2];
+                    Buffer.BlockCopy(questBytes, 0, questBuffer, 0, questBytes.Length);
+
+                    character.CompletedQuestCounts[i] = D2QuestHelper.GetReallyCompletedQuestCount(questBuffer);
+
+                    questBuffers.Add(i, questBuffer);
+                }
+            }
+            
+            if ((RequiredData & READ_CURRENT_AREA) > 0)
+                currentArea = reader.ReadByte(memory.Address.Area, AddressingMode.Relative);
+            else
+                currentArea = -1;
+
+            if ((RequiredData & READ_CURRENT_DIFFICULTY) > 0)
+                currentDifficulty = gameInfo.Game.Difficulty;
+            else
+                currentDifficulty = 0;
+
+            // Build filter to get only equipped items.
+            itemStrings.Clear();
+            if ((RequiredData & READ_EQUIPPED_ITEM_STRINGS) > 0)
+            {
+                Func<D2ItemData, bool> filter = data => data.BodyLoc != BodyLocation.None;
+                foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))
+                {
+                    List<D2Stat> itemStats = unitReader.GetStats(item);
+                    if (itemStats == null)
+                    {
+                        continue;
+                    }
+
+                    StringBuilder statBuilder = new StringBuilder();
+                    statBuilder.Append(inventoryReader.ItemReader.GetFullItemName(item));
+
+                    statBuilder.Append(Environment.NewLine);
+                    List<string> magicalStrings = inventoryReader.ItemReader.GetMagicalStrings(item);
+                    foreach (string str in magicalStrings)
+                    {
+                        statBuilder.Append("    ");
+                        statBuilder.Append(str);
+                        statBuilder.Append(Environment.NewLine);
+                    }
+                    D2ItemData itemData = reader.Read<D2ItemData>(item.UnitData);
+                    itemStrings.Add(itemData.BodyLoc, statBuilder.ToString());
+                }
+
+            }
+
+            if ((RequiredData & READ_INVENTORY_ITEM_IDS) > 0)
+                inventoryItemIds = (from item in inventoryReader.EnumerateInventory()
+                                     select item.eClass).ToList();
+            else
+                inventoryItemIds.Clear();
 
             // New data was read, update anyone interested:
-            OnDataRead(new DataReadEventArgs(character, itemClassMap, IsAutosplitCharacter(character)));
+            OnDataRead(createDataReadEventArgs());
+        }
+
+        private DataReadEventArgs createDataReadEventArgs()
+        {
+            return new DataReadEventArgs(
+                character, 
+                itemStrings, 
+                currentArea, 
+                currentDifficulty, 
+                inventoryItemIds, 
+                itemClassMap, 
+                IsAutosplitCharacter(character), 
+                questBuffers
+            );
         }
 
         bool IsAutosplitCharacter(Character character)
@@ -452,46 +556,6 @@ namespace Zutatensuppe.D2Reader
             wasInTitleScreen = false;
 
             return character;
-        }
-
-        public D2ItemData GetItemData(D2Unit item)
-        {
-            D2ItemData itemData = reader.Read<D2ItemData>(item.UnitData);
-            return itemData;
-        }
-        public IEnumerable<D2Unit> GetInventoryItems(Func<D2ItemData, bool> filter)
-        {
-            return inventoryReader.EnumerateInventory(filter);
-        }
-        public List<D2Stat> GetStats(D2Unit item)
-        {
-            return unitReader.GetStats(item);
-        }
-        public string GetFullItemName(D2Unit item)
-        {
-            return inventoryReader.ItemReader.GetFullItemName(item);
-        }
-        public List<string> GetMagicalItemStrings(D2Unit item)
-        {
-            return inventoryReader.ItemReader.GetMagicalStrings(item);
-        }
-
-        public ushort[] GetQuestBuffer(int difficulty)
-        {
-            if (gameInfo == null)
-                return null;
-            if (difficulty < 0 || difficulty >= gameInfo.PlayerData.Quests.Length)
-                return null;
-            if (gameInfo.PlayerData.Quests[difficulty].IsNull)
-                return null;
-
-            // Read quest array as an array of 16 bit values.
-            D2QuestArray questArray = reader.Read<D2QuestArray>(gameInfo.PlayerData.Quests[difficulty]);
-            byte[] questBytes = reader.Read(questArray.Buffer, questArray.Length);
-            ushort[] questBuffer = new ushort[(questBytes.Length + 1) / 2];
-            Buffer.BlockCopy(questBytes, 0, questBuffer, 0, questBytes.Length);
-
-            return questBuffer;
         }
         
         protected virtual void OnNewCharacter(NewCharacterEventArgs e)
