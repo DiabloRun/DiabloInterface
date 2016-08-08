@@ -410,9 +410,7 @@ namespace Zutatensuppe.D2Reader
                 unitReader.GetItemStatsMap(gameInfo.Player), 
                 gameInfo
             );
-
-
-            itemClassMap.Clear();
+            
             if ((RequiredData & READ_ITEM_CLASS_MAP) > 0)
                 itemClassMap = unitReader.GetItemClassMap(gameInfo.Player);
             else
