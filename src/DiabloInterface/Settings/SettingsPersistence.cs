@@ -1,4 +1,4 @@
-﻿using Zutatensuppe.DiabloInterface.Logging;
+﻿using Zutatensuppe.DiabloInterface.Core.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;

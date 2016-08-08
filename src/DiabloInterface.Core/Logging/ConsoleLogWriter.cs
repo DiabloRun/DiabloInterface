@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Zutatensuppe.DiabloInterface.Logging
+namespace Zutatensuppe.DiabloInterface.Core.Logging
 {
     public class ConsoleLogWriter : ILogWriter
     {

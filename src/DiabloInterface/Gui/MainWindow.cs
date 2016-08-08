@@ -4,12 +4,13 @@ using System.Threading;
 using System.IO;
 using System.Collections.Generic;
 using Zutatensuppe.DiabloInterface.Server;
-using Zutatensuppe.DiabloInterface.Logging;
+using Zutatensuppe.DiabloInterface.Core.Logging;
 using System.Text;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.DiabloInterface.Gui.Forms;
 using Zutatensuppe.DiabloInterface.Autosplit;
 using Zutatensuppe.DiabloInterface.Settings;
+using Zutatensuppe.DiabloInterface.Server.Handlers;
 using Zutatensuppe.D2Reader.Struct.Item;
 
 namespace Zutatensuppe.DiabloInterface.Gui
@@ -17,7 +18,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
     public partial class MainWindow : WsExCompositedForm
     {
 
-        private const string ItemServerPipeName = "DiabloInterfaceItems";
+        private const string ItemServerPipeName = "DiabloInterfacePipe";
         private const string WindowTitleFormat = "Diablo Interface v{0}"; // {0} => Application.ProductVersion
 
         public ApplicationSettings Settings { get; private set; }
@@ -28,7 +29,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
         DebugWindow debugWindow;
 
         D2DataReader dataReader;
-        ItemServer itemServer;
+        DiabloInterfaceServer pipeServer;
 
         public MainWindow()
         {
@@ -47,7 +48,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            itemServer.Stop();
+            pipeServer.Stop();
             base.OnFormClosing(e);
         }
 
@@ -123,7 +124,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             return settings;
         }
 
-        private void initialize()
+        void Initialize()
         {
             try
             {
@@ -134,7 +135,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 // Log error and show error message.
                 Logger.Instance.WriteLine("Unhandled Settings Error:{0}{1}", Environment.NewLine, e.ToString());
                 MessageBox.Show(
-                    "An unhandled exception was caught trying to load the settings."+ Environment.NewLine + 
+                    "An unhandled exception was caught trying to load the settings."+ Environment.NewLine +
                     "Please report the error and include the log found in the log folder.",
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
@@ -148,9 +149,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 dataReader.NewCharacter += new NewCharacterCreatedEventHandler(this.d2Reader_NewCharacter);
                 dataReader.DataRead += new DataReadEventHandler(this.d2Reader_DataRead);
                 dataReader.DataReader += new DataReaderEventHandler(this.d2Reader_DataReader);
-
-                itemServer = new ItemServer(dataReader, ItemServerPipeName);
             }
+
+            InitializePipeServer();
 
             if (dataReaderThread == null)
             {
@@ -165,6 +166,18 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
 
             ApplySettings(Settings);
+        }
+
+        void InitializePipeServer()
+        {
+            if (pipeServer != null)
+                return;
+
+            pipeServer = new DiabloInterfaceServer(ItemServerPipeName);
+            pipeServer.AddRequestHandler(@"version", () =>
+                new VersionRequestHandler(System.Reflection.Assembly.GetEntryAssembly()));
+            pipeServer.AddRequestHandler(@"items", () => new AllItemsRequestHandler(dataReader));
+            pipeServer.AddRequestHandler(@"items/(\w+)", () => new ItemRequestHandler(dataReader));
         }
 
         private void d2Reader_DataReader(object sender, DataReaderEventArgs e)
@@ -435,7 +448,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             LoadConfigFileList();
             LogAutoSplits();
         }
-        
+
         private void LogAutoSplits()
         {
             var logMessage = new StringBuilder();
@@ -477,7 +490,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
-            initialize();
+            Initialize();
         }
 
         private void debugMenuItem_Click(object sender, EventArgs e)
@@ -522,7 +535,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 tsmi.Click += LoadConfigFile;
                 items.Add(tsmi);
             }
-           
+
             loadConfigMenuItem.DropDownItems.AddRange(items.ToArray());
         }
 

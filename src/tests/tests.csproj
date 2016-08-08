@@ -50,6 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="RequestProcessorTest.cs" />
     <Compile Include="StructTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -57,6 +58,10 @@
     <ProjectReference Include="..\D2Reader\D2Reader.csproj">
       <Project>{C5F081D7-FB83-4934-908F-53CE986AB08C}</Project>
       <Name>D2Reader</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiabloInterface.Server\DiabloInterface.Server.csproj">
+      <Project>{59944b50-1a5e-4e02-b9be-0f9b499770df}</Project>
+      <Name>DiabloInterface.Server</Name>
     </ProjectReference>
     <ProjectReference Include="..\DiabloInterface\DiabloInterface.csproj">
       <Project>{25bb3310-9bd7-4234-af7d-9f7fb6870a20}</Project>

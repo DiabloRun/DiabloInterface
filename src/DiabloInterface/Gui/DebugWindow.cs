@@ -92,7 +92,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     {
                         questRows[q.Act - 1, q.Quest - 1].Update(questBits);
                     }
-                    catch (System.NullReferenceException ex)
+                    catch (NullReferenceException)
                     {
                         // System.NullReferenceException
                     }

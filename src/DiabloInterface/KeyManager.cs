@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Linq;
 using WindowsInput;
 using WindowsInput.Native;
+using Zutatensuppe.DiabloInterface.Core.Logging;
 
 namespace Zutatensuppe.DiabloInterface
 {
@@ -30,11 +31,11 @@ namespace Zutatensuppe.DiabloInterface
         {
             if (key == Keys.None)
             {
-                Logging.Logger.Instance.WriteLine("Not triggering `None` hotkey...");
+                Logger.Instance.WriteLine("Not triggering `None` hotkey...");
                 return;
             }
 
-            Logging.Logger.Instance.WriteLine("Triggering hotkey: " + key);
+            Logger.Instance.WriteLine("Triggering hotkey: " + key);
 
             VirtualKeyCode virtualKey = (VirtualKeyCode)(key & Keys.KeyCode);
 
@@ -43,22 +44,22 @@ namespace Zutatensuppe.DiabloInterface
             if (key.HasFlag(Keys.Control))
             {
                 modifiers.Add(VirtualKeyCode.CONTROL);
-                Logging.Logger.Instance.WriteLine("Key has `Control` Flag");
+                Logger.Instance.WriteLine("Key has `Control` Flag");
             }
 
             if (key.HasFlag(Keys.Shift))
             {
                 modifiers.Add(VirtualKeyCode.SHIFT);
-                Logging.Logger.Instance.WriteLine("Key has `Shift` Flag");
+                Logger.Instance.WriteLine("Key has `Shift` Flag");
             }
 
             if (key.HasFlag(Keys.Alt))
             {
                 modifiers.Add(VirtualKeyCode.MENU);
-                Logging.Logger.Instance.WriteLine("Key has `Alt` Flag");
+                Logger.Instance.WriteLine("Key has `Alt` Flag");
             }
 
-            Logging.Logger.Instance.WriteLine("Virtual Key Code: " + virtualKey.ToString());
+            Logger.Instance.WriteLine("Virtual Key Code: " + virtualKey.ToString());
 
             TriggerHotkey(modifiers, virtualKey);
         }
@@ -73,7 +74,7 @@ namespace Zutatensuppe.DiabloInterface
 
             if (key == 0)
             {
-                Logging.Logger.Instance.WriteLine("Not triggering 0 key...");
+                Logger.Instance.WriteLine("Not triggering 0 key...");
                 return;
             }
 
@@ -81,13 +82,13 @@ namespace Zutatensuppe.DiabloInterface
             var invalidModifiers = BuildInvalidModifiers(modifiers);
             foreach (var modifier in invalidModifiers)
             {
-                Logging.Logger.Instance.WriteLine("Keyupping modifier " + modifier.ToString());
+                Logger.Instance.WriteLine("Keyupping modifier " + modifier.ToString());
                 Simulator.Keyboard.KeyUp(modifier);
             }
 
             if (key == VirtualKeyCode.XBUTTON1 || key == VirtualKeyCode.XBUTTON2)
             {
-                // livesplit takes the -2 codes. 
+                // livesplit takes the -2 codes.
                 Simulator.Mouse.XButtonClick((int) key - 2);
             }
             else if (key == VirtualKeyCode.MBUTTON)

@@ -13,6 +13,11 @@
 /src/D2Reader/bin
 /src/D2Reader/obj
 
+/src/DiabloInterface.Core/bin
+/src/DiabloInterface.Core/obj
+/src/DiabloInterface.Server/bin
+/src/DiabloInterface.Server/obj
+
 /src/TestResults
 
 # Recommended ignores for Visual Studio NuGet

@@ -1,4 +1,4 @@
-﻿using Zutatensuppe.DiabloInterface.Logging;
+﻿using Zutatensuppe.DiabloInterface.Core.Logging;
 using System;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -31,7 +31,7 @@ namespace Zutatensuppe.DiabloInterface
                         System.Diagnostics.Process.Start(updateUrl);
                     }
                 }
-                
+
             } else if ( userTriggered )
             {
                 if (MessageBox.Show("No new version is available, but there might be a pre-release. Go to releases overview now?", "No new version available",

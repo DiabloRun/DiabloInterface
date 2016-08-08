@@ -82,8 +82,6 @@ namespace Zutatensuppe.D2Reader
         D2MemoryTable memory;
         D2MemoryTable nextMemoryTable;
 
-
-
         int currentArea;
         byte currentDifficulty;
         bool wasInTitleScreen = false;
@@ -95,7 +93,7 @@ namespace Zutatensuppe.D2Reader
         List<int> inventoryItemIds;
         Dictionary<int, int> itemClassMap;
 
-        // flags for data that d2reader must read. 
+        // flags for data that d2reader must read.
         // outside tool can set this from outside and the data will be returned in the OnDataRead event
         public const int READ_CURRENT_AREA = 1 << 0;
         public const int READ_CURRENT_DIFFICULTY = 1 << 1;
@@ -104,9 +102,9 @@ namespace Zutatensuppe.D2Reader
         public const int READ_EQUIPPED_ITEM_STRINGS = 1 << 4; // bodyLoc => item name + desc
         public const int READ_ITEM_CLASS_MAP = 1 << 5;
 
-        public int RequiredData = 
-            READ_CURRENT_AREA 
-            | READ_CURRENT_DIFFICULTY 
+        public int RequiredData =
+            READ_CURRENT_AREA
+            | READ_CURRENT_DIFFICULTY
             | READ_ITEM_CLASS_MAP
             | READ_QUEST_BUFFERS
             | READ_INVENTORY_ITEM_IDS;
@@ -126,7 +124,7 @@ namespace Zutatensuppe.D2Reader
         {
             this.nextMemoryTable = GetVersionMemoryTable(version);
         }
-    
+
 
         private D2MemoryTable GetVersionMemoryTable(string version)
         {
@@ -160,32 +158,32 @@ namespace Zutatensuppe.D2Reader
                 case "1.14d":
                 default:
 
-                    // some global things: 
+                    // some global things:
 
                     // 0x6C1164: a list of int (addresses), length is probably 22 .. there is a switch case reading from it when casting a spell
 
 
-                    // possible statlist flags? 
+                    // possible statlist flags?
                     // they are referenced directly, for example:
                     // => 0x6CE264 => 00 00 00 00
                     // => 0x6CE268 => 01 00 00 00
                     // => 0x6CE26C => 02 00 00 00
-                    // => 0x6CE270 => 04 00 00 00 
-                    // ... 
+                    // => 0x6CE270 => 04 00 00 00
+                    // ...
 
                     // some global stuff found in asm:
 
-                    // 0x745774 => ??? contains Address to something? 
-                    // 0x7457AC => ??? (some number or const or type id?) 
+                    // 0x745774 => ??? contains Address to something?
+                    // 0x7457AC => ??? (some number or const or type id?)
 
-                    // 0x7A0610 
-                    // 0x7A0650 
-                    // 0x7A0654 
+                    // 0x7A0610
+                    // 0x7A0650
+                    // 0x7A0654
                     // 0x7A2788 => some number?
                     // 0x7A27C0 => some base address to an array
                     // 0x7A2808 => ???
                     // 0x724AC0 => base address for D2CharacterClassSkillIconStruct, length is 7*0x22 (classes: 0-6)
-                    // 0x7A6A70 => contains address of player unit 
+                    // 0x7A6A70 => contains address of player unit
 
                     // 0x7A6F96 => some array ?
                     // 0x7A740A => end address of that array?
@@ -406,8 +404,8 @@ namespace Zutatensuppe.D2Reader
             // Update character data.
             character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
             character.ParseStats(
-                unitReader.GetStatsMap(gameInfo.Player), 
-                unitReader.GetItemStatsMap(gameInfo.Player), 
+                unitReader.GetStatsMap(gameInfo.Player),
+                unitReader.GetItemStatsMap(gameInfo.Player),
                 gameInfo
             );
             
@@ -419,7 +417,7 @@ namespace Zutatensuppe.D2Reader
             // get quest buffers
             questBuffers.Clear();
             if ((RequiredData & READ_QUEST_BUFFERS) > 0)
-            { 
+            {
                 for (int i = 0; i < gameInfo.PlayerData.Quests.Length; i++)
                 {
                     if (gameInfo.PlayerData.Quests[i].IsNull)
@@ -436,7 +434,7 @@ namespace Zutatensuppe.D2Reader
                     questBuffers.Add(i, questBuffer);
                 }
             }
-            
+
             if ((RequiredData & READ_CURRENT_AREA) > 0)
                 currentArea = reader.ReadByte(memory.Address.Area, AddressingMode.Relative);
             else
@@ -490,13 +488,13 @@ namespace Zutatensuppe.D2Reader
         private DataReadEventArgs createDataReadEventArgs()
         {
             return new DataReadEventArgs(
-                character, 
-                itemStrings, 
-                currentArea, 
-                currentDifficulty, 
-                inventoryItemIds, 
-                itemClassMap, 
-                IsAutosplitCharacter(character), 
+                character,
+                itemStrings,
+                currentArea,
+                currentDifficulty,
+                inventoryItemIds,
+                itemClassMap,
+                IsAutosplitCharacter(character),
                 questBuffers
             );
         }
@@ -555,7 +553,7 @@ namespace Zutatensuppe.D2Reader
 
             return character;
         }
-        
+
         protected virtual void OnNewCharacter(NewCharacterEventArgs e)
         {
             NewCharacter?.Invoke(this, e);
