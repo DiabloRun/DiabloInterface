@@ -51,13 +51,14 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>di.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\di.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>App.manifest</ApplicationManifest>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -250,8 +251,7 @@
     <None Include="Resources\Images\Runes\runes-high-contrast.png" />
     <None Include="Resources\Images\Icons\bug.png" />
     <Content Include="di.ico" />
-    <Content Include="Diablo II_101.ico" />
-    <Content Include="Resources\Diablo II_101.ico" />
+    <Content Include="Resources\di.ico" />
     <None Include="Resources\Images\Runes\runes.png" />
     <None Include="Resources\Images\Icons\disk.png" />
     <None Include="Resources\Images\Icons\folder_explore.png" />
