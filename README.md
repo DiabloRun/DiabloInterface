@@ -49,7 +49,7 @@ Put them into same folder as the exe file and rename to settings.conf, or just l
 
 ## Contact
 
-Feel free to join us in Discord in our [DiabloInterface Channel](https://discord.gg/4YFsd).
+Feel free to join us in Discord in our [DiabloInterface Channel](https://discord.gg/CVJvyAz).
 
 ## Troubleshooting
 
