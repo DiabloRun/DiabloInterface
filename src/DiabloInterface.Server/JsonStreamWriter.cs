@@ -4,15 +4,17 @@ using System.Text;
 
 namespace Zutatensuppe.DiabloInterface.Server
 {
-    class JsonStreamWriter
+    internal class JsonStreamWriter
     {
         BinaryWriter writer;
         Encoding encoding;
+        JsonConverter[] converters;
 
-        public JsonStreamWriter(Stream stream, Encoding encoding)
+        public JsonStreamWriter(Stream stream, Encoding encoding, params JsonConverter[] converters)
         {
             writer = new BinaryWriter(stream);
             this.encoding = encoding;
+            this.converters = converters;
         }
 
         void WriteJsonString(string data)
@@ -24,7 +26,7 @@ namespace Zutatensuppe.DiabloInterface.Server
 
         public void WriteJson(object json)
         {
-            string jsonData = JsonConvert.SerializeObject(json);
+            string jsonData = JsonConvert.SerializeObject(json, converters);
             WriteJsonString(jsonData);
         }
 

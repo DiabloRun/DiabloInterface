@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Zutatensuppe.DiabloInterface.Server
 {
-    class JsonStreamReader
+    internal class JsonStreamReader
     {
         BinaryReader reader;
         Encoding encoding;

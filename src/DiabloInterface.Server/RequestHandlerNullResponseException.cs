@@ -2,7 +2,7 @@
 
 namespace Zutatensuppe.DiabloInterface.Server
 {
-    class RequestHandlerNullResponseException : Exception
+    public class RequestHandlerNullResponseException : Exception
     {
         public string Resource { get; }
         public IRequestHandler Handler { get; }

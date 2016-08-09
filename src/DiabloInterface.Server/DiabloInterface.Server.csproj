@@ -46,8 +46,11 @@
   <ItemGroup>
     <Compile Include="DiabloInterfaceServer.cs" />
     <Compile Include="Handlers\AllItemsRequestHandler.cs" />
+    <Compile Include="Handlers\CharacterRequestHandler.cs" />
     <Compile Include="Handlers\ItemRequestHandler.cs" />
+    <Compile Include="Handlers\QuestRequestHandler.cs" />
     <Compile Include="Handlers\VersionRequestHandler.cs" />
+    <Compile Include="RequestHandlerInvalidException.cs" />
     <Compile Include="RequestHandlerNullResponseException.cs" />
     <Compile Include="IRequestHandler.cs" />
     <Compile Include="JsonStreamReader.cs" />

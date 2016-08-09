@@ -176,8 +176,14 @@ namespace Zutatensuppe.DiabloInterface.Gui
             pipeServer = new DiabloInterfaceServer(ItemServerPipeName);
             pipeServer.AddRequestHandler(@"version", () =>
                 new VersionRequestHandler(System.Reflection.Assembly.GetEntryAssembly()));
-            pipeServer.AddRequestHandler(@"items", () => new AllItemsRequestHandler(dataReader));
-            pipeServer.AddRequestHandler(@"items/(\w+)", () => new ItemRequestHandler(dataReader));
+            pipeServer.AddRequestHandler(@"items", () =>
+                new AllItemsRequestHandler(dataReader));
+            pipeServer.AddRequestHandler(@"items/(\w+)", () =>
+                new ItemRequestHandler(dataReader));
+            pipeServer.AddRequestHandler(@"characters/(current|active)", () =>
+                new CharacterRequestHandler(dataReader));
+            pipeServer.AddRequestHandler(@"quests/(\d+)", () =>
+                new QuestRequestHandler(dataReader));
         }
 
         private void d2Reader_DataReader(object sender, DataReaderEventArgs e)

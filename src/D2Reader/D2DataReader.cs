@@ -63,7 +63,6 @@ namespace Zutatensuppe.D2Reader
 
     public class D2DataReader : IDisposable
     {
-
         public event NewCharacterCreatedEventHandler NewCharacter;
 
         public event DataReadEventHandler DataRead;
@@ -85,6 +84,7 @@ namespace Zutatensuppe.D2Reader
         int currentArea;
         byte currentDifficulty;
         bool wasInTitleScreen = false;
+        DateTime activeCharacterTimestamp;
         Character activeCharacter = null;
         Character character = null;
         Dictionary<string, Character> characters;
@@ -109,6 +109,28 @@ namespace Zutatensuppe.D2Reader
             | READ_QUEST_BUFFERS
             | READ_INVENTORY_ITEM_IDS;
 
+        public DateTime ActiveCharacterTimestamp => activeCharacterTimestamp;
+        public Character ActiveCharacter => activeCharacter;
+        public Character CurrentCharacter => character;
+
+        /// <summary>
+        /// Gets the most recent quest status buffer for the current difficulty.
+        /// </summary>
+        /// <returns></returns>
+        public ushort[] CurrentQuestBuffer
+        {
+            get
+            {
+                if (questBuffers == null)
+                    return null;
+
+                ushort[] statusBuffer;
+                if (questBuffers.TryGetValue(currentDifficulty, out statusBuffer))
+                    return statusBuffer;
+                else return null;
+            }
+        }
+
         public D2DataReader( string version)
         {
             this.memory = GetVersionMemoryTable(version);
@@ -124,7 +146,6 @@ namespace Zutatensuppe.D2Reader
         {
             this.nextMemoryTable = GetVersionMemoryTable(version);
         }
-
 
         private D2MemoryTable GetVersionMemoryTable(string version)
         {
@@ -408,7 +429,7 @@ namespace Zutatensuppe.D2Reader
                 unitReader.GetItemStatsMap(gameInfo.Player),
                 gameInfo
             );
-            
+
             if ((RequiredData & READ_ITEM_CLASS_MAP) > 0)
                 itemClassMap = unitReader.GetItemClassMap(gameInfo.Player);
             else
@@ -543,6 +564,7 @@ namespace Zutatensuppe.D2Reader
                 // A brand new character has been started.
                 if (experience == 0 && level == 1)
                 {
+                    activeCharacterTimestamp = DateTime.Now;
                     activeCharacter = character;
                     OnNewCharacter(new NewCharacterEventArgs(character));
                 }

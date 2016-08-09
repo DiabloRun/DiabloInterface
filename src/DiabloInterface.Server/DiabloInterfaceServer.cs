@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Text;
 using System.Threading;
+using Newtonsoft.Json.Converters;
 
 namespace Zutatensuppe.DiabloInterface.Server
 {
@@ -108,7 +109,8 @@ namespace Zutatensuppe.DiabloInterface.Server
 
             // Get response and write.
             var response = HandleRequest(request);
-            var writer = new JsonStreamWriter(pipe, Encoding.UTF8);
+            var writer = new JsonStreamWriter(pipe, Encoding.UTF8,
+                new IsoDateTimeConverter());
             writer.WriteJson(response);
             writer.Flush();
         }
