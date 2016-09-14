@@ -89,7 +89,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 return;
             }
 
-            nameLabel.Text = player.name;
+            nameLabel.Text = player.Name;
             lvlLabel.Text = "LVL: " + player.Level;
             goldLabel.Text = "GOLD: " + (player.Gold + player.GoldStash);
             deathsLabel.Text = "DEATHS: " + player.Deaths;

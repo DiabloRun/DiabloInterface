@@ -114,6 +114,11 @@ namespace Zutatensuppe.D2Reader
         public Character CurrentCharacter => character;
 
         /// <summary>
+        /// Polling rate for data reads.
+        /// </summary>
+        public TimeSpan PollingRate { get; set; } = TimeSpan.FromMilliseconds(500);
+
+        /// <summary>
         /// Gets the most recent quest status buffer for the current difficulty.
         /// </summary>
         /// <returns></returns>
@@ -327,7 +332,7 @@ namespace Zutatensuppe.D2Reader
         {
             while (!disposed)
             {
-                Thread.Sleep(500);
+                Thread.Sleep(PollingRate);
 
                 // Block here until we have a valid reader.
                 if (!checkIfD2Running())
@@ -558,7 +563,7 @@ namespace Zutatensuppe.D2Reader
             if (character == null)
             {
                 character = new Character();
-                character.name = playerName;
+                character.Name = playerName;
                 characters[playerName] = character;
 
                 // A brand new character has been started.

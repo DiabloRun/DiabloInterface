@@ -21,7 +21,7 @@ namespace Zutatensuppe.D2Reader
         const int MIN_RESIST = -100;
         const int BASE_MAX_RESIST = 75;
 
-        public string name;
+        public string Name { get; set; }
 
         public CharacterClass CharClass { get; private set; }
 

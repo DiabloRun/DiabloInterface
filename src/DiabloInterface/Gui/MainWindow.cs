@@ -207,7 +207,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private void d2Reader_NewCharacter(object sender, NewCharacterEventArgs e)
         {
             Reset();
-            Logger.Instance.WriteLine("A new character was created - autosplits OK for {0}", e.Character.name);
+            Logger.Instance.WriteLine("A new character was created - autosplits OK for {0}", e.Character.Name);
         }
         private void Reset()
         {
@@ -403,7 +403,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 Directory.CreateDirectory(Settings.FileFolder);
             }
 
-            File.WriteAllText(Settings.FileFolder + "/name.txt", player.name);
+            File.WriteAllText(Settings.FileFolder + "/name.txt", player.Name);
             File.WriteAllText(Settings.FileFolder + "/level.txt", player.Level.ToString());
             File.WriteAllText(Settings.FileFolder + "/strength.txt", player.Strength.ToString());
             File.WriteAllText(Settings.FileFolder + "/dexterity.txt", player.Dexterity.ToString());
