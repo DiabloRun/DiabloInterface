@@ -4,27 +4,30 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Configuration;
+using System.Reflection;
 
 namespace Zutatensuppe.DiabloInterface.Settings
 {
     class SettingsPersistence
     {
+        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+
         //todo:remove the other filetype options, only Di should be writing these so they should all have the right extension
         const string DefaultSettingsFile = @".\Settings\DefaultSettings.conf";
         public const string FileFilter = "Config Files|*.conf;*.json|All Files|*.*";
 
-        private string appPropertySettingsPath = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
+        readonly string appPropertySettingsPath = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
 
         public string CurrentSettingsFile
         {
             get
             {
-                string filename = Properties.Settings.Default.SettingsFile;
-                Logger.Instance.WriteLine("Current settings file is \"{0}\"", filename);
+                var filename = Properties.Settings.Default.SettingsFile;
+                Logger.Info($"Current settings file is \"{filename}\"");
                 if (string.IsNullOrEmpty(filename))
                 {
                     filename = DefaultSettingsFile;
-                    Logger.Instance.WriteLine("Using Default Config File instead: \"{0}\"", filename);
+                    Logger.Info($"Using Default Config File instead: \"{filename}\"");
                 }
 
                 return filename;
@@ -44,14 +47,14 @@ namespace Zutatensuppe.DiabloInterface.Settings
 
         public ApplicationSettings Load()
         {
-            Logger.Instance.WriteLine("App Property Settings Path is \"{0}\"", appPropertySettingsPath);
+            Logger.Info($"App Property Settings Path is \"{appPropertySettingsPath}\"");
             return Load(CurrentSettingsFile);
         }
 
         public ApplicationSettings Load(string filename)
         {
             ILegacySettingsResolver resolver = new DefaultLegacySettingsResolver();
-            foreach (var factory in ReaderFactoryEnumeration(resolver, filename))
+            foreach (Func<ISettingsReader> factory in ReaderFactoryEnumeration(resolver, filename))
             {
                 ISettingsReader reader = null;
 
@@ -64,7 +67,7 @@ namespace Zutatensuppe.DiabloInterface.Settings
                     ApplicationSettings settings = reader.Read();
                     if (settings != null)
                     {
-                        Logger.Instance.WriteLine("Loaded settings from \"{0}\"", filename);
+                        Logger.Info($"Loaded settings from \"{filename}\"");
 
                         // Update current settings file.
                         if (CurrentSettingsFile != filename)
@@ -83,14 +86,11 @@ namespace Zutatensuppe.DiabloInterface.Settings
                 // Log other IO exceptions.
                 catch (IOException e)
                 {
-                    Logger.Instance.WriteLine("Settings Error: [{0}] {1}", e.GetType().Name, e.Message);
+                    Logger.Warn("Failed to read settings", e);
                 }
                 finally
                 {
-                    if (reader != null)
-                    {
-                        reader.Dispose();
-                    }
+                    reader?.Dispose();
                 }
             }
 
@@ -120,7 +120,7 @@ namespace Zutatensuppe.DiabloInterface.Settings
                 }
             }
 
-            Logger.Instance.WriteLine("Saving settings as \"{0}\".", filename);
+            Logger.Info($"Saving settings as \"{filename}\".");
 
             using (var writer = new JsonSettingsWriter(filename))
             {

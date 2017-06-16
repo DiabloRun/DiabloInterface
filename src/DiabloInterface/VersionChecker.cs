@@ -8,13 +8,12 @@ namespace Zutatensuppe.DiabloInterface
 {
     class VersionChecker
     {
-
         static string ReleasesUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases";
         static string ReleasesLatestUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases/latest";
 
         public static void CheckForUpdate( bool userTriggered )
         {
-            string updateUrl = getUpdateUrl();
+            string updateUrl = GetUpdateUrl();
 
             if (updateUrl != null)
             {
@@ -24,7 +23,7 @@ namespace Zutatensuppe.DiabloInterface
                     Properties.Settings.Default.LastFoundVersion = updateUrl;
                     Properties.Settings.Default.Save();
 
-                    if (MessageBox.Show("A new version of DiabloInterface is available. Go to download page now?", "New version available",
+                    if (MessageBox.Show(@"A new version of DiabloInterface is available. Go to download page now?", @"New version available",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                         MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                     {
@@ -34,7 +33,7 @@ namespace Zutatensuppe.DiabloInterface
 
             } else if ( userTriggered )
             {
-                if (MessageBox.Show("No new version is available, but there might be a pre-release. Go to releases overview now?", "No new version available",
+                if (MessageBox.Show(@"No new version is available, but there might be a pre-release. Go to releases overview now?", @"No new version available",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                     MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                 {
@@ -44,7 +43,7 @@ namespace Zutatensuppe.DiabloInterface
         }
 
 
-        public static string getUpdateUrl()
+        static string GetUpdateUrl()
         {
             Match verMatch = Regex.Match(Application.ProductVersion, @"^(\d+)\.(\d+)\.(\d+)(?:\.PR\.(\d+))?$");
             if (!verMatch.Success)
@@ -78,7 +77,7 @@ namespace Zutatensuppe.DiabloInterface
             }
             catch (WebException e)
             {
-                Logger.Instance.WriteLine("VersionChecker Error: {0}", e.Message);
+                LogServiceLocator.Get(typeof(VersionChecker)).Error("Failed to retrieve latest release from Url", e);
                 return null;
             }
 
@@ -125,7 +124,6 @@ namespace Zutatensuppe.DiabloInterface
             {
                 return null;
             }
-
         }
     }
 }

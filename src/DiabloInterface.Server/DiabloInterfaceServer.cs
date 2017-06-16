@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json.Converters;
@@ -11,18 +12,19 @@ namespace Zutatensuppe.DiabloInterface.Server
 {
     public class DiabloInterfaceServer
     {
-        string pipeName;
+        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+
+        readonly string pipeName;
         Thread listenThread;
 
-        Dictionary<string, Func<IRequestHandler>> requestHandlers = new Dictionary<string, Func<IRequestHandler>>();
+        readonly Dictionary<string, Func<IRequestHandler>> requestHandlers = new Dictionary<string, Func<IRequestHandler>>();
         public IReadOnlyDictionary<string, Func<IRequestHandler>> RequestHandlers => requestHandlers;
 
         public DiabloInterfaceServer(string pipeName)
         {
             this.pipeName = pipeName;
 
-            listenThread = new Thread(new ThreadStart(ServerListen));
-            listenThread.IsBackground = true;
+            listenThread = new Thread(ServerListen) {IsBackground = true};
             listenThread.Start();
         }
 
@@ -94,9 +96,8 @@ namespace Zutatensuppe.DiabloInterface.Server
                 }
                 catch (IOException e)
                 {
-                    Logger.Instance.WriteLine("ItemServer Error: {0}", e.Message);
-
-                    if (pipe != null) pipe.Close();
+                    Logger.Error("Item Server Failure", e);
+                    pipe?.Close();
                 }
             }
         }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Linq;
+using System.Reflection;
 using WindowsInput;
 using WindowsInput.Native;
 using Zutatensuppe.DiabloInterface.Core.Logging;
@@ -10,8 +11,10 @@ namespace Zutatensuppe.DiabloInterface
     /// <summary>
     /// ugly with way too much hardcoding. but functional so far
     /// </summary>
-    class KeyManager
+    internal static class KeyManager
     {
+        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+
         static IInputSimulator simulatorInstance;
         static IInputSimulator Simulator
         {
@@ -31,40 +34,40 @@ namespace Zutatensuppe.DiabloInterface
         {
             if (key == Keys.None)
             {
-                Logger.Instance.WriteLine("Not triggering `None` hotkey...");
+                Logger.Debug("Not triggering `None` hotkey...");
                 return;
             }
 
-            Logger.Instance.WriteLine("Triggering hotkey: " + key);
+            Logger.Info("Triggering hotkey: " + key);
 
-            VirtualKeyCode virtualKey = (VirtualKeyCode)(key & Keys.KeyCode);
+            var virtualKey = (VirtualKeyCode)(key & Keys.KeyCode);
 
             // Construct modifier list.
-            List<VirtualKeyCode> modifiers = new List<VirtualKeyCode>();
+            var modifiers = new List<VirtualKeyCode>();
             if (key.HasFlag(Keys.Control))
             {
                 modifiers.Add(VirtualKeyCode.CONTROL);
-                Logger.Instance.WriteLine("Key has `Control` Flag");
+                Logger.Debug("Key has `Control` Flag");
             }
 
             if (key.HasFlag(Keys.Shift))
             {
                 modifiers.Add(VirtualKeyCode.SHIFT);
-                Logger.Instance.WriteLine("Key has `Shift` Flag");
+                Logger.Debug("Key has `Shift` Flag");
             }
 
             if (key.HasFlag(Keys.Alt))
             {
                 modifiers.Add(VirtualKeyCode.MENU);
-                Logger.Instance.WriteLine("Key has `Alt` Flag");
+                Logger.Debug("Key has `Alt` Flag");
             }
 
-            Logger.Instance.WriteLine("Virtual Key Code: " + virtualKey.ToString());
+            Logger.Debug($"Virtual Key Code: {virtualKey}");
 
             TriggerHotkey(modifiers, virtualKey);
         }
 
-        public static void TriggerHotkey(IEnumerable<VirtualKeyCode> modifiers, VirtualKeyCode key)
+        static void TriggerHotkey(IEnumerable<VirtualKeyCode> modifiers, VirtualKeyCode key)
         {
 
             if (modifiers == null)
@@ -74,15 +77,15 @@ namespace Zutatensuppe.DiabloInterface
 
             if (key == 0)
             {
-                Logger.Instance.WriteLine("Not triggering 0 key...");
+                Logger.Debug("Not triggering 0 key...");
                 return;
             }
 
             // Unpress untanted modifier keys, the user have to repress them.
-            var invalidModifiers = BuildInvalidModifiers(modifiers);
+            IEnumerable<VirtualKeyCode> invalidModifiers = BuildInvalidModifiers(modifiers);
             foreach (var modifier in invalidModifiers)
             {
-                Logger.Instance.WriteLine("Keyupping modifier " + modifier.ToString());
+                Logger.Debug("Keyupping modifier " + modifier);
                 Simulator.Keyboard.KeyUp(modifier);
             }
 
@@ -105,14 +108,14 @@ namespace Zutatensuppe.DiabloInterface
 
         static IEnumerable<VirtualKeyCode> BuildInvalidModifiers(IEnumerable<VirtualKeyCode> keys)
         {
-            List<VirtualKeyCode> modifiers = new List<VirtualKeyCode>() {
+            var modifiers = new List<VirtualKeyCode>() {
                 VirtualKeyCode.CONTROL,
                 VirtualKeyCode.MENU,
                 VirtualKeyCode.SHIFT,
             };
 
-            List<VirtualKeyCode> invalidModifiers = new List<VirtualKeyCode>();
-            foreach (VirtualKeyCode modifier in modifiers)
+            var invalidModifiers = new List<VirtualKeyCode>();
+            foreach (var modifier in modifiers)
             {
                 if (keys.Contains(modifier))
                     continue;

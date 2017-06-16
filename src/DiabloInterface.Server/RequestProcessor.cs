@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 
@@ -8,9 +9,11 @@ namespace Zutatensuppe.DiabloInterface.Server
 {
     public class RequestProcessor
     {
+        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+
         public QueryResponse HandleRequest(IReadOnlyDictionary<string, Func<IRequestHandler>> handlers, QueryRequest request)
         {
-            if (request == null || string.IsNullOrEmpty(request.Resource))
+            if (string.IsNullOrEmpty(request?.Resource))
             {
                 return new QueryResponse()
                 {
@@ -30,7 +33,7 @@ namespace Zutatensuppe.DiabloInterface.Server
                                     Match = match
                                 }).FirstOrDefault();
 
-            if (resourceData == null || resourceData.Handler == null)
+            if (resourceData?.Handler == null)
             {
                 return new QueryResponse()
                 {
@@ -42,8 +45,8 @@ namespace Zutatensuppe.DiabloInterface.Server
 
             try
             {
-                List<string> parameters = new List<string>();
-                for (int i = 1; i < resourceData.Match.Groups.Count; ++i)
+                var parameters = new List<string>();
+                for (var i = 1; i < resourceData.Match.Groups.Count; ++i)
                     parameters.Add(resourceData.Match.Groups[i].Value);
 
                 var response = resourceData.Handler.HandleRequest(request, parameters);
@@ -55,7 +58,7 @@ namespace Zutatensuppe.DiabloInterface.Server
             }
             catch (Exception e)
             {
-                Logger.Instance.WriteLine($"Failed to process request [{resource}]{Environment.NewLine}{e}");
+                Logger.Error($"Failed to process request [{resource}]", e);
                 return new QueryResponse()
                 {
                     Resource = resource,

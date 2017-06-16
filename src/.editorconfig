@@ -3,6 +3,10 @@ root = true
 [*]
 end_of_line = crlf
 
+[*.config]
+indent_style = space
+indent_size = 4
+
 [*.cs]
 charset = utf-8
 indent_style = space

@@ -5,8 +5,10 @@ using Zutatensuppe.D2Reader.Struct.Stat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Text;
+using Zutatensuppe.DiabloInterface.Core.Logging;
 
 namespace Zutatensuppe.D2Reader
 {
@@ -63,6 +65,8 @@ namespace Zutatensuppe.D2Reader
 
     public class D2DataReader : IDisposable
     {
+        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+
         public event NewCharacterCreatedEventHandler NewCharacter;
 
         public event DataReadEventHandler DataRead;
@@ -287,6 +291,8 @@ namespace Zutatensuppe.D2Reader
             // If a reader already exists but the process is closed, dispose of the reader.
             if (reader != null && !reader.IsValid)
             {
+                Logger.Warn("Disposing old Diablo II process.");
+
                 reader.Dispose();
                 reader = null;
             }
@@ -305,6 +311,7 @@ namespace Zutatensuppe.D2Reader
                 //int idx = D2StatArray.GetArrayIndexByStatCostClassId(reader, new IntPtr(0x49C6048), 0x00070000);
                 //idx = D2StatArray.GetArrayIndexByStatCostClassId(reader, new IntPtr(0x06FF5024), 0x00ac0000);
 
+                Logger.Info("Found a Diablo II process.");
 
                 // Process opened successfully.
                 return true;

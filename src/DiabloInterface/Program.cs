@@ -16,6 +16,8 @@ namespace Zutatensuppe.DiabloInterface
             if (ShouldQuitWithoutProperDotNetFramework())
                 return;
 
+            InitializeLogger();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainWindow());
@@ -44,11 +46,25 @@ namespace Zutatensuppe.DiabloInterface
         {
             MessageBox.Show(e.ExceptionObject.ToString(), @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-            if (Logger.Instance != null)
-            {
-                Logger.Instance.WriteLine($"[ERROR]: Unhandled Exception: {e.ExceptionObject}");
-                Logger.Instance.WriteLine("Terminating with error.");
-            }
+            var logger = LogServiceLocator.Get(typeof(Program));
+            logger?.Fatal("Unhandled Exception", (Exception)e.ExceptionObject);
+        }
+
+        static void InitializeLogger()
+        {
+            Log4NetLogger.Initialize();
+
+            LogApplicationInfo();
+        }
+
+        static void LogApplicationInfo()
+        {
+            var logger = LogServiceLocator.Get(typeof(Program));
+            logger.Info($"Diablo Interface Version {Application.ProductVersion}");
+            logger.Info($"Operating system: {Environment.OSVersion}");
+
+            var versionName = NetFrameworkVersionExtension.FriendlyName(NewestFrameworkVersion);
+            logger.Info($".NET Framework: {versionName}");
         }
     }
 }

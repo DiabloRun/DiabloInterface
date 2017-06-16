@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Threading;
 using System.IO;
 using System.Collections.Generic;
+using System.Reflection;
 using Zutatensuppe.DiabloInterface.Server;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using System.Text;
@@ -17,9 +18,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
 {
     public partial class MainWindow : WsExCompositedForm
     {
+        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private const string ItemServerPipeName = "DiabloInterfacePipe";
-        private const string WindowTitleFormat = "Diablo Interface v{0}"; // {0} => Application.ProductVersion
+        const string ItemServerPipeName = "DiabloInterfacePipe";
+        const string WindowTitleFormat = "Diablo Interface v{0}"; // {0} => Application.ProductVersion
 
         public ApplicationSettings Settings { get; private set; }
 
@@ -36,9 +38,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // We want to dispose our handles once the window is disposed.
             Disposed += OnWindowDisposed;
 
-            InitializeLogger();
-            WriteLogHeader();
-
             InitializeComponent();
 
             // Display current version along with the application name.
@@ -50,30 +49,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
         {
             pipeServer.Stop();
             base.OnFormClosing(e);
-        }
-
-        private void InitializeLogger()
-        {
-            List<ILogWriter> logWriters = new List<ILogWriter>();
-
-            // Attatch log file writer.
-            string logFile = Path.Combine("Logs", FileLogWriter.TimedLogFilename());
-            logWriters.Add(new FileLogWriter(logFile));
-
-#if DEBUG
-            // Use a console logger on debug versions.
-            logWriters.Add(new ConsoleLogWriter());
-#endif
-
-            // Create and use the new logger.
-            Logger.Instance = new Logger(logWriters);
-        }
-
-        private void WriteLogHeader()
-        {
-            Logger.Instance.WriteLineRaw("Diablo Interface Version {0}", Application.ProductVersion);
-            Logger.Instance.WriteLineRaw("Operating system: {0}", Environment.OSVersion);
-            Logger.Instance.WriteLineRaw(new string('-', 40));
         }
 
         private void OnWindowDisposed(object sender, EventArgs e)
@@ -93,7 +68,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
             if (settings == null)
             {
-                Logger.Instance.WriteLine("Loaded default settings.");
+                Logger.Info("Loaded default settings.");
 
                 // Return default settings.
                 return new ApplicationSettings();
@@ -115,7 +90,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
             if (settings == null)
             {
-                Logger.Instance.WriteLine("Loaded default settings.");
+                Logger.Info("Loaded default settings.");
 
                 // Return default settings.
                 return new ApplicationSettings();
@@ -133,13 +108,12 @@ namespace Zutatensuppe.DiabloInterface.Gui
             catch (Exception e)
             {
                 // Log error and show error message.
-                Logger.Instance.WriteLine("Unhandled Settings Error:{0}{1}", Environment.NewLine, e.ToString());
+                Logger.Error("Unhandled Settings Error", e);
                 MessageBox.Show(
-                    "An unhandled exception was caught trying to load the settings."+ Environment.NewLine +
-                    "Please report the error and include the log found in the log folder.",
-                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    @"An unhandled exception was caught trying to load the settings." + Environment.NewLine +
+                    @"Please report the error and include the log found in the log folder.",
+                    @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                // Rethrow current exception.
                 throw;
             }
 
@@ -186,15 +160,15 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 new QuestRequestHandler(dataReader));
         }
 
-        private void d2Reader_DataReader(object sender, DataReaderEventArgs e)
+        void d2Reader_DataReader(object sender, DataReaderEventArgs e)
         {
-            Logger.Instance.WriteLine("Generic Data reader event: "+ e.type.ToString());
+            Logger.Info("Generic Data reader event: "+ e.type.ToString());
         }
 
-        private void d2Reader_DataRead(object sender, DataReadEventArgs e)
+        void d2Reader_DataRead(object sender, DataReadEventArgs e)
         {
             this.UpdateLabels(e.Character, e.ItemClassMap);
-            this.writeFiles(e.Character);
+            this.WriteFiles(e.Character);
 
             UpdateDebugWindow(e.QuestBuffers, e.ItemStrings);
 
@@ -204,12 +178,14 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 UpdateAutoSplits(e.QuestBuffers, e.CurrentArea, e.CurrentDifficulty, e.ItemIds, e.Character);
             }
         }
-        private void d2Reader_NewCharacter(object sender, NewCharacterEventArgs e)
+
+        void d2Reader_NewCharacter(object sender, NewCharacterEventArgs e)
         {
             Reset();
-            Logger.Instance.WriteLine("A new character was created - autosplits OK for {0}", e.Character.Name);
+            Logger.Info($"A new character was created - autosplits OK for {e.Character.Name}");
         }
-        private void Reset()
+
+        void Reset()
         {
             foreach (AutoSplit autosplit in Settings.Autosplits)
             {
@@ -348,7 +324,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
         }
 
-        private void CompleteAutoSplit(AutoSplit autosplit, Character character)
+        void CompleteAutoSplit(AutoSplit autosplit, Character character)
         {
             // Autosplit already reached.
             if (autosplit.IsReached)
@@ -357,14 +333,13 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
 
             autosplit.IsReached = true;
-            this.triggerAutosplit(character);
+            TriggerAutosplit(character);
 
-            int autoSplitIndex = this.Settings.Autosplits.IndexOf(autosplit);
-            Logger.Instance.WriteLine("AutoSplit: #{0} ({1}, {2}) Reached.",
-                autoSplitIndex, autosplit.Name, autosplit.Difficulty);
+            var autoSplitIndex = this.Settings.Autosplits.IndexOf(autosplit);
+            Logger.Info($"AutoSplit: #{autoSplitIndex} ({autosplit.Name}, {autosplit.Difficulty}) Reached.");
         }
 
-        private void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
+        void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
         {
             if (InvokeRequired)
             {
@@ -381,7 +356,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
         }
 
-        private void triggerAutosplit(Character player)
+        void TriggerAutosplit(Character player)
         {
             if (Settings.DoAutosplit && Settings.AutosplitHotkey != Keys.None)
             {
@@ -389,9 +364,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
         }
 
-        private void writeFiles(Character player)
+        void WriteFiles(Character player)
         {
-
             // todo: only write files if content changed
             if (!Settings.CreateFiles)
             {
@@ -419,7 +393,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             File.WriteAllText(Settings.FileFolder + "/frw.txt", player.FasterRunWalk.ToString());
             File.WriteAllText(Settings.FileFolder + "/fhr.txt", player.FasterHitRecovery.ToString());
             File.WriteAllText(Settings.FileFolder + "/ias.txt", player.IncreasedAttackSpeed.ToString());
-
         }
 
         private void ApplySettings(ApplicationSettings settings)
@@ -455,22 +428,21 @@ namespace Zutatensuppe.DiabloInterface.Gui
             LogAutoSplits();
         }
 
-        private void LogAutoSplits()
+        void LogAutoSplits()
         {
             var logMessage = new StringBuilder();
             logMessage.Append("Configured autosplits:");
 
-            for (int i = 0; i < Settings.Autosplits.Count; ++i)
+            for (var i = 0; i < Settings.Autosplits.Count; ++i)
             {
                 var split = Settings.Autosplits[i];
 
                 logMessage.AppendLine();
                 logMessage.Append("  ");
-                logMessage.AppendFormat("#{0} [{2}, {3}, {4}] \"{1}\"", i,
-                    split.Name, split.Type, split.Value, split.Difficulty);
+                logMessage.Append($"#{i} [{split.Type}, {split.Value}, {split.Difficulty}] \"{split.Name}\"");
             }
 
-            Logger.Instance.WriteLine(logMessage.ToString());
+            Logger.Info(logMessage.ToString());
         }
 
         private void exitMenuItem_Click(object sender, EventArgs e)
