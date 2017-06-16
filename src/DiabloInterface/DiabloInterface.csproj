@@ -84,6 +84,9 @@
     <Compile Include="Autosplit\AutoSplit.cs" />
     <Compile Include="Autosplit\AutoSplitFactory.cs" />
     <Compile Include="Autosplit\D2Level.cs" />
+    <Compile Include="Framework\NetFrameworkVersion.cs" />
+    <Compile Include="Framework\NetFrameworkVersionComparator.cs" />
+    <Compile Include="Framework\NetFrameworkVersionExtension.cs" />
     <Compile Include="Gui\Controls\AbstractLayout.cs">
       <SubType>UserControl</SubType>
     </Compile>
