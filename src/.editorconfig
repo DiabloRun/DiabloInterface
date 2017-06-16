@@ -1,11 +1,18 @@
 root = true
 
+[*]
+end_of_line = crlf
+
 [*.cs]
 charset = utf-8
 indent_style = space
 indent_size = 4
-tab_width = 4
 trim_trailing_whitespace = true
+insert_final_newline = true
 
 [*.Designer.cs]
 trim_trailing_whitespace = false
+insert_final_newline = false
+
+[*.xml]
+indent_style = space
