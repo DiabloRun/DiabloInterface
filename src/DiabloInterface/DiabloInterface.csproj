@@ -243,7 +243,6 @@
   <ItemGroup>
     <None Include="Resources\Images\Runes\runes-high-contrast.png" />
     <None Include="Resources\Images\Icons\bug.png" />
-    <Content Include="di.ico" />
     <Content Include="Resources\di.ico" />
     <None Include="Resources\Images\Runes\runes.png" />
     <None Include="Resources\Images\Icons\disk.png" />
