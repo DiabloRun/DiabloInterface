@@ -47,8 +47,6 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             if (character == null)
                 return null;
 
-            Console.WriteLine("Character name: ", character.Name);
-
             return new
             {
                 IsCurrentCharacter = character == dataReader.CurrentCharacter,

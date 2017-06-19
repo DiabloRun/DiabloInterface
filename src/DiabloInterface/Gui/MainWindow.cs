@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -19,8 +20,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
     public partial class MainWindow : WsExCompositedForm
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
-
-        const string ItemServerPipeName = "DiabloInterfacePipe";
 
         ApplicationSettings Settings { get; set; }
 
@@ -58,82 +57,63 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         void Initialize()
         {
-            try
-            {
-                Settings = LoadSettings();
-            }
-            catch (Exception e)
-            {
-                // Log error and show error message.
-                Logger.Error("Unhandled Settings Error", e);
-                MessageBox.Show(
-                    @"An unhandled exception was caught trying to load the settings." + Environment.NewLine +
-                    @"Please report the error and include the log found in the log folder.",
-                    @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Settings = LoadPreviousSettings();
 
-                throw;
-            }
-
-            if (dataReader == null)
-            {
-                dataReader = new D2DataReader(Settings.D2Version);
-                dataReader.NewCharacter += dataReader_NewCharacter;
-                dataReader.DataRead += dataReader_DataRead;
-                dataReader.DataReader += dataReader_DataReader;
-            }
-
+            InitializeDataReader();
             InitializePipeServer();
-
-            if (dataReaderThread == null)
-            {
-                dataReaderThread = new Thread(dataReader.readDataThreadFunc) {IsBackground = true};
-                dataReaderThread.Start();
-            }
-
-            if (Settings.CheckUpdates)
-            {
-                VersionChecker.CheckForUpdate(false);
-            }
+            InitializeDataReaderThread();
+            CheckForUpdates();
 
             ApplySettings(Settings);
         }
 
-        ApplicationSettings LoadSettings()
+        static ApplicationSettings LoadPreviousSettings()
         {
-            var persistence = new SettingsPersistence();
-            var settings = persistence.Load();
-
-            if (settings == null)
+            try
             {
-                Logger.Info("Loaded default settings.");
-
-                // Return default settings.
-                return new ApplicationSettings();
+                return LoadPersistedSettings() ?? LoadDefaultSettings();
             }
+            catch (Exception e)
+            {
+                Logger.Error("Failed to load previous settings.", e);
+                MessageBox.Show($@"Failed to load settings.{Environment.NewLine}See the error log for more details.",
+                    @"Settings Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-            return settings;
+                throw;
+            }
         }
 
-        ApplicationSettings LoadSettings(string fileName)
+        static ApplicationSettings LoadPersistedSettings(string fileName = null)
         {
             var persistence = new SettingsPersistence();
+            return string.IsNullOrWhiteSpace(fileName)
+                ? persistence.Load()
+                : persistence.Load(fileName);
+        }
 
-            ApplicationSettings settings;
+        static ApplicationSettings LoadDefaultSettings()
+        {
+            Logger.Info("No previous settings detected. Loading default.");
+            return ApplicationSettings.Default;
+        }
 
-            if (fileName == String.Empty)
-                settings = persistence.Load();
-            else
-                settings = persistence.Load(fileName);
+        void InitializeDataReader()
+        {
+            if (dataReader != null) return;
 
-            if (settings == null)
-            {
-                Logger.Info("Loaded default settings.");
+            dataReader = new D2DataReader(Settings.D2Version);
+            dataReader.NewCharacter += dataReader_NewCharacter;
+            dataReader.DataRead += dataReader_DataRead;
+            dataReader.DataReader += dataReader_DataReader;
+        }
 
-                // Return default settings.
-                return new ApplicationSettings();
-            }
+        void InitializeDataReaderThread()
+        {
+            if (dataReaderThread != null) return;
 
-            return settings;
+            dataReaderThread = new Thread(dataReader.readDataThreadFunc) { IsBackground = true };
+            dataReaderThread.Start();
         }
 
         void InitializePipeServer()
@@ -141,7 +121,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             if (pipeServer != null)
                 return;
 
-            pipeServer = new DiabloInterfaceServer(ItemServerPipeName);
+            const string pipeName = "DiabloInterfacePipe";
+            pipeServer = new DiabloInterfaceServer(pipeName);
             pipeServer.AddRequestHandler(@"version", () =>
                 new VersionRequestHandler(Assembly.GetEntryAssembly()));
             pipeServer.AddRequestHandler(@"items", () =>
@@ -152,6 +133,14 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 new CharacterRequestHandler(dataReader));
             pipeServer.AddRequestHandler(@"quests/(\d+)", () =>
                 new QuestRequestHandler(dataReader));
+        }
+
+        void CheckForUpdates()
+        {
+            if (Settings.CheckUpdates)
+            {
+                VersionChecker.CheckForUpdate(false);
+            }
         }
 
         void ApplySettings(ApplicationSettings settings)
@@ -167,6 +156,14 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
             dataReader.SetD2Version(Settings.D2Version);
 
+            UpdateInterfaceLayout();
+            UpdateAutoSplitsForDebugView();
+            LoadSettingsFileList();
+            LogAutoSplits();
+        }
+
+        void UpdateInterfaceLayout()
+        {
             if (Settings.DisplayLayoutHorizontal)
             {
                 verticalLayout2.MakeInactive();
@@ -177,47 +174,81 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 horizontalLayout1.MakeInactive();
                 verticalLayout2.MakeActive(Settings);
             }
+        }
 
-            // Update debug window.
+        void UpdateAutoSplitsForDebugView()
+        {
             if (debugWindow != null && debugWindow.Visible)
             {
                 debugWindow.UpdateAutosplits(Settings.Autosplits);
             }
-
-            LoadConfigFileList();
-            LogAutoSplits();
         }
 
-        void LoadConfigFileList()
+        void LoadSettingsFileList()
         {
             loadConfigMenuItem.DropDownItems.Clear();
 
-            List<ToolStripItem> items = new List<ToolStripItem>();
-            string settingsFolder = @".\Settings";
+            DirectoryInfo settingsDirectory = GetSettingsDirectory();
+            FileInfo[] files = settingsDirectory.GetFiles("*.conf", SearchOption.AllDirectories);
 
-            if (!Directory.Exists(settingsFolder))
-            {
-                Directory.CreateDirectory(settingsFolder);
-            }
-            DirectoryInfo di = new DirectoryInfo(settingsFolder);
-            foreach (FileInfo fi in di.GetFiles("*.conf", SearchOption.AllDirectories))
-            {
-                ToolStripMenuItem tsmi = new ToolStripMenuItem();
-                tsmi.Text = fi.Name.Substring(0, fi.Name.LastIndexOf('.'));
-                tsmi.Tag = fi.FullName;
-                tsmi.Click += LoadConfigFile;
-                items.Add(tsmi);
-            }
+            ToolStripItem[] items = (from fileInfo in files
+                select CreateSettingsToolStripMenuItem(fileInfo) as ToolStripItem).ToArray();
 
-            loadConfigMenuItem.DropDownItems.AddRange(items.ToArray());
+            loadConfigMenuItem.DropDownItems.AddRange(items);
+        }
+
+        ToolStripMenuItem CreateSettingsToolStripMenuItem(FileInfo fileInfo)
+        {
+            var item = new ToolStripMenuItem
+            {
+                Text = fileInfo.Name.Substring(0, fileInfo.Name.LastIndexOf('.')),
+                Tag = fileInfo.FullName
+            };
+            item.Click += LoadConfigFile;
+
+            return item;
+        }
+
+        static DirectoryInfo GetSettingsDirectory()
+        {
+            var directory = new DirectoryInfo(@".\Settings");
+            if (directory.Exists) return directory;
+
+            Logger.Info($"Creating settings directory at: {directory.FullName}");
+            directory.Create();
+
+            return directory;
         }
 
         void LoadConfigFile(object sender, EventArgs e)
         {
             var fileName = ((ToolStripMenuItem)sender).Tag.ToString();
-            var settings = LoadSettings(fileName);
-            Properties.Settings.Default.SettingsFile = fileName;
-            ApplySettings(settings);
+
+            ApplicationSettings settings;
+            if (TryLoadSettingsFromFile(fileName, out settings))
+            {
+                Properties.Settings.Default.SettingsFile = fileName;
+                ApplySettings(settings);
+            }
+        }
+
+        static bool TryLoadSettingsFromFile(string fileName, out ApplicationSettings settings)
+        {
+            try
+            {
+                settings = LoadPersistedSettings(fileName);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Failed to load settings from file: {fileName}.", e);
+                MessageBox.Show($@"Failed to load settings.{Environment.NewLine}See the error log for more details.",
+                    @"Settings Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            settings = null;
+            return false;
         }
 
         void LogAutoSplits()

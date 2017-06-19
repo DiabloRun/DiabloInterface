@@ -12,7 +12,6 @@ namespace Zutatensuppe.DiabloInterface.Settings
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        //todo:remove the other filetype options, only Di should be writing these so they should all have the right extension
         const string DefaultSettingsFile = @".\Settings\DefaultSettings.conf";
         public const string FileFilter = "Config Files|*.conf;*.json|All Files|*.*";
 
@@ -106,7 +105,7 @@ namespace Zutatensuppe.DiabloInterface.Settings
         public void Save(ApplicationSettings settings, string filename)
         {
             // check if directory exists first
-            string directory = new FileInfo(filename).Directory.FullName;
+            string directory = new FileInfo(filename).Directory?.FullName;
             if (!Directory.Exists(directory))
             {
                 SaveFileDialog d = new SaveFileDialog();

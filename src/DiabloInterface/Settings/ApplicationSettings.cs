@@ -1,12 +1,14 @@
-﻿using Zutatensuppe.DiabloInterface.Autosplit;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Zutatensuppe.DiabloInterface.Autosplit;
 
 namespace Zutatensuppe.DiabloInterface.Settings
 {
     public class ApplicationSettings
     {
+        public static ApplicationSettings Default => new ApplicationSettings();
+
         public string FileFolder { get; set; } = "Files";
         public string FontName { get; set; } = "Courier New";
         public string D2Version { get; set; }
