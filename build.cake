@@ -1,4 +1,4 @@
-#addin nuget:?package=Cake.Compression&version=0.86.0
+#addin nuget:?package=Cake.Compression&version=0.1.1
 #addin nuget:?package=SharpZipLib&version=0.86.0
 
 var target = Argument("target", "Default");
