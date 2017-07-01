@@ -25,19 +25,16 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
 
     public class ItemRequestHandler : IRequestHandler
     {
-        D2DataReader dataReader;
+        readonly D2DataReader dataReader;
 
         public ItemRequestHandler(D2DataReader dataReader)
         {
-            if (dataReader == null)
-                throw new ArgumentNullException(nameof(dataReader));
-
-            this.dataReader = dataReader;
+            this.dataReader = dataReader ?? throw new ArgumentNullException(nameof(dataReader));
         }
 
         public QueryResponse HandleRequest(QueryRequest request, IList<string> arguments)
         {
-            var equipmentLocations = GetItemLocations(arguments[0]);
+            List<BodyLocation> equipmentLocations = GetItemLocations(arguments[0]);
             if (equipmentLocations.Count == 0)
                 return BuildResponse(new ItemResponsePayload() { IsValidSlot = false });
 
@@ -59,7 +56,7 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             return BuildResponse(responsePayload);
         }
 
-        QueryResponse BuildResponse(ItemResponsePayload payload)
+        static QueryResponse BuildResponse(ItemResponsePayload payload)
         {
             return new QueryResponse()
             {
@@ -68,9 +65,9 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             };
         }
 
-        List<BodyLocation> GetItemLocations(string itemSlot)
+        static List<BodyLocation> GetItemLocations(string itemSlot)
         {
-            List<BodyLocation> locations = new List<BodyLocation>();
+            var locations = new List<BodyLocation>();
             if (string.IsNullOrEmpty(itemSlot))
                 return locations;
 
@@ -124,7 +121,6 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
                 case "shield2":
                     locations.Add(BodyLocation.SecondaryRight);
                     break;
-                default: break;
             }
 
             return locations;

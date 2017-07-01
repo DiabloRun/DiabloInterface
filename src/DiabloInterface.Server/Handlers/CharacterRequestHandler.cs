@@ -8,7 +8,7 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
     {
         const string InvalidMessage = "Character request handler must accept one argument set to either 'current' or 'active'";
 
-        D2DataReader dataReader;
+        readonly D2DataReader dataReader;
 
         public CharacterRequestHandler(D2DataReader dataReader)
         {
@@ -20,7 +20,7 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             if (arguments.Count == 0)
                 throw new RequestHandlerInvalidException(InvalidMessage);
 
-            object payload = null;
+            object payload;
             switch (arguments[0].ToLowerInvariant())
             {
                 case "active":
@@ -50,16 +50,16 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             return new
             {
                 IsCurrentCharacter = character == dataReader.CurrentCharacter,
-                Name = character.Name,
+                character.Name,
                 Created = timestamp,
-                Level = character.Level,
-                Experience = character.Experience,
+                character.Level,
+                character.Experience,
                 Stats = new
                 {
-                    Strength = character.Strength,
-                    Dexterity = character.Dexterity,
-                    Vitality = character.Vitality,
-                    Energy = character.Energy
+                    character.Strength,
+                    character.Dexterity,
+                    character.Vitality,
+                    character.Energy
                 },
                 Resistances = new
                 {
@@ -68,8 +68,8 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
                     Lightning = character.LightningResist,
                     Poison = character.PoisonResist
                 },
-                Gold = character.Gold,
-                GoldStash = character.GoldStash
+                character.Gold,
+                character.GoldStash
             };
         }
     }

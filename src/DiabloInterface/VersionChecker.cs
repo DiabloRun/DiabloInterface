@@ -6,12 +6,12 @@ using System.Windows.Forms;
 
 namespace Zutatensuppe.DiabloInterface
 {
-    class VersionChecker
+    internal class VersionChecker
     {
-        static string ReleasesUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases";
-        static string ReleasesLatestUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases/latest";
+        const string ReleasesUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases";
+        const string ReleasesLatestUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases/latest";
 
-        public static void CheckForUpdate( bool userTriggered )
+        public static void CheckForUpdate(bool userTriggered)
         {
             string updateUrl = GetUpdateUrl();
 
@@ -31,7 +31,8 @@ namespace Zutatensuppe.DiabloInterface
                     }
                 }
 
-            } else if ( userTriggered )
+            }
+            else if (userTriggered)
             {
                 if (MessageBox.Show(@"No new version is available, but there might be a pre-release. Go to releases overview now?", @"No new version available",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question,
@@ -62,7 +63,7 @@ namespace Zutatensuppe.DiabloInterface
                 pre = 0;
             }
 
-            string location = null;
+            string location;
 
             try
             {
