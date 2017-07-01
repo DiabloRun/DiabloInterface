@@ -84,6 +84,9 @@
     <Compile Include="Autosplit\AutoSplit.cs" />
     <Compile Include="Autosplit\AutoSplitFactory.cs" />
     <Compile Include="Autosplit\D2Level.cs" />
+    <Compile Include="Data\CharacterStats.cs" />
+    <Compile Include="Data\ICharacterStats.cs" />
+    <Compile Include="IO\CharacterStatFileWriter.cs" />
     <Compile Include="Framework\NetFrameworkVersion.cs" />
     <Compile Include="Framework\NetFrameworkVersionComparator.cs" />
     <Compile Include="Framework\NetFrameworkVersionExtension.cs" />
@@ -154,6 +157,8 @@
     <Compile Include="Gui\Controls\RuneDisplayElement.Designer.cs">
       <DependentUpon>RuneDisplayElement.cs</DependentUpon>
     </Compile>
+    <Compile Include="IO\ITextFileWriter.cs" />
+    <Compile Include="IO\TextFileWriter.cs" />
     <Compile Include="Settings\DefaultLegacySettingsResolver.cs" />
     <Compile Include="Settings\ILegacySettingsObject.cs" />
     <Compile Include="Settings\ILegacySettingsResolver.cs" />
@@ -278,6 +283,7 @@
       <Name>DiabloInterface.Server</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

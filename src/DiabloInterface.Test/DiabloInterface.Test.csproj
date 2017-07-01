@@ -6,8 +6,8 @@
     <ProjectGuid>{D9A9D63E-4A48-4429-9098-478AEC6304E9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>tests</RootNamespace>
-    <AssemblyName>tests</AssemblyName>
+    <RootNamespace>DiabloInterface.Test</RootNamespace>
+    <AssemblyName>DiabloInterface.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -50,6 +50,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Mocks\CharacterStatsMock.cs" />
+    <Compile Include="IO\StatFileWriterTest.cs" />
+    <Compile Include="Mocks\TextFileWriterMock.cs" />
     <Compile Include="RequestProcessorTest.cs" />
     <Compile Include="StructTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

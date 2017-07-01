@@ -6,24 +6,11 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Zutatensuppe.D2Reader.Struct;
 
-namespace tests
+namespace DiabloInterface.Test
 {
     [TestClass]
     public class StructTests
     {
-        /// <summary>
-        /// Get all types has field with the ExpectOffset attribute.
-        /// </summary>
-        /// <returns>The types with the attribute.</returns>
-        public IEnumerable<Type> EnumerateStructTypes()
-        {
-            Type attributeType = typeof(ExpectOffsetAttribute);
-            return from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                   from type in assembly.GetTypes()
-                   where type.GetFields().Any(field => Attribute.IsDefined(field, attributeType))
-                   select type;
-        }
-
         [TestMethod]
         public void EnsureOffsetsAreCorrect()
         {
@@ -41,10 +28,23 @@ namespace tests
                 var attribute = testCase.Item3;
 
                 // Check if the real and expected offsets match.
-                uint fieldOffset = (uint)Marshal.OffsetOf(type, field.Name).ToInt32();
+                var fieldOffset = (uint)Marshal.OffsetOf(type, field.Name).ToInt32();
                 Assert.AreEqual(attribute.Offset, fieldOffset,
-                    string.Format("[{0}.{1}] offset mismatch!", type.Name, field.Name));
+                    $"[{type.Name}.{field.Name}] offset mismatch!");
             }
+        }
+
+        /// <summary>
+        /// Get all types has field with the ExpectOffset attribute.
+        /// </summary>
+        /// <returns>The types with the attribute.</returns>
+        static IEnumerable<Type> EnumerateStructTypes()
+        {
+            var attributeType = typeof(ExpectOffsetAttribute);
+            return from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                from type in assembly.GetTypes()
+                where type.GetFields().Any(field => Attribute.IsDefined(field, attributeType))
+                select type;
         }
     }
 }

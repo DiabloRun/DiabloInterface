@@ -10,7 +10,9 @@ using Zutatensuppe.D2Reader;
 using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.DiabloInterface.Autosplit;
 using Zutatensuppe.DiabloInterface.Core.Logging;
+using Zutatensuppe.DiabloInterface.Data;
 using Zutatensuppe.DiabloInterface.Gui.Forms;
+using Zutatensuppe.DiabloInterface.IO;
 using Zutatensuppe.DiabloInterface.Server;
 using Zutatensuppe.DiabloInterface.Server.Handlers;
 using Zutatensuppe.DiabloInterface.Settings;
@@ -276,7 +278,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
         void dataReader_DataRead(object sender, DataReadEventArgs e)
         {
             UpdateLabels(e.Character, e.ItemClassMap);
-            WriteFiles(e.Character);
+            WriteCharacterStatFiles(e.Character);
 
             UpdateDebugWindow(e.QuestBuffers, e.ItemStrings);
 
@@ -471,35 +473,15 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
         }
 
-        void WriteFiles(Character player)
+        void WriteCharacterStatFiles(Character player)
         {
-            // TODO: Only write files if content changed.
-            if (!Settings.CreateFiles)
-            {
-                return;
-            }
+            if (!Settings.CreateFiles) return;
 
-            if (!Directory.Exists(Settings.FileFolder))
-            {
-                Directory.CreateDirectory(Settings.FileFolder);
-            }
+            var fileWriter = new TextFileWriter();
+            var statWriter = new CharacterStatFileWriter(fileWriter, Settings.FileFolder);
+            var stats = new CharacterStats(player);
 
-            File.WriteAllText(Settings.FileFolder + "/name.txt", player.Name);
-            File.WriteAllText(Settings.FileFolder + "/level.txt", player.Level.ToString());
-            File.WriteAllText(Settings.FileFolder + "/strength.txt", player.Strength.ToString());
-            File.WriteAllText(Settings.FileFolder + "/dexterity.txt", player.Dexterity.ToString());
-            File.WriteAllText(Settings.FileFolder + "/vitality.txt", player.Vitality.ToString());
-            File.WriteAllText(Settings.FileFolder + "/energy.txt", player.Energy.ToString());
-            File.WriteAllText(Settings.FileFolder + "/fire_res.txt", player.FireResist.ToString());
-            File.WriteAllText(Settings.FileFolder + "/cold_res.txt", player.ColdResist.ToString());
-            File.WriteAllText(Settings.FileFolder + "/light_res.txt", player.LightningResist.ToString());
-            File.WriteAllText(Settings.FileFolder + "/poison_res.txt", player.PoisonResist.ToString());
-            File.WriteAllText(Settings.FileFolder + "/gold.txt", (player.Gold + player.GoldStash).ToString());
-            File.WriteAllText(Settings.FileFolder + "/deaths.txt", player.Deaths.ToString());
-            File.WriteAllText(Settings.FileFolder + "/fcr.txt", player.FasterCastRate.ToString());
-            File.WriteAllText(Settings.FileFolder + "/frw.txt", player.FasterRunWalk.ToString());
-            File.WriteAllText(Settings.FileFolder + "/fhr.txt", player.FasterHitRecovery.ToString());
-            File.WriteAllText(Settings.FileFolder + "/ias.txt", player.IncreasedAttackSpeed.ToString());
+            statWriter.WriteFiles(stats);
         }
 
         void exitMenuItem_Click(object sender, EventArgs e)

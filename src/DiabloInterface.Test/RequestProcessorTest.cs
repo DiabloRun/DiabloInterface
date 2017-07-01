@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using Zutatensuppe.DiabloInterface.Server;
 
-namespace tests
+namespace DiabloInterface.Test
 {
     [TestClass]
     public class RequestProcessorTest
     {
-        RequestProcessor requestProcessor = new RequestProcessor();
+        readonly RequestProcessor requestProcessor = new RequestProcessor();
 
         class RequestHandlerMock : IRequestHandler
         {
@@ -27,7 +27,7 @@ namespace tests
         [TestMethod]
         public void RequestProcessorResolvesNormalResources()
         {
-            Dictionary<string, Func<IRequestHandler>> handlers = new Dictionary<string, Func<IRequestHandler>>();
+            var handlers = new Dictionary<string, Func<IRequestHandler>>();
             handlers.Add("test", () => new RequestHandlerMock());
 
             var request = new QueryRequest() { Resource = "test" };
@@ -39,7 +39,7 @@ namespace tests
         [TestMethod]
         public void RequestProcessorMatchesEntireString()
         {
-            Dictionary<string, Func<IRequestHandler>> handlers = new Dictionary<string, Func<IRequestHandler>>();
+            var handlers = new Dictionary<string, Func<IRequestHandler>>();
             handlers.Add("test", () => new RequestHandlerMock());
 
             var request = new QueryRequest() { Resource = "test/test" };
@@ -51,7 +51,7 @@ namespace tests
         [TestMethod]
         public void RequestProcessorResolvesRegexResources()
         {
-            Dictionary<string, Func<IRequestHandler>> handlers = new Dictionary<string, Func<IRequestHandler>>();
+            var handlers = new Dictionary<string, Func<IRequestHandler>>();
             handlers.Add(@"test/(\w+)$", () => new RequestHandlerMock());
 
             var request = new QueryRequest() { Resource = "test/item" };
