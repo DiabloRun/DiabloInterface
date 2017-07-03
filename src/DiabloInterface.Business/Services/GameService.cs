@@ -2,6 +2,7 @@
 {
     using System;
     using System.Reflection;
+    using System.Threading;
 
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.DiabloInterface.Core.Logging;
@@ -14,6 +15,7 @@
 
         bool isDisposed;
         D2DataReader dataReader;
+        Thread dataReaderThread;
 
         public GameService(ISettingsService settingsService)
         {
@@ -23,6 +25,7 @@
             this.settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
 
             InitializeDataReader();
+            InitializeDataReaderThread();
         }
 
         ~GameService()
@@ -54,6 +57,7 @@
                 {
                     dataReader.DataRead -= OnDataRead;
                     dataReader.CharacterCreated -= OnCharacterCreated;
+
                     dataReader.Dispose();
                     dataReader = null;
                 }
@@ -67,6 +71,13 @@
             dataReader = new D2DataReader(settingsService.CurrentSettings.D2Version);
             dataReader.CharacterCreated += OnCharacterCreated;
             dataReader.DataRead += OnDataRead;
+        }
+
+        void InitializeDataReaderThread()
+        {
+            Logger.Info("Initializing data reader thread.");
+            dataReaderThread = new Thread(dataReader.RunReadOperation) { IsBackground = true };
+            dataReaderThread.Start();
         }
 
         void OnCharacterCreated(object sender, CharacterCreatedEventArgs e) =>

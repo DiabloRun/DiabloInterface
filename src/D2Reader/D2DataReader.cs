@@ -321,7 +321,7 @@
             }
         }
 
-        public void readDataThreadFunc()
+        public void RunReadOperation()
         {
             while (!isDisposed)
             {

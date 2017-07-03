@@ -6,7 +6,6 @@
     using System.Linq;
     using System.Reflection;
     using System.Text;
-    using System.Threading;
     using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader;
@@ -29,13 +28,14 @@
         readonly ISettingsService settingsService;
         readonly IGameService gameService;
 
-        Thread dataReaderThread;
         SettingsWindow settingsWindow;
         DebugWindow debugWindow;
         DiabloInterfaceServer pipeServer;
 
         public MainWindow(ISettingsService settingsService, IGameService gameService)
         {
+            Logger.Info("Creating main window.");
+
             this.settingsService = settingsService;
             this.gameService = gameService;
 
@@ -71,18 +71,9 @@
         void Initialize()
         {
             InitializePipeServer();
-            InitializeDataReaderThread();
             CheckForUpdates();
 
             ApplySettings(settingsService.CurrentSettings);
-        }
-
-        void InitializeDataReaderThread()
-        {
-            if (dataReaderThread != null) return;
-
-            dataReaderThread = new Thread(gameService.DataReader.readDataThreadFunc) { IsBackground = true };
-            dataReaderThread.Start();
         }
 
         void InitializePipeServer()
