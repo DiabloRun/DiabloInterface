@@ -1,22 +1,22 @@
-﻿using Zutatensuppe.D2Reader.Readers;
-using Zutatensuppe.D2Reader.Struct;
-using Zutatensuppe.D2Reader.Struct.Item;
-using Zutatensuppe.D2Reader.Struct.Stat;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Text;
-using Zutatensuppe.DiabloInterface.Core.Logging;
-
-namespace Zutatensuppe.D2Reader
+﻿namespace Zutatensuppe.D2Reader
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using System.Text;
+    using System.Threading;
+
+    using Zutatensuppe.D2Reader.Readers;
+    using Zutatensuppe.D2Reader.Struct;
+    using Zutatensuppe.D2Reader.Struct.Item;
+    using Zutatensuppe.D2Reader.Struct.Stat;
+    using Zutatensuppe.DiabloInterface.Core.Logging;
+
     public delegate void NewCharacterCreatedEventHandler(object sender, NewCharacterEventArgs e);
     public delegate void DataReadEventHandler(object sender, DataReadEventArgs e);
-    public delegate void DataReaderEventHandler(object sender, DataReaderEventArgs e);
 
-    public class DataReaderEventArgs : System.EventArgs
+    public class DataReaderEventArgs : EventArgs
     {
         public enum MsgType{
             DISPOSED,
@@ -28,7 +28,8 @@ namespace Zutatensuppe.D2Reader
             this.type = type;
         }
     }
-    public class NewCharacterEventArgs : System.EventArgs
+
+    public class NewCharacterEventArgs : EventArgs
     {
         public Character Character;
 
@@ -39,7 +40,8 @@ namespace Zutatensuppe.D2Reader
             Character = character;
         }
     }
-    public class DataReadEventArgs : System.EventArgs
+
+    public class DataReadEventArgs : EventArgs
     {
         public Dictionary<int, int> ItemClassMap;
         public Dictionary<int, ushort[]> QuestBuffers;
@@ -65,18 +67,12 @@ namespace Zutatensuppe.D2Reader
 
     public class D2DataReader : IDisposable
     {
+        const string DiabloProcessName = "game";
+        const string DiabloModuleName = "Game.exe";
+
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public event NewCharacterCreatedEventHandler NewCharacter;
-
-        public event DataReadEventHandler DataRead;
-
-        public event DataReaderEventHandler DataReader;
-
-        const string DIABLO_PROCESS_NAME = "game";
-        const string DIABLO_MODULE_NAME = "Game.exe";
-
-        bool disposed = false;
+        bool isDisposed;
 
         D2GameInfo gameInfo;
         ProcessMemoryReader reader;
@@ -151,14 +147,48 @@ namespace Zutatensuppe.D2Reader
             itemClassMap = new Dictionary<int, int>();
         }
 
+        public event NewCharacterCreatedEventHandler NewCharacter;
+
+        public event DataReadEventHandler DataRead;
+
+        #region IDisposable Implementation
+
+        ~D2DataReader()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+
+            Logger.Info("Data reader disposed.");
+
+            if (disposing && reader != null)
+            {
+                reader.Dispose();
+                reader = null;
+            }
+
+            isDisposed = true;
+        }
+
+        #endregion
+
         public void SetD2Version(string version)
         {
             this.nextMemoryTable = GetVersionMemoryTable(version);
         }
 
-        private D2MemoryTable GetVersionMemoryTable(string version)
+        D2MemoryTable GetVersionMemoryTable(string version)
         {
-            D2MemoryTable memoryTable = new D2MemoryTable();
+            var memoryTable = new D2MemoryTable();
 
             // Offsets are the same for all versions so far.
             memoryTable.Offset.Quests = new int[] { 0x264, 0x450, 0x20, 0x00 };
@@ -168,7 +198,7 @@ namespace Zutatensuppe.D2Reader
                 case "1.14c":
                     memoryTable.Address.World = new IntPtr(0x0047ACC0);
                     memoryTable.Address.GameId = new IntPtr(0x00479C94);
-                    memoryTable.Address.PlayerUnit = new IntPtr(0x0039CEFC);//(0x39DAF8);
+                    memoryTable.Address.PlayerUnit = new IntPtr(0x0039CEFC);
                     memoryTable.Address.Area = new IntPtr(0x0039A1C8);
 
                     memoryTable.Address.GlobalData = new IntPtr(0x33FD78);
@@ -255,37 +285,6 @@ namespace Zutatensuppe.D2Reader
             return memoryTable;
         }
 
-        #region Disposable
-
-        ~D2DataReader()
-        {
-            Dispose(false);
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                OnDataReader(new DataReaderEventArgs(DataReaderEventArgs.MsgType.DISPOSED));
-
-                this.disposed = true;
-
-                if (reader != null)
-                {
-                    reader.Dispose();
-                    reader = null;
-                }
-            }
-        }
-
-        #endregion
-
         public bool checkIfD2Running()
         {
             // If a reader already exists but the process is closed, dispose of the reader.
@@ -303,7 +302,7 @@ namespace Zutatensuppe.D2Reader
 
             try
             {
-                reader = new ProcessMemoryReader(DIABLO_PROCESS_NAME, DIABLO_MODULE_NAME);
+                reader = new ProcessMemoryReader(DiabloProcessName, DiabloModuleName);
                 unitReader = new UnitReader(reader, memory);
                 inventoryReader = new InventoryReader(reader, memory);
 
@@ -337,7 +336,7 @@ namespace Zutatensuppe.D2Reader
 
         public void readDataThreadFunc()
         {
-            while (!disposed)
+            while (!isDisposed)
             {
                 Thread.Sleep(PollingRate);
 
@@ -596,11 +595,6 @@ namespace Zutatensuppe.D2Reader
         protected virtual void OnDataRead(DataReadEventArgs e)
         {
             DataRead?.Invoke(this, e);
-        }
-
-        protected virtual void OnDataReader(DataReaderEventArgs e)
-        {
-            DataReader?.Invoke(this, e);
         }
     }
 }

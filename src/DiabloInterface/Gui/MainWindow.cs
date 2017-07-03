@@ -98,7 +98,6 @@
             dataReader = new D2DataReader(settingsService.CurrentSettings.D2Version);
             dataReader.NewCharacter += dataReader_NewCharacter;
             dataReader.DataRead += dataReader_DataRead;
-            dataReader.DataReader += dataReader_DataReader;
         }
 
         void InitializeDataReaderThread()
