@@ -13,32 +13,28 @@
     using Zutatensuppe.D2Reader.Struct.Stat;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
-    public delegate void NewCharacterCreatedEventHandler(object sender, NewCharacterEventArgs e);
-    public delegate void DataReadEventHandler(object sender, DataReadEventArgs e);
-
-    public class DataReaderEventArgs : EventArgs
+    /// <summary>
+    ///     Describes what type of data the data reader should read.
+    /// </summary>
+    [Flags]
+    public enum DataReaderEnableFlags
     {
-        public enum MsgType{
-            DISPOSED,
-        };
-
-        public MsgType type;
-        public DataReaderEventArgs(MsgType type)
-        {
-            this.type = type;
-        }
+        CurrentArea = 1 << 0,
+        CurrentDifficulty = 1 << 1,
+        QuestBuffers = 1 << 2,
+        InventoryItemIds = 1 << 3,
+        EquippedItemStrings = 1 << 4,
+        ItemClassMap = 1 << 5
     }
 
-    public class NewCharacterEventArgs : EventArgs
+    public class CharacterCreatedEventArgs : EventArgs
     {
-        public Character Character;
-
-        // Provide one or more constructors, as well as fields and
-        // accessors for the arguments.
-        public NewCharacterEventArgs(Character character)
+        public CharacterCreatedEventArgs(Character character)
         {
             Character = character;
         }
+
+        public Character Character { get; }
     }
 
     public class DataReadEventArgs : EventArgs
@@ -93,21 +89,12 @@
         List<int> inventoryItemIds;
         Dictionary<int, int> itemClassMap;
 
-        // flags for data that d2reader must read.
-        // outside tool can set this from outside and the data will be returned in the OnDataRead event
-        public const int READ_CURRENT_AREA = 1 << 0;
-        public const int READ_CURRENT_DIFFICULTY = 1 << 1;
-        public const int READ_QUEST_BUFFERS = 1 << 2;
-        public const int READ_INVENTORY_ITEM_IDS = 1 << 3;
-        public const int READ_EQUIPPED_ITEM_STRINGS = 1 << 4; // bodyLoc => item name + desc
-        public const int READ_ITEM_CLASS_MAP = 1 << 5;
-
-        public int RequiredData =
-            READ_CURRENT_AREA
-            | READ_CURRENT_DIFFICULTY
-            | READ_ITEM_CLASS_MAP
-            | READ_QUEST_BUFFERS
-            | READ_INVENTORY_ITEM_IDS;
+        public DataReaderEnableFlags ReadFlags { get; set; } =
+              DataReaderEnableFlags.CurrentArea
+            | DataReaderEnableFlags.CurrentDifficulty
+            | DataReaderEnableFlags.ItemClassMap
+            | DataReaderEnableFlags.QuestBuffers
+            | DataReaderEnableFlags.InventoryItemIds;
 
         public DateTime ActiveCharacterTimestamp => activeCharacterTimestamp;
         public Character ActiveCharacter => activeCharacter;
@@ -136,9 +123,9 @@
             }
         }
 
-        public D2DataReader( string version)
+        public D2DataReader(string version)
         {
-            this.memory = GetVersionMemoryTable(version);
+            memory = GetVersionMemoryTable(version);
 
             characters = new Dictionary<string, Character>();
             questBuffers = new Dictionary<int, ushort[]>();
@@ -147,9 +134,9 @@
             itemClassMap = new Dictionary<int, int>();
         }
 
-        public event NewCharacterCreatedEventHandler NewCharacter;
+        public event EventHandler<CharacterCreatedEventArgs> CharacterCreated;
 
-        public event DataReadEventHandler DataRead;
+        public event EventHandler<DataReadEventArgs> DataRead;
 
         #region IDisposable Implementation
 
@@ -183,7 +170,7 @@
 
         public void SetD2Version(string version)
         {
-            this.nextMemoryTable = GetVersionMemoryTable(version);
+            nextMemoryTable = GetVersionMemoryTable(version);
         }
 
         D2MemoryTable GetVersionMemoryTable(string version)
@@ -285,7 +272,7 @@
             return memoryTable;
         }
 
-        public bool checkIfD2Running()
+        public bool InitializeReaders()
         {
             // If a reader already exists but the process is closed, dispose of the reader.
             if (reader != null && !reader.IsValid)
@@ -341,7 +328,7 @@
                 Thread.Sleep(PollingRate);
 
                 // Block here until we have a valid reader.
-                if (!checkIfD2Running())
+                if (!InitializeReaders())
                     continue;
 
                 // Memory table change.
@@ -441,14 +428,14 @@
                 gameInfo
             );
 
-            if ((RequiredData & READ_ITEM_CLASS_MAP) > 0)
+            if (ReadFlags.HasFlag(DataReaderEnableFlags.ItemClassMap))
                 itemClassMap = unitReader.GetItemClassMap(gameInfo.Player);
             else
                 itemClassMap.Clear();
 
             // get quest buffers
             questBuffers.Clear();
-            if ((RequiredData & READ_QUEST_BUFFERS) > 0)
+            if (ReadFlags.HasFlag(DataReaderEnableFlags.QuestBuffers))
             {
                 for (int i = 0; i < gameInfo.PlayerData.Quests.Length; i++)
                 {
@@ -467,19 +454,19 @@
                 }
             }
 
-            if ((RequiredData & READ_CURRENT_AREA) > 0)
+            if (ReadFlags.HasFlag(DataReaderEnableFlags.CurrentArea))
                 currentArea = reader.ReadByte(memory.Address.Area, AddressingMode.Relative);
             else
                 currentArea = -1;
 
-            if ((RequiredData & READ_CURRENT_DIFFICULTY) > 0)
+            if (ReadFlags.HasFlag(DataReaderEnableFlags.CurrentDifficulty))
                 currentDifficulty = gameInfo.Game.Difficulty;
             else
                 currentDifficulty = 0;
 
             // Build filter to get only equipped items.
             itemStrings.Clear();
-            if ((RequiredData & READ_EQUIPPED_ITEM_STRINGS) > 0)
+            if (ReadFlags.HasFlag(DataReaderEnableFlags.EquippedItemStrings))
             {
                 Func<D2ItemData, bool> filter = data => data.BodyLoc != BodyLocation.None;
                 foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))
@@ -507,17 +494,17 @@
 
             }
 
-            if ((RequiredData & READ_INVENTORY_ITEM_IDS) > 0)
+            if (ReadFlags.HasFlag(DataReaderEnableFlags.InventoryItemIds))
                 inventoryItemIds = (from item in inventoryReader.EnumerateInventory()
                                      select item.eClass).ToList();
             else
                 inventoryItemIds.Clear();
 
             // New data was read, update anyone interested:
-            OnDataRead(createDataReadEventArgs());
+            OnDataRead(CreateDataReadEventArgs());
         }
 
-        private DataReadEventArgs createDataReadEventArgs()
+        DataReadEventArgs CreateDataReadEventArgs()
         {
             return new DataReadEventArgs(
                 character,
@@ -577,7 +564,7 @@
                 {
                     activeCharacterTimestamp = DateTime.Now;
                     activeCharacter = character;
-                    OnNewCharacter(new NewCharacterEventArgs(character));
+                    OnCharacterCreated(new CharacterCreatedEventArgs(character));
                 }
             }
 
@@ -587,14 +574,10 @@
             return character;
         }
 
-        protected virtual void OnNewCharacter(NewCharacterEventArgs e)
-        {
-            NewCharacter?.Invoke(this, e);
-        }
+        protected virtual void OnCharacterCreated(CharacterCreatedEventArgs e) =>
+            CharacterCreated?.Invoke(this, e);
 
-        protected virtual void OnDataRead(DataReadEventArgs e)
-        {
+        protected virtual void OnDataRead(DataReadEventArgs e) =>
             DataRead?.Invoke(this, e);
-        }
     }
 }

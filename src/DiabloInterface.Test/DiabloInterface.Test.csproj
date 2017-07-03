@@ -50,6 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="EnumFlagExtensionTest.cs" />
     <Compile Include="Mocks\CharacterStatsMock.cs" />
     <Compile Include="IO\StatFileWriterTest.cs" />
     <Compile Include="Mocks\TextFileWriterMock.cs" />
@@ -61,6 +62,10 @@
     <ProjectReference Include="..\D2Reader\D2Reader.csproj">
       <Project>{C5F081D7-FB83-4934-908F-53CE986AB08C}</Project>
       <Name>D2Reader</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiabloInterface.Core\DiabloInterface.Core.csproj">
+      <Project>{4DC903B9-B02C-47D3-A695-4873FA5219AD}</Project>
+      <Name>DiabloInterface.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\DiabloInterface.Server\DiabloInterface.Server.csproj">
       <Project>{59944b50-1a5e-4e02-b9be-0f9b499770df}</Project>

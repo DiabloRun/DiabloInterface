@@ -14,6 +14,7 @@
     using Zutatensuppe.DiabloInterface.Business.AutoSplits;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
+    using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Data;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
@@ -26,47 +27,33 @@
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
         readonly ISettingsService settingsService;
+        readonly IGameService gameService;
 
         Thread dataReaderThread;
         SettingsWindow settingsWindow;
         DebugWindow debugWindow;
-        D2DataReader dataReader;
         DiabloInterfaceServer pipeServer;
 
-        public MainWindow(ISettingsService settingsService)
+        public MainWindow(ISettingsService settingsService, IGameService gameService)
         {
             this.settingsService = settingsService;
+            this.gameService = gameService;
 
-            RegisterGameServiceEventHandlers();
-            RegisterWindowEventHandlers();
+            RegisterServiceEventHandlers();
             InitializeComponent();
         }
 
-        void RegisterGameServiceEventHandlers()
+        void RegisterServiceEventHandlers()
         {
-            settingsService.SettingsChanged += SettingsServiceSettingsChanged;
+            settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
+
+            gameService.CharacterCreated += GameServiceOnCharacterCreated;
+            gameService.DataRead += GameServiceOnDataRead;
         }
 
-        void SettingsServiceSettingsChanged(object sender, ApplicationSettingsEventArgs e)
+        void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
         {
             ApplySettings(e.Settings);
-        }
-
-        void RegisterWindowEventHandlers()
-        {
-            // These events are not exposed through the Designer.
-            Disposed += MainWindowDisposed;
-        }
-
-        void MainWindowDisposed(object sender, EventArgs e)
-        {
-            DisposeDataReader();
-        }
-
-        void DisposeDataReader()
-        {
-            dataReader?.Dispose();
-            dataReader = null;
         }
 
         void MainWindowLoad(object sender, EventArgs e)
@@ -83,7 +70,6 @@
 
         void Initialize()
         {
-            InitializeDataReader();
             InitializePipeServer();
             InitializeDataReaderThread();
             CheckForUpdates();
@@ -91,20 +77,11 @@
             ApplySettings(settingsService.CurrentSettings);
         }
 
-        void InitializeDataReader()
-        {
-            if (dataReader != null) return;
-
-            dataReader = new D2DataReader(settingsService.CurrentSettings.D2Version);
-            dataReader.NewCharacter += dataReader_NewCharacter;
-            dataReader.DataRead += dataReader_DataRead;
-        }
-
         void InitializeDataReaderThread()
         {
             if (dataReaderThread != null) return;
 
-            dataReaderThread = new Thread(dataReader.readDataThreadFunc) { IsBackground = true };
+            dataReaderThread = new Thread(gameService.DataReader.readDataThreadFunc) { IsBackground = true };
             dataReaderThread.Start();
         }
 
@@ -113,6 +90,8 @@
             if (pipeServer != null) return;
 
             const string PipeName = "DiabloInterfacePipe";
+
+            var dataReader = gameService.DataReader;
             pipeServer = new DiabloInterfaceServer(PipeName);
             pipeServer.AddRequestHandler(@"version", () => new VersionRequestHandler(Assembly.GetEntryAssembly()));
             pipeServer.AddRequestHandler(@"items", () => new AllItemsRequestHandler(dataReader));
@@ -137,8 +116,6 @@
                 Invoke((Action)(() => ApplySettings(settings)));
                 return;
             }
-
-            dataReader.SetD2Version(settings.D2Version);
 
             UpdateLayoutSettings(settings);
             UpdateAutoSplitsSettingsForDebugView(settings);
@@ -238,12 +215,7 @@
             Logger.Info(logMessage.ToString());
         }
 
-        void dataReader_DataReader(object sender, DataReaderEventArgs e)
-        {
-            Logger.Info("Generic Data reader event: "+ e.type.ToString());
-        }
-
-        void dataReader_DataRead(object sender, DataReadEventArgs e)
+        void GameServiceOnDataRead(object sender, DataReadEventArgs e)
         {
             UpdateLabels(e.Character, e.ItemClassMap);
             WriteCharacterStatFiles(e.Character);
@@ -257,7 +229,7 @@
             }
         }
 
-        void dataReader_NewCharacter(object sender, NewCharacterEventArgs e)
+        void GameServiceOnCharacterCreated(object sender, CharacterCreatedEventArgs e)
         {
             Reset();
             Logger.Info($"A new character was created - autosplits OK for {e.Character.Name}");
@@ -483,7 +455,9 @@
                 debugWindow = new DebugWindow();
                 debugWindow.UpdateAutosplits(settingsService.CurrentSettings.Autosplits);
 
-                dataReader.RequiredData |= D2DataReader.READ_EQUIPPED_ITEM_STRINGS;
+                var dataReader = gameService.DataReader;
+                var flags = dataReader.ReadFlags.SetFlag(DataReaderEnableFlags.EquippedItemStrings);
+                dataReader.ReadFlags = flags;
 
                 debugWindow.FormClosed += DebugWindow_FormClosed;
             }
@@ -493,13 +467,25 @@
 
         void DebugWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
-            dataReader.RequiredData &= ~D2DataReader.READ_EQUIPPED_ITEM_STRINGS;
+            var dataReader = gameService.DataReader;
+            var flags = dataReader.ReadFlags.ClearFlag(DataReaderEnableFlags.EquippedItemStrings);
+            dataReader.ReadFlags = flags;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
+            UnregisterServiceEvents();
+
             pipeServer.Stop();
             base.OnFormClosing(e);
+        }
+
+        void UnregisterServiceEvents()
+        {
+            settingsService.SettingsChanged -= SettingsServiceOnSettingsChanged;
+
+            gameService.CharacterCreated -= GameServiceOnCharacterCreated;
+            gameService.DataRead -= GameServiceOnDataRead;
         }
     }
 }

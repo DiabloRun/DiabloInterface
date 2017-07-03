@@ -22,7 +22,7 @@
             }
 
             InitializeLogger();
-            InitializeApplication();
+            RunApplication();
         }
 
         static void RegisterAppDomainExceptionLogging()
@@ -71,20 +71,28 @@
             logger.Info($".NET Framework: {versionName}");
         }
 
-        static void InitializeApplication()
+        static void RunApplication()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(CreateMainWindow());
+
+            var settingsService = CreateSettingsService();
+
+            using (var gameService = new GameService(settingsService))
+            {
+                var mainWindow = new MainWindow(settingsService, gameService);
+                Application.Run(mainWindow);
+            }
         }
 
-        static Form CreateMainWindow()
+        static ISettingsService CreateSettingsService()
         {
             var appStorage = new ApplicationStorage();
-            var settingsService = new SettingsService(appStorage);
-            settingsService.LoadSettingsFromPreviousSession();
+            var service = new SettingsService(appStorage);
 
-            return new MainWindow(settingsService);
+            service.LoadSettingsFromPreviousSession();
+
+            return service;
         }
     }
 }

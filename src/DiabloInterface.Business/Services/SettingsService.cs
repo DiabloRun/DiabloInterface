@@ -17,6 +17,8 @@
 
         public SettingsService(IApplicationStorage appStorage)
         {
+            Logger.Info("Initializing settings service.");
+
             this.appStorage = appStorage;
         }
 
