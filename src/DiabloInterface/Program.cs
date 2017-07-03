@@ -1,12 +1,15 @@
 ﻿namespace Zutatensuppe.DiabloInterface
 {
     using System;
+    using System.Reflection;
     using System.Windows.Forms;
 
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Framework;
     using Zutatensuppe.DiabloInterface.Gui;
+    using Zutatensuppe.DiabloInterface.Server;
+    using Zutatensuppe.DiabloInterface.Server.Handlers;
 
     using static Framework.NetFrameworkVersionComparator;
 
@@ -80,8 +83,11 @@
 
             using (var gameService = new GameService(settingsService))
             {
+                var pipeServer = CreatePipeServer(gameService);
                 var mainWindow = new MainWindow(settingsService, gameService);
                 Application.Run(mainWindow);
+
+                pipeServer.Stop();
             }
         }
 
@@ -93,6 +99,26 @@
             service.LoadSettingsFromPreviousSession();
 
             return service;
+        }
+
+        static DiabloInterfaceServer CreatePipeServer(GameService gameService)
+        {
+            const string PipeName = "DiabloInterfacePipe";
+
+
+            var logger = LogServiceLocator.Get(typeof(Program));
+            logger.Info("Initializing pipe server.");
+
+            var pipeServer = new DiabloInterfaceServer(PipeName);
+
+            var dataReader = gameService.DataReader;
+            pipeServer.AddRequestHandler(@"version", () => new VersionRequestHandler(Assembly.GetEntryAssembly()));
+            pipeServer.AddRequestHandler(@"items", () => new AllItemsRequestHandler(dataReader));
+            pipeServer.AddRequestHandler(@"items/(\w+)", () => new ItemRequestHandler(dataReader));
+            pipeServer.AddRequestHandler(@"characters/(current|active)", () => new CharacterRequestHandler(dataReader));
+            pipeServer.AddRequestHandler(@"quests/(\d+)", () => new QuestRequestHandler(dataReader));
+
+            return pipeServer;
         }
     }
 }

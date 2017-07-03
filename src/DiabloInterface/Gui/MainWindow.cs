@@ -18,8 +18,6 @@
     using Zutatensuppe.DiabloInterface.Data;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
     using Zutatensuppe.DiabloInterface.IO;
-    using Zutatensuppe.DiabloInterface.Server;
-    using Zutatensuppe.DiabloInterface.Server.Handlers;
 
     public partial class MainWindow : WsExCompositedForm
     {
@@ -30,11 +28,13 @@
 
         SettingsWindow settingsWindow;
         DebugWindow debugWindow;
-        DiabloInterfaceServer pipeServer;
 
         public MainWindow(ISettingsService settingsService, IGameService gameService)
         {
             Logger.Info("Creating main window.");
+
+            if (settingsService == null) throw new ArgumentNullException(nameof(settingsService));
+            if (gameService == null) throw new ArgumentNullException(nameof(gameService));
 
             this.settingsService = settingsService;
             this.gameService = gameService;
@@ -59,36 +59,14 @@
         void MainWindowLoad(object sender, EventArgs e)
         {
             SetTitleWithApplicationVersion();
-            Initialize();
+            CheckForUpdates();
+            ApplySettings(settingsService.CurrentSettings);
         }
 
         void SetTitleWithApplicationVersion()
         {
             Text = $@"Diablo Interface v{Application.ProductVersion}";
             Update();
-        }
-
-        void Initialize()
-        {
-            InitializePipeServer();
-            CheckForUpdates();
-
-            ApplySettings(settingsService.CurrentSettings);
-        }
-
-        void InitializePipeServer()
-        {
-            if (pipeServer != null) return;
-
-            const string PipeName = "DiabloInterfacePipe";
-
-            var dataReader = gameService.DataReader;
-            pipeServer = new DiabloInterfaceServer(PipeName);
-            pipeServer.AddRequestHandler(@"version", () => new VersionRequestHandler(Assembly.GetEntryAssembly()));
-            pipeServer.AddRequestHandler(@"items", () => new AllItemsRequestHandler(dataReader));
-            pipeServer.AddRequestHandler(@"items/(\w+)", () => new ItemRequestHandler(dataReader));
-            pipeServer.AddRequestHandler(@"characters/(current|active)", () => new CharacterRequestHandler(dataReader));
-            pipeServer.AddRequestHandler(@"quests/(\d+)", () => new QuestRequestHandler(dataReader));
         }
 
         void CheckForUpdates()
@@ -466,8 +444,6 @@
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             UnregisterServiceEvents();
-
-            pipeServer.Stop();
             base.OnFormClosing(e);
         }
 
