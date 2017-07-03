@@ -1,12 +1,13 @@
-﻿using Zutatensuppe.DiabloInterface.Autosplit;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using System;
-
-namespace Zutatensuppe.DiabloInterface.Gui.Controls
+﻿namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Linq;
+    using System.Windows.Forms;
+
+    using Zutatensuppe.DiabloInterface.Business.AutoSplits;
+
     public partial class AutoSplitTable : UserControl
     {
         static string[] HeaderTitles = new string[]

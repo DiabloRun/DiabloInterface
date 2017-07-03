@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Zutatensuppe.DiabloInterface.Settings
+﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
+    using System;
+
     public interface ISettingsReader : IDisposable
     {
         ApplicationSettings Read();

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-
-namespace Zutatensuppe.DiabloInterface.Autosplit
+﻿namespace Zutatensuppe.DiabloInterface
 {
+    using System;
+    using System.Collections.Generic;
+
     // from d2exp.mpq/data/excel/Levels.txt
     public class D2Level
     {

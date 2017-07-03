@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Settings
+﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
     public interface ILegacySettingsResolver
     {

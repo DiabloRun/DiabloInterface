@@ -1,5 +1,5 @@
 ﻿using Zutatensuppe.D2Reader;
-using Zutatensuppe.DiabloInterface.Settings;
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -7,6 +7,8 @@ using System.Windows.Forms;
 
 namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
+    using Zutatensuppe.DiabloInterface.Business.Settings;
+
     public partial class HorizontalLayout : AbstractLayout
     {
 

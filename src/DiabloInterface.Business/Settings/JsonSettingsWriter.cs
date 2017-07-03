@@ -1,10 +1,11 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.IO;
-using System.Text;
-
-namespace Zutatensuppe.DiabloInterface.Settings
+﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
+    using System;
+    using System.IO;
+    using System.Text;
+
+    using Newtonsoft.Json;
+
     public class JsonSettingsWriter : ISettingsWriter
     {
         StreamWriter writer;

@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using Zutatensuppe.DiabloInterface.Autosplit;
-
-namespace Zutatensuppe.DiabloInterface.Settings
+﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Windows.Forms;
+
+    using Zutatensuppe.DiabloInterface.Business.AutoSplits;
+
     public class ApplicationSettings
     {
         public static ApplicationSettings Default => new ApplicationSettings();

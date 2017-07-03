@@ -1,18 +1,18 @@
-﻿using Zutatensuppe.DiabloInterface.Autosplit;
-using Zutatensuppe.D2Reader;
-using Zutatensuppe.D2Reader.Struct.Item;
-using Zutatensuppe.DiabloInterface.Gui.Controls;
-using Zutatensuppe.DiabloInterface.Gui.Forms;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-
-namespace Zutatensuppe.DiabloInterface.Gui
+﻿namespace Zutatensuppe.DiabloInterface.Gui
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Windows.Forms;
+
+    using Zutatensuppe.D2Reader;
+    using Zutatensuppe.D2Reader.Struct.Item;
+    using Zutatensuppe.DiabloInterface.Business.AutoSplits;
+    using Zutatensuppe.DiabloInterface.Gui.Controls;
+    using Zutatensuppe.DiabloInterface.Gui.Forms;
+
     public partial class DebugWindow : WsExCompositedForm
     {
-
         /// <summary>
         /// Helper class for binding/unbinding autosplit event handlers.
         /// </summary>

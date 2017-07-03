@@ -1,14 +1,13 @@
-﻿using Zutatensuppe.D2Reader;
-
-namespace Zutatensuppe.DiabloInterface.Autosplit
+﻿namespace Zutatensuppe.DiabloInterface.Business.AutoSplits
 {
+    using Zutatensuppe.D2Reader;
+
     public class AutoSplitFactory
     {
-
         /// <summary>
         /// Create a default auto split.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A default auto split.</returns>
         public AutoSplit Create()
         {
             return new AutoSplit();
@@ -19,7 +18,7 @@ namespace Zutatensuppe.DiabloInterface.Autosplit
         /// Also handles difficulty levels.
         /// </summary>
         /// <param name="previous">The previous autosplit in the list. May be null.</param>
-        /// <returns></returns>
+        /// <returns>A sequenced auto split.</returns>
         public AutoSplit CreateSequential(AutoSplit previous)
         {
             if (previous == null)
@@ -34,7 +33,7 @@ namespace Zutatensuppe.DiabloInterface.Autosplit
             }
 
             // Sequence bosses.
-            else if (previous.Type == AutoSplit.SplitType.Quest)
+            if (previous.Type == AutoSplit.SplitType.Quest)
             {
                 short difficulty = previous.Difficulty;
                 D2QuestHelper.Quest quest = D2QuestHelper.Quest.A1Q1;
@@ -73,18 +72,13 @@ namespace Zutatensuppe.DiabloInterface.Autosplit
         /// </summary>
         /// <param name="quest">The quest.</param>
         /// <param name="difficulty">Difficulty for quest.</param>
-        /// <returns></returns>
+        /// <returns>An autosplit for a specific quest.</returns>
         public AutoSplit CreateForQuest(D2QuestHelper.Quest quest, short difficulty)
         {
-            string name;
             // Get quest name if exists or default to "Quest".
-            if (D2QuestHelper.Quests.ContainsKey(quest))
-            {
-                name = D2QuestHelper.Quests[quest].CommonName;
-            } else
-            {
-                name = "Quest";
-            }
+            string name = D2QuestHelper.Quests.ContainsKey(quest)
+                ? D2QuestHelper.Quests[quest].CommonName
+                : "Quest";
 
             // Add difficulty to name if above normal.
             if (difficulty == 1)

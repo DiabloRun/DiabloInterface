@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Zutatensuppe.DiabloInterface.Settings
+﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
+    using System.Collections.Generic;
+
     public interface ILegacySettingsObject
     {
         bool Contains(string key);

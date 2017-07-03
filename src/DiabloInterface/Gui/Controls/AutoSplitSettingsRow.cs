@@ -1,11 +1,12 @@
-﻿using Zutatensuppe.DiabloInterface.Autosplit;
-using Zutatensuppe.D2Reader;
+﻿using Zutatensuppe.D2Reader;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
+    using Zutatensuppe.DiabloInterface.Business.AutoSplits;
+
     public partial class AutoSplitSettingsRow : UserControl
     {
         private static string LABEL_CHAR_LEVEL = "Level";

@@ -1,35 +1,36 @@
-﻿using System;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using System.Collections.Generic;
-using Zutatensuppe.DiabloInterface.Gui.Controls;
-using System.IO;
-using Newtonsoft.Json;
-using System.Reflection;
-using Zutatensuppe.DiabloInterface.Gui.Forms;
-using Zutatensuppe.DiabloInterface.Autosplit;
-using Zutatensuppe.DiabloInterface.Settings;
-
-namespace Zutatensuppe.DiabloInterface.Gui
+﻿namespace Zutatensuppe.DiabloInterface.Gui
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.IO;
+    using System.Linq;
+    using System.Windows.Forms;
+
+    using Newtonsoft.Json;
+
+    using Zutatensuppe.DiabloInterface.Business.AutoSplits;
+    using Zutatensuppe.DiabloInterface.Business.Services;
+    using Zutatensuppe.DiabloInterface.Business.Settings;
+    using Zutatensuppe.DiabloInterface.Core.Extensions;
+    using Zutatensuppe.DiabloInterface.Gui.Controls;
+    using Zutatensuppe.DiabloInterface.Gui.Forms;
+
     public partial class SettingsWindow : WsExCompositedForm
     {
-
-        private const string WindowTitleFormat = "Settings ({0})"; // {0} => Settings File Path
+        readonly ISettingsService settingsService;
 
         private string SettingsFilePath = Application.StartupPath + @"\Settings";
 
         AutoSplitTable autoSplitTable;
-        ApplicationSettings settings;
-
-        public event Action<ApplicationSettings> SettingsUpdated;
 
         bool dirty = false;
         public bool IsDirty
         {
             get
             {
+                var settings = settingsService.CurrentSettings;
+
                 return dirty
                     || (autoSplitTable != null && autoSplitTable.IsDirty)
                     || settings.FontName != GetFontName()
@@ -67,15 +68,16 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     || btnSetLightningResColor.ForeColor != settings.ColorLightningRes
                     || btnSetPoisonResColor.ForeColor != settings.ColorPoisonRes
 
-
                     || button2.BackColor != settings.ColorBackground;
                 ;
             }
         }
 
-        public SettingsWindow(ApplicationSettings settings)
+        public SettingsWindow(ISettingsService settingsService)
         {
-            this.settings = settings;
+            this.settingsService = settingsService;
+            this.settingsService.SettingsChanged += SettingsServiceSettingsChanged;
+
             InitializeComponent();
             InitializeAutoSplitTable();
             InitializeRunes();
@@ -85,10 +87,18 @@ namespace Zutatensuppe.DiabloInterface.Gui
             RuneComboBox.SelectedIndex = 0;
             cbRuneWord.SelectedIndex = 0;
 
-            InitializeSettings();
+            ReloadComponentsWithCurrentSettings();
 
             // Loading the settings will dirty mark pretty much everything, here
             // we just verify that nothing has actually changed yet.
+            MarkClean();
+        }
+
+        void SettingsServiceSettingsChanged(object sender, ApplicationSettingsEventArgs e)
+        {
+            // NOTE: This may have been due to loading settings from elsewhere. For now the
+            ////     behavior will be to refresh the settings window in that case.
+            ReloadComponentsWithCurrentSettings();
             MarkClean();
         }
 
@@ -97,7 +107,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // Settings was closed with dirty settings, reload the original settings.
             if (IsDirty)
             {
-                InitializeSettings();
+                ReloadComponentsWithCurrentSettings();
                 MarkClean();
             }
         }
@@ -115,14 +125,16 @@ namespace Zutatensuppe.DiabloInterface.Gui
             AutoSplitLayout.Controls.Add(autoSplitTable);
         }
 
-        private void UpdateTitle()
+        void UpdateTitle()
         {
-            Text = string.Format(WindowTitleFormat, Properties.Settings.Default.SettingsFile.Substring(Properties.Settings.Default.SettingsFile.LastIndexOf("\\")+1));
+            Text = $@"Settings ({Path.GetFileName(settingsService.CurrentSettingsFile)})";
         }
 
-        private void InitializeSettings()
+        void ReloadComponentsWithCurrentSettings()
         {
             UpdateTitle();
+
+            var settings = settingsService.CurrentSettings;
 
             fontComboBox.SelectedIndex = fontComboBox.Items.IndexOf(settings.FontName);
 
@@ -225,8 +237,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             return runesList;
         }
 
-        private void UpdateSettings()
+        ApplicationSettings CopyModifiedSettings()
         {
+            var settings = settingsService.CurrentSettings.DeepCopy();
+
             settings.Runes = RunesList();
             settings.Autosplits = autoSplitTable.AutoSplits.ToList();
             settings.CreateFiles = CreateFilesCheckBox.Checked;
@@ -268,6 +282,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
             settings.ColorBackground = button2.BackColor;
 
+            return settings;
         }
 
         private void AddAutoSplitButton_Clicked(object sender, EventArgs e)
@@ -331,74 +346,40 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
         }
 
-        void OnSettingsUpdated()
+        void SaveSettings(string path = null)
         {
-            var updateEvent = SettingsUpdated;
-            if (updateEvent != null)
-            {
-                updateEvent(settings);
-            }
-        }
+            path = path ?? settingsService.CurrentSettingsFile;
+            var modifiedSettings = CopyModifiedSettings();
 
-        void SaveSettings(string filename = null)
-        {
             UseWaitCursor = true;
-
-            UpdateSettings();
-
-            // Persist settings to file.
-            var persistense = new SettingsPersistence();
-            if (string.IsNullOrEmpty(filename))
-                 persistense.Save(settings);
-            else persistense.Save(settings, filename);
-
-            // file name may be a different one now
-            UpdateTitle();
-
-            MarkClean();
-            OnSettingsUpdated();
-
+            settingsService.SaveSettings(path, modifiedSettings);
+            settingsService.LoadSettings(path ?? settingsService.CurrentSettingsFile);
             UseWaitCursor = false;
+
+            LoadConfigFileList();
         }
 
+        // TODO: Differentiate between loading and reverting settings.
         bool LoadSettings(string filename)
         {
             UseWaitCursor = true;
-
-            var persistence = new SettingsPersistence();
-            var settings = persistence.Load(filename);
-            if (settings != null)
-            {
-                this.settings = settings;
-
-                UpdateTitle();
-                InitializeSettings();
-
-                MarkClean();
-                OnSettingsUpdated();
-
-                UseWaitCursor = false;
-
-                return true;
-            }
-
-            // Failed to persist settings.
+            var success = settingsService.LoadSettings(filename);
             UseWaitCursor = false;
-            return false;
+            return success;
         }
 
         private void SaveSettingsAsMenuItem_Click(object sender, EventArgs e)
         {
-            SimpleSaveDialog ssd = new SimpleSaveDialog(String.Empty);
-            ssd.StartPosition = FormStartPosition.CenterParent;
-            DialogResult res = ssd.ShowDialog();
+            var saveDialog = new SimpleSaveDialog(string.Empty);
+            saveDialog.StartPosition = FormStartPosition.CenterParent;
+            DialogResult result = saveDialog.ShowDialog();
 
-            if (res == DialogResult.OK)
+            if (result == DialogResult.OK)
             {
-                SaveSettings(Path.Combine(SettingsFilePath, ssd.NewFileName) + ".conf");
+                SaveSettings(Path.Combine(SettingsFilePath, saveDialog.NewFileName) + ".conf");
             }
 
-            ssd.Dispose();
+            saveDialog.Dispose();
 
             LoadConfigFileList();
         }
@@ -410,7 +391,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if ( IsDirty )
+            if (IsDirty)
             {
                 LoadSettings(Properties.Settings.Default.SettingsFile);
             }
@@ -458,23 +439,22 @@ namespace Zutatensuppe.DiabloInterface.Gui
             RuneDisplayElement element = new RuneDisplayElement(rune);
             RuneDisplayPanel.Controls.Add(element);
         }
-        private void LoadConfigFileList()
+
+        void LoadConfigFileList()
         {
             lstConfigFiles.Items.Clear();
 
-            DirectoryInfo di = new DirectoryInfo(SettingsFilePath);
-            foreach (FileInfo fi in di.GetFiles("*.conf", SearchOption.AllDirectories))
+            var directory = new DirectoryInfo(SettingsFilePath);
+            foreach (var fileInfo in directory.GetFiles("*.conf", SearchOption.AllDirectories))
             {
-                ConfigEntry ce = new ConfigEntry()
+                var ce = new ConfigEntry()
                 {
-                    DisplayName = fi.Name.Substring(0, fi.Name.LastIndexOf('.')),
-                    Path = fi.FullName
+                    DisplayName = fileInfo.Name.Substring(0, fileInfo.Name.LastIndexOf('.')),
+                    Path = fileInfo.FullName
                 };
 
                 lstConfigFiles.Items.Add(ce);
             }
-
-            
         }
 
         class ConfigEntry
@@ -521,29 +501,28 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
         }
 
-        private void menuNew_Click(object sender, EventArgs e)
+        void menuNew_Click(object sender, EventArgs e)
         {
+            var saveDialog = new SimpleSaveDialog(String.Empty);
+            DialogResult result = saveDialog.ShowDialog();
 
-            SimpleSaveDialog ssd = new SimpleSaveDialog(String.Empty);
-            DialogResult res = ssd.ShowDialog();
-
-            if (res == DialogResult.OK)
+            if (result == DialogResult.OK)
             {
-                NewSettings(Path.Combine(SettingsFilePath, ssd.NewFileName) + ".conf");
+                NewSettings(Path.Combine(SettingsFilePath, saveDialog.NewFileName) + ".conf");
             }
 
-            ssd.Dispose();
-
-            
+            saveDialog.Dispose();
         }
 
-        private void NewSettings(string path)
+        void NewSettings(string path)
         {
-            settings = new ApplicationSettings();
-            InitializeSettings();
-            SaveSettings(path);
+            UseWaitCursor = true;
+            var settings = new ApplicationSettings();
+            settingsService.SaveSettings(path, settings);
+            settingsService.LoadSettings(path);
+            UseWaitCursor = false;
+
             LoadConfigFileList();
-            LoadSettings(path);
         }
 
         private void menuLoad_Click(object sender, EventArgs e)

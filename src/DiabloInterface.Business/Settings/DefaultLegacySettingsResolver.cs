@@ -1,8 +1,8 @@
-﻿using System;
-using System.Windows.Forms;
-
-namespace Zutatensuppe.DiabloInterface.Settings
+﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
+    using System;
+    using System.Windows.Forms;
+
     public class DefaultLegacySettingsResolver : ILegacySettingsResolver
     {
         public ApplicationSettings ResolveSettings(ApplicationSettings settings, ILegacySettingsObject obj)
@@ -14,12 +14,13 @@ namespace Zutatensuppe.DiabloInterface.Settings
 
         void ResolveHotkeys(ApplicationSettings settings, ILegacySettingsObject obj)
         {
-            if (settings == null) throw new ArgumentNullException("settings");
-            if (obj == null) throw new ArgumentNullException("obj");
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
+            if (obj == null) throw new ArgumentNullException(nameof(obj));
 
             // Already has hotkeys, no need to resolve.
             if (settings.AutosplitHotkey != Keys.None)
                 return;
+
             // No hotkeys assigned: default to None.
             if (!obj.Contains("TriggerKeys"))
                 return;

@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Zutatensuppe.DiabloInterface.Settings
+﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
+    using System;
+    using System.Collections.Generic;
+
     class LegacySettingsObject : ILegacySettingsObject
     {
         Dictionary<string, object> data;
 
         public LegacySettingsObject(Dictionary<string, object> data)
         {
-            if (data == null) throw new ArgumentNullException("data");
+            if (data == null) throw new ArgumentNullException(nameof(data));
 
             this.data = data;
         }

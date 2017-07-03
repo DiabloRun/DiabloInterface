@@ -1,9 +1,10 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
-
-namespace Zutatensuppe.DiabloInterface.Autosplit
+﻿namespace Zutatensuppe.DiabloInterface.Business.AutoSplits
 {
+    using System;
+
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
+
     public class AutoSplit
     {
         public enum SplitType

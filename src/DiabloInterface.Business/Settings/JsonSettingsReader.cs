@@ -1,11 +1,12 @@
-﻿using System;
-using System.Text;
-using Newtonsoft.Json;
-using System.IO;
-using Newtonsoft.Json.Linq;
-
-namespace Zutatensuppe.DiabloInterface.Settings
+﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
+    using System;
+    using System.IO;
+    using System.Text;
+
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+
     public class JsonSettingsReader : ISettingsReader
     {
         ILegacySettingsResolver resolver;
@@ -13,7 +14,7 @@ namespace Zutatensuppe.DiabloInterface.Settings
 
         public JsonSettingsReader(ILegacySettingsResolver resolver, string filename)
         {
-            if (resolver == null) throw new ArgumentNullException("resolver");
+            if (resolver == null) throw new ArgumentNullException(nameof(resolver));
 
             this.resolver = resolver;
             jsonData = File.ReadAllText(filename);
@@ -21,7 +22,7 @@ namespace Zutatensuppe.DiabloInterface.Settings
 
         public JsonSettingsReader(ILegacySettingsResolver resolver, string filename, Encoding encoding)
         {
-            if (resolver == null) throw new ArgumentNullException("resolver");
+            if (resolver == null) throw new ArgumentNullException(nameof(resolver));
 
             this.resolver = resolver;
             jsonData = File.ReadAllText(filename, encoding);

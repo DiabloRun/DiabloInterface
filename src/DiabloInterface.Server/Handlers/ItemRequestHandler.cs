@@ -29,7 +29,9 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
 
         public ItemRequestHandler(D2DataReader dataReader)
         {
-            this.dataReader = dataReader ?? throw new ArgumentNullException(nameof(dataReader));
+            if (dataReader == null) throw new ArgumentNullException(nameof(dataReader));
+
+            this.dataReader = dataReader;
         }
 
         public QueryResponse HandleRequest(QueryRequest request, IList<string> arguments)

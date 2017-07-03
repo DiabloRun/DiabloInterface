@@ -1,11 +1,12 @@
-﻿using Zutatensuppe.DiabloInterface.Autosplit;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
-namespace Zutatensuppe.DiabloInterface.Settings
+﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
+
+    using Zutatensuppe.DiabloInterface.Business.AutoSplits;
+
     public class LegacySettingsReader : ISettingsReader
     {
         ILegacySettingsResolver resolver;
@@ -13,7 +14,7 @@ namespace Zutatensuppe.DiabloInterface.Settings
 
         public LegacySettingsReader(ILegacySettingsResolver resolver, string filename)
         {
-            if (resolver == null) throw new ArgumentNullException("resolver");
+            if (resolver == null) throw new ArgumentNullException(nameof(resolver));
 
             this.resolver = resolver;
             reader = new StreamReader(filename);
@@ -21,7 +22,7 @@ namespace Zutatensuppe.DiabloInterface.Settings
 
         public LegacySettingsReader(ILegacySettingsResolver resolver, string filename, Encoding encoding)
         {
-            if (resolver == null) throw new ArgumentNullException("resolver");
+            if (resolver == null) throw new ArgumentNullException(nameof(resolver));
 
             this.resolver = resolver;
             reader = new StreamReader(filename, encoding);
