@@ -5,6 +5,7 @@
     using System.Drawing;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Windows.Forms;
 
     using Newtonsoft.Json;
@@ -13,18 +14,21 @@
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
     using Zutatensuppe.DiabloInterface.Core.Extensions;
+    using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Gui.Controls;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
 
     public partial class SettingsWindow : WsExCompositedForm
     {
+        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+
         readonly ISettingsService settingsService;
 
-        private string SettingsFilePath = Application.StartupPath + @"\Settings";
+        string SettingsFilePath = Application.StartupPath + @"\Settings";
 
         AutoSplitTable autoSplitTable;
 
-        bool dirty = false;
+        bool dirty;
         public bool IsDirty
         {
             get
@@ -75,13 +79,14 @@
 
         public SettingsWindow(ISettingsService settingsService)
         {
+            Logger.Info("Creating settings window.");
+
             this.settingsService = settingsService;
-            this.settingsService.SettingsChanged += SettingsServiceSettingsChanged;
 
             InitializeComponent();
             InitializeAutoSplitTable();
             InitializeRunes();
-            LoadConfigFileList();
+            PopulateSettingsFileList(settingsService.SettingsFileCollection);
 
             // Select first rune (don't leave combo box empty).
             RuneComboBox.SelectedIndex = 0;
@@ -94,22 +99,44 @@
             MarkClean();
         }
 
-        void SettingsServiceSettingsChanged(object sender, ApplicationSettingsEventArgs e)
+        void SettingsWindowOnShown(object sender, EventArgs e)
         {
-            // NOTE: This may have been due to loading settings from elsewhere. For now the
-            ////     behavior will be to refresh the settings window in that case.
-            ReloadComponentsWithCurrentSettings();
-            MarkClean();
-        }
+            Logger.Info("Show settings window.");
 
-        private void SettingsWindow_Shown(object sender, EventArgs e)
-        {
+            RegisterServiceEventHandlers();
+
             // Settings was closed with dirty settings, reload the original settings.
             if (IsDirty)
             {
                 ReloadComponentsWithCurrentSettings();
                 MarkClean();
             }
+        }
+
+        void RegisterServiceEventHandlers()
+        {
+            settingsService.SettingsChanged += SettingsServiceSettingsChanged;
+            settingsService.SettingsCollectionChanged += SettingsServiceOnSettingsCollectionChanged;
+        }
+
+        void UnregisterServiceEventHandlers()
+        {
+            settingsService.SettingsChanged -= SettingsServiceSettingsChanged;
+            settingsService.SettingsCollectionChanged -= SettingsServiceOnSettingsCollectionChanged;
+        }
+
+        void SettingsServiceSettingsChanged(object sender, ApplicationSettingsEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke((Action)(() => SettingsServiceSettingsChanged(sender, e)));
+                return;
+            }
+
+            // NOTE: This may have been due to loading settings from elsewhere. For now the
+            ////     behavior will be to refresh the settings window in that case.
+            ReloadComponentsWithCurrentSettings();
+            MarkClean();
         }
 
         void InitializeAutoSplitTable()
@@ -307,13 +334,13 @@
             autoSplitTable.ScrollControlIntoView(row);
         }
 
-        private void SettingsWindow_FormClosing(object sender, FormClosingEventArgs e)
+        void SettingsWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing && IsDirty)
             {
                 DialogResult result = MessageBox.Show(
-                    "Would you like to save your settings before closing?",
-                    "Save Changes",
+                    @"Would you like to save your settings before closing?",
+                    @"Save Changes",
                     MessageBoxButtons.YesNoCancel,
                     MessageBoxIcon.Question);
 
@@ -329,6 +356,8 @@
                         return;
                 }
             }
+
+            UnregisterServiceEventHandlers();
         }
 
         private void AutoSplitTestHotkey_Click(object sender, EventArgs e)
@@ -355,8 +384,6 @@
             settingsService.SaveSettings(path, modifiedSettings);
             settingsService.LoadSettings(path ?? settingsService.CurrentSettingsFile);
             UseWaitCursor = false;
-
-            LoadConfigFileList();
         }
 
         // TODO: Differentiate between loading and reverting settings.
@@ -368,20 +395,17 @@
             return success;
         }
 
-        private void SaveSettingsAsMenuItem_Click(object sender, EventArgs e)
+        void SaveSettingsAsMenuItem_Click(object sender, EventArgs e)
         {
-            var saveDialog = new SimpleSaveDialog(string.Empty);
-            saveDialog.StartPosition = FormStartPosition.CenterParent;
-            DialogResult result = saveDialog.ShowDialog();
-
-            if (result == DialogResult.OK)
+            using (var saveDialog = new SimpleSaveDialog(string.Empty))
             {
-                SaveSettings(Path.Combine(SettingsFilePath, saveDialog.NewFileName) + ".conf");
+                saveDialog.StartPosition = FormStartPosition.CenterParent;
+                var result = saveDialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    SaveSettings(Path.Combine(SettingsFilePath, saveDialog.NewFileName) + ".conf");
+                }
             }
-
-            saveDialog.Dispose();
-
-            LoadConfigFileList();
         }
    
         private void CheckUpdatesButton_Click(object sender, EventArgs e)
@@ -434,33 +458,42 @@
             rw.Runes.ForEach(r => AddIndividualRune(r));
         }
 
-        private void AddIndividualRune(Rune rune)
+        void AddIndividualRune(Rune rune)
         {
             RuneDisplayElement element = new RuneDisplayElement(rune);
             RuneDisplayPanel.Controls.Add(element);
         }
 
-        void LoadConfigFileList()
+        void SettingsServiceOnSettingsCollectionChanged(object sender, SettingsCollectionEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke((Action)(() => SettingsServiceOnSettingsCollectionChanged(sender, e)));
+                return;
+            }
+
+            PopulateSettingsFileList(e.Collection);
+        }
+
+        void PopulateSettingsFileList(IEnumerable<FileInfo> settingsFileCollection)
         {
             lstConfigFiles.Items.Clear();
-
-            var directory = new DirectoryInfo(SettingsFilePath);
-            foreach (var fileInfo in directory.GetFiles("*.conf", SearchOption.AllDirectories))
-            {
-                var ce = new ConfigEntry()
-                {
-                    DisplayName = fileInfo.Name.Substring(0, fileInfo.Name.LastIndexOf('.')),
-                    Path = fileInfo.FullName
-                };
-
-                lstConfigFiles.Items.Add(ce);
-            }
+            IEnumerable<ConfigEntry> items = settingsFileCollection.Select(CreateConfigEntry);
+            lstConfigFiles.Items.AddRange(items.Cast<object>().ToArray());
         }
+
+        static ConfigEntry CreateConfigEntry(FileInfo fileInfo) => new ConfigEntry()
+        {
+            DisplayName = Path.GetFileNameWithoutExtension(fileInfo.Name),
+            Path = fileInfo.FullName
+        };
 
         class ConfigEntry
         {
             public string DisplayName { get; set; }
+
             public string Path { get; set; }
+
             public override string ToString()
             {
                 return DisplayName;
@@ -470,7 +503,7 @@
         private void lstConfigFiles_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             // make sure we actually dbl click an item, not just anywhere in the box.
-            int index = this.lstConfigFiles.IndexFromPoint(e.Location);
+            int index = lstConfigFiles.IndexFromPoint(e.Location);
             if (index != ListBox.NoMatches)
             {
                 LoadSettings(((ConfigEntry)lstConfigFiles.Items[index]).Path);
@@ -503,15 +536,14 @@
 
         void menuNew_Click(object sender, EventArgs e)
         {
-            var saveDialog = new SimpleSaveDialog(String.Empty);
-            DialogResult result = saveDialog.ShowDialog();
-
-            if (result == DialogResult.OK)
+            using (var saveDialog = new SimpleSaveDialog(string.Empty))
             {
-                NewSettings(Path.Combine(SettingsFilePath, saveDialog.NewFileName) + ".conf");
+                var result = saveDialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    NewSettings(Path.Combine(SettingsFilePath, saveDialog.NewFileName) + ".conf");
+                }
             }
-
-            saveDialog.Dispose();
         }
 
         void NewSettings(string path)
@@ -521,8 +553,6 @@
             settingsService.SaveSettings(path, settings);
             settingsService.LoadSettings(path);
             UseWaitCursor = false;
-
-            LoadConfigFileList();
         }
 
         private void menuLoad_Click(object sender, EventArgs e)
@@ -530,29 +560,30 @@
             LoadSettings(((ConfigEntry)lstConfigFiles.SelectedItem).Path);
         }
 
-        private void menuClone_Click(object sender, EventArgs e)
+        void menuClone_Click(object sender, EventArgs e)
         {
-            SimpleSaveDialog ssd = new SimpleSaveDialog(String.Empty);
-            DialogResult res = ssd.ShowDialog();
-
-            if (res == DialogResult.OK)
+            using (var saveDialog = new SimpleSaveDialog(string.Empty))
             {
-                CloneSettings(((ConfigEntry)lstConfigFiles.SelectedItem).Path, Path.Combine(SettingsFilePath,ssd.NewFileName)+".conf");
+                var result = saveDialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    CloneSettings(
+                        ((ConfigEntry)lstConfigFiles.SelectedItem).Path,
+                        Path.Combine(SettingsFilePath, saveDialog.NewFileName) + ".conf");
+                }
             }
-
-            ssd.Dispose();
         }
-        private void ReneameSettings(string oldPath, string newPath)
+
+        void RenameSettings(string oldPath, string newPath)
         {
             File.Copy(oldPath, newPath);
             File.Delete(oldPath);
-            LoadConfigFileList();
             LoadSettings(newPath);
         }
-        private void CloneSettings(string oldPath, string newPath)
+
+        void CloneSettings(string oldPath, string newPath)
         {
             File.Copy(oldPath, newPath);
-            LoadConfigFileList();
             LoadSettings(newPath);
         }
 
@@ -561,19 +592,19 @@
             DeleteSettings(((ConfigEntry)lstConfigFiles.SelectedItem).Path);
         }
 
-        private void DeleteSettings(string path)
+        void DeleteSettings(string path)
         {
             File.Delete(path);
-            LoadConfigFileList();
         }
 
-        private void selectColor(object sender)
+        void SelectColor(object sender)
         {
             ColorDialog d = new ColorDialog();
             if (d.ShowDialog() == DialogResult.OK)
                 ((Control)sender).ForeColor = d.Color;
         }
-        private void SetBackgroundColor(Color c)
+
+        void SetBackgroundColor(Color c)
         {
             button2.BackColor = c;
             button2.ForeColor = (384 - c.R - c.G - c.B) > 0 ? Color.White : Color.Black;
@@ -592,57 +623,57 @@
 
         private void btnSetNameColor_Click(object sender, EventArgs e)
         {
-            selectColor(sender);
+            SelectColor(sender);
         }
 
         private void btnSetGoldColor_Click(object sender, EventArgs e)
         {
-            selectColor(sender);
+            SelectColor(sender);
         }
 
         private void btnSetBaseSettingsColor_Click(object sender, EventArgs e)
         {
-            selectColor(sender);
+            SelectColor(sender);
         }
 
         private void btnSetAdvancedStatsColor_Click(object sender, EventArgs e)
         {
-            selectColor(sender);
+            SelectColor(sender);
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            selectColor(sender);
+            SelectColor(sender);
         }
 
         private void btnSetLevelColor_Click(object sender, EventArgs e)
         {
-            selectColor(sender);
+            SelectColor(sender);
         }
 
         private void btnSetFireResColor_Click(object sender, EventArgs e)
         {
-            selectColor(sender);
+            SelectColor(sender);
         }
 
         private void btnSetColdResColor_Click(object sender, EventArgs e)
         {
-            selectColor(sender);
+            SelectColor(sender);
         }
 
         private void btnSetLightningResColor_Click(object sender, EventArgs e)
         {
-            selectColor(sender);
+            SelectColor(sender);
         }
 
         private void btnSetPoisonResColor_Click(object sender, EventArgs e)
         {
-            selectColor(sender);
+            SelectColor(sender);
         }
 
         private void btnSetDifficultyColor_Click(object sender, EventArgs e)
         {
-            selectColor(sender);
+            SelectColor(sender);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -670,19 +701,20 @@
             }
         }
 
-        private void renameToolStripMenuItem_Click(object sender, EventArgs e)
+        void renameToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string current = ((ConfigEntry)lstConfigFiles.SelectedItem).Path;
-            SimpleSaveDialog ssd = new SimpleSaveDialog(Path.GetFileName(current).Replace(".conf", ""));
-            DialogResult res = ssd.ShowDialog();
+            string fileName = Path.GetFileNameWithoutExtension(current);
 
-            if (res == DialogResult.OK)
+            using (var saveDialog = new SimpleSaveDialog(fileName))
             {
-                string newPath = Path.Combine(SettingsFilePath, ssd.NewFileName) + ".conf";
-                ReneameSettings(current, newPath);
+                var result = saveDialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    string newPath = Path.Combine(SettingsFilePath, saveDialog.NewFileName) + ".conf";
+                    RenameSettings(current, newPath);
+                }
             }
-
-            ssd.Dispose();
         }
 
         private void comboBoxLayout_SelectedIndexChanged(object sender, EventArgs e)

@@ -1069,7 +1069,7 @@
             this.Name = "SettingsWindow";
             this.Text = "Settings";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SettingsWindow_FormClosing);
-            this.Shown += new System.EventHandler(this.SettingsWindow_Shown);
+            this.Shown += new System.EventHandler(this.SettingsWindowOnShown);
             this.FontGroup.ResumeLayout(false);
             this.FontGroup.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).EndInit();

@@ -1,6 +1,8 @@
 ﻿namespace Zutatensuppe.DiabloInterface.Business.Services
 {
     using System;
+    using System.Collections.Generic;
+    using System.IO;
 
     using Zutatensuppe.DiabloInterface.Business.Settings;
 
@@ -12,9 +14,19 @@
         event EventHandler<ApplicationSettingsEventArgs> SettingsChanged;
 
         /// <summary>
+        ///     Occurs whenever a file is added or removed from the settings directory.
+        /// </summary>
+        event EventHandler<SettingsCollectionEventArgs> SettingsCollectionChanged;
+
+        /// <summary>
         ///     Gets the currently loaded settings.
         /// </summary>
         ApplicationSettings CurrentSettings { get; }
+
+        /// <summary>
+        ///     Gets the settings file collection.
+        /// </summary>
+        IEnumerable<FileInfo> SettingsFileCollection { get; }
 
         /// <summary>
         ///     Gets the path of the current settings file.
@@ -55,5 +67,15 @@
         }
 
         public ApplicationSettings Settings { get; }
+    }
+
+    public class SettingsCollectionEventArgs : EventArgs
+    {
+        public SettingsCollectionEventArgs(IEnumerable<FileInfo> collection)
+        {
+            Collection = collection;
+        }
+
+        public IEnumerable<FileInfo> Collection { get; }
     }
 }

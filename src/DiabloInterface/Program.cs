@@ -79,8 +79,7 @@
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var settingsService = CreateSettingsService();
-
+            using (var settingsService = CreateSettingsService())
             using (var gameService = new GameService(settingsService))
             {
                 var pipeServer = CreatePipeServer(gameService);
@@ -91,7 +90,7 @@
             }
         }
 
-        static ISettingsService CreateSettingsService()
+        static SettingsService CreateSettingsService()
         {
             var appStorage = new ApplicationStorage();
             var service = new SettingsService(appStorage);
@@ -104,7 +103,6 @@
         static DiabloInterfaceServer CreatePipeServer(GameService gameService)
         {
             const string PipeName = "DiabloInterfacePipe";
-
 
             var logger = LogServiceLocator.Get(typeof(Program));
             logger.Info("Initializing pipe server.");

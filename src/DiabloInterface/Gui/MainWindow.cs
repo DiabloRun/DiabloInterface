@@ -41,11 +41,13 @@
 
             RegisterServiceEventHandlers();
             InitializeComponent();
+            PopulateSetingsFileListContextMenu(settingsService.SettingsFileCollection);
         }
 
         void RegisterServiceEventHandlers()
         {
             settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
+            settingsService.SettingsCollectionChanged += SettingsServiceOnSettingsCollectionChanged;
 
             gameService.CharacterCreated += GameServiceOnCharacterCreated;
             gameService.DataRead += GameServiceOnDataRead;
@@ -54,6 +56,17 @@
         void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
         {
             ApplySettings(e.Settings);
+        }
+
+        void SettingsServiceOnSettingsCollectionChanged(object sender, SettingsCollectionEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke((Action)(() => SettingsServiceOnSettingsCollectionChanged(sender, e)));
+                return;
+            }
+
+            PopulateSetingsFileListContextMenu(e.Collection);
         }
 
         void MainWindowLoad(object sender, EventArgs e)
@@ -88,7 +101,6 @@
 
             UpdateLayoutSettings(settings);
             UpdateAutoSplitsSettingsForDebugView(settings);
-            LoadSettingsFileList();
             LogAutoSplits();
         }
 
@@ -114,40 +126,24 @@
             }
         }
 
-        void LoadSettingsFileList()
+        void PopulateSetingsFileListContextMenu(IEnumerable<FileInfo> settingsFileCollection)
         {
             loadConfigMenuItem.DropDownItems.Clear();
-
-            DirectoryInfo settingsDirectory = GetSettingsDirectory();
-            FileInfo[] files = settingsDirectory.GetFiles("*.conf", SearchOption.AllDirectories);
-
-            ToolStripItem[] items = (from fileInfo in files
-                select CreateSettingsToolStripMenuItem(fileInfo) as ToolStripItem).ToArray();
-
-            loadConfigMenuItem.DropDownItems.AddRange(items);
+            IEnumerable<ToolStripItem> items = settingsFileCollection.Select(CreateSettingsToolStripMenuItem);
+            loadConfigMenuItem.DropDownItems.AddRange(items.ToArray());
         }
 
         ToolStripMenuItem CreateSettingsToolStripMenuItem(FileInfo fileInfo)
         {
             var item = new ToolStripMenuItem
             {
-                Text = fileInfo.Name.Substring(0, fileInfo.Name.LastIndexOf('.')),
+                Text = Path.GetFileNameWithoutExtension(fileInfo.Name),
                 Tag = fileInfo.FullName
             };
+
             item.Click += LoadConfigFile;
 
             return item;
-        }
-
-        static DirectoryInfo GetSettingsDirectory()
-        {
-            var directory = new DirectoryInfo(@".\Settings");
-            if (directory.Exists) return directory;
-
-            Logger.Info($"Creating settings directory at: {directory.FullName}");
-            directory.Create();
-
-            return directory;
         }
 
         void LoadConfigFile(object sender, EventArgs e)
@@ -450,6 +446,7 @@
         void UnregisterServiceEvents()
         {
             settingsService.SettingsChanged -= SettingsServiceOnSettingsChanged;
+            settingsService.SettingsCollectionChanged -= SettingsServiceOnSettingsCollectionChanged;
 
             gameService.CharacterCreated -= GameServiceOnCharacterCreated;
             gameService.DataRead -= GameServiceOnDataRead;
