@@ -12,7 +12,8 @@
 
         public string FileFolder { get; set; } = "Files";
         public string FontName { get; set; } = "Courier New";
-        public string D2Version { get; set; }
+
+        public string D2Version { get; set; } = "1.14d";
         public int FontSize { get; set; } = 10;
         public int FontSizeTitle { get; set; } = 18;
         public bool CreateFiles { get; set; }
