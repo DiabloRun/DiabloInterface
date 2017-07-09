@@ -487,6 +487,11 @@
                 // Failed to open process.
                 return false;
             }
+            catch (ProcessMemoryReadException)
+            {
+                // Failed to read memory.
+                return false;
+            }
         }
 
         public void ItemSlotAction(List<BodyLocation> slots, Action<ItemReader, D2Unit> action)

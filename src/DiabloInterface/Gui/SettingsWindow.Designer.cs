@@ -952,6 +952,7 @@
             this.CheckUpdatesButton.TabIndex = 2;
             this.CheckUpdatesButton.Text = "Check for updates now";
             this.CheckUpdatesButton.UseVisualStyleBackColor = true;
+            this.CheckUpdatesButton.Click += new System.EventHandler(this.CheckUpdatesButton_Click);
             // 
             // CheckUpdatesCheckBox
             // 

@@ -4,20 +4,38 @@
     using System.Reflection;
     using System.Windows.Forms;
 
-    using Zutatensuppe.DiabloInterface.Business.Services;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
-    using Zutatensuppe.DiabloInterface.Framework;
-    using Zutatensuppe.DiabloInterface.Gui;
-    using Zutatensuppe.DiabloInterface.Server;
-    using Zutatensuppe.DiabloInterface.Server.Handlers;
+    using Core.Logging;
+    using Framework;
+    using Gui;
+    using Server;
+    using Server.Handlers;
+    using Business.Services;
+    using System.Runtime.InteropServices;
 
     using static Framework.NetFrameworkVersionComparator;
 
     internal static class Program
     {
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        const int SW_HIDE = 0;
+        const int SW_SHOW = 5;
+
         [STAThread]
         static void Main()
         {
+            var handle = GetConsoleWindow();
+            ShowWindow(handle, SW_HIDE);
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                ShowWindow(handle, SW_SHOW);
+            }
+
             RegisterAppDomainExceptionLogging();
             if (ShouldQuitWithoutProperDotNetFramework())
             {
@@ -25,6 +43,7 @@
             }
 
             InitializeLogger();
+
             RunApplication();
         }
 
