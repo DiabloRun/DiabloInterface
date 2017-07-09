@@ -146,7 +146,9 @@ namespace Zutatensuppe.D2Reader
 
             // Make sure we read successfully.
             if (!success || bytesRead != (uint)data.Length)
-                throw new ProcessMemoryReadException(address);
+            {
+              throw new ProcessMemoryReadException(address);
+            }
             return data;
         }
 

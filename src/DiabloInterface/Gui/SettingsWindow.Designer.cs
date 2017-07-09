@@ -991,7 +991,8 @@
             this.VersionComboBox.FormattingEnabled = true;
             this.VersionComboBox.Items.AddRange(new object[] {
             "1.14d",
-            "1.14c"});
+            "1.14c",
+            "1.14b"});
             this.VersionComboBox.Location = new System.Drawing.Point(105, 17);
             this.VersionComboBox.Name = "VersionComboBox";
             this.VersionComboBox.Size = new System.Drawing.Size(117, 21);
