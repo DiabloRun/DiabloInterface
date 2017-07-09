@@ -362,17 +362,17 @@
 
                     break;
                 case "1.14c":
+                    memoryTable.Address.GlobalData = new IntPtr(0x33FD78);
+
                     memoryTable.Address.World = new IntPtr(0x0047ACC0);
                     memoryTable.Address.GameId = new IntPtr(0x00479C94);
-                    memoryTable.Address.PlayerUnit = new IntPtr(0x0039CEFC);
-                    memoryTable.Address.Area = new IntPtr(0x0039A1C8);
-
-                    memoryTable.Address.GlobalData = new IntPtr(0x33FD78);
                     memoryTable.Address.LowQualityItems = new IntPtr(0x563BE0);
                     memoryTable.Address.ItemDescriptions = new IntPtr(0x5639E0);
                     memoryTable.Address.MagicModifierTable = new IntPtr(0x563A04);
                     memoryTable.Address.RareModifierTable = new IntPtr(0x563A28);
 
+                    memoryTable.Address.PlayerUnit = new IntPtr(0x0039CEFC);
+                    memoryTable.Address.Area = new IntPtr(0x0039A1C8);
                     memoryTable.Address.StringIndexerTable = new IntPtr(0x479A3C);
                     memoryTable.Address.StringAddressTable = new IntPtr(0x479A40);
                     memoryTable.Address.PatchStringIndexerTable = new IntPtr(0x479A58);
@@ -437,12 +437,10 @@
 
                     memoryTable.Address.PlayerUnit = new IntPtr(0x003A5E74); // points to the player struct address
                     memoryTable.Address.Area = new IntPtr(0x003A3140); // integer that is the current area of the player
-
-                    /*GOT*/memoryTable.Address.StringIndexerTable = new IntPtr(0x4829B4); // => points to 0x6684C7C
+                    memoryTable.Address.StringIndexerTable = new IntPtr(0x4829B4); // => points to 0x6684C7C
                     memoryTable.Address.StringAddressTable = new IntPtr(0x4829B8); // => points to 0x5A03c24
-
                     memoryTable.Address.PatchStringIndexerTable = new IntPtr(0x4829D0);
-                    /*GOT*/memoryTable.Address.PatchStringAddressTable = new IntPtr(0x4829BC);
+                    memoryTable.Address.PatchStringAddressTable = new IntPtr(0x4829BC);
                     memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(0x4829D4);
                     memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x4829C0);
 
