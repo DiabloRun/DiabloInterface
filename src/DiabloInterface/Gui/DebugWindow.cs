@@ -60,8 +60,11 @@
         QuestDebugRow[,] QuestRowsHell;
 
         List<AutosplitBinding> autoSplitBindings;
-
         Dictionary<BodyLocation, string> itemStrings;
+
+        Dictionary<Label, BodyLocation> locs;
+        private Label clickedLabel = null;
+        private Label hoveredLabel = null;
 
         public DebugWindow()
         {
@@ -176,124 +179,77 @@
             ActLabelsHell = new Label[5];
             QuestRowsHell = new QuestDebugRow[5, 6];
             LoadQuests(ActLabelsHell, QuestRowsHell, tabPage3);
+
+            locs = new Dictionary<Label, BodyLocation>();
+            locs.Add(label1, BodyLocation.Head);
+            locs.Add(label10, BodyLocation.Amulet);
+            locs.Add(label3, BodyLocation.PrimaryRight);
+            locs.Add(label2, BodyLocation.PrimaryLeft);
+            locs.Add(label4, BodyLocation.BodyArmor);
+            locs.Add(label7, BodyLocation.RingLeft);
+            locs.Add(label8, BodyLocation.RingRight);
+            locs.Add(label5, BodyLocation.Gloves);
+            locs.Add(label6, BodyLocation.Belt);
+            locs.Add(label9, BodyLocation.Boots);
         }
 
         public void UpdateItemStats(Dictionary<BodyLocation, string> itemStrings)
         {
             if (DesignMode) return;
-
-
             this.itemStrings = itemStrings;
+            UpdateItemDebugInformation();
+        }
+        
+        private void UpdateItemDebugInformation()
+        {
+            if (InvokeRequired)
+            {
+                // Delegate call to UI thread.
+                Invoke((Action)(() => UpdateItemDebugInformation()));
+                return;
+            }
+
+            // hover has precedence vs clicked labels
+            Label l = hoveredLabel != null ? hoveredLabel : (clickedLabel != null ? clickedLabel : null);
+            if (l == null || itemStrings == null || !locs.ContainsKey(l) || !itemStrings.ContainsKey(locs[l]))
+            {
+                textItemDesc.Text = "";
+                return;
+            }
+            
+            textItemDesc.Text = itemStrings[locs[l]];
         }
 
-        private void label1_MouseEnter(object sender, EventArgs e)
+        private void LabelClick(object sender, EventArgs e)
         {
-            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.Head)) return;
-            textItemDesc.Text = itemStrings[BodyLocation.Head];
+            if (clickedLabel == sender)
+            {
+                clickedLabel = null;
+                ((Label)sender).ForeColor = Color.Aquamarine;
+            }
+            else
+            {
+                clickedLabel = (Label)sender;
+                ((Label)sender).ForeColor = Color.Yellow;
+            }
+            UpdateItemDebugInformation();
         }
 
-        private void label1_MouseLeave(object sender, EventArgs e)
+        private void LabelMouseEnter(object sender, EventArgs e)
         {
-            textItemDesc.Text = "";
+            hoveredLabel = (Label)sender;
+            UpdateItemDebugInformation();
         }
 
-        private void label10_MouseEnter(object sender, EventArgs e)
+        private void LabelMouseLeave(object sender, EventArgs e)
         {
-            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.Amulet)) return;
-            textItemDesc.Text = itemStrings[BodyLocation.Amulet];
+            if (hoveredLabel != sender)
+            {
+                return;
+            }
+            hoveredLabel = null;
+            UpdateItemDebugInformation();
         }
-
-        private void label10_MouseLeave(object sender, EventArgs e)
-        {
-            textItemDesc.Text = "";
-        }
-
-        private void label3_MouseEnter(object sender, EventArgs e)
-        {
-            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.PrimaryRight)) return;
-            textItemDesc.Text = itemStrings[BodyLocation.PrimaryRight];
-        }
-
-        private void label3_MouseLeave(object sender, EventArgs e)
-        {
-            textItemDesc.Text = "";
-        }
-
-        private void label2_MouseEnter(object sender, EventArgs e)
-        {
-            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.PrimaryLeft)) return;
-            textItemDesc.Text = itemStrings[BodyLocation.PrimaryLeft];
-        }
-
-        private void label2_MouseLeave(object sender, EventArgs e)
-        {
-            textItemDesc.Text = "";
-        }
-
-        private void label4_MouseEnter(object sender, EventArgs e)
-        {
-            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.BodyArmor)) return;
-            textItemDesc.Text = itemStrings[BodyLocation.BodyArmor];
-        }
-
-        private void label4_MouseLeave(object sender, EventArgs e)
-        {
-            textItemDesc.Text = "";
-        }
-
-        private void label7_MouseEnter(object sender, EventArgs e)
-        {
-            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.RingLeft)) return;
-            textItemDesc.Text = itemStrings[BodyLocation.RingLeft];
-        }
-
-        private void label7_MouseLeave(object sender, EventArgs e)
-        {
-            textItemDesc.Text = "";
-        }
-
-        private void label8_MouseEnter(object sender, EventArgs e)
-        {
-            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.RingRight)) return;
-            textItemDesc.Text = itemStrings[BodyLocation.RingRight];
-        }
-
-        private void label8_MouseLeave(object sender, EventArgs e)
-        {
-            textItemDesc.Text = "";
-        }
-
-        private void label5_MouseEnter(object sender, EventArgs e)
-        {
-            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.Gloves)) return;
-            textItemDesc.Text = itemStrings[BodyLocation.Gloves];
-        }
-
-        private void label5_MouseLeave(object sender, EventArgs e)
-        {
-            textItemDesc.Text = "";
-        }
-
-        private void label6_MouseEnter(object sender, EventArgs e)
-        {
-            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.Belt)) return;
-            textItemDesc.Text = itemStrings[BodyLocation.Belt];
-        }
-
-        private void label6_MouseLeave(object sender, EventArgs e)
-        {
-            textItemDesc.Text = "";
-        }
-
-        private void label9_MouseEnter(object sender, EventArgs e)
-        {
-            if (itemStrings == null || !itemStrings.ContainsKey(BodyLocation.Boots)) return;
-            textItemDesc.Text = itemStrings[BodyLocation.Boots];
-        }
-
-        private void label9_MouseLeave(object sender, EventArgs e)
-        {
-            textItemDesc.Text = "";
-        }
+        
     }
 }

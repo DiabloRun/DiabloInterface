@@ -136,8 +136,9 @@
             this.label1.TabIndex = 5;
             this.label1.Text = "Head";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label1.MouseEnter += new System.EventHandler(this.label1_MouseEnter);
-            this.label1.MouseLeave += new System.EventHandler(this.label1_MouseLeave);
+            this.label1.Click += new System.EventHandler(this.LabelClick);
+            this.label1.MouseEnter += new System.EventHandler(this.LabelMouseEnter);
+            this.label1.MouseLeave += new System.EventHandler(this.LabelMouseLeave);
             // 
             // label2
             // 
@@ -149,8 +150,9 @@
             this.label2.TabIndex = 6;
             this.label2.Text = "Left Arm";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label2.MouseEnter += new System.EventHandler(this.label2_MouseEnter);
-            this.label2.MouseLeave += new System.EventHandler(this.label2_MouseLeave);
+            this.label2.Click += new System.EventHandler(this.LabelClick);
+            this.label2.MouseEnter += new System.EventHandler(this.LabelMouseEnter);
+            this.label2.MouseLeave += new System.EventHandler(this.LabelMouseLeave);
             // 
             // label3
             // 
@@ -162,8 +164,9 @@
             this.label3.TabIndex = 7;
             this.label3.Text = "Right Arm";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label3.MouseEnter += new System.EventHandler(this.label3_MouseEnter);
-            this.label3.MouseLeave += new System.EventHandler(this.label3_MouseLeave);
+            this.label3.Click += new System.EventHandler(this.LabelClick);
+            this.label3.MouseEnter += new System.EventHandler(this.LabelMouseEnter);
+            this.label3.MouseLeave += new System.EventHandler(this.LabelMouseLeave);
             // 
             // label4
             // 
@@ -175,8 +178,9 @@
             this.label4.TabIndex = 8;
             this.label4.Text = "Body";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label4.MouseEnter += new System.EventHandler(this.label4_MouseEnter);
-            this.label4.MouseLeave += new System.EventHandler(this.label4_MouseLeave);
+            this.label4.Click += new System.EventHandler(this.LabelClick);
+            this.label4.MouseEnter += new System.EventHandler(this.LabelMouseEnter);
+            this.label4.MouseLeave += new System.EventHandler(this.LabelMouseLeave);
             // 
             // label5
             // 
@@ -188,8 +192,9 @@
             this.label5.TabIndex = 9;
             this.label5.Text = "Gloves";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label5.MouseEnter += new System.EventHandler(this.label5_MouseEnter);
-            this.label5.MouseLeave += new System.EventHandler(this.label5_MouseLeave);
+            this.label5.Click += new System.EventHandler(this.LabelClick);
+            this.label5.MouseEnter += new System.EventHandler(this.LabelMouseEnter);
+            this.label5.MouseLeave += new System.EventHandler(this.LabelMouseLeave);
             // 
             // label6
             // 
@@ -201,8 +206,9 @@
             this.label6.TabIndex = 10;
             this.label6.Text = "Belt";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label6.MouseEnter += new System.EventHandler(this.label6_MouseEnter);
-            this.label6.MouseLeave += new System.EventHandler(this.label6_MouseLeave);
+            this.label6.Click += new System.EventHandler(this.LabelClick);
+            this.label6.MouseEnter += new System.EventHandler(this.LabelMouseEnter);
+            this.label6.MouseLeave += new System.EventHandler(this.LabelMouseLeave);
             // 
             // label7
             // 
@@ -214,8 +220,9 @@
             this.label7.TabIndex = 11;
             this.label7.Text = "L";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label7.MouseEnter += new System.EventHandler(this.label7_MouseEnter);
-            this.label7.MouseLeave += new System.EventHandler(this.label7_MouseLeave);
+            this.label7.Click += new System.EventHandler(this.LabelClick);
+            this.label7.MouseEnter += new System.EventHandler(this.LabelMouseEnter);
+            this.label7.MouseLeave += new System.EventHandler(this.LabelMouseLeave);
             // 
             // label8
             // 
@@ -227,8 +234,9 @@
             this.label8.TabIndex = 12;
             this.label8.Text = "R";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label8.MouseEnter += new System.EventHandler(this.label8_MouseEnter);
-            this.label8.MouseLeave += new System.EventHandler(this.label8_MouseLeave);
+            this.label8.Click += new System.EventHandler(this.LabelClick);
+            this.label8.MouseEnter += new System.EventHandler(this.LabelMouseEnter);
+            this.label8.MouseLeave += new System.EventHandler(this.LabelMouseLeave);
             // 
             // label9
             // 
@@ -240,8 +248,9 @@
             this.label9.TabIndex = 13;
             this.label9.Text = "Boots";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label9.MouseEnter += new System.EventHandler(this.label9_MouseEnter);
-            this.label9.MouseLeave += new System.EventHandler(this.label9_MouseLeave);
+            this.label9.Click += new System.EventHandler(this.LabelClick);
+            this.label9.MouseEnter += new System.EventHandler(this.LabelMouseEnter);
+            this.label9.MouseLeave += new System.EventHandler(this.LabelMouseLeave);
             // 
             // label10
             // 
@@ -253,8 +262,9 @@
             this.label10.TabIndex = 12;
             this.label10.Text = "A";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label10.MouseEnter += new System.EventHandler(this.label10_MouseEnter);
-            this.label10.MouseLeave += new System.EventHandler(this.label10_MouseLeave);
+            this.label10.Click += new System.EventHandler(this.LabelClick);
+            this.label10.MouseEnter += new System.EventHandler(this.LabelMouseEnter);
+            this.label10.MouseLeave += new System.EventHandler(this.LabelMouseLeave);
             // 
             // textItemDesc
             // 
