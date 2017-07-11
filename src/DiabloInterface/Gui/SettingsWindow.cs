@@ -10,6 +10,7 @@
 
     using Newtonsoft.Json;
 
+    using Zutatensuppe.DiabloInterface.Business;
     using Zutatensuppe.DiabloInterface.Business.AutoSplits;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
@@ -360,7 +361,7 @@
             UnregisterServiceEventHandlers();
         }
 
-        private void AutoSplitTestHotkey_Click(object sender, EventArgs e)
+        void AutoSplitTestHotkey_Click(object sender, EventArgs e)
         {
             KeyManager.TriggerHotkey(autoSplitHotkeyControl.Hotkey);
         }

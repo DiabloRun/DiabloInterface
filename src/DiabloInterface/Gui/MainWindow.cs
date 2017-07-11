@@ -5,12 +5,10 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
     using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Struct.Item;
-    using Zutatensuppe.DiabloInterface.Business.AutoSplits;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
     using Zutatensuppe.DiabloInterface.Core.Extensions;
@@ -26,20 +24,23 @@
 
         readonly ISettingsService settingsService;
         readonly IGameService gameService;
+        readonly IAutoSplitService autoSplitService;
 
         SettingsWindow settingsWindow;
         DebugWindow debugWindow;
         AbstractLayout currentLayout;
 
-        public MainWindow(ISettingsService settingsService, IGameService gameService)
+        public MainWindow(ISettingsService settingsService, IGameService gameService, IAutoSplitService autoSplitService)
         {
             Logger.Info("Creating main window.");
 
             if (settingsService == null) throw new ArgumentNullException(nameof(settingsService));
             if (gameService == null) throw new ArgumentNullException(nameof(gameService));
+            if (autoSplitService == null) throw new ArgumentNullException(nameof(autoSplitService));
 
             this.settingsService = settingsService;
             this.gameService = gameService;
+            this.autoSplitService = autoSplitService;
 
             RegisterServiceEventHandlers();
             InitializeComponent();
@@ -52,7 +53,6 @@
             settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
             settingsService.SettingsCollectionChanged += SettingsServiceOnSettingsCollectionChanged;
 
-            gameService.CharacterCreated += GameServiceOnCharacterCreated;
             gameService.DataRead += GameServiceOnDataRead;
         }
 
@@ -136,7 +136,6 @@
 
             UpdateLayoutIfChanged(settings);
             UpdateAutoSplitsSettingsForDebugView(settings);
-            LogAutoSplits();
         }
 
         void UpdateAutoSplitsSettingsForDebugView(ApplicationSettings settings)
@@ -183,24 +182,6 @@
             }
         }
 
-        void LogAutoSplits()
-        {
-            var settings = settingsService.CurrentSettings;
-            var logMessage = new StringBuilder();
-            logMessage.Append("Configured autosplits:");
-
-            for (var i = 0; i < settings.Autosplits.Count; ++i)
-            {
-                var split = settings.Autosplits[i];
-
-                logMessage.AppendLine();
-                logMessage.Append("  ");
-                logMessage.Append($"#{i} [{split.Type}, {split.Value}, {split.Difficulty}] \"{split.Name}\"");
-            }
-
-            Logger.Info(logMessage.ToString());
-        }
-
         void GameServiceOnDataRead(object sender, DataReadEventArgs e)
         {
             if (InvokeRequired)
@@ -212,27 +193,6 @@
             WriteCharacterStatFiles(e.Character);
 
             UpdateDebugWindow(e.QuestBuffers, e.ItemStrings);
-
-            // Update autosplits only if enabled and the character was a freshly started character.
-            if (e.IsAutosplitCharacter && settingsService.CurrentSettings.DoAutosplit)
-            {
-                UpdateAutoSplits(e.QuestBuffers, e.CurrentArea, e.CurrentDifficulty, e.ItemIds, e.Character);
-            }
-        }
-
-        void GameServiceOnCharacterCreated(object sender, CharacterCreatedEventArgs e)
-        {
-            Logger.Info($"A new character was created - autosplits OK for {e.Character.Name}");
-
-            ResetAutoSplits();
-        }
-
-        void ResetAutoSplits()
-        {
-            foreach (AutoSplit autosplit in settingsService.CurrentSettings.Autosplits)
-            {
-                autosplit.IsReached = false;
-            }
         }
 
         void UpdateDebugWindow(Dictionary<int, ushort[]> questBuffers, Dictionary<BodyLocation, string> itemStrings)
@@ -254,139 +214,6 @@
             debugWindow.UpdateItemStats(itemStrings);
         }
 
-        void UpdateAutoSplits(Dictionary<int, ushort[]> questBuffers, int areaId, byte difficulty, List<int> itemIds, Character character)
-        {
-            foreach (AutoSplit autosplit in settingsService.CurrentSettings.Autosplits)
-            {
-                if (autosplit.IsReached)
-                {
-                    continue;
-                }
-                if (autosplit.Type != AutoSplit.SplitType.Special)
-                {
-                    continue;
-                }
-                if (autosplit.Value == (int)AutoSplit.Special.GameStart)
-                {
-                    CompleteAutoSplit(autosplit);
-                }
-                if (autosplit.Value == (int)AutoSplit.Special.Clear100Percent
-                    && character.CompletedQuestCounts[difficulty] == D2QuestHelper.Quests.Count
-                    && autosplit.MatchesDifficulty(difficulty))
-                {
-                    CompleteAutoSplit(autosplit);
-                }
-                if (autosplit.Value == (int)AutoSplit.Special.Clear100PercentAllDifficulties
-                    && character.CompletedQuestCounts[0] == D2QuestHelper.Quests.Count
-                    && character.CompletedQuestCounts[1] == D2QuestHelper.Quests.Count
-                    && character.CompletedQuestCounts[2] == D2QuestHelper.Quests.Count)
-                {
-                    CompleteAutoSplit(autosplit);
-                }
-            }
-
-            bool haveUnreachedCharLevelSplits = false;
-            bool haveUnreachedAreaSplits = false;
-            bool haveUnreachedItemSplits = false;
-            bool haveUnreachedQuestSplits = false;
-
-            foreach (AutoSplit autosplit in settingsService.CurrentSettings.Autosplits)
-            {
-                if (autosplit.IsReached || !autosplit.MatchesDifficulty(difficulty))
-                {
-                    continue;
-                }
-                switch (autosplit.Type)
-                {
-                    case AutoSplit.SplitType.CharLevel:
-                        haveUnreachedCharLevelSplits = true;
-                        break;
-                    case AutoSplit.SplitType.Area:
-                        haveUnreachedAreaSplits = true;
-                        break;
-                    case AutoSplit.SplitType.Item:
-                        haveUnreachedItemSplits = true;
-                        break;
-                    case AutoSplit.SplitType.Quest:
-                        haveUnreachedQuestSplits = true;
-                        break;
-                }
-            }
-
-            // if no unreached splits, return
-            if (!(haveUnreachedCharLevelSplits || haveUnreachedAreaSplits || haveUnreachedItemSplits || haveUnreachedQuestSplits))
-            {
-                return;
-            }
-
-            ushort[] questBuffer = null;
-
-            if (haveUnreachedQuestSplits && questBuffers.ContainsKey(difficulty))
-            {
-                questBuffer = questBuffers[difficulty];
-            }
-
-            foreach (AutoSplit autosplit in settingsService.CurrentSettings.Autosplits)
-            {
-                if (autosplit.IsReached || !autosplit.MatchesDifficulty(difficulty))
-                {
-                    continue;
-                }
-
-                switch (autosplit.Type)
-                {
-                    case AutoSplit.SplitType.CharLevel:
-                        if (autosplit.Value <= character.Level)
-                        {
-                            CompleteAutoSplit(autosplit);
-                        }
-                        break;
-                    case AutoSplit.SplitType.Area:
-                        if (autosplit.Value == areaId)
-                        {
-                            CompleteAutoSplit(autosplit);
-                        }
-                        break;
-                    case AutoSplit.SplitType.Item:
-                        if (itemIds.Contains(autosplit.Value))
-                        {
-                            CompleteAutoSplit(autosplit);
-                        }
-                        break;
-                    case AutoSplit.SplitType.Quest:
-                        if (D2QuestHelper.IsQuestComplete((D2QuestHelper.Quest)autosplit.Value, questBuffer))
-                        {
-                            CompleteAutoSplit(autosplit);
-                        }
-                        break;
-                }
-            }
-        }
-
-        void CompleteAutoSplit(AutoSplit autosplit)
-        {
-            // Autosplit already reached.
-            if (autosplit.IsReached)
-            {
-                return;
-            }
-
-            autosplit.IsReached = true;
-            TriggerAutosplit();
-
-            var autoSplitIndex = settingsService.CurrentSettings.Autosplits.IndexOf(autosplit);
-            Logger.Info($"AutoSplit: #{autoSplitIndex} ({autosplit.Name}, {autosplit.Difficulty}) Reached.");
-        }
-
-        void TriggerAutosplit()
-        {
-            var settings = settingsService.CurrentSettings;
-            if (settings.DoAutosplit && settings.AutosplitHotkey != Keys.None)
-            {
-                KeyManager.TriggerHotkey(settings.AutosplitHotkey);
-            }
-        }
-
         void WriteCharacterStatFiles(Character player)
         {
             if (!settingsService.CurrentSettings.CreateFiles) return;
@@ -405,7 +232,7 @@
 
         void resetMenuItem_Click(object sender, EventArgs e)
         {
-            ResetAutoSplits();
+            autoSplitService.ResetAutoSplits();
             currentLayout?.Reset();
         }
 
@@ -454,7 +281,6 @@
             settingsService.SettingsChanged -= SettingsServiceOnSettingsChanged;
             settingsService.SettingsCollectionChanged -= SettingsServiceOnSettingsCollectionChanged;
 
-            gameService.CharacterCreated -= GameServiceOnCharacterCreated;
             gameService.DataRead -= GameServiceOnDataRead;
         }
     }

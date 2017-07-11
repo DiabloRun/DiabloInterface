@@ -1,21 +1,24 @@
-﻿using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Linq;
-using System.Reflection;
-using WindowsInput;
-using WindowsInput.Native;
-using Zutatensuppe.DiabloInterface.Core.Logging;
-
-namespace Zutatensuppe.DiabloInterface
+﻿namespace Zutatensuppe.DiabloInterface.Business
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using System.Windows.Forms;
+
+    using WindowsInput;
+    using WindowsInput.Native;
+
+    using Zutatensuppe.DiabloInterface.Core.Logging;
+
     /// <summary>
     /// ugly with way too much hardcoding. but functional so far
     /// </summary>
-    internal static class KeyManager
+    public static class KeyManager
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
         static IInputSimulator simulatorInstance;
+
         static IInputSimulator Simulator
         {
             get
@@ -69,7 +72,6 @@ namespace Zutatensuppe.DiabloInterface
 
         static void TriggerHotkey(IEnumerable<VirtualKeyCode> modifiers, VirtualKeyCode key)
         {
-
             if (modifiers == null)
             {
                 modifiers = new List<VirtualKeyCode>();
@@ -92,7 +94,7 @@ namespace Zutatensuppe.DiabloInterface
             if (key == VirtualKeyCode.XBUTTON1 || key == VirtualKeyCode.XBUTTON2)
             {
                 // livesplit takes the -2 codes.
-                Simulator.Mouse.XButtonClick((int) key - 2);
+                Simulator.Mouse.XButtonClick((int)key - 2);
             }
             else if (key == VirtualKeyCode.MBUTTON)
             {
@@ -108,7 +110,8 @@ namespace Zutatensuppe.DiabloInterface
 
         static IEnumerable<VirtualKeyCode> BuildInvalidModifiers(IEnumerable<VirtualKeyCode> keys)
         {
-            var modifiers = new List<VirtualKeyCode>() {
+            var modifiers = new List<VirtualKeyCode>
+            {
                 VirtualKeyCode.CONTROL,
                 VirtualKeyCode.MENU,
                 VirtualKeyCode.SHIFT,

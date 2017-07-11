@@ -4,22 +4,20 @@
     using System.Reflection;
     using System.Windows.Forms;
 
+    using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Framework;
     using Zutatensuppe.DiabloInterface.Gui;
     using Zutatensuppe.DiabloInterface.Server;
     using Zutatensuppe.DiabloInterface.Server.Handlers;
-    using Zutatensuppe.DiabloInterface.Business.Services;
 
     using static Framework.NetFrameworkVersionComparator;
 
     internal static class Program
     {
-
         [STAThread]
         static void Main()
         {
-
 #if DEBUG
             ApplicationConsole.initialize();
 #endif
@@ -89,8 +87,9 @@
             using (var settingsService = CreateSettingsService())
             using (var gameService = new GameService(settingsService))
             {
+                var autoSplitService = new AutoSplitService(settingsService, gameService);
                 var pipeServer = CreatePipeServer(gameService);
-                var mainWindow = new MainWindow(settingsService, gameService);
+                var mainWindow = new MainWindow(settingsService, gameService, autoSplitService);
                 Application.Run(mainWindow);
 
                 pipeServer.Stop();
