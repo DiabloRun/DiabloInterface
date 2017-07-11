@@ -106,7 +106,6 @@
             this.MinimizeBox = false;
             this.Name = "MainWindow";
             this.Text = "DiabloInterface";
-            this.Load += new System.EventHandler(this.MainWindowLoad);
             this.contextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 

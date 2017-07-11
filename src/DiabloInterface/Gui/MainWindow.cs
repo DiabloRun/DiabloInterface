@@ -38,8 +38,9 @@
 
             RegisterServiceEventHandlers();
             InitializeComponent();
-            UpdateLayoutView(settingsService.CurrentSettings);
             PopulateSetingsFileListContextMenu(settingsService.SettingsFileCollection);
+            SetTitleWithApplicationVersion();
+            ApplySettings(settingsService.CurrentSettings);
         }
 
         void RegisterServiceEventHandlers()
@@ -70,10 +71,15 @@
             PopulateSetingsFileListContextMenu(e.Collection);
         }
 
+        void ApplySettings(ApplicationSettings settings)
+        {
+            ApplyLayoutChanges(settings);
+        }
+
         void ApplyLayoutChanges(ApplicationSettings settings)
         {
             var isHorizontal = currentLayout is HorizontalLayout;
-            if (isHorizontal != settings.DisplayLayoutHorizontal)
+            if (isHorizontal != settings.DisplayLayoutHorizontal || currentLayout == null)
             {
                 UpdateLayoutView(settings);
             }
@@ -100,21 +106,10 @@
                 : new VerticalLayout(settingsService, gameService);
         }
 
-        void MainWindowLoad(object sender, EventArgs e)
-        {
-            SetTitleWithApplicationVersion();
-            ApplySettings(settingsService.CurrentSettings);
-        }
-
         void SetTitleWithApplicationVersion()
         {
             Text = $@"Diablo Interface v{Application.ProductVersion}";
             Update();
-        }
-
-        void ApplySettings(ApplicationSettings settings)
-        {
-            ApplyLayoutChanges(settings);
         }
 
         void PopulateSetingsFileListContextMenu(IEnumerable<FileInfo> settingsFileCollection)
