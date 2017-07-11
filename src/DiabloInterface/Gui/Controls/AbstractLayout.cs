@@ -1,30 +1,103 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
-using System;
-
-namespace Zutatensuppe.DiabloInterface.Gui.Controls
+﻿namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Linq;
+    using System.Windows.Forms;
+
+    using Zutatensuppe.D2Reader;
+    using Zutatensuppe.DiabloInterface.Business.Services;
+    using Zutatensuppe.DiabloInterface.Business.Settings;
+
     public partial class AbstractLayout : UserControl
     {
+        readonly ISettingsService settingsService;
+        readonly IGameService gameService;
 
-        protected IEnumerable<Label> infoLabels;
-        protected IEnumerable<FlowLayoutPanel> runePanels;
-        protected Dictionary<Control, string> defaultTexts;
+        protected AbstractLayout(ISettingsService settingsService, IGameService gameService)
+        {
+            if (settingsService == null) throw new ArgumentNullException(nameof(settingsService));
+            if (gameService == null) throw new ArgumentNullException(nameof(gameService));
 
-        protected bool RealFrwIas;
+            this.settingsService = settingsService;
+            this.gameService = gameService;
 
-        public void Reset()
+            RegisterServiceEventHandlers();
+            InitializeComponent();
+            InitializeElements();
+
+            Load += (sender, e) => UpdateSettings(settingsService.CurrentSettings);
+
+            // Clean up events when disposed because services outlive us.
+            Disposed += (sender, e) => UnregisterServiceEventHandlers();
+        }
+
+        protected IEnumerable<Label> InfoLabels { get; set; }
+
+        protected IEnumerable<FlowLayoutPanel> RunePanels { get; set; }
+
+        protected Dictionary<Control, string> DefaultTexts { get; set; }
+
+        void InitializeElements()
+        {
+            InfoLabels = Enumerable.Empty<Label>();
+            RunePanels = Enumerable.Empty<FlowLayoutPanel>();
+            DefaultTexts = new Dictionary<Control, string>();
+        }
+
+        void RegisterServiceEventHandlers()
+        {
+            settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
+            gameService.CharacterCreated += GameServiceOnCharacterCreated;
+            gameService.DataRead += GameServiceOnDataRead;
+        }
+
+        void UnregisterServiceEventHandlers()
+        {
+            settingsService.SettingsChanged -= SettingsServiceOnSettingsChanged;
+
+            gameService.CharacterCreated -= GameServiceOnCharacterCreated;
+            gameService.DataRead -= GameServiceOnDataRead;
+        }
+
+        void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
         {
             if (InvokeRequired)
             {
-                // Delegate call to UI thread.
-                Invoke((Action)(() => Reset()));
+                Invoke((Action)(() => SettingsServiceOnSettingsChanged(sender, e)));
                 return;
             }
 
-            foreach (FlowLayoutPanel fp in runePanels)
+            UpdateSettings(e.Settings);
+        }
+
+        void GameServiceOnCharacterCreated(object sender, CharacterCreatedEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke((Action)(() => GameServiceOnCharacterCreated(sender, e)));
+                return;
+            }
+
+            Reset();
+        }
+
+        void GameServiceOnDataRead(object sender, DataReadEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke((Action)(() => GameServiceOnDataRead(sender, e)));
+                return;
+            }
+
+            UpdateLabels(e.Character, e.ItemClassMap);
+            UpdateRuneDisplay(e.ItemClassMap);
+        }
+
+        public void Reset()
+        {
+            foreach (FlowLayoutPanel fp in RunePanels)
             {
                 if (fp.Controls.Count <= 0)
                     continue;
@@ -35,75 +108,44 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 }
             }
 
-            foreach (KeyValuePair<Control, string> pair in defaultTexts)
+            foreach (KeyValuePair<Control, string> pair in DefaultTexts)
             {
                 pair.Key.Text = pair.Value;
             }
         }
 
-        virtual protected void InitializeElements()
+        protected virtual void UpdateSettings(ApplicationSettings settings)
         {
-            infoLabels = Enumerable.Empty<Label>();
-            runePanels = Enumerable.Empty<FlowLayoutPanel>();
-            defaultTexts = new Dictionary<Control, string>();
         }
 
-        protected void ChangeVisibility(Control c, bool visible)
+        protected virtual void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
         {
-            if (InvokeRequired)
-            {
-                // Delegate call to UI thread.
-                Invoke((Action)(() => ChangeVisibility(c, visible)));
-                return;
-            }
-
-            if (visible)
-            {
-                c.Show();
-            }
-            else
-            {
-                c.Hide();
-            }
         }
 
-        protected void UpdateMinWidth(Label[] labels)
+        protected void UpdateLabelWidthAlignment(params Label[] labels)
         {
-            if (InvokeRequired)
-            {
-                // Delegate call to UI thread.
-                Invoke((Action)(() => UpdateMinWidth(labels)));
-                return;
-            }
+            var maxWidth = 0;
 
-            int w = 0;
-            foreach (Label label in labels)
+            foreach (var label in labels)
             {
                 var measuredSize = TextRenderer.MeasureText(label.Text, label.Font, Size.Empty, TextFormatFlags.SingleLine);
-                if (measuredSize.Width > w) w = measuredSize.Width;
+                maxWidth = Math.Max(measuredSize.Width, maxWidth);
             }
 
-            foreach (Label label in labels)
+            foreach (var label in labels)
             {
-                label.MinimumSize = new Size(w, 0);
+                label.MinimumSize = new Size(maxWidth, 0);
             }
         }
 
-        protected void UpdateRuneDisplay(Dictionary<int, int> itemClassMap)
+        void UpdateRuneDisplay(Dictionary<int, int> itemClassMap)
         {
-            if (InvokeRequired)
-            {
-                // Delegate call to UI thread.
-                Invoke((Action)(() => UpdateRuneDisplay(itemClassMap)));
-                return;
-            }
-
-            foreach (FlowLayoutPanel fp in runePanels)
+            foreach (FlowLayoutPanel fp in RunePanels)
             {
                 if (fp.Controls.Count <= 0)
                     continue;
 
-                Dictionary<int, int> dict = new Dictionary<int, int>(itemClassMap);
+                var dict = new Dictionary<int, int>(itemClassMap);
                 foreach (RuneDisplayElement c in fp.Controls)
                 {
                     int eClass = (int)c.Rune + 610;
@@ -114,7 +156,6 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                     }
                 }
             }
-
         }
     }
 }

@@ -1,25 +1,33 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using Zutatensuppe.D2Reader;
-using System;
-
-namespace Zutatensuppe.DiabloInterface.Gui.Controls
+﻿namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Reflection;
+    using System.Windows.Forms;
+
+    using Zutatensuppe.D2Reader;
+    using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
+    using Zutatensuppe.DiabloInterface.Core.Logging;
 
     public partial class VerticalLayout : AbstractLayout
     {
+        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public VerticalLayout()
+        bool realFrwIas;
+
+        public VerticalLayout(ISettingsService settingsService, IGameService gameService)
+            : base(settingsService, gameService)
         {
+            Logger.Info("Creating vertical layout.");
+
             InitializeComponent();
             InitializeElements();
         }
 
-        override protected void InitializeElements()
+        void InitializeElements()
         {
-            infoLabels = new[]
+            InfoLabels = new[]
             {
                 deathsLabel,
                 goldLabel, lvlLabel,
@@ -33,7 +41,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 normLabelVal, nmLabelVal, hellLabelVal,
             };
 
-            runePanels = new[] 
+            RunePanels = new[]
             {
                 panelRuneDisplay2
             };
@@ -46,48 +54,24 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 labelFireResVal, labelColdResVal, labelLightResVal, labelPoisonResVal,
                 normLabelVal, nmLabelVal, hellLabelVal,
             };
-            defaultTexts = new Dictionary<Control, string>();
+            DefaultTexts = new Dictionary<Control, string>();
             foreach (Control c in l)
             {
-                defaultTexts.Add(c, c.Text);
+                DefaultTexts.Add(c, c.Text);
             }
         }
 
-        public void MakeInactive()
+        protected override void UpdateSettings(ApplicationSettings settings)
         {
-            if (InvokeRequired)
-            {
-                // Delegate call to UI thread.
-                Invoke((Action)(() => MakeInactive()));
-                return;
-            }
-            Hide();
+            base.UpdateSettings(settings);
+
+            ApplyLabelSettings(settings);
+            ApplyRuneSettings(settings);
+            UpdateLayout(settings);
         }
 
-        public void MakeActive(ApplicationSettings Settings)
+        protected override void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
         {
-            if (InvokeRequired)
-            {
-                // Delegate call to UI thread.
-                Invoke((Action)(() => MakeActive(Settings)));
-                return;
-            }
-
-            ApplyLabelSettings(Settings);
-            ApplyRuneSettings(Settings);
-            Show();
-            UpdateLayout(Settings);
-        }
-
-        public void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
-        {
-            if (InvokeRequired)
-            {
-                // Delegate call to UI thread.
-                Invoke((Action)(() => UpdateLabels(player, itemClassMap)));
-                return;
-            }
-
             nameLabel.Text = player.Name;
             lvlLabel.Text = "LVL: " + player.Level;
             goldLabel.Text = "GOLD: " + (player.Gold + player.GoldStash);
@@ -97,19 +81,19 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             labelDexVal.Text = "" + player.Dexterity;
             labelVitVal.Text = "" + player.Vitality;
             labelEneVal.Text = "" + player.Energy;
-            UpdateMinWidth(new Label[] { labelStrVal, labelDexVal, labelVitVal, labelEneVal });
+            UpdateLabelWidthAlignment(labelStrVal, labelDexVal, labelVitVal, labelEneVal);
 
-            labelFrwVal.Text = "" + (RealFrwIas ? player.RealFRW() : player.FasterRunWalk);
+            labelFrwVal.Text = "" + (realFrwIas ? player.RealFRW() : player.FasterRunWalk);
             labelFcrVal.Text = "" + player.FasterCastRate;
             labelFhrVal.Text = "" + player.FasterHitRecovery;
-            labelIasVal.Text = "" + (RealFrwIas ? player.RealIAS() : player.IncreasedAttackSpeed);
-            UpdateMinWidth(new Label[] { labelFrwVal, labelFcrVal, labelFhrVal, labelIasVal });
+            labelIasVal.Text = "" + (realFrwIas ? player.RealIAS() : player.IncreasedAttackSpeed);
+            UpdateLabelWidthAlignment(labelFrwVal, labelFcrVal, labelFhrVal, labelIasVal);
 
             labelFireResVal.Text = "" + player.FireResist;
             labelColdResVal.Text = "" + player.ColdResist;
             labelLightResVal.Text = "" + player.LightningResist;
             labelPoisonResVal.Text = "" + player.PoisonResist;
-            UpdateMinWidth(new Label[] { labelFireResVal, labelColdResVal, labelLightResVal, labelPoisonResVal });
+            UpdateLabelWidthAlignment(labelFireResVal, labelColdResVal, labelLightResVal, labelPoisonResVal);
 
             int perc0 = (int)(100.0 * player.CompletedQuestCounts[0] / (float)D2QuestHelper.Quests.Count + .5);
             int perc1 = (int)(100.0 * player.CompletedQuestCounts[1] / (float)D2QuestHelper.Quests.Count + .5);
@@ -118,12 +102,10 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             normLabelVal.Text = perc0 + "%";
             nmLabelVal.Text = perc1 + "%";
             hellLabelVal.Text = perc2 + "%";
-            UpdateMinWidth(new Label[] { normLabelVal, nmLabelVal, hellLabelVal });
-
-            UpdateRuneDisplay(itemClassMap);
+            UpdateLabelWidthAlignment(normLabelVal, nmLabelVal, hellLabelVal);
         }
 
-        private void UpdateLayout(ApplicationSettings Settings)
+        void UpdateLayout(ApplicationSettings settings)
         {
             bool first = true;
             // Calculate maximum sizes that the labels can possible get.
@@ -153,7 +135,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             {
                 Size statSize = TextRenderer.MeasureText("DEX: 499", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
                 panelBaseStats.Size = new Size(statSize.Width, statSize.Height * panelBaseStats.RowCount);
-                panelBaseStats.Margin = new Padding(panelBaseStats.Margin.Left, first ? 0 : Settings.VerticalLayoutPadding, panelBaseStats.Margin.Right, panelBaseStats.Margin.Bottom);
+                panelBaseStats.Margin = new Padding(panelBaseStats.Margin.Left, first ? 0 : settings.VerticalLayoutPadding, panelBaseStats.Margin.Right, panelBaseStats.Margin.Bottom);
                 first = false;
             }
 
@@ -163,7 +145,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             {
                 Size advancedStatSize = TextRenderer.MeasureText("FRW: 99", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
                 panelAdvancedStats.Size = new Size(advancedStatSize.Width, advancedStatSize.Height * panelAdvancedStats.RowCount);
-                panelAdvancedStats.Margin = new Padding(panelAdvancedStats.Margin.Left, first ? 0 : Settings.VerticalLayoutPadding, panelAdvancedStats.Margin.Right, panelAdvancedStats.Margin.Bottom);
+                panelAdvancedStats.Margin = new Padding(panelAdvancedStats.Margin.Left, first ? 0 : settings.VerticalLayoutPadding, panelAdvancedStats.Margin.Right, panelAdvancedStats.Margin.Bottom);
                 first = false;
             }
 
@@ -174,7 +156,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             {
                 Size resStatSize = TextRenderer.MeasureText("COLD: -100", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
                 panelResistances.Size = new Size(resStatSize.Width, resStatSize.Height * panelResistances.RowCount);
-                panelResistances.Margin = new Padding(panelResistances.Margin.Left, first ? 0 : Settings.VerticalLayoutPadding, panelResistances.Margin.Right, panelResistances.Margin.Bottom);
+                panelResistances.Margin = new Padding(panelResistances.Margin.Left, first ? 0 : settings.VerticalLayoutPadding, panelResistances.Margin.Right, panelResistances.Margin.Bottom);
                 first = false;
             }
 
@@ -183,86 +165,86 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             {
                 Size diffPercStatSize = TextRenderer.MeasureText("NORM: 100%", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
                 panelDiffPercentages.Size = new Size(diffPercStatSize.Width, diffPercStatSize.Height * panelDiffPercentages.RowCount);
-                panelDiffPercentages.Margin = new Padding(panelDiffPercentages.Margin.Left, first ? 0 : Settings.VerticalLayoutPadding, panelDiffPercentages.Margin.Right, panelDiffPercentages.Margin.Bottom);
+                panelDiffPercentages.Margin = new Padding(panelDiffPercentages.Margin.Left, first ? 0 : settings.VerticalLayoutPadding, panelDiffPercentages.Margin.Right, panelDiffPercentages.Margin.Bottom);
                 first = false;
             }
 
         }
 
-        private void ApplyRuneSettings(ApplicationSettings Settings)
+        void ApplyRuneSettings(ApplicationSettings settings)
         {
-            if (Settings.DisplayRunes && Settings.Runes.Count > 0)
+            if (settings.DisplayRunes && settings.Runes.Count > 0)
             {
                 panelRuneDisplay2.Controls.Clear();
-                Settings.Runes.ForEach(r => { panelRuneDisplay2.Controls.Add(new RuneDisplayElement((Rune)r, Settings.DisplayRunesHighContrast, false, false)); });
+                settings.Runes.ForEach(r => { panelRuneDisplay2.Controls.Add(new RuneDisplayElement((Rune)r, settings.DisplayRunesHighContrast, false, false)); });
 
-                ChangeVisibility(panelRuneDisplay2, true);
-            } else
+                panelRuneDisplay2.Show();
+            }
+            else
             {
-                ChangeVisibility(panelRuneDisplay2, false);
+                panelRuneDisplay2.Hide();
             }
         }
 
-        private void ApplyLabelSettings(ApplicationSettings Settings)
+        void ApplyLabelSettings(ApplicationSettings settings)
         {
-            BackColor = Settings.ColorBackground;
+            BackColor = settings.ColorBackground;
 
-            nameLabel.Font = new Font(Settings.FontName, Settings.FontSizeTitle);
-            Font infoFont = new Font(Settings.FontName, Settings.FontSize);
-            foreach (Label label in infoLabels)
+            nameLabel.Font = new Font(settings.FontName, settings.FontSizeTitle);
+            var infoFont = new Font(settings.FontName, settings.FontSize);
+            foreach (Label label in InfoLabels)
                 label.Font = infoFont;
 
             // Hide/show labels wanted labels.
-            ChangeVisibility(nameLabel, Settings.DisplayName);
-            ChangeVisibility(goldLabel, Settings.DisplayGold);
-            ChangeVisibility(deathsLabel, Settings.DisplayDeathCounter);
-            ChangeVisibility(lvlLabel, Settings.DisplayLevel);
-            ChangeVisibility(panelResistances, Settings.DisplayResistances);
-            ChangeVisibility(panelBaseStats, Settings.DisplayBaseStats);
-            ChangeVisibility(panelAdvancedStats, Settings.DisplayAdvancedStats);
-            ChangeVisibility(panelDiffPercentages, Settings.DisplayDifficultyPercentages);
+            nameLabel.Visible = settings.DisplayName;
+            goldLabel.Visible = settings.DisplayGold;
+            deathsLabel.Visible = settings.DisplayDeathCounter;
+            lvlLabel.Visible = settings.DisplayLevel;
+            panelResistances.Visible = settings.DisplayResistances;
+            panelBaseStats.Visible = settings.DisplayBaseStats;
+            panelAdvancedStats.Visible = settings.DisplayAdvancedStats;
+            panelDiffPercentages.Visible = settings.DisplayDifficultyPercentages;
 
-            RealFrwIas = Settings.DisplayRealFrwIas;
+            realFrwIas = settings.DisplayRealFrwIas;
 
-            nameLabel.ForeColor = Settings.ColorName;
-            goldLabel.ForeColor = Settings.ColorGold;
-            deathsLabel.ForeColor = Settings.ColorDeaths;
-            lvlLabel.ForeColor = Settings.ColorLevel;
+            nameLabel.ForeColor = settings.ColorName;
+            goldLabel.ForeColor = settings.ColorGold;
+            deathsLabel.ForeColor = settings.ColorDeaths;
+            lvlLabel.ForeColor = settings.ColorLevel;
 
-            fireLabel.ForeColor = Settings.ColorFireRes;
-            labelFireResVal.ForeColor = Settings.ColorFireRes;
-            coldLabel.ForeColor = Settings.ColorColdRes;
-            labelColdResVal.ForeColor = Settings.ColorColdRes;
-            lighLabel.ForeColor = Settings.ColorLightningRes;
-            labelLightResVal.ForeColor = Settings.ColorLightningRes;
-            poisLabel.ForeColor = Settings.ColorPoisonRes;
-            labelPoisonResVal.ForeColor = Settings.ColorPoisonRes;
+            fireLabel.ForeColor = settings.ColorFireRes;
+            labelFireResVal.ForeColor = settings.ColorFireRes;
+            coldLabel.ForeColor = settings.ColorColdRes;
+            labelColdResVal.ForeColor = settings.ColorColdRes;
+            lighLabel.ForeColor = settings.ColorLightningRes;
+            labelLightResVal.ForeColor = settings.ColorLightningRes;
+            poisLabel.ForeColor = settings.ColorPoisonRes;
+            labelPoisonResVal.ForeColor = settings.ColorPoisonRes;
 
-            strLabel.ForeColor = Settings.ColorBaseStats;
-            labelStrVal.ForeColor = Settings.ColorBaseStats;
-            vitLabel.ForeColor = Settings.ColorBaseStats;
-            labelVitVal.ForeColor = Settings.ColorBaseStats;
-            dexLabel.ForeColor = Settings.ColorBaseStats;
-            labelDexVal.ForeColor = Settings.ColorBaseStats;
-            eneLabel.ForeColor = Settings.ColorBaseStats;
-            labelEneVal.ForeColor = Settings.ColorBaseStats;
+            strLabel.ForeColor = settings.ColorBaseStats;
+            labelStrVal.ForeColor = settings.ColorBaseStats;
+            vitLabel.ForeColor = settings.ColorBaseStats;
+            labelVitVal.ForeColor = settings.ColorBaseStats;
+            dexLabel.ForeColor = settings.ColorBaseStats;
+            labelDexVal.ForeColor = settings.ColorBaseStats;
+            eneLabel.ForeColor = settings.ColorBaseStats;
+            labelEneVal.ForeColor = settings.ColorBaseStats;
 
-            fcrLabel.ForeColor = Settings.ColorAdvancedStats;
-            labelFcrVal.ForeColor = Settings.ColorAdvancedStats;
-            fhrLabel.ForeColor = Settings.ColorAdvancedStats;
-            labelFhrVal.ForeColor = Settings.ColorAdvancedStats;
-            iasLabel.ForeColor = Settings.ColorAdvancedStats;
-            labelIasVal.ForeColor = Settings.ColorAdvancedStats;
-            frwLabel.ForeColor = Settings.ColorAdvancedStats;
-            labelFrwVal.ForeColor = Settings.ColorAdvancedStats;
+            fcrLabel.ForeColor = settings.ColorAdvancedStats;
+            labelFcrVal.ForeColor = settings.ColorAdvancedStats;
+            fhrLabel.ForeColor = settings.ColorAdvancedStats;
+            labelFhrVal.ForeColor = settings.ColorAdvancedStats;
+            iasLabel.ForeColor = settings.ColorAdvancedStats;
+            labelIasVal.ForeColor = settings.ColorAdvancedStats;
+            frwLabel.ForeColor = settings.ColorAdvancedStats;
+            labelFrwVal.ForeColor = settings.ColorAdvancedStats;
             
-            normLabel.ForeColor = Settings.ColorDifficultyPercentages;            
-            normLabelVal.ForeColor = Settings.ColorDifficultyPercentages;
-            nmLabel.ForeColor = Settings.ColorDifficultyPercentages;
-            nmLabelVal.ForeColor = Settings.ColorDifficultyPercentages;
-            hellLabel.ForeColor = Settings.ColorDifficultyPercentages;
-            hellLabelVal.ForeColor = Settings.ColorDifficultyPercentages;
+            normLabel.ForeColor = settings.ColorDifficultyPercentages;
+            normLabelVal.ForeColor = settings.ColorDifficultyPercentages;
+            nmLabel.ForeColor = settings.ColorDifficultyPercentages;
+            nmLabelVal.ForeColor = settings.ColorDifficultyPercentages;
+            hellLabel.ForeColor = settings.ColorDifficultyPercentages;
+            hellLabelVal.ForeColor = settings.ColorDifficultyPercentages;
         }
-        
     }
 }

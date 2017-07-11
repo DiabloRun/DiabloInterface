@@ -36,8 +36,6 @@
             this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.horizontalLayout1 = new Zutatensuppe.DiabloInterface.Gui.Controls.HorizontalLayout();
-            this.verticalLayout2 = new Zutatensuppe.DiabloInterface.Gui.Controls.VerticalLayout();
             this.contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -92,29 +90,6 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitMenuItem_Click);
             // 
-            // horizontalLayout1
-            // 
-            this.horizontalLayout1.AutoSize = true;
-            this.horizontalLayout1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.horizontalLayout1.BackColor = System.Drawing.Color.Black;
-            this.horizontalLayout1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.horizontalLayout1.Location = new System.Drawing.Point(0, 0);
-            this.horizontalLayout1.Margin = new System.Windows.Forms.Padding(0);
-            this.horizontalLayout1.Name = "horizontalLayout1";
-            this.horizontalLayout1.Size = new System.Drawing.Size(730, 514);
-            this.horizontalLayout1.TabIndex = 0;
-            // 
-            // verticalLayout2
-            // 
-            this.verticalLayout2.AutoSize = true;
-            this.verticalLayout2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.verticalLayout2.BackColor = System.Drawing.Color.Black;
-            this.verticalLayout2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.verticalLayout2.Location = new System.Drawing.Point(0, 0);
-            this.verticalLayout2.Name = "verticalLayout2";
-            this.verticalLayout2.Size = new System.Drawing.Size(730, 514);
-            this.verticalLayout2.TabIndex = 2;
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -124,8 +99,6 @@
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(730, 514);
             this.ContextMenuStrip = this.contextMenu;
-            this.Controls.Add(this.verticalLayout2);
-            this.Controls.Add(this.horizontalLayout1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -136,7 +109,6 @@
             this.Load += new System.EventHandler(this.MainWindowLoad);
             this.contextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -147,9 +119,6 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem debugMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadConfigMenuItem;
-        
-        private Controls.VerticalLayout verticalLayout2;
-        private Controls.HorizontalLayout horizontalLayout1;
     }
 }
 

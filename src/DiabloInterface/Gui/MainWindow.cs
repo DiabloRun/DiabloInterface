@@ -16,6 +16,7 @@
     using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Data;
+    using Zutatensuppe.DiabloInterface.Gui.Controls;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
     using Zutatensuppe.DiabloInterface.IO;
 
@@ -28,6 +29,7 @@
 
         SettingsWindow settingsWindow;
         DebugWindow debugWindow;
+        AbstractLayout currentLayout;
 
         public MainWindow(ISettingsService settingsService, IGameService gameService)
         {
@@ -41,6 +43,7 @@
 
             RegisterServiceEventHandlers();
             InitializeComponent();
+            UpdateLayoutView(settingsService.CurrentSettings);
             PopulateSetingsFileListContextMenu(settingsService.SettingsFileCollection);
         }
 
@@ -67,6 +70,36 @@
             }
 
             PopulateSetingsFileListContextMenu(e.Collection);
+        }
+
+        void UpdateLayoutIfChanged(ApplicationSettings settings)
+        {
+            var isHorizontal = currentLayout is HorizontalLayout;
+            if (isHorizontal != settings.DisplayLayoutHorizontal)
+            {
+                UpdateLayoutView(settings);
+            }
+        }
+
+        void UpdateLayoutView(ApplicationSettings settings)
+        {
+            var nextLayout = CreateLayout(settings.DisplayLayoutHorizontal);
+            if (currentLayout != null)
+            {
+                Controls.Remove(currentLayout);
+                currentLayout.Dispose();
+                currentLayout = null;
+            }
+
+            Controls.Add(nextLayout);
+            currentLayout = nextLayout;
+        }
+
+        AbstractLayout CreateLayout(bool horizontal)
+        {
+            return horizontal
+                ? new HorizontalLayout(settingsService, gameService) as AbstractLayout
+                : new VerticalLayout(settingsService, gameService);
         }
 
         void MainWindowLoad(object sender, EventArgs e)
@@ -99,23 +132,11 @@
                 return;
             }
 
-            UpdateLayoutSettings(settings);
+            Logger.Info("Applying settings to main window.");
+
+            UpdateLayoutIfChanged(settings);
             UpdateAutoSplitsSettingsForDebugView(settings);
             LogAutoSplits();
-        }
-
-        void UpdateLayoutSettings(ApplicationSettings settings)
-        {
-            if (settings.DisplayLayoutHorizontal)
-            {
-                verticalLayout2.MakeInactive();
-                horizontalLayout1.MakeActive(settings);
-            }
-            else
-            {
-                horizontalLayout1.MakeInactive();
-                verticalLayout2.MakeActive(settings);
-            }
         }
 
         void UpdateAutoSplitsSettingsForDebugView(ApplicationSettings settings)
@@ -182,7 +203,12 @@
 
         void GameServiceOnDataRead(object sender, DataReadEventArgs e)
         {
-            UpdateLabels(e.Character, e.ItemClassMap);
+            if (InvokeRequired)
+            {
+                Invoke((Action)(() => GameServiceOnDataRead(sender, e)));
+                return;
+            }
+
             WriteCharacterStatFiles(e.Character);
 
             UpdateDebugWindow(e.QuestBuffers, e.ItemStrings);
@@ -196,19 +222,17 @@
 
         void GameServiceOnCharacterCreated(object sender, CharacterCreatedEventArgs e)
         {
-            Reset();
             Logger.Info($"A new character was created - autosplits OK for {e.Character.Name}");
+
+            ResetAutoSplits();
         }
 
-        void Reset()
+        void ResetAutoSplits()
         {
             foreach (AutoSplit autosplit in settingsService.CurrentSettings.Autosplits)
             {
                 autosplit.IsReached = false;
             }
-
-            horizontalLayout1.Reset();
-            verticalLayout2.Reset();
         }
 
         void UpdateDebugWindow(Dictionary<int, ushort[]> questBuffers, Dictionary<BodyLocation, string> itemStrings)
@@ -354,25 +378,6 @@
             Logger.Info($"AutoSplit: #{autoSplitIndex} ({autosplit.Name}, {autosplit.Difficulty}) Reached.");
         }
 
-        void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
-        {
-            if (InvokeRequired)
-            {
-                // Delegate call to UI thread.
-                Invoke((Action)(() => UpdateLabels(player, itemClassMap)));
-                return;
-            }
-
-            if (settingsService.CurrentSettings.DisplayLayoutHorizontal)
-            {
-                horizontalLayout1.UpdateLabels(player, itemClassMap);
-            }
-            else
-            {
-                verticalLayout2.UpdateLabels(player, itemClassMap);
-            }
-        }
-
         void TriggerAutosplit()
         {
             var settings = settingsService.CurrentSettings;
@@ -400,7 +405,8 @@
 
         void resetMenuItem_Click(object sender, EventArgs e)
         {
-            Reset();
+            ResetAutoSplits();
+            currentLayout?.Reset();
         }
 
         void settingsMenuItem_Click(object sender, EventArgs e)
