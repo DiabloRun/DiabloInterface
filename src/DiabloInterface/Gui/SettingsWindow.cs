@@ -30,6 +30,29 @@
         AutoSplitTable autoSplitTable;
 
         bool dirty;
+
+        public SettingsWindow(ISettingsService settingsService)
+        {
+            Logger.Info("Creating settings window.");
+
+            this.settingsService = settingsService;
+
+            InitializeComponent();
+            InitializeAutoSplitTable();
+            InitializeRunes();
+            PopulateSettingsFileList(settingsService.SettingsFileCollection);
+
+            // Select first rune (don't leave combo box empty).
+            RuneComboBox.SelectedIndex = 0;
+            cbRuneWord.SelectedIndex = 0;
+
+            ReloadComponentsWithCurrentSettings();
+
+            // Loading the settings will dirty mark pretty much everything, here
+            // we just verify that nothing has actually changed yet.
+            MarkClean();
+        }
+
         public bool IsDirty
         {
             get
@@ -74,30 +97,7 @@
                     || btnSetPoisonResColor.ForeColor != settings.ColorPoisonRes
 
                     || button2.BackColor != settings.ColorBackground;
-                ;
             }
-        }
-
-        public SettingsWindow(ISettingsService settingsService)
-        {
-            Logger.Info("Creating settings window.");
-
-            this.settingsService = settingsService;
-
-            InitializeComponent();
-            InitializeAutoSplitTable();
-            InitializeRunes();
-            PopulateSettingsFileList(settingsService.SettingsFileCollection);
-
-            // Select first rune (don't leave combo box empty).
-            RuneComboBox.SelectedIndex = 0;
-            cbRuneWord.SelectedIndex = 0;
-
-            ReloadComponentsWithCurrentSettings();
-
-            // Loading the settings will dirty mark pretty much everything, here
-            // we just verify that nothing has actually changed yet.
-            MarkClean();
         }
 
         void SettingsWindowOnShown(object sender, EventArgs e)
@@ -313,15 +313,18 @@
             return settings;
         }
 
-        private void AddAutoSplitButton_Clicked(object sender, EventArgs e)
+        void AddAutoSplitButton_Clicked(object sender, EventArgs e)
         {
             var splits = autoSplitTable.AutoSplits;
             var factory = new AutoSplitFactory();
 
             AddAutoSplit(factory.CreateSequential(splits.LastOrDefault()));
+
+            // Automatically enable auto splits when adding.
+            EnableAutosplitCheckBox.Checked = true;
         }
 
-        private void AddAutoSplit(AutoSplit autosplit)
+        void AddAutoSplit(AutoSplit autosplit)
         {
             if (autosplit == null) return;
 
