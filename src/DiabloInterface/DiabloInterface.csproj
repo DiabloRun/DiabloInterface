@@ -79,10 +79,7 @@
   <ItemGroup>
     <Compile Include="ApplicationStorage.cs" />
     <Compile Include="D2Level.cs" />
-    <Compile Include="Data\CharacterStats.cs" />
-    <Compile Include="Data\ICharacterStats.cs" />
     <Compile Include="ApplicationConsole.cs" />
-    <Compile Include="IO\CharacterStatFileWriter.cs" />
     <Compile Include="Framework\NetFrameworkVersion.cs" />
     <Compile Include="Framework\NetFrameworkVersionComparator.cs" />
     <Compile Include="Framework\NetFrameworkVersionExtension.cs" />
@@ -153,8 +150,6 @@
     <Compile Include="Gui\Controls\RuneDisplayElement.Designer.cs">
       <DependentUpon>RuneDisplayElement.cs</DependentUpon>
     </Compile>
-    <Compile Include="IO\ITextFileWriter.cs" />
-    <Compile Include="IO\TextFileWriter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Gui\SettingsWindow.cs">

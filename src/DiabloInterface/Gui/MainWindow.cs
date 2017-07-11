@@ -7,14 +7,11 @@
     using System.Reflection;
     using System.Windows.Forms;
 
-    using Zutatensuppe.D2Reader;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
     using Zutatensuppe.DiabloInterface.Core.Logging;
-    using Zutatensuppe.DiabloInterface.Data;
     using Zutatensuppe.DiabloInterface.Gui.Controls;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
-    using Zutatensuppe.DiabloInterface.IO;
 
     public partial class MainWindow : WsExCompositedForm
     {
@@ -49,8 +46,6 @@
         {
             settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
             settingsService.SettingsCollectionChanged += SettingsServiceOnSettingsCollectionChanged;
-
-            gameService.DataRead += GameServiceOnDataRead;
         }
 
         void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
@@ -168,28 +163,6 @@
             }
         }
 
-        void GameServiceOnDataRead(object sender, DataReadEventArgs e)
-        {
-            if (InvokeRequired)
-            {
-                Invoke((Action)(() => GameServiceOnDataRead(sender, e)));
-                return;
-            }
-
-            WriteCharacterStatFiles(e.Character);
-        }
-
-        void WriteCharacterStatFiles(Character player)
-        {
-            if (!settingsService.CurrentSettings.CreateFiles) return;
-
-            var fileWriter = new TextFileWriter();
-            var statWriter = new CharacterStatFileWriter(fileWriter, settingsService.CurrentSettings.FileFolder);
-            var stats = new CharacterStats(player);
-
-            statWriter.WriteFiles(stats);
-        }
-
         void exitMenuItem_Click(object sender, EventArgs e)
         {
             Close();
@@ -229,8 +202,6 @@
         {
             settingsService.SettingsChanged -= SettingsServiceOnSettingsChanged;
             settingsService.SettingsCollectionChanged -= SettingsServiceOnSettingsCollectionChanged;
-
-            gameService.DataRead -= GameServiceOnDataRead;
         }
     }
 }

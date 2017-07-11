@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.IO
+﻿namespace Zutatensuppe.DiabloInterface.Business.IO
 {
     public interface ITextFileWriter
     {

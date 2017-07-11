@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using DiabloInterface.Test.Mocks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Zutatensuppe.DiabloInterface.Data;
-using Zutatensuppe.DiabloInterface.IO;
-
-namespace DiabloInterface.Test.IO
+﻿namespace DiabloInterface.Test.IO
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using DiabloInterface.Test.Mocks;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Zutatensuppe.DiabloInterface.Business.Data;
+    using Zutatensuppe.DiabloInterface.Business.IO;
+
     [TestClass]
     public class StatFileWriterTest
     {

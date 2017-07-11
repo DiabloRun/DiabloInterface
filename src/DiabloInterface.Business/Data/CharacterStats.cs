@@ -1,7 +1,7 @@
-﻿using Zutatensuppe.D2Reader;
-
-namespace Zutatensuppe.DiabloInterface.Data
+﻿namespace Zutatensuppe.DiabloInterface.Business.Data
 {
+    using Zutatensuppe.D2Reader;
+
     internal class CharacterStats : ICharacterStats
     {
         readonly Character character;

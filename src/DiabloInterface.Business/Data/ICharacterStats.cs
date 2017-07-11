@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Data
+﻿namespace Zutatensuppe.DiabloInterface.Business.Data
 {
     public interface ICharacterStats
     {

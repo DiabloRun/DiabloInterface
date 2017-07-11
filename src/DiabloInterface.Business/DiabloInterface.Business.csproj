@@ -51,8 +51,14 @@
   <ItemGroup>
     <Compile Include="AutoSplits\AutoSplit.cs" />
     <Compile Include="AutoSplits\AutoSplitFactory.cs" />
+    <Compile Include="Data\CharacterStats.cs" />
+    <Compile Include="Data\ICharacterStats.cs" />
+    <Compile Include="IO\CharacterStatFileWriter.cs" />
+    <Compile Include="IO\ITextFileWriter.cs" />
+    <Compile Include="IO\TextFileWriter.cs" />
     <Compile Include="KeyManager.cs" />
     <Compile Include="Services\AutoSplitService.cs" />
+    <Compile Include="Services\CharacterStatFileWriterService.cs" />
     <Compile Include="Services\GameService.cs" />
     <Compile Include="Services\IAutoSplitService.cs" />
     <Compile Include="Services\IGameService.cs" />

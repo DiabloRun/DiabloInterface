@@ -1,6 +1,7 @@
 ﻿namespace Zutatensuppe.DiabloInterface
 {
     using System;
+    using System.Collections.Generic;
     using System.Reflection;
     using System.Windows.Forms;
 
@@ -87,6 +88,7 @@
             using (var settingsService = CreateSettingsService())
             using (var gameService = new GameService(settingsService))
             {
+                new CharacterStatFileWriterService(settingsService, gameService);
                 var autoSplitService = new AutoSplitService(settingsService, gameService);
                 var pipeServer = CreatePipeServer(gameService);
                 var mainWindow = new MainWindow(settingsService, gameService, autoSplitService);

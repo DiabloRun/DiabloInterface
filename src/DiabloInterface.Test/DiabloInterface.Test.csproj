@@ -63,6 +63,10 @@
       <Project>{C5F081D7-FB83-4934-908F-53CE986AB08C}</Project>
       <Name>D2Reader</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DiabloInterface.Business\DiabloInterface.Business.csproj">
+      <Project>{2E429B2B-BD0A-48C3-AE99-0E292EA5D2DA}</Project>
+      <Name>DiabloInterface.Business</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DiabloInterface.Core\DiabloInterface.Core.csproj">
       <Project>{4DC903B9-B02C-47D3-A695-4873FA5219AD}</Project>
       <Name>DiabloInterface.Core</Name>

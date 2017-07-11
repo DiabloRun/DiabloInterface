@@ -1,8 +1,10 @@
-﻿using System.IO;
-using Zutatensuppe.DiabloInterface.Data;
-
-namespace Zutatensuppe.DiabloInterface.IO
+﻿namespace Zutatensuppe.DiabloInterface.Business.IO
 {
+    using System;
+    using System.IO;
+
+    using Zutatensuppe.DiabloInterface.Business.Data;
+
     public class CharacterStatFileWriter
     {
         readonly ITextFileWriter writer;
@@ -10,6 +12,9 @@ namespace Zutatensuppe.DiabloInterface.IO
 
         public CharacterStatFileWriter(ITextFileWriter writer, string directoryPath)
         {
+            if (writer == null) throw new ArgumentNullException(nameof(writer));
+            if (directoryPath == null) throw new ArgumentNullException(nameof(directoryPath));
+
             this.writer = writer;
             this.directoryPath = directoryPath;
         }

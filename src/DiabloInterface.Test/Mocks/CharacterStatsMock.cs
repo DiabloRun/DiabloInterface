@@ -1,7 +1,7 @@
-﻿using Zutatensuppe.DiabloInterface.Data;
-
-namespace DiabloInterface.Test.Mocks
+﻿namespace DiabloInterface.Test.Mocks
 {
+    using Zutatensuppe.DiabloInterface.Business.Data;
+
     internal class CharacterStatsMock : ICharacterStats
     {
         public string Name { get; set; }
