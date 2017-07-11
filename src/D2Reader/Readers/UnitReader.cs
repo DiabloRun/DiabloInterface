@@ -140,35 +140,6 @@ namespace Zutatensuppe.D2Reader.Readers
                     select g).ToDictionary(x => x.Key, x => x.Single());
         }
 
-        public Dictionary<int, int> GetItemClassMap(D2Unit unit)
-        {
-            Dictionary<int, int> units = new Dictionary<int, int>();
-
-            List<D2Stat> statList = new List<D2Stat>();
-            InventoryReader inventoryReader = new InventoryReader(reader, memory);
-
-            // Build filter to get only equipped items and items in inventory
-            Func<D2ItemData, bool> filter = data => true;
-            foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))
-            {
-                List<D2Stat> itemStats = GetStats(item);
-                if (itemStats == null)
-                {
-                    continue;
-                }
-
-                if ( units.ContainsKey(item.eClass) )
-                {
-                    units[item.eClass]++;
-                } else
-                {
-                    units[item.eClass] = 1;
-                }
-            }
-            
-            return units;
-        }
-
         public Dictionary<StatIdentifier, D2Stat> GetItemStatsMap(D2Unit unit)
         {
             List<D2Stat> stats = GetItemStats(unit);

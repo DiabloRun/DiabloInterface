@@ -878,6 +878,7 @@ namespace Zutatensuppe.D2Reader.Readers
                     }
                 }
             }
+
             return stats;
         }
 
@@ -920,6 +921,39 @@ namespace Zutatensuppe.D2Reader.Readers
             }
 
             return properties;
+        }
+
+        public IEnumerable<D2Unit> GetSocketedItems(D2Unit item)
+        {
+            var items = new List<D2Unit>();
+            if (!IsValidItem(item)) return items;
+
+            // Helper for iterating item inventory.
+            Func<D2Unit, D2Unit> getNextInventoryItem = subItem =>
+            {
+                var subItemData = GetItemData(subItem);
+                if (subItemData == null) return null;
+                if (subItemData.NextItem.IsNull) return null;
+                return reader.Read<D2Unit>(subItemData.NextItem);
+            };
+
+            // Combine with socketed item stats (runes, gems).
+            // This is also done for runewords and such, without this an "Ancient's Pledge" runeword
+            // would be missing a few resistances...
+            if (!item.pInventory.IsNull)
+            {
+                var inventory = reader.Read<D2Inventory>(item.pInventory);
+                if (!inventory.pFirstItem.IsNull)
+                {
+                    var subItem = reader.Read<D2Unit>(inventory.pFirstItem);
+                    for (; subItem != null; subItem = getNextInventoryItem(subItem))
+                    {
+                        items.Add(subItem);
+                    }
+                }
+            }
+
+            return items;
         }
     }
 }

@@ -7,11 +7,11 @@
     using System.Text;
     using System.Threading;
 
-    using Readers;
-    using Struct;
-    using Struct.Item;
-    using Struct.Stat;
-    using DiabloInterface.Core.Logging;
+    using Zutatensuppe.D2Reader.Readers;
+    using Zutatensuppe.D2Reader.Struct;
+    using Zutatensuppe.D2Reader.Struct.Item;
+    using Zutatensuppe.D2Reader.Struct.Stat;
+    using Zutatensuppe.DiabloInterface.Core.Logging;
 
     /// <summary>
     ///     Describes what type of data the data reader should read.
@@ -24,7 +24,6 @@
         QuestBuffers = 1 << 2,
         InventoryItemIds = 1 << 3,
         EquippedItemStrings = 1 << 4,
-        ItemClassMap = 1 << 5
     }
 
     public class CharacterCreatedEventArgs : EventArgs
@@ -39,18 +38,15 @@
 
     public class DataReadEventArgs : EventArgs
     {
-        public Dictionary<int, int> ItemClassMap;
-        public Dictionary<int, ushort[]> QuestBuffers;
-        public Character Character;
-        public bool IsAutosplitCharacter;
-        public int CurrentArea;
-        public byte CurrentDifficulty;
-        public List<int> ItemIds;
-        public Dictionary<BodyLocation, string> ItemStrings;
-
-        public DataReadEventArgs(Character character, Dictionary<BodyLocation, string> itemStrings, int currentArea, byte currentDifficulty, List<int> itemIds, Dictionary<int, int> itemClassMap, bool isAutosplitCharacter, Dictionary<int, ushort[]> questBuffers)
+        public DataReadEventArgs(
+            Character character,
+            Dictionary<BodyLocation, string> itemStrings,
+            int currentArea,
+            byte currentDifficulty,
+            List<int> itemIds,
+            bool isAutosplitCharacter,
+            Dictionary<int, ushort[]> questBuffers)
         {
-            ItemClassMap = itemClassMap;
             Character = character;
             IsAutosplitCharacter = isAutosplitCharacter;
             QuestBuffers = questBuffers;
@@ -59,6 +55,14 @@
             ItemIds = itemIds;
             ItemStrings = itemStrings;
         }
+
+        public Dictionary<int, ushort[]> QuestBuffers { get; }
+        public Character Character { get; }
+        public bool IsAutosplitCharacter { get; }
+        public int CurrentArea { get; }
+        public byte CurrentDifficulty { get; }
+        public List<int> ItemIds { get; }
+        public Dictionary<BodyLocation, string> ItemStrings { get; }
     }
 
     public class D2DataReader : IDisposable
@@ -87,12 +91,10 @@
         Dictionary<int, ushort[]> questBuffers;
         Dictionary<BodyLocation, string> itemStrings;
         List<int> inventoryItemIds;
-        Dictionary<int, int> itemClassMap;
 
         public DataReaderEnableFlags ReadFlags { get; set; } =
               DataReaderEnableFlags.CurrentArea
             | DataReaderEnableFlags.CurrentDifficulty
-            | DataReaderEnableFlags.ItemClassMap
             | DataReaderEnableFlags.QuestBuffers
             | DataReaderEnableFlags.InventoryItemIds;
 
@@ -131,7 +133,6 @@
             questBuffers = new Dictionary<int, ushort[]>();
             itemStrings = new Dictionary<BodyLocation, string>();
             inventoryItemIds = new List<int>();
-            itemClassMap = new Dictionary<int, int>();
         }
 
         public event EventHandler<CharacterCreatedEventArgs> CharacterCreated;
@@ -608,13 +609,7 @@
             character.ParseStats(
                 unitReader.GetStatsMap(gameInfo.Player),
                 unitReader.GetItemStatsMap(gameInfo.Player),
-                gameInfo
-            );
-
-            if (ReadFlags.HasFlag(DataReaderEnableFlags.ItemClassMap))
-                itemClassMap = unitReader.GetItemClassMap(gameInfo.Player);
-            else
-                itemClassMap.Clear();
+                gameInfo);
 
             // get quest buffers
             questBuffers.Clear();
@@ -681,13 +676,19 @@
             }
 
             if (ReadFlags.HasFlag(DataReaderEnableFlags.InventoryItemIds))
-                inventoryItemIds = (from item in inventoryReader.EnumerateInventory()
-                                     select item.eClass).ToList();
-            else
-                inventoryItemIds.Clear();
+                inventoryItemIds = ReadInventoryItemIds(inventoryReader);
+            else inventoryItemIds.Clear();
 
             // New data was read, update anyone interested:
             OnDataRead(CreateDataReadEventArgs());
+        }
+
+        List<int> ReadInventoryItemIds(InventoryReader inventoryReader1)
+        {
+            IEnumerable<D2Unit> baseItems = inventoryReader.EnumerateInventory();
+            IEnumerable<D2Unit> socketedItems = baseItems.SelectMany(item => inventoryReader.ItemReader.GetSocketedItems(item));
+            IEnumerable<D2Unit> allItems = baseItems.Concat(socketedItems);
+            return (from item in allItems select item.eClass).ToList();
         }
 
         DataReadEventArgs CreateDataReadEventArgs()
@@ -698,10 +699,8 @@
                 currentArea,
                 currentDifficulty,
                 inventoryItemIds,
-                itemClassMap,
                 IsAutosplitCharacter(character),
-                questBuffers
-            );
+                questBuffers);
         }
 
         bool IsAutosplitCharacter(Character character)

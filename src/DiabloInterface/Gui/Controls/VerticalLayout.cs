@@ -70,7 +70,7 @@
             UpdateLayout(settings);
         }
 
-        protected override void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
+        protected override void UpdateLabels(Character player)
         {
             nameLabel.Text = player.Name;
             lvlLabel.Text = "LVL: " + player.Level;

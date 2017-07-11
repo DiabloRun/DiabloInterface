@@ -91,8 +91,8 @@
                 return;
             }
 
-            UpdateLabels(e.Character, e.ItemClassMap);
-            UpdateRuneDisplay(e.ItemClassMap);
+            UpdateLabels(e.Character);
+            UpdateRuneDisplay(e.ItemIds);
         }
 
         public void Reset()
@@ -118,7 +118,7 @@
         {
         }
 
-        protected virtual void UpdateLabels(Character player, Dictionary<int, int> itemClassMap)
+        protected virtual void UpdateLabels(Character player)
         {
         }
 
@@ -138,20 +138,25 @@
             }
         }
 
-        void UpdateRuneDisplay(Dictionary<int, int> itemClassMap)
+        void UpdateRuneDisplay(IEnumerable<int> itemIds)
         {
             foreach (FlowLayoutPanel fp in RunePanels)
             {
                 if (fp.Controls.Count <= 0)
                     continue;
 
-                var dict = new Dictionary<int, int>(itemClassMap);
+                // Used for keeping track of how many items of each type there is.
+                Dictionary<int, int> itemClassCounts = itemIds
+                    .GroupBy(id => id)
+                    .ToDictionary(g => g.Key, g => g.Count());
+
                 foreach (RuneDisplayElement c in fp.Controls)
                 {
                     int eClass = (int)c.Rune + 610;
-                    if (dict.ContainsKey(eClass) && dict[eClass] > 0)
+
+                    if (itemClassCounts.ContainsKey(eClass) && itemClassCounts[eClass] > 0)
                     {
-                        dict[eClass]--;
+                        itemClassCounts[eClass]--;
                         c.SetHaveRune(true);
                     }
                 }
