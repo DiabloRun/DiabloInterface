@@ -50,6 +50,12 @@
 
         void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
         {
+            if (InvokeRequired)
+            {
+                Invoke((Action)(() => SettingsServiceOnSettingsChanged(sender, e)));
+                return;
+            }
+
             ApplySettings(e.Settings);
         }
 
@@ -64,7 +70,7 @@
             PopulateSetingsFileListContextMenu(e.Collection);
         }
 
-        void UpdateLayoutIfChanged(ApplicationSettings settings)
+        void ApplyLayoutChanges(ApplicationSettings settings)
         {
             var isHorizontal = currentLayout is HorizontalLayout;
             if (isHorizontal != settings.DisplayLayoutHorizontal)
@@ -117,14 +123,7 @@
 
         void ApplySettings(ApplicationSettings settings)
         {
-            if (InvokeRequired)
-            {
-                // Delegate call to UI thread.
-                Invoke((Action)(() => ApplySettings(settings)));
-                return;
-            }
-
-            UpdateLayoutIfChanged(settings);
+            ApplyLayoutChanges(settings);
         }
 
         void PopulateSetingsFileListContextMenu(IEnumerable<FileInfo> settingsFileCollection)
@@ -194,11 +193,11 @@
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            UnregisterServiceEvents();
+            UnregisterServiceEventHandlers();
             base.OnFormClosing(e);
         }
 
-        void UnregisterServiceEvents()
+        void UnregisterServiceEventHandlers()
         {
             settingsService.SettingsChanged -= SettingsServiceOnSettingsChanged;
             settingsService.SettingsCollectionChanged -= SettingsServiceOnSettingsCollectionChanged;
