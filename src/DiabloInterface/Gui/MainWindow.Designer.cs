@@ -57,7 +57,7 @@
             this.settingsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
-            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsMenuItem_Click);
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.SettingsMenuItemOnClick);
             // 
             // loadConfigMenuItem
             // 
@@ -72,7 +72,7 @@
             this.resetToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
             this.resetToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.resetToolStripMenuItem.Text = "Reset";
-            this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetMenuItem_Click);
+            this.resetToolStripMenuItem.Click += new System.EventHandler(this.ResetMenuItemOnClick);
             // 
             // debugMenuItem
             // 
@@ -88,7 +88,7 @@
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitMenuItem_Click);
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitMenuItemOnClick);
             // 
             // MainWindow
             // 

@@ -162,18 +162,18 @@
             }
         }
 
-        void exitMenuItem_Click(object sender, EventArgs e)
+        void ExitMenuItemOnClick(object sender, EventArgs e)
         {
             Close();
         }
 
-        void resetMenuItem_Click(object sender, EventArgs e)
+        void ResetMenuItemOnClick(object sender, EventArgs e)
         {
             autoSplitService.ResetAutoSplits();
             currentLayout?.Reset();
         }
 
-        void settingsMenuItem_Click(object sender, EventArgs e)
+        void SettingsMenuItemOnClick(object sender, EventArgs e)
         {
             using (var settingsWindow = new SettingsWindow(settingsService))
             {
