@@ -103,7 +103,6 @@
         void MainWindowLoad(object sender, EventArgs e)
         {
             SetTitleWithApplicationVersion();
-            CheckForUpdates();
             ApplySettings(settingsService.CurrentSettings);
         }
 
@@ -111,14 +110,6 @@
         {
             Text = $@"Diablo Interface v{Application.ProductVersion}";
             Update();
-        }
-
-        void CheckForUpdates()
-        {
-            if (settingsService.CurrentSettings.CheckUpdates)
-            {
-                VersionChecker.CheckForUpdate(false);
-            }
         }
 
         void ApplySettings(ApplicationSettings settings)

@@ -88,6 +88,8 @@
             using (var settingsService = CreateSettingsService())
             using (var gameService = new GameService(settingsService))
             {
+                CheckForApplicationUpdates(settingsService);
+
                 new CharacterStatFileWriterService(settingsService, gameService);
                 var autoSplitService = new AutoSplitService(settingsService, gameService);
                 var pipeServer = CreatePipeServer(gameService);
@@ -95,6 +97,14 @@
                 Application.Run(mainWindow);
 
                 pipeServer.Stop();
+            }
+        }
+
+        static void CheckForApplicationUpdates(ISettingsService settingsService)
+        {
+            if (settingsService.CurrentSettings.CheckUpdates)
+            {
+                VersionChecker.CheckForUpdate(false);
             }
         }
 
