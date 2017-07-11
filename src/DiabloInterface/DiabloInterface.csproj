@@ -104,6 +104,7 @@
     <Compile Include="Gui\Controls\FontComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Gui\Controls\Gem.cs" />
     <Compile Include="Gui\Controls\HotkeyControl.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -121,6 +121,7 @@
             bool haveUnreachedAreaSplits = false;
             bool haveUnreachedItemSplits = false;
             bool haveUnreachedQuestSplits = false;
+            bool haveUnreachedGemSplits = false;
 
             foreach (var autoSplit in settings.Autosplits)
             {
@@ -143,11 +144,14 @@
                     case AutoSplit.SplitType.Quest:
                         haveUnreachedQuestSplits = true;
                         break;
+                    case AutoSplit.SplitType.Gems:
+                        haveUnreachedGemSplits = true;
+                        break;
                 }
             }
 
             // if no unreached splits, return
-            if (!(haveUnreachedCharLevelSplits || haveUnreachedAreaSplits || haveUnreachedItemSplits || haveUnreachedQuestSplits))
+            if (!(haveUnreachedCharLevelSplits || haveUnreachedAreaSplits || haveUnreachedItemSplits || haveUnreachedQuestSplits || haveUnreachedGemSplits))
             {
                 return;
             }
@@ -192,6 +196,14 @@
                         break;
                     case AutoSplit.SplitType.Quest:
                         if (D2QuestHelper.IsQuestComplete((D2QuestHelper.Quest)autoSplit.Value, questBuffer))
+                        {
+                            CompleteAutoSplit(autoSplit);
+                        }
+
+                        break;
+
+                    case AutoSplit.SplitType.Gems:
+                        if (eventArgs.ItemIds.Contains(autoSplit.Value))
                         {
                             CompleteAutoSplit(autoSplit);
                         }

@@ -15,6 +15,7 @@
             Item = 2,
             Quest = 3,
             Special = 4,
+            Gems = 5,
         }
 
         public enum Special
@@ -112,6 +113,9 @@
                 return true;
 
             if (Type == SplitType.Special && (Value == (short)Special.Clear100PercentAllDifficulties || Value == (short)Special.GameStart))
+                return true;
+
+            if (Type == SplitType.Gems)
                 return true;
 
             return false;

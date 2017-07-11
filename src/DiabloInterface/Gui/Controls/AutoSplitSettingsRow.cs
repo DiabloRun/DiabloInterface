@@ -1,34 +1,36 @@
-﻿using Zutatensuppe.D2Reader;
-using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-
-namespace Zutatensuppe.DiabloInterface.Gui.Controls
+﻿namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
+    using System.Windows.Forms;
+
+    using Zutatensuppe.D2Reader;
     using Zutatensuppe.DiabloInterface.Business.AutoSplits;
 
     public partial class AutoSplitSettingsRow : UserControl
     {
-        private static string LABEL_CHAR_LEVEL = "Level";
-        private static string LABEL_AREA = "Area";
-        private static string LABEL_ITEM = "Item";
-        private static string LABEL_QUEST = "Quest";
-        private static string LABEL_SPECIAL = "Special";
+        static string LABEL_CHAR_LEVEL = "Level";
+        static string LABEL_AREA = "Area";
+        static string LABEL_ITEM = "Item";
+        static string LABEL_QUEST = "Quest";
+        static string LABEL_SPECIAL = "Special";
+        static string LABEL_GEMS = "Gems";
 
-        private static string LABEL_NORMAL = "Normal";
-        private static string LABEL_NIGHTMARE = "Nightmare";
-        private static string LABEL_HELL = "Hell";
+        static string LABEL_NORMAL = "Normal";
+        static string LABEL_NIGHTMARE = "Nightmare";
+        static string LABEL_HELL = "Hell";
 
-        private static string LABEL_HORADRIC_CUBE = "Horadric Cube";
-        private static string LABEL_HORADRIC_SHAFT = "Horadric Shaft";
-        private static string LABEL_HORADRIC_AMULET = "Horadric Amulet";
-        private static string LABEL_KHALIMS_EYE = "Khalim's Eye";
-        private static string LABEL_KHALIMS_HEART = "Khalim's Heart";
-        private static string LABEL_KHALIMS_BRAIN = "Khalim's Brain";
+        static string LABEL_HORADRIC_CUBE = "Horadric Cube";
+        static string LABEL_HORADRIC_SHAFT = "Horadric Shaft";
+        static string LABEL_HORADRIC_AMULET = "Horadric Amulet";
+        static string LABEL_KHALIMS_EYE = "Khalim's Eye";
+        static string LABEL_KHALIMS_HEART = "Khalim's Heart";
+        static string LABEL_KHALIMS_BRAIN = "Khalim's Brain";
 
-        private static string LABEL_GAME_START = "Game Start";
-        private static string LABEL_CLEAR_100_PERCENT = "Clear 100%";
-        private static string LABEL_CLEAR_100_PERCENT_ALL = "Clear 100% of all difficulties";
+        static string LABEL_GAME_START = "Game Start";
+        static string LABEL_CLEAR_100_PERCENT = "Clear 100%";
+        static string LABEL_CLEAR_100_PERCENT_ALL = "Clear 100% of all difficulties";
 
         private class Item
         {
@@ -63,6 +65,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             cmbType.Items.Add(new Item(LABEL_ITEM, (int)AutoSplit.SplitType.Item));
             cmbType.Items.Add(new Item(LABEL_QUEST, (int)AutoSplit.SplitType.Quest));
             cmbType.Items.Add(new Item(LABEL_SPECIAL, (int)AutoSplit.SplitType.Special));
+            cmbType.Items.Add(new Item(LABEL_GEMS, (int)AutoSplit.SplitType.Gems));
             cmbType.SelectedIndex = (int)autosplit.Type;
 
             FillComboBoxes();
@@ -89,7 +92,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             cmbDifficulty.Items.Add(new Item(LABEL_HELL, 2));
             cmbDifficulty.SelectedIndex = AutoSplit.Difficulty;
             cmbDifficulty.Show();
-            if ( AutoSplit.IsDifficultyIgnored() )
+            if (AutoSplit.IsDifficultyIgnored())
             {
                 cmbDifficulty.Hide();
             } else
@@ -130,6 +133,14 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                     cmbValue.Items.Add(new Item(LABEL_GAME_START, (int)AutoSplit.Special.GameStart));
                     cmbValue.Items.Add(new Item(LABEL_CLEAR_100_PERCENT, (int)AutoSplit.Special.Clear100Percent));
                     cmbValue.Items.Add(new Item(LABEL_CLEAR_100_PERCENT_ALL, (int)AutoSplit.Special.Clear100PercentAllDifficulties));
+                    break;
+                case AutoSplit.SplitType.Gems:
+                    foreach (Gem gem in Enum.GetValues(typeof(Gem)))
+                    {
+                        var name = Regex.Replace(gem.ToString(), @"(\B[A-Z])", " $1");
+                        cmbValue.Items.Add(new Item(name, (int)gem));
+                    }
+
                     break;
             }
         }
