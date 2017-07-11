@@ -80,7 +80,7 @@
             this.debugMenuItem.Name = "debugMenuItem";
             this.debugMenuItem.Size = new System.Drawing.Size(160, 22);
             this.debugMenuItem.Text = "Debug";
-            this.debugMenuItem.Click += new System.EventHandler(this.debugMenuItem_Click);
+            this.debugMenuItem.Click += new System.EventHandler(this.DebugMenuItemOnClick);
             // 
             // exitToolStripMenuItem
             // 

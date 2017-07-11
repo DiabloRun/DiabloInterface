@@ -8,10 +8,8 @@
     using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader;
-    using Zutatensuppe.D2Reader.Struct.Item;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
-    using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Data;
     using Zutatensuppe.DiabloInterface.Gui.Controls;
@@ -26,7 +24,7 @@
         readonly IGameService gameService;
         readonly IAutoSplitService autoSplitService;
 
-        DebugWindow debugWindow;
+        Form debugWindow;
         AbstractLayout currentLayout;
 
         public MainWindow(ISettingsService settingsService, IGameService gameService, IAutoSplitService autoSplitService)
@@ -131,18 +129,7 @@
                 return;
             }
 
-            Logger.Info("Applying settings to main window.");
-
             UpdateLayoutIfChanged(settings);
-            UpdateAutoSplitsSettingsForDebugView(settings);
-        }
-
-        void UpdateAutoSplitsSettingsForDebugView(ApplicationSettings settings)
-        {
-            if (debugWindow != null && debugWindow.Visible)
-            {
-                debugWindow.UpdateAutosplits(settings.Autosplits);
-            }
         }
 
         void PopulateSetingsFileListContextMenu(IEnumerable<FileInfo> settingsFileCollection)
@@ -190,27 +177,6 @@
             }
 
             WriteCharacterStatFiles(e.Character);
-
-            UpdateDebugWindow(e.QuestBuffers, e.ItemStrings);
-        }
-
-        void UpdateDebugWindow(Dictionary<int, ushort[]> questBuffers, Dictionary<BodyLocation, string> itemStrings)
-        {
-            if (debugWindow == null)
-            {
-                return;
-            }
-
-            // Fill in quest data.
-            for (int difficulty = 0; difficulty < 3; ++difficulty)
-            {
-                if (questBuffers.ContainsKey(difficulty))
-                {
-                    debugWindow.UpdateQuestData(questBuffers[difficulty], difficulty);
-                }
-            }
-
-            debugWindow.UpdateItemStats(itemStrings);
         }
 
         void WriteCharacterStatFiles(Character player)
@@ -243,28 +209,14 @@
             }
         }
 
-        void debugMenuItem_Click(object sender, EventArgs e)
+        void DebugMenuItemOnClick(object sender, EventArgs e)
         {
             if (debugWindow == null || debugWindow.IsDisposed)
             {
-                debugWindow = new DebugWindow();
-                debugWindow.UpdateAutosplits(settingsService.CurrentSettings.Autosplits);
-
-                var dataReader = gameService.DataReader;
-                var flags = dataReader.ReadFlags.SetFlag(DataReaderEnableFlags.EquippedItemStrings);
-                dataReader.ReadFlags = flags;
-
-                debugWindow.FormClosed += DebugWindow_FormClosed;
+                debugWindow = new DebugWindow(settingsService, gameService);
             }
 
             debugWindow.Show();
-        }
-
-        void DebugWindow_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            var dataReader = gameService.DataReader;
-            var flags = dataReader.ReadFlags.ClearFlag(DataReaderEnableFlags.EquippedItemStrings);
-            dataReader.ReadFlags = flags;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

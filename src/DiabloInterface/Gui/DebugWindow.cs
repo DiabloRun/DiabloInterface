@@ -3,53 +3,24 @@
     using System;
     using System.Collections.Generic;
     using System.Drawing;
+    using System.Reflection;
     using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Struct.Item;
     using Zutatensuppe.DiabloInterface.Business.AutoSplits;
+    using Zutatensuppe.DiabloInterface.Business.Services;
+    using Zutatensuppe.DiabloInterface.Core.Extensions;
+    using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Gui.Controls;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
 
     public partial class DebugWindow : WsExCompositedForm
     {
-        /// <summary>
-        /// Helper class for binding/unbinding autosplit event handlers.
-        /// </summary>
-        class AutosplitBinding
-        {
-            bool didUnbind;
-            AutoSplit autoSplit;
-            Action<AutoSplit> reachedHandler;
-            Action<AutoSplit> resetHandler;
+        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-            public AutosplitBinding(AutoSplit autoSplit, Action<AutoSplit> reachedHandler, Action<AutoSplit> resetHandler)
-            {
-                this.autoSplit = autoSplit;
-                this.reachedHandler = reachedHandler;
-                this.resetHandler = resetHandler;
-
-                this.autoSplit.Reached += reachedHandler;
-                this.autoSplit.Reset += resetHandler;
-            }
-
-            ~AutosplitBinding()
-            {
-                Unbind();
-            }
-
-            /// <summary>
-            /// Unbding the autosplit handlers.
-            /// </summary>
-            public void Unbind()
-            {
-                if (didUnbind) return;
-
-                didUnbind = true;
-                autoSplit.Reached -= reachedHandler;
-                autoSplit.Reset -= resetHandler;
-            }
-        }
+        readonly ISettingsService settingsService;
+        readonly IGameService gameService;
 
         Label[] ActLabelsNormal;
         Label[] ActLabelsNightmare;
@@ -66,12 +37,89 @@
         private Label clickedLabel = null;
         private Label hoveredLabel = null;
 
-        public DebugWindow()
+        public DebugWindow(ISettingsService settingsService, IGameService gameService)
         {
+            Logger.Info("Creating debug window.");
+
+            if (settingsService == null) throw new ArgumentNullException(nameof(settingsService));
+            if (gameService == null) throw new ArgumentNullException(nameof(gameService));
+
+            this.settingsService = settingsService;
+            this.gameService = gameService;
+
+            EnableReaderDebugData();
+            RegisterServiceEventHandlers();
+
+            // Unregister event handlers when we are done.
+            Disposed += (sender, args) =>
+            {
+                Logger.Info("Disposing debug window.");
+                UnregisterServiceEventHandlers();
+                DisableReaderDebugData();
+            };
+
             InitializeComponent();
+            ApplyAutoSplitSettings(settingsService.CurrentSettings.Autosplits);
         }
 
-        public void UpdateQuestData(ushort[] questBuffer, int difficulty)
+        void EnableReaderDebugData()
+        {
+            var dataReader = gameService.DataReader;
+            var flags = dataReader.ReadFlags.SetFlag(DataReaderEnableFlags.EquippedItemStrings);
+            dataReader.ReadFlags = flags;
+        }
+
+        void DisableReaderDebugData()
+        {
+            var dataReader = gameService.DataReader;
+            var flags = dataReader.ReadFlags.ClearFlag(DataReaderEnableFlags.EquippedItemStrings);
+            dataReader.ReadFlags = flags;
+        }
+
+        void RegisterServiceEventHandlers()
+        {
+            settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
+            gameService.DataRead += GameServiceOnDataRead;
+        }
+
+        void UnregisterServiceEventHandlers()
+        {
+            settingsService.SettingsChanged -= SettingsServiceOnSettingsChanged;
+            gameService.DataRead -= GameServiceOnDataRead;
+        }
+
+        void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke((Action)(() => SettingsServiceOnSettingsChanged(sender, e)));
+                return;
+            }
+
+            ApplyAutoSplitSettings(e.Settings.Autosplits);
+        }
+
+        void GameServiceOnDataRead(object sender, DataReadEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke((Action)(() => GameServiceOnDataRead(sender, e)));
+                return;
+            }
+
+            // Fill in quest data.
+            for (int difficulty = 0; difficulty < 3; ++difficulty)
+            {
+                if (e.QuestBuffers.ContainsKey(difficulty))
+                {
+                    UpdateQuestData(e.QuestBuffers[difficulty], difficulty);
+                }
+            }
+
+            UpdateItemStats(e.ItemStrings);
+        }
+
+        void UpdateQuestData(ushort[] questBuffer, int difficulty)
         {
             QuestDebugRow[,] questRows;
             ushort questBits;
@@ -118,7 +166,7 @@
             autoSplitBindings.Clear();
         }
 
-        public void UpdateAutosplits(List<AutoSplit> autoSplits)
+        void ApplyAutoSplitSettings(List<AutoSplit> autoSplits)
         {
             if (DesignMode) return;
             // Unbinds and clears the binding list.
@@ -193,7 +241,7 @@
             locs.Add(label9, BodyLocation.Boots);
         }
 
-        public void UpdateItemStats(Dictionary<BodyLocation, string> itemStrings)
+        void UpdateItemStats(Dictionary<BodyLocation, string> itemStrings)
         {
             if (DesignMode) return;
             this.itemStrings = itemStrings;
@@ -250,6 +298,43 @@
             hoveredLabel = null;
             UpdateItemDebugInformation();
         }
-        
+
+        /// <summary>
+        /// Helper class for binding/unbinding AutoSplit event handlers.
+        /// </summary>
+        class AutosplitBinding
+        {
+            bool didUnbind;
+            AutoSplit autoSplit;
+            Action<AutoSplit> reachedHandler;
+            Action<AutoSplit> resetHandler;
+
+            public AutosplitBinding(AutoSplit autoSplit, Action<AutoSplit> reachedHandler, Action<AutoSplit> resetHandler)
+            {
+                this.autoSplit = autoSplit;
+                this.reachedHandler = reachedHandler;
+                this.resetHandler = resetHandler;
+
+                this.autoSplit.Reached += reachedHandler;
+                this.autoSplit.Reset += resetHandler;
+            }
+
+            ~AutosplitBinding()
+            {
+                Unbind();
+            }
+
+            /// <summary>
+            /// Unbding the autosplit handlers.
+            /// </summary>
+            public void Unbind()
+            {
+                if (didUnbind) return;
+
+                didUnbind = true;
+                autoSplit.Reached -= reachedHandler;
+                autoSplit.Reset -= resetHandler;
+            }
+        }
     }
 }
