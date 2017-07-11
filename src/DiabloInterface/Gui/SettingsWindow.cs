@@ -172,6 +172,7 @@
 
             CreateFilesCheckBox.Checked = settings.CreateFiles;
             EnableAutosplitCheckBox.Checked = settings.DoAutosplit;
+            autoSplitHotkeyControl.ForeColor = settings.AutosplitHotkey == Keys.None ? Color.Red : Color.Black;
             autoSplitHotkeyControl.Hotkey = settings.AutosplitHotkey;
             CheckUpdatesCheckBox.Checked = settings.CheckUpdates;
             chkDisplayName.Checked = settings.DisplayName;
@@ -724,6 +725,11 @@
         private void comboBoxLayout_SelectedIndexChanged(object sender, EventArgs e)
         {
             comboBoxRunesOrientation.Enabled = comboBoxLayout.SelectedIndex == 0;
+        }
+
+        void AutoSplitHotkeyControlOnHotkeyChanged(object sender, Keys e)
+        {
+            autoSplitHotkeyControl.ForeColor = e == Keys.None ? Color.Red : SystemColors.WindowText;
         }
     }
 }

@@ -265,6 +265,7 @@
             this.autoSplitHotkeyControl.TabIndex = 3;
             this.autoSplitHotkeyControl.Text = "None";
             this.autoSplitHotkeyControl.UseKeyWhitelist = true;
+            this.autoSplitHotkeyControl.HotkeyChanged += new System.EventHandler<System.Windows.Forms.Keys>(this.AutoSplitHotkeyControlOnHotkeyChanged);
             // 
             // AutoSplitHotkeyLabel
             // 
