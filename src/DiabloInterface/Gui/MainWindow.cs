@@ -26,7 +26,6 @@
         readonly IGameService gameService;
         readonly IAutoSplitService autoSplitService;
 
-        SettingsWindow settingsWindow;
         DebugWindow debugWindow;
         AbstractLayout currentLayout;
 
@@ -238,12 +237,10 @@
 
         void settingsMenuItem_Click(object sender, EventArgs e)
         {
-            if (settingsWindow == null || settingsWindow.IsDisposed)
+            using (var settingsWindow = new SettingsWindow(settingsService))
             {
-                settingsWindow = new SettingsWindow(settingsService);
+                settingsWindow.ShowDialog();
             }
-
-            settingsWindow.ShowDialog();
         }
 
         void debugMenuItem_Click(object sender, EventArgs e)

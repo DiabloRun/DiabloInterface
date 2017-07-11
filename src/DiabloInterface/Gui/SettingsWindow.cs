@@ -37,10 +37,18 @@
 
             this.settingsService = settingsService;
 
+            RegisterServiceEventHandlers();
             InitializeComponent();
             InitializeAutoSplitTable();
             InitializeRunes();
             PopulateSettingsFileList(settingsService.SettingsFileCollection);
+
+            // Unregister event handlers when we are done.
+            Disposed += (sender, args) =>
+            {
+                Logger.Info("Disposing settings window.");
+                UnregisterServiceEventHandlers();
+            };
 
             // Select first rune (don't leave combo box empty).
             RuneComboBox.SelectedIndex = 0;
@@ -97,20 +105,6 @@
                     || btnSetPoisonResColor.ForeColor != settings.ColorPoisonRes
 
                     || button2.BackColor != settings.ColorBackground;
-            }
-        }
-
-        void SettingsWindowOnShown(object sender, EventArgs e)
-        {
-            Logger.Info("Show settings window.");
-
-            RegisterServiceEventHandlers();
-
-            // Settings was closed with dirty settings, reload the original settings.
-            if (IsDirty)
-            {
-                ReloadComponentsWithCurrentSettings();
-                MarkClean();
             }
         }
 
@@ -339,30 +333,27 @@
             autoSplitTable.ScrollControlIntoView(row);
         }
 
-        void SettingsWindow_FormClosing(object sender, FormClosingEventArgs e)
+        void SettingsWindowOnFormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing && IsDirty)
+            if (e.CloseReason != CloseReason.UserClosing || !IsDirty) return;
+
+            DialogResult result = MessageBox.Show(
+                @"Would you like to save your settings before closing?",
+                @"Save Changes",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Question);
+
+            switch (result)
             {
-                DialogResult result = MessageBox.Show(
-                    @"Would you like to save your settings before closing?",
-                    @"Save Changes",
-                    MessageBoxButtons.YesNoCancel,
-                    MessageBoxIcon.Question);
-
-                switch (result)
-                {
-                    case DialogResult.Yes:
-                        SaveSettings();
-                        break;
-                    case DialogResult.No:
-                        break;
-                    case DialogResult.Cancel:
-                        e.Cancel = true;
-                        return;
-                }
+                case DialogResult.Yes:
+                    SaveSettings();
+                    break;
+                case DialogResult.No:
+                    break;
+                case DialogResult.Cancel:
+                    e.Cancel = true;
+                    break;
             }
-
-            UnregisterServiceEventHandlers();
         }
 
         void AutoSplitTestHotkey_Click(object sender, EventArgs e)

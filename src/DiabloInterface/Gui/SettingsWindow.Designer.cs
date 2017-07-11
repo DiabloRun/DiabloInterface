@@ -1071,8 +1071,7 @@
             this.MinimumSize = new System.Drawing.Size(702, 542);
             this.Name = "SettingsWindow";
             this.Text = "Settings";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SettingsWindow_FormClosing);
-            this.Shown += new System.EventHandler(this.SettingsWindowOnShown);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SettingsWindowOnFormClosing);
             this.FontGroup.ResumeLayout(false);
             this.FontGroup.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).EndInit();
