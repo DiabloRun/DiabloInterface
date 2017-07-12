@@ -74,38 +74,55 @@
 
         readonly IGameMemoryTableFactory memoryTableFactory;
 
+        readonly Dictionary<string, Character> characters = new Dictionary<string, Character>();
+        readonly Dictionary<int, ushort[]> questBuffers = new Dictionary<int, ushort[]>();
+
         bool isDisposed;
 
-        D2GameInfo gameInfo;
         ProcessMemoryReader reader;
         UnitReader unitReader;
         InventoryReader inventoryReader;
         GameMemoryTable memory;
         GameMemoryTable nextMemoryTable;
 
-        int currentArea;
         byte currentDifficulty;
-        bool wasInTitleScreen = false;
+        bool wasInTitleScreen;
         DateTime activeCharacterTimestamp;
-        Character activeCharacter = null;
-        Character character = null;
-        Dictionary<string, Character> characters;
-        Dictionary<int, ushort[]> questBuffers;
-        Dictionary<BodyLocation, string> itemStrings;
-        List<int> inventoryItemIds;
+        Character activeCharacter;
+        Character character;
+
+        public D2DataReader(IGameMemoryTableFactory memoryTableFactory, string gameVersion)
+        {
+            if (memoryTableFactory == null) throw new ArgumentNullException(nameof(memoryTableFactory));
+
+            this.memoryTableFactory = memoryTableFactory;
+
+            memory = CreateGameMemoryTableForVersion(gameVersion);
+        }
+
+        ~D2DataReader()
+        {
+            Dispose(false);
+        }
+
+        public event EventHandler<CharacterCreatedEventArgs> CharacterCreated;
+
+        public event EventHandler<DataReadEventArgs> DataRead;
 
         public DataReaderEnableFlags ReadFlags { get; set; } =
-              DataReaderEnableFlags.CurrentArea
+            DataReaderEnableFlags.CurrentArea
             | DataReaderEnableFlags.CurrentDifficulty
             | DataReaderEnableFlags.QuestBuffers
             | DataReaderEnableFlags.InventoryItemIds;
 
         public DateTime ActiveCharacterTimestamp => activeCharacterTimestamp;
+
         public Character ActiveCharacter => activeCharacter;
+
         public Character CurrentCharacter => character;
 
         /// <summary>
-        /// Polling rate for data reads.
+        /// Gets or sets reader polling rate.
         /// </summary>
         public TimeSpan PollingRate { get; set; } = TimeSpan.FromMilliseconds(500);
 
@@ -127,30 +144,9 @@
             }
         }
 
-        public D2DataReader(IGameMemoryTableFactory memoryTableFactory, string gameVersion)
-        {
-            if (memoryTableFactory == null) throw new ArgumentNullException(nameof(memoryTableFactory));
-
-            this.memoryTableFactory = memoryTableFactory;
-
-            memory = CreateGameMemoryTableForVersion(gameVersion);
-
-            characters = new Dictionary<string, Character>();
-            questBuffers = new Dictionary<int, ushort[]>();
-            itemStrings = new Dictionary<BodyLocation, string>();
-            inventoryItemIds = new List<int>();
-        }
-
-        public event EventHandler<CharacterCreatedEventArgs> CharacterCreated;
-
-        public event EventHandler<DataReadEventArgs> DataRead;
+        bool IsProcessReaderTerminated => reader != null && !reader.IsValid;
 
         #region IDisposable Implementation
-
-        ~D2DataReader()
-        {
-            Dispose(false);
-        }
 
         public void Dispose()
         {
@@ -185,32 +181,31 @@
             return memoryTableFactory.CreateForVersion(gameVersion);
         }
 
-        public bool InitializeReaders()
+        bool ValidateGameDataReaders()
         {
-            // If a reader already exists but the process is closed, dispose of the reader.
-            if (reader != null && !reader.IsValid)
-            {
-                Logger.Warn("Disposing old Diablo II process.");
+            DisposeProcessReaderIfProcessTerminated();
+            return reader != null || InitializeGameDataReaders();
+        }
 
-                reader.Dispose();
-                reader = null;
-            }
+        void DisposeProcessReaderIfProcessTerminated()
+        {
+            if (!IsProcessReaderTerminated) return;
 
-            // A reader exists already.
-            if (reader != null)
-                return true;
+            Logger.Warn("Disposing process reader for terminated Diablo II process.");
 
+            reader.Dispose();
+            reader = null;
+        }
+
+        bool InitializeGameDataReaders()
+        {
             try
             {
                 reader = new ProcessMemoryReader(DiabloProcessName, DiabloModuleName);
                 unitReader = new UnitReader(reader, memory);
                 inventoryReader = new InventoryReader(reader, memory);
 
-                // test stuff
-                //int idx = D2StatArray.GetArrayIndexByStatCostClassId(reader, new IntPtr(0x49C6048), 0x00070000);
-                //idx = D2StatArray.GetArrayIndexByStatCostClassId(reader, new IntPtr(0x06FF5024), 0x00ac0000);
-
-                Logger.Info("Found a Diablo II process.");
+                Logger.Info("Found the Diablo II process.");
 
                 // Process opened successfully.
                 return true;
@@ -246,7 +241,7 @@
                 Thread.Sleep(PollingRate);
 
                 // Block here until we have a valid reader.
-                if (!InitializeReaders())
+                if (!ValidateGameDataReaders())
                     continue;
 
                 // Memory table change.
@@ -274,29 +269,13 @@
             }
         }
 
-        D2GameInfo GetGameInfo()
+        D2GameInfo ReadGameInfo()
         {
-            uint gameId = reader.ReadUInt32(memory.Address.GameId, AddressingMode.Relative);
-            IntPtr worldPointer = reader.ReadAddress32(memory.Address.World, AddressingMode.Relative);
-
-            // Get world if game is loaded.
-            if (worldPointer == IntPtr.Zero) return null;
-            D2World world = reader.Read<D2World>(worldPointer);
-
-            // Find the game address.
-            uint gameIndex = gameId & world.GameMask;
-            uint gameOffset = gameIndex * 0x0C + 0x08;
-            IntPtr gamePointer = reader.ReadAddress32(world.GameBuffer + gameOffset);
-
-            // Check for invalid pointers, this value can actually be negative during transition
-            // screens, so we need to reinterpret the pointer as a signed integer.
-            if (unchecked((int)gamePointer.ToInt64()) < 0)
-                return null;
-
             try
             {
-                D2Game game = reader.Read<D2Game>(gamePointer);
-                if (game.Client.IsNull) return null;
+                D2Game game = ReadActiveGameInstance();
+                if (game == null || game.Client.IsNull) return null;
+
                 D2Client client = reader.Read<D2Client>(game.Client);
 
                 // Make sure we are reading a player type.
@@ -319,122 +298,164 @@
             }
         }
 
-        public void ProcessGameData()
+        D2Game ReadActiveGameInstance()
+        {
+            uint gameId = reader.ReadUInt32(memory.Address.GameId, AddressingMode.Relative);
+            IntPtr worldPointer = reader.ReadAddress32(memory.Address.World, AddressingMode.Relative);
+
+            // Get world if game is loaded.
+            if (worldPointer == IntPtr.Zero) return null;
+            D2World world = reader.Read<D2World>(worldPointer);
+
+            // Find the game address.
+            uint gameIndex = gameId & world.GameMask;
+            uint gameOffset = (gameIndex * 0x0C) + 0x08;
+            IntPtr gamePointer = reader.ReadAddress32(world.GameBuffer + gameOffset);
+
+            // Check for invalid pointers, this value can actually be negative during transition
+            // screens, so we need to reinterpret the pointer as a signed integer.
+            if (unchecked((int)gamePointer.ToInt64()) < 0)
+                return null;
+
+            return reader.Read<D2Game>(gamePointer);
+        }
+
+        void ProcessGameData()
         {
             // Make sure the game is loaded.
-            gameInfo = GetGameInfo();
+            var gameInfo = ReadGameInfo();
             if (gameInfo == null)
             {
                 wasInTitleScreen = true;
                 return;
             }
-            unitReader = new UnitReader(reader, memory);
-            inventoryReader = new InventoryReader(reader, memory);
 
-            // Get associated character data.
-            character = GetCurrentCharacter(gameInfo);
+            ClearReaderCache();
 
-            IntPtr playerAddress = reader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
+            ProcessCharacterData(gameInfo);
+            ProcessQuestBuffers(gameInfo);
+            var currentArea = ProcessCurrentArea();
+            ProcessCurrentDifficulty(gameInfo);
+            Dictionary<BodyLocation, string> itemStrings = ProcessEquippedItemStrings();
+            List<int> inventoryItemIds = ProcessInventoryItemIds();
 
-            // var skillsMap = unitReader.GetSkillMap(gameInfo.Player);
-
-            // Update character data.
-            character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
-            character.ParseStats(
-                unitReader.GetStatsMap(gameInfo.Player),
-                unitReader.GetItemStatsMap(gameInfo.Player),
-                gameInfo);
-
-            // get quest buffers
-            questBuffers.Clear();
-            if (ReadFlags.HasFlag(DataReaderEnableFlags.QuestBuffers))
-            {
-                for (int i = 0; i < gameInfo.PlayerData.Quests.Length; i++)
-                {
-                    if (gameInfo.PlayerData.Quests[i].IsNull)
-                        continue;
-
-                    // Read quest array as an array of 16 bit values.
-                    D2QuestArray questArray = reader.Read<D2QuestArray>(gameInfo.PlayerData.Quests[i]);
-                    byte[] questBytes = reader.Read(questArray.Buffer, questArray.Length);
-                    ushort[] questBuffer = new ushort[(questBytes.Length + 1) / 2];
-                    Buffer.BlockCopy(questBytes, 0, questBuffer, 0, questBytes.Length);
-
-                    character.CompletedQuestCounts[i] = D2QuestHelper.GetReallyCompletedQuestCount(questBuffer);
-
-                    questBuffers.Add(i, questBuffer);
-                }
-            }
-
-            if (ReadFlags.HasFlag(DataReaderEnableFlags.CurrentArea))
-                currentArea = reader.ReadByte(memory.Address.Area, AddressingMode.Relative);
-            else
-                currentArea = -1;
-
-            if (ReadFlags.HasFlag(DataReaderEnableFlags.CurrentDifficulty))
-                currentDifficulty = gameInfo.Game.Difficulty;
-            else
-                currentDifficulty = 0;
-
-            // Build filter to get only equipped items.
-            itemStrings.Clear();
-            if (ReadFlags.HasFlag(DataReaderEnableFlags.EquippedItemStrings))
-            {
-                Func<D2ItemData, bool> filter = data => data.BodyLoc != BodyLocation.None;
-                foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))
-                {
-                    List<D2Stat> itemStats = unitReader.GetStats(item);
-                    if (itemStats == null)
-                    {
-                        continue;
-                    }
-
-                    StringBuilder statBuilder = new StringBuilder();
-                    statBuilder.Append(inventoryReader.ItemReader.GetFullItemName(item));
-
-                    statBuilder.Append(Environment.NewLine);
-                    List<string> magicalStrings = inventoryReader.ItemReader.GetMagicalStrings(item);
-                    foreach (string str in magicalStrings)
-                    {
-                        statBuilder.Append("    ");
-                        statBuilder.Append(str);
-                        statBuilder.Append(Environment.NewLine);
-                    }
-                    D2ItemData itemData = reader.Read<D2ItemData>(item.UnitData);
-                    if ( !itemStrings.ContainsKey(itemData.BodyLoc) )
-                    {
-                        itemStrings.Add(itemData.BodyLoc, statBuilder.ToString());
-                    }
-                }
-
-            }
-
-            if (ReadFlags.HasFlag(DataReaderEnableFlags.InventoryItemIds))
-                inventoryItemIds = ReadInventoryItemIds(inventoryReader);
-            else inventoryItemIds.Clear();
-
-            // New data was read, update anyone interested:
-            OnDataRead(CreateDataReadEventArgs());
-        }
-
-        List<int> ReadInventoryItemIds(InventoryReader inventoryReader1)
-        {
-            IEnumerable<D2Unit> baseItems = inventoryReader.EnumerateInventory();
-            IEnumerable<D2Unit> socketedItems = baseItems.SelectMany(item => inventoryReader.ItemReader.GetSocketedItems(item));
-            IEnumerable<D2Unit> allItems = baseItems.Concat(socketedItems);
-            return (from item in allItems select item.eClass).ToList();
-        }
-
-        DataReadEventArgs CreateDataReadEventArgs()
-        {
-            return new DataReadEventArgs(
+            OnDataRead(new DataReadEventArgs(
                 character,
                 itemStrings,
                 currentArea,
                 currentDifficulty,
                 inventoryItemIds,
                 IsAutosplitCharacter(character),
-                questBuffers);
+                questBuffers));
+        }
+
+        void ClearReaderCache()
+        {
+            unitReader = new UnitReader(reader, memory);
+            inventoryReader = new InventoryReader(reader, memory);
+        }
+
+        void ProcessCharacterData(D2GameInfo gameInfo)
+        {
+            character = GetCurrentCharacter(gameInfo);
+            character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
+
+            Dictionary<StatIdentifier, D2Stat> playerStats = unitReader.GetStatsMap(gameInfo.Player);
+            Dictionary<StatIdentifier, D2Stat> itemStats = unitReader.GetItemStatsMap(gameInfo.Player);
+            character.ParseStats(playerStats, itemStats, gameInfo);
+        }
+
+        void ProcessQuestBuffers(D2GameInfo gameInfo)
+        {
+            questBuffers.Clear();
+            if (ReadFlags.HasFlag(DataReaderEnableFlags.QuestBuffers))
+            {
+                ReadQuestBuffers(gameInfo);
+            }
+        }
+
+        void ReadQuestBuffers(D2GameInfo gameInfo)
+        {
+            for (int i = 0; i < gameInfo.PlayerData.Quests.Length; i++)
+            {
+                if (gameInfo.PlayerData.Quests[i].IsNull) continue;
+
+                // Read quest array as an array of 16 bit values.
+                D2QuestArray questArray = reader.Read<D2QuestArray>(gameInfo.PlayerData.Quests[i]);
+                byte[] questBytes = reader.Read(questArray.Buffer, questArray.Length);
+                ushort[] questBuffer = new ushort[(questBytes.Length + 1) / 2];
+                Buffer.BlockCopy(questBytes, 0, questBuffer, 0, questBytes.Length);
+
+                character.CompletedQuestCounts[i] = D2QuestHelper.GetReallyCompletedQuestCount(questBuffer);
+
+                questBuffers.Add(i, questBuffer);
+            }
+        }
+
+        int ProcessCurrentArea()
+        {
+            return ReadFlags.HasFlag(DataReaderEnableFlags.CurrentArea)
+                ? reader.ReadByte(memory.Address.Area, AddressingMode.Relative)
+                : -1;
+        }
+
+        void ProcessCurrentDifficulty(D2GameInfo gameInfo)
+        {
+            currentDifficulty = ReadFlags.HasFlag(DataReaderEnableFlags.CurrentDifficulty)
+                ? gameInfo.Game.Difficulty : (byte)0;
+        }
+
+        Dictionary<BodyLocation, string> ProcessEquippedItemStrings()
+        {
+            var enabled = ReadFlags.HasFlag(DataReaderEnableFlags.EquippedItemStrings);
+            return enabled ? ReadEquippedItemStrings() : new Dictionary<BodyLocation, string>();
+        }
+
+        Dictionary<BodyLocation, string> ReadEquippedItemStrings()
+        {
+            var itemStrings = new Dictionary<BodyLocation, string>();
+
+            // Build filter to get only equipped items.
+            Func<D2ItemData, bool> filter = data => data.BodyLoc != BodyLocation.None;
+            foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))
+            {
+                List<D2Stat> itemStats = unitReader.GetStats(item);
+                if (itemStats == null) continue;
+
+                StringBuilder statBuilder = new StringBuilder();
+                statBuilder.Append(inventoryReader.ItemReader.GetFullItemName(item));
+
+                statBuilder.Append(Environment.NewLine);
+                List<string> magicalStrings = inventoryReader.ItemReader.GetMagicalStrings(item);
+                foreach (string str in magicalStrings)
+                {
+                    statBuilder.Append("    ");
+                    statBuilder.Append(str);
+                    statBuilder.Append(Environment.NewLine);
+                }
+
+                D2ItemData itemData = reader.Read<D2ItemData>(item.UnitData);
+                if (!itemStrings.ContainsKey(itemData.BodyLoc))
+                {
+                    itemStrings.Add(itemData.BodyLoc, statBuilder.ToString());
+                }
+            }
+
+            return itemStrings;
+        }
+
+        List<int> ProcessInventoryItemIds()
+        {
+            var enabled = ReadFlags.HasFlag(DataReaderEnableFlags.InventoryItemIds);
+            return enabled ? ReadInventoryItemIds() : new List<int>();
+        }
+
+        List<int> ReadInventoryItemIds()
+        {
+            IReadOnlyCollection<D2Unit> baseItems = inventoryReader.EnumerateInventory().ToList();
+            IEnumerable<D2Unit> socketedItems = baseItems.SelectMany(item => inventoryReader.ItemReader.GetSocketedItems(item));
+            IEnumerable<D2Unit> allItems = baseItems.Concat(socketedItems);
+            return (from item in allItems select item.eClass).ToList();
         }
 
         bool IsAutosplitCharacter(Character character)
@@ -455,14 +476,14 @@
             if (characters.TryGetValue(playerName, out character))
             {
                 // We were just in the title screen and came back to a new character.
-                bool ResetOnBeginning = wasInTitleScreen && experience == 0;
+                bool resetOnBeginning = wasInTitleScreen && experience == 0;
 
                 // If we lost experience on level 1 we have a reset. Level 1 check is important or
                 // this might think we reset when losing experience in nightmare or hell after dying.
-                bool ResetOnLevelOne = character.Level == 1 && experience < character.Experience;
+                bool resetOnLevelOne = character.Level == 1 && experience < character.Experience;
 
                 // Check for reset with same character name.
-                if (ResetOnBeginning || ResetOnLevelOne || level < character.Level)
+                if (resetOnBeginning || resetOnLevelOne || level < character.Level)
                 {
                     // Recreate character.
                     characters.Remove(playerName);
