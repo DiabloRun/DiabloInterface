@@ -28,7 +28,7 @@ namespace Zutatensuppe.D2Reader.Readers
 
         ushort[] opNestings;
 
-        public ItemReader(ProcessMemoryReader reader, D2MemoryTable memory) : base(reader, memory)
+        public ItemReader(ProcessMemoryReader reader, GameMemoryTable memory) : base(reader, memory)
         {
             cachedItemData = new Dictionary<IntPtr, D2ItemData>();
             cachedDescriptions = new Dictionary<int, D2ItemDescription>();

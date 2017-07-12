@@ -44,11 +44,11 @@ namespace Zutatensuppe.D2Reader.Readers
     public class StringLookupTable
     {
         ProcessMemoryReader reader;
-        D2MemoryAddressTable memory;
+        GameMemoryAddressTable memory;
 
         static Dictionary<ushort, string> StringCache = new Dictionary<ushort, string>();
 
-        public StringLookupTable(ProcessMemoryReader reader, D2MemoryAddressTable memory)
+        public StringLookupTable(ProcessMemoryReader reader, GameMemoryAddressTable memory)
         {
             this.reader = reader;
             this.memory = memory;

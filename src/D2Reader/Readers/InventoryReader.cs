@@ -9,13 +9,13 @@ namespace Zutatensuppe.D2Reader.Readers
 {
     class InventoryReader
     {
-        D2MemoryTable memory;
+        GameMemoryTable memory;
         ProcessMemoryReader processReader;
         ItemReader itemReader;
 
         public ItemReader ItemReader { get { return itemReader; } }
 
-        public InventoryReader(ProcessMemoryReader reader, D2MemoryTable memory)
+        public InventoryReader(ProcessMemoryReader reader, GameMemoryTable memory)
         {
             processReader = reader;
             this.memory = memory;

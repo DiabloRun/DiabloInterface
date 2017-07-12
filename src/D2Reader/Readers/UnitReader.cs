@@ -11,12 +11,12 @@ namespace Zutatensuppe.D2Reader.Readers
     public class UnitReader
     {
         protected ProcessMemoryReader reader;
-        protected D2MemoryTable memory;
+        protected GameMemoryTable memory;
         protected StringLookupTable stringReader;
 
         D2Unit player = null;
 
-        public UnitReader(ProcessMemoryReader reader, D2MemoryTable memory)
+        public UnitReader(ProcessMemoryReader reader, GameMemoryTable memory)
         {
             this.reader = reader;
             this.memory = memory;

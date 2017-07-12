@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Zutatensuppe.D2Reader
+﻿namespace Zutatensuppe.D2Reader
 {
-    public class D2MemoryAddressTable
+    using System;
+
+    public class GameMemoryAddressTable
     {
         public IntPtr World;
         public IntPtr GameId;
@@ -15,7 +11,6 @@ namespace Zutatensuppe.D2Reader
         public IntPtr MagicModifierTable;
         public IntPtr RareModifierTable;
 
-        // These all probably belong to a global struct the compiler optimized away.
         public IntPtr PlayerUnit;
         public IntPtr GlobalData;
         public IntPtr LowQualityItems;

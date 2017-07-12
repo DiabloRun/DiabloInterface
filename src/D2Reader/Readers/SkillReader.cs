@@ -9,11 +9,11 @@ namespace Zutatensuppe.D2Reader.Readers
     {
 
         ProcessMemoryReader reader;
-        D2MemoryTable memory;
+        GameMemoryTable memory;
         protected StringLookupTable stringReader;
         D2GlobalData globals;
 
-        public SkillReader(ProcessMemoryReader reader, D2MemoryTable memory)
+        public SkillReader(ProcessMemoryReader reader, GameMemoryTable memory)
         {
             this.reader = reader;
 

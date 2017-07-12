@@ -68,7 +68,10 @@
 
         void InitializeDataReader()
         {
-            dataReader = new D2DataReader(settingsService.CurrentSettings.D2Version);
+            var gameVersion = settingsService.CurrentSettings.D2Version;
+            var memoryTableFactory = new GameMemoryTableFactory();
+
+            dataReader = new D2DataReader(memoryTableFactory, gameVersion);
             dataReader.CharacterCreated += OnCharacterCreated;
             dataReader.DataRead += OnDataRead;
         }
