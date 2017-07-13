@@ -1,7 +1,6 @@
 ﻿namespace Zutatensuppe.DiabloInterface
 {
     using System;
-    using System.Collections.Generic;
     using System.Reflection;
     using System.Windows.Forms;
 
@@ -19,10 +18,6 @@
         [STAThread]
         static void Main()
         {
-#if DEBUG
-            ApplicationConsole.initialize();
-#endif
-
             RegisterAppDomainExceptionLogging();
             if (ShouldQuitWithoutProperDotNetFramework())
             {
