@@ -1,3 +1,4 @@
+#tool nuget:?package=vswhere
 #addin nuget:?package=Cake.Compression&version=0.1.1
 #addin nuget:?package=SharpZipLib&version=0.86.0
 
@@ -25,10 +26,18 @@ Task("Build")
     .IsDependentOn("RestorePackages")
     .Does(() =>
 {
-    MSBuild(solution, settings => settings
-        .SetConfiguration(configuration)
-        .SetVerbosity(Verbosity.Minimal)
-    );
+    var modernMSBuildPath = VSWhereLatest() + File(@"\MSBuild\15.0\Bin\MSBuild.exe");
+
+    MSBuild(solution, settings =>
+    {
+        if (FileExists(modernMSBuildPath))
+        {
+            settings.ToolPath = modernMSBuildPath;
+        }
+
+        settings.SetConfiguration(configuration);
+        settings.SetVerbosity(Verbosity.Minimal);
+    });
 });
 
 Task("Package")
