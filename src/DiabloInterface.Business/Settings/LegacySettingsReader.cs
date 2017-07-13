@@ -71,7 +71,6 @@
             settings.FontSizeTitle = getIntDefault("FontSizeTitle", settings.FontSizeTitle);
             settings.CheckUpdates = getBoolDefault("CheckUpdates", settings.CheckUpdates);
             settings.CreateFiles = getBoolDefault("CreateFiles", settings.CreateFiles);
-            settings.D2Version = getStringDefault("D2Version", settings.D2Version);
             settings.DoAutosplit = getBoolDefault("DoAutosplit", settings.DoAutosplit);
             settings.Runes = data.ContainsKey("Runes") ? (List<int>)data["Runes"] : settings.Runes;
 

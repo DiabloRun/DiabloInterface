@@ -9,7 +9,6 @@ namespace Zutatensuppe.D2Reader.Readers
     {
 
         ProcessMemoryReader reader;
-        GameMemoryTable memory;
         protected StringLookupTable stringReader;
         D2GlobalData globals;
 
@@ -44,6 +43,7 @@ namespace Zutatensuppe.D2Reader.Readers
             throw new NotImplementedException();
 
             // get points in skill from items ...
+            /*
             int skillPoints = 0;
 
             D2SkillData skillData = ReadSkillData(skill);
@@ -56,6 +56,7 @@ namespace Zutatensuppe.D2Reader.Readers
             int x = skill.__UnknownUsed;
             
             return skillPoints;
+            */
         }
 
         public int GetTotalNumberOfSkillPoints(D2Skill skill)

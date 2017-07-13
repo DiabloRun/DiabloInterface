@@ -7,6 +7,16 @@
         GameMemoryTable CreateForVersion(string gameVersion);
     }
 
+    public class GameVersionUnsupportedException : Exception
+    {
+        public String GameVersion;
+        public GameVersionUnsupportedException(String gameVersion) :
+            base(string.Format("Failed to create memory table for game version {0}", gameVersion))
+        {
+            GameVersion = gameVersion;
+        }
+    }
+
     public class GameMemoryTableFactory : IGameMemoryTableFactory
     {
         public GameMemoryTable CreateForVersion(string gameVersion)
@@ -21,7 +31,7 @@
             // for information about how to find addresses for a different version of the game.
             switch (gameVersion)
             {
-                case "1.14b":
+                case "1.14.1.68": // 1.14b
                     memoryTable.Address.GlobalData = new IntPtr(0x00340D78);
 
                     memoryTable.Address.World = new IntPtr(0x0047BD78);
@@ -41,7 +51,7 @@
                     memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x47AB00);
 
                     break;
-                case "1.14c":
+                case "1.14.2.70": // 1.14c
                     memoryTable.Address.GlobalData = new IntPtr(0x33FD78);
 
                     memoryTable.Address.World = new IntPtr(0x0047ACC0);
@@ -61,8 +71,7 @@
                     memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x479A48);
 
                     break;
-                case "1.14d":
-                default:
+                case "1.14.3.71": // 1.14d
                     memoryTable.Address.GlobalData = new IntPtr(0x00344304);
 
                     memoryTable.Address.World = new IntPtr(0x00483D38);
@@ -82,6 +91,9 @@
                     memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x4829C0);
 
                     break;
+
+                default:
+                    throw new GameVersionUnsupportedException(gameVersion);
             }
 
             return memoryTable;

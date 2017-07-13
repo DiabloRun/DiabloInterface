@@ -103,9 +103,6 @@
             this.UpdateGroup = new System.Windows.Forms.GroupBox();
             this.CheckUpdatesButton = new System.Windows.Forms.Button();
             this.CheckUpdatesCheckBox = new System.Windows.Forms.CheckBox();
-            this.VersionGroup = new System.Windows.Forms.GroupBox();
-            this.VersionLabel = new System.Windows.Forms.Label();
-            this.VersionComboBox = new System.Windows.Forms.ComboBox();
             this.mainPanel = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnSaveAs = new System.Windows.Forms.Button();
@@ -132,7 +129,6 @@
             this.tabPageSettingsMisc.SuspendLayout();
             this.DataGroup.SuspendLayout();
             this.UpdateGroup.SuspendLayout();
-            this.VersionGroup.SuspendLayout();
             this.mainPanel.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -901,7 +897,6 @@
             // 
             this.tabPageSettingsMisc.Controls.Add(this.DataGroup);
             this.tabPageSettingsMisc.Controls.Add(this.UpdateGroup);
-            this.tabPageSettingsMisc.Controls.Add(this.VersionGroup);
             this.tabPageSettingsMisc.Location = new System.Drawing.Point(4, 22);
             this.tabPageSettingsMisc.Name = "tabPageSettingsMisc";
             this.tabPageSettingsMisc.Padding = new System.Windows.Forms.Padding(3);
@@ -964,41 +959,6 @@
             this.CheckUpdatesCheckBox.TabIndex = 1;
             this.CheckUpdatesCheckBox.Text = "Check for updates at start";
             this.CheckUpdatesCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // VersionGroup
-            // 
-            this.VersionGroup.Controls.Add(this.VersionLabel);
-            this.VersionGroup.Controls.Add(this.VersionComboBox);
-            this.VersionGroup.Location = new System.Drawing.Point(3, 152);
-            this.VersionGroup.Margin = new System.Windows.Forms.Padding(0);
-            this.VersionGroup.Name = "VersionGroup";
-            this.VersionGroup.Size = new System.Drawing.Size(231, 49);
-            this.VersionGroup.TabIndex = 17;
-            this.VersionGroup.TabStop = false;
-            this.VersionGroup.Text = "Diablo 2";
-            // 
-            // VersionLabel
-            // 
-            this.VersionLabel.AutoSize = true;
-            this.VersionLabel.Location = new System.Drawing.Point(6, 20);
-            this.VersionLabel.Name = "VersionLabel";
-            this.VersionLabel.Size = new System.Drawing.Size(45, 13);
-            this.VersionLabel.TabIndex = 1;
-            this.VersionLabel.Text = "Version:";
-            // 
-            // VersionComboBox
-            // 
-            this.VersionComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.VersionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.VersionComboBox.FormattingEnabled = true;
-            this.VersionComboBox.Items.AddRange(new object[] {
-            "1.14d",
-            "1.14c",
-            "1.14b"});
-            this.VersionComboBox.Location = new System.Drawing.Point(105, 17);
-            this.VersionComboBox.Name = "VersionComboBox";
-            this.VersionComboBox.Size = new System.Drawing.Size(117, 21);
-            this.VersionComboBox.TabIndex = 0;
             // 
             // mainPanel
             // 
@@ -1100,8 +1060,6 @@
             this.DataGroup.PerformLayout();
             this.UpdateGroup.ResumeLayout(false);
             this.UpdateGroup.PerformLayout();
-            this.VersionGroup.ResumeLayout(false);
-            this.VersionGroup.PerformLayout();
             this.mainPanel.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -1162,9 +1120,6 @@
         private System.Windows.Forms.GroupBox UpdateGroup;
         private System.Windows.Forms.Button CheckUpdatesButton;
         private System.Windows.Forms.CheckBox CheckUpdatesCheckBox;
-        private System.Windows.Forms.GroupBox VersionGroup;
-        private System.Windows.Forms.Label VersionLabel;
-        private System.Windows.Forms.ComboBox VersionComboBox;
         private System.Windows.Forms.FlowLayoutPanel RuneDisplayPanel;
         private System.Windows.Forms.Button btnSetLevelColor;
         private System.Windows.Forms.Button btnSetFireResColor;

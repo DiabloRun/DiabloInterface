@@ -74,7 +74,6 @@
                     || settings.FontSizeTitle != (int)titleFontSizeNumeric.Value
                     || settings.CreateFiles != CreateFilesCheckBox.Checked
                     || settings.CheckUpdates != CheckUpdatesCheckBox.Checked
-                    || settings.D2Version != VersionComboBox.SelectedItem.ToString()
                     || settings.DisplayName != chkDisplayName.Checked
                     || settings.DisplayGold != chkDisplayGold.Checked
                     || settings.DisplayDeathCounter != chkDisplayDeathCounter.Checked
@@ -197,12 +196,6 @@
             btnSetLightningResColor.ForeColor = settings.ColorLightningRes;
             btnSetPoisonResColor.ForeColor = settings.ColorPoisonRes;
 
-
-            // Show the selected diablo version.
-            int versionIndex = this.VersionComboBox.FindString(settings.D2Version);
-            if (versionIndex < 0) versionIndex = 0;
-            this.VersionComboBox.SelectedIndex = versionIndex;
-
             InitializeAutoSplitTable();
             foreach (AutoSplit a in settings.Autosplits)
             {
@@ -274,7 +267,6 @@
             settings.FontSizeTitle = (int)titleFontSizeNumeric.Value;
             settings.VerticalLayoutPadding = (int)numericUpDownPaddingInVerticalLayout.Value;
             settings.FontName = GetFontName();
-            settings.D2Version = (string)VersionComboBox.SelectedItem;
 
             settings.DisplayName = chkDisplayName.Checked;
             settings.DisplayGold = chkDisplayGold.Checked;

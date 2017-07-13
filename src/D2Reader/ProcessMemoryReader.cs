@@ -32,6 +32,11 @@ namespace Zutatensuppe.D2Reader
 
         IntPtr baseAddress;
         IntPtr processHandle;
+        String fileVersion;
+
+        public String FileVersion {
+            get { return fileVersion; }
+        }
 
         public bool IsValid
         {
@@ -48,6 +53,7 @@ namespace Zutatensuppe.D2Reader
         {
             bool foundModule = false;
             uint foundProcessId = 0;
+            String foundFileVersion = null;
             IntPtr foundBaseAddress = IntPtr.Zero;
 
             Process[] processes = Process.GetProcessesByName(processName);
@@ -63,6 +69,7 @@ namespace Zutatensuppe.D2Reader
                             foundModule = true;
                             foundProcessId = (uint)process.Id;
                             foundBaseAddress = module.BaseAddress;
+                            foundFileVersion = module.FileVersionInfo.FileVersion;
                         }
                     }
                 }
@@ -78,6 +85,7 @@ namespace Zutatensuppe.D2Reader
             baseAddress = foundBaseAddress;
             ProcessAccessFlags flags = ProcessAccessFlags.QueryLimitedInfo | ProcessAccessFlags.MemoryRead;
             processHandle = OpenProcess(flags, false, foundProcessId);
+            fileVersion = foundFileVersion;
 
             // Make sure we succeeded in opening the handle.
             if (processHandle == IntPtr.Zero) throw new ProcessNotFoundException(processName, moduleName);

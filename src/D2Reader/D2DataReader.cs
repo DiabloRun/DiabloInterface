@@ -83,7 +83,6 @@
         UnitReader unitReader;
         InventoryReader inventoryReader;
         GameMemoryTable memory;
-        GameMemoryTable nextMemoryTable;
 
         byte currentDifficulty;
         bool wasInTitleScreen;
@@ -91,13 +90,9 @@
         Character activeCharacter;
         Character character;
 
-        public D2DataReader(IGameMemoryTableFactory memoryTableFactory, string gameVersion)
+        public D2DataReader(IGameMemoryTableFactory memoryTableFactory)
         {
-            if (memoryTableFactory == null) throw new ArgumentNullException(nameof(memoryTableFactory));
-
-            this.memoryTableFactory = memoryTableFactory;
-
-            memory = CreateGameMemoryTableForVersion(gameVersion);
+            this.memoryTableFactory = memoryTableFactory ?? throw new ArgumentNullException(nameof(memoryTableFactory));
         }
 
         ~D2DataReader()
@@ -171,11 +166,6 @@
 
         #endregion
 
-        public void SetD2Version(string version)
-        {
-            nextMemoryTable = CreateGameMemoryTableForVersion(version);
-        }
-
         GameMemoryTable CreateGameMemoryTableForVersion(string gameVersion)
         {
             return memoryTableFactory.CreateForVersion(gameVersion);
@@ -202,6 +192,9 @@
             try
             {
                 reader = new ProcessMemoryReader(DiabloProcessName, DiabloModuleName);
+                
+                memory = CreateGameMemoryTableForVersion(reader.FileVersion);
+
                 unitReader = new UnitReader(reader, memory);
                 inventoryReader = new InventoryReader(reader, memory);
 
@@ -213,11 +206,31 @@
             catch (ProcessNotFoundException)
             {
                 // Failed to open process.
+                // Logger.Info("Diablo II Process was not found.");
+                reader = null;
+                memory = null;
+                unitReader = null;
+                inventoryReader = null;
+                return false;
+            }
+            catch (GameVersionUnsupportedException e)
+            {
+                // Failed to create memory table.
+                Logger.Info(string.Format("Diablo II Process was found, but the version {0} is not supported.", e.GameVersion));
+                reader = null;
+                memory = null;
+                unitReader = null;
+                inventoryReader = null;
                 return false;
             }
             catch (ProcessMemoryReadException)
             {
                 // Failed to read memory.
+                Logger.Info("Diablo II Process was found but failed to read memory.");
+                reader = null;
+                memory = null;
+                unitReader = null;
+                inventoryReader = null;
                 return false;
             }
         }
@@ -243,13 +256,6 @@
                 // Block here until we have a valid reader.
                 if (!ValidateGameDataReaders())
                     continue;
-
-                // Memory table change.
-                if (nextMemoryTable != null)
-                {
-                    memory = nextMemoryTable;
-                    nextMemoryTable = null;
-                }
 
                 try
                 {
