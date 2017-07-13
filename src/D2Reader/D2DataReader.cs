@@ -198,40 +198,38 @@
                 unitReader = new UnitReader(reader, memory);
                 inventoryReader = new InventoryReader(reader, memory);
 
-                Logger.Info("Found the Diablo II process.");
+                Logger.Info($"Found the Diablo II process (version {reader.FileVersion}).");
 
-                // Process opened successfully.
                 return true;
             }
             catch (ProcessNotFoundException)
             {
-                // Failed to open process.
-                // Logger.Info("Diablo II Process was not found.");
-                reader = null;
-                memory = null;
-                unitReader = null;
-                inventoryReader = null;
+                CleanUpDataReaders();
+
                 return false;
             }
             catch (GameVersionUnsupportedException e)
             {
-                // Failed to create memory table.
-                Logger.Info(string.Format("Diablo II Process was found, but the version {0} is not supported.", e.GameVersion));
-                reader = null;
-                memory = null;
-                unitReader = null;
-                inventoryReader = null;
+                Logger.Error($"Diablo II Process was found, but the version {e.GameVersion} is not supported.");
+                CleanUpDataReaders();
+
                 return false;
             }
             catch (ProcessMemoryReadException)
             {
-                // Failed to read memory.
-                Logger.Info("Diablo II Process was found but failed to read memory.");
+                Logger.Error("Diablo II Process was found but failed to read memory.");
+                CleanUpDataReaders();
+
+                return false;
+            }
+
+            void CleanUpDataReaders()
+            {
+                reader?.Dispose();
                 reader = null;
                 memory = null;
                 unitReader = null;
                 inventoryReader = null;
-                return false;
             }
         }
 
@@ -240,8 +238,9 @@
             if (reader == null) return;
 
             // Add all items found in the slots.
-            Func<D2ItemData, bool> filterSlots = data => slots.FindIndex(x => x == data.BodyLoc) >= 0;
-            foreach (var item in inventoryReader.EnumerateInventory(filterSlots))
+            bool FilterSlots(D2ItemData data) => slots.FindIndex(x => x == data.BodyLoc) >= 0;
+
+            foreach (var item in inventoryReader.EnumerateInventory(FilterSlots))
             {
                 action?.Invoke(inventoryReader.ItemReader, item);
             }
@@ -422,8 +421,9 @@
             var itemStrings = new Dictionary<BodyLocation, string>();
 
             // Build filter to get only equipped items.
-            Func<D2ItemData, bool> filter = data => data.BodyLoc != BodyLocation.None;
-            foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))
+            bool Filter(D2ItemData data) => data.BodyLoc != BodyLocation.None;
+
+            foreach (D2Unit item in inventoryReader.EnumerateInventory(Filter))
             {
                 List<D2Stat> itemStats = unitReader.GetStats(item);
                 if (itemStats == null) continue;
@@ -478,7 +478,7 @@
             int experience = unitReader.GetStatValue(gameInfo.Player, StatIdentifier.Experience) ?? 0;
 
             // We encountered this character name before.
-            Character character = null;
+            Character character;
             if (characters.TryGetValue(playerName, out character))
             {
                 // We were just in the title screen and came back to a new character.
@@ -501,8 +501,7 @@
             // with the same name as a previous character.
             if (character == null)
             {
-                character = new Character();
-                character.Name = playerName;
+                character = new Character {Name = playerName};
                 characters[playerName] = character;
 
                 // A brand new character has been started.

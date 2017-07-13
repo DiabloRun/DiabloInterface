@@ -1,11 +1,12 @@
-﻿using Zutatensuppe.D2Reader.Struct;
-using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Text;
-
-namespace Zutatensuppe.D2Reader
+﻿namespace Zutatensuppe.D2Reader
 {
+    using System;
+    using System.Diagnostics;
+    using System.Runtime.InteropServices;
+    using System.Text;
+
+    using Zutatensuppe.D2Reader.Struct;
+
     public enum AddressingMode
     {
         Absolute,
@@ -15,39 +16,23 @@ namespace Zutatensuppe.D2Reader
     public class ProcessNotFoundException : Exception
     {
         public ProcessNotFoundException(string processName, string moduleName) :
-            base(string.Format("Could not find process {0}[{1}]", processName, moduleName))
+            base($"Could not find process {processName}[{moduleName}]")
         { }
     }
 
     public class ProcessMemoryReadException : Exception
     {
         public ProcessMemoryReadException(IntPtr address) :
-            base(string.Format("Failed to read memory at: 0x{0:X8}", address.ToInt64()))
+            base($"Failed to read memory at: 0x{address.ToInt64():X8}")
         { }
     }
 
     public class ProcessMemoryReader : IDisposable
     {
-        const uint PROCESS_STILL_ACTIVE = 259;
+        const uint ProcessStillActive = 259;
 
         IntPtr baseAddress;
         IntPtr processHandle;
-        String fileVersion;
-
-        public String FileVersion {
-            get { return fileVersion; }
-        }
-
-        public bool IsValid
-        {
-            get
-            {
-                uint exitCode = 0;
-                if (!GetExitCodeProcess(processHandle, out exitCode))
-                    return false;
-                return exitCode == PROCESS_STILL_ACTIVE;
-            }
-        }
 
         public ProcessMemoryReader(string processName, string moduleName)
         {
@@ -73,7 +58,8 @@ namespace Zutatensuppe.D2Reader
                         }
                     }
                 }
-            } catch
+            }
+            catch
             {
                 throw new ProcessNotFoundException(processName, moduleName);
             }
@@ -85,10 +71,23 @@ namespace Zutatensuppe.D2Reader
             baseAddress = foundBaseAddress;
             ProcessAccessFlags flags = ProcessAccessFlags.QueryLimitedInfo | ProcessAccessFlags.MemoryRead;
             processHandle = OpenProcess(flags, false, foundProcessId);
-            fileVersion = foundFileVersion;
+            FileVersion = foundFileVersion;
 
             // Make sure we succeeded in opening the handle.
             if (processHandle == IntPtr.Zero) throw new ProcessNotFoundException(processName, moduleName);
+        }
+
+        public string FileVersion { get; }
+
+        public bool IsValid
+        {
+            get
+            {
+                uint exitCode = 0;
+                if (!GetExitCodeProcess(processHandle, out exitCode))
+                    return false;
+                return exitCode == ProcessStillActive;
+            }
         }
 
         #region Disposable
@@ -107,7 +106,8 @@ namespace Zutatensuppe.D2Reader
 
         protected virtual void Dispose(bool disposing)
         {
-            if (processHandle != IntPtr.Zero) {
+            if (processHandle != IntPtr.Zero)
+            {
                 CloseHandle(processHandle);
                 processHandle = IntPtr.Zero;
             }
