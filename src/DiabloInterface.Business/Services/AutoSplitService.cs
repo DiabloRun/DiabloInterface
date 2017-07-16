@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
     using System.Text;
     using System.Windows.Forms;
@@ -82,7 +83,7 @@
             
             var difficulty = eventArgs.CurrentDifficulty;
             IList<QuestCollection> gameQuests = eventArgs.Quests;
-            var quests = gameQuests[(int)difficulty];
+            var currentQuests = gameQuests[(int)difficulty];
 
             foreach (var autoSplit in settings.Autosplits)
             {
@@ -102,16 +103,14 @@
                 }
 
                 if (autoSplit.Value == (int)AutoSplit.Special.Clear100Percent
-                    && quests.IsFullyCompleted
+                    && currentQuests.IsFullyCompleted
                     && autoSplit.MatchesDifficulty(difficulty))
                 {
                     CompleteAutoSplit(autoSplit);
                 }
 
                 if (autoSplit.Value == (int)AutoSplit.Special.Clear100PercentAllDifficulties
-                    && gameQuests[0].IsFullyCompleted
-                    && gameQuests[1].IsFullyCompleted
-                    && gameQuests[2].IsFullyCompleted)
+                    && gameQuests.All(quests => quests.IsFullyCompleted))
                 {
                     CompleteAutoSplit(autoSplit);
                 }
@@ -193,8 +192,8 @@
 
                         break;
                     case AutoSplit.SplitType.Quest:
-                        if (quests == null) continue;
-                        if (quests.IsQuestCompleted((QuestId)autoSplit.Value))
+                        if (currentQuests == null) continue;
+                        if (currentQuests.IsQuestCompleted((QuestId)autoSplit.Value))
                         {
                             CompleteAutoSplit(autoSplit);
                         }

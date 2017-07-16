@@ -96,9 +96,9 @@
             labelPoisonResVal.Text = "" + player.PoisonResist;
             UpdateLabelWidthAlignment(labelFireResVal, labelColdResVal, labelLightResVal, labelPoisonResVal);
 
-            normLabelVal.Text = $"{quests[0].CompletionProgress:P0}";
-            nmLabelVal.Text = $"{quests[1].CompletionProgress:P0}";
-            hellLabelVal.Text = $"{quests[2].CompletionProgress:P0}";
+            normLabelVal.Text = $@"{quests[0].CompletionProgress:0%}";
+            nmLabelVal.Text = $@"{quests[1].CompletionProgress:0%}";
+            hellLabelVal.Text = $@"{quests[2].CompletionProgress:0%}";
             UpdateLabelWidthAlignment(normLabelVal, nmLabelVal, hellLabelVal);
         }
 
