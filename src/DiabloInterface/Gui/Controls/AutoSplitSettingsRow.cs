@@ -6,6 +6,7 @@
     using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader;
+    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.AutoSplits;
 
     public partial class AutoSplitSettingsRow : UserControl
@@ -32,7 +33,7 @@
         static string LABEL_CLEAR_100_PERCENT = "Clear 100%";
         static string LABEL_CLEAR_100_PERCENT_ALL = "Clear 100% of all difficulties";
 
-        private class Item
+        class Item
         {
             public string Name;
             public int Value;
@@ -124,9 +125,12 @@
                     cmbValue.Items.Add(new Item(LABEL_KHALIMS_BRAIN, (int)D2Data.ItemId.KHALIM_BRAIN));
                     break;
                 case AutoSplit.SplitType.Quest:
-                    foreach ( KeyValuePair<D2QuestHelper.Quest, D2QuestHelper.D2Quest> item in D2QuestHelper.Quests )
+                    foreach (QuestId questId in Enum.GetValues(typeof(QuestId)))
                     {
-                        cmbValue.Items.Add(new Item((item.Value.BossQuest ? "" : ("Act " + item.Value.Act + " - ")) + item.Value.CommonName, (int)item.Key));
+                        var quest = QuestFactory.Create(questId, 0);
+                        var name = (quest.IsBossQuest ? "" : $"Act {quest.Act} - ") + quest.CommonName;
+
+                        cmbValue.Items.Add(new Item(name, (int)questId));
                     }
                     break;
                 case AutoSplit.SplitType.Special:

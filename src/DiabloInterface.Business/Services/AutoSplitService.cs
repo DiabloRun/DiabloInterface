@@ -7,6 +7,7 @@
     using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader;
+    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.AutoSplits;
     using Zutatensuppe.DiabloInterface.Business.Settings;
     using Zutatensuppe.DiabloInterface.Core.Logging;
@@ -22,11 +23,8 @@
         {
             Logger.Info("Creating auto split service.");
 
-            if (settingsService == null) throw new ArgumentNullException(nameof(settingsService));
-            if (gameService == null) throw new ArgumentNullException(nameof(gameService));
-
-            this.settingsService = settingsService;
-            this.gameService = gameService;
+            this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+            this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
 
             RegisterServiceEventHandlers();
         }
@@ -81,8 +79,10 @@
             // Update autosplits only if the character was a freshly started character.
             if (!eventArgs.IsAutosplitCharacter) return;
 
-            var character = eventArgs.Character;
+            
             var difficulty = eventArgs.CurrentDifficulty;
+            IList<QuestCollection> gameQuests = eventArgs.Quests;
+            var quests = gameQuests[(int)difficulty];
 
             foreach (var autoSplit in settings.Autosplits)
             {
@@ -102,16 +102,16 @@
                 }
 
                 if (autoSplit.Value == (int)AutoSplit.Special.Clear100Percent
-                    && character.CompletedQuestCounts[difficulty] == D2QuestHelper.Quests.Count
+                    && quests.IsFullyCompleted
                     && autoSplit.MatchesDifficulty(difficulty))
                 {
                     CompleteAutoSplit(autoSplit);
                 }
 
                 if (autoSplit.Value == (int)AutoSplit.Special.Clear100PercentAllDifficulties
-                    && character.CompletedQuestCounts[0] == D2QuestHelper.Quests.Count
-                    && character.CompletedQuestCounts[1] == D2QuestHelper.Quests.Count
-                    && character.CompletedQuestCounts[2] == D2QuestHelper.Quests.Count)
+                    && gameQuests[0].IsFullyCompleted
+                    && gameQuests[1].IsFullyCompleted
+                    && gameQuests[2].IsFullyCompleted)
                 {
                     CompleteAutoSplit(autoSplit);
                 }
@@ -151,18 +151,16 @@
             }
 
             // if no unreached splits, return
-            if (!(haveUnreachedCharLevelSplits || haveUnreachedAreaSplits || haveUnreachedItemSplits || haveUnreachedQuestSplits || haveUnreachedGemSplits))
+            if (!(haveUnreachedCharLevelSplits
+                || haveUnreachedAreaSplits
+                || haveUnreachedItemSplits
+                || haveUnreachedQuestSplits
+                || haveUnreachedGemSplits))
             {
                 return;
             }
 
-            IReadOnlyDictionary<int, ushort[]> questBuffers = eventArgs.QuestBuffers;
-            ushort[] questBuffer = null;
-
-            if (haveUnreachedQuestSplits && questBuffers.ContainsKey(difficulty))
-            {
-                questBuffer = questBuffers[difficulty];
-            }
+            var character = eventArgs.Character;
 
             foreach (var autoSplit in settings.Autosplits)
             {
@@ -195,13 +193,13 @@
 
                         break;
                     case AutoSplit.SplitType.Quest:
-                        if (D2QuestHelper.IsQuestComplete((D2QuestHelper.Quest)autoSplit.Value, questBuffer))
+                        if (quests == null) continue;
+                        if (quests.IsQuestCompleted((QuestId)autoSplit.Value))
                         {
                             CompleteAutoSplit(autoSplit);
                         }
 
                         break;
-
                     case AutoSplit.SplitType.Gems:
                         if (eventArgs.ItemIds.Contains(autoSplit.Value))
                         {

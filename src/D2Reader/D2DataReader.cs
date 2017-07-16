@@ -7,6 +7,7 @@
     using System.Text;
     using System.Threading;
 
+    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.D2Reader.Readers;
     using Zutatensuppe.D2Reader.Struct;
     using Zutatensuppe.D2Reader.Struct.Item;
@@ -42,27 +43,27 @@
             Character character,
             Dictionary<BodyLocation, string> itemStrings,
             int currentArea,
-            byte currentDifficulty,
+            GameDifficulty currentDifficulty,
             List<int> itemIds,
             bool isAutosplitCharacter,
-            Dictionary<int, ushort[]> questBuffers)
+            IList<QuestCollection> quests)
         {
             Character = character;
-            IsAutosplitCharacter = isAutosplitCharacter;
-            QuestBuffers = questBuffers;
+            ItemStrings = itemStrings;
             CurrentArea = currentArea;
             CurrentDifficulty = currentDifficulty;
             ItemIds = itemIds;
-            ItemStrings = itemStrings;
+            IsAutosplitCharacter = isAutosplitCharacter;
+            Quests = quests;
         }
 
-        public Dictionary<int, ushort[]> QuestBuffers { get; }
         public Character Character { get; }
-        public bool IsAutosplitCharacter { get; }
-        public int CurrentArea { get; }
-        public byte CurrentDifficulty { get; }
-        public List<int> ItemIds { get; }
         public Dictionary<BodyLocation, string> ItemStrings { get; }
+        public int CurrentArea { get; }
+        public GameDifficulty CurrentDifficulty { get; }
+        public List<int> ItemIds { get; }
+        public bool IsAutosplitCharacter { get; }
+        public IList<QuestCollection> Quests { get; }
     }
 
     public class D2DataReader : IDisposable
@@ -75,7 +76,6 @@
         readonly IGameMemoryTableFactory memoryTableFactory;
 
         readonly Dictionary<string, Character> characters = new Dictionary<string, Character>();
-        readonly Dictionary<int, ushort[]> questBuffers = new Dictionary<int, ushort[]>();
 
         bool isDisposed;
 
@@ -84,11 +84,12 @@
         InventoryReader inventoryReader;
         GameMemoryTable memory;
 
-        byte currentDifficulty;
+        GameDifficulty currentDifficulty;
         bool wasInTitleScreen;
         DateTime activeCharacterTimestamp;
         Character activeCharacter;
         Character character;
+        IList<QuestCollection> gameQuests = new List<QuestCollection>();
 
         public D2DataReader(IGameMemoryTableFactory memoryTableFactory)
         {
@@ -125,19 +126,8 @@
         /// Gets the most recent quest status buffer for the current difficulty.
         /// </summary>
         /// <returns></returns>
-        public ushort[] CurrentQuestBuffer
-        {
-            get
-            {
-                if (questBuffers == null)
-                    return null;
-
-                ushort[] statusBuffer;
-                if (questBuffers.TryGetValue(currentDifficulty, out statusBuffer))
-                    return statusBuffer;
-                else return null;
-            }
-        }
+        public QuestCollection CurrentQuests =>
+            gameQuests.ElementAtOrDefault((int)currentDifficulty);
 
         bool IsProcessReaderTerminated => reader != null && !reader.IsValid;
 
@@ -338,7 +328,7 @@
             ClearReaderCache();
 
             ProcessCharacterData(gameInfo);
-            ProcessQuestBuffers(gameInfo);
+            ProcessQuests(gameInfo);
             var currentArea = ProcessCurrentArea();
             ProcessCurrentDifficulty(gameInfo);
             Dictionary<BodyLocation, string> itemStrings = ProcessEquippedItemStrings();
@@ -351,7 +341,7 @@
                 currentDifficulty,
                 inventoryItemIds,
                 IsAutosplitCharacter(character),
-                questBuffers));
+                gameQuests));
         }
 
         void ClearReaderCache()
@@ -370,32 +360,36 @@
             character.ParseStats(playerStats, itemStats, gameInfo);
         }
 
-        void ProcessQuestBuffers(D2GameInfo gameInfo)
+        void ProcessQuests(D2GameInfo gameInfo)
         {
-            questBuffers.Clear();
+            gameQuests = new List<QuestCollection>();
             if (ReadFlags.HasFlag(DataReaderEnableFlags.QuestBuffers))
             {
-                ReadQuestBuffers(gameInfo);
+                gameQuests = ReadQuests(gameInfo);
             }
         }
 
-        void ReadQuestBuffers(D2GameInfo gameInfo)
+        List<QuestCollection> ReadQuests(D2GameInfo gameInfo) => (
+            from address in gameInfo.PlayerData.Quests
+            where !address.IsNull
+            select ReadQuestBuffer(address) into questBuffer
+            select TransformToQuestList(questBuffer) into quests
+            select new QuestCollection(quests)).ToList();
+
+        ushort[] ReadQuestBuffer(DataPointer address)
         {
-            for (int i = 0; i < gameInfo.PlayerData.Quests.Length; i++)
-            {
-                if (gameInfo.PlayerData.Quests[i].IsNull) continue;
+            // Read quest array as an array of 16 bit values.
+            var questArray = reader.Read<D2QuestArray>(address);
+            byte[] questBytes = reader.Read(questArray.Buffer, questArray.Length);
 
-                // Read quest array as an array of 16 bit values.
-                D2QuestArray questArray = reader.Read<D2QuestArray>(gameInfo.PlayerData.Quests[i]);
-                byte[] questBytes = reader.Read(questArray.Buffer, questArray.Length);
-                ushort[] questBuffer = new ushort[(questBytes.Length + 1) / 2];
-                Buffer.BlockCopy(questBytes, 0, questBuffer, 0, questBytes.Length);
-
-                character.CompletedQuestCounts[i] = D2QuestHelper.GetReallyCompletedQuestCount(questBuffer);
-
-                questBuffers.Add(i, questBuffer);
-            }
+            var questBuffer = new ushort[(questBytes.Length + 1) / 2];
+            Buffer.BlockCopy(questBytes, 0, questBuffer, 0, questBytes.Length);
+            return questBuffer;
         }
+
+        static List<Quest> TransformToQuestList(IEnumerable<ushort> questBuffer) => questBuffer
+            .Select((data, index) => QuestFactory.CreateFromBufferIndex(index, data))
+            .Where(quest => quest != null).ToList();
 
         int ProcessCurrentArea()
         {
@@ -407,7 +401,7 @@
         void ProcessCurrentDifficulty(D2GameInfo gameInfo)
         {
             currentDifficulty = ReadFlags.HasFlag(DataReaderEnableFlags.CurrentDifficulty)
-                ? gameInfo.Game.Difficulty : (byte)0;
+                ? (GameDifficulty)gameInfo.Game.Difficulty : GameDifficulty.Normal;
         }
 
         Dictionary<BodyLocation, string> ProcessEquippedItemStrings()

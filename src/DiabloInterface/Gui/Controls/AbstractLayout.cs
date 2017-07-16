@@ -7,6 +7,7 @@
     using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader;
+    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
 
@@ -91,7 +92,7 @@
                 return;
             }
 
-            UpdateLabels(e.Character);
+            UpdateLabels(e.Character, e.Quests);
             UpdateRuneDisplay(e.ItemIds);
         }
 
@@ -118,7 +119,7 @@
         {
         }
 
-        protected virtual void UpdateLabels(Character player)
+        protected virtual void UpdateLabels(Character player, IList<QuestCollection> quests)
         {
         }
 

@@ -5,6 +5,8 @@
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
 
+    using Zutatensuppe.D2Reader.Models;
+
     public class AutoSplit
     {
         public enum SplitType
@@ -121,12 +123,12 @@
             return false;
         }
 
-        public bool MatchesDifficulty(short difficulty)
+        public bool MatchesDifficulty(GameDifficulty difficulty)
         {
             if (IsDifficultyIgnored())
                 return true;
 
-            return Difficulty == difficulty;
+            return Difficulty == (short)difficulty;
         }
 
         /// <summary>

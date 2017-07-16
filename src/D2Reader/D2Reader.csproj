@@ -47,8 +47,13 @@
     <Compile Include="GameMemoryAddressTable.cs" />
     <Compile Include="GameMemoryOffsetTable.cs" />
     <Compile Include="GameMemoryTable.cs" />
-    <Compile Include="D2QuestHelper.cs" />
+    <Compile Include="QuestFactory.cs" />
     <Compile Include="GameMemoryTableFactory.cs" />
+    <Compile Include="Models\GameDifficulty.cs" />
+    <Compile Include="Models\Quest.cs" />
+    <Compile Include="Models\QuestCollection.cs" />
+    <Compile Include="Models\QuestDetails.cs" />
+    <Compile Include="Models\QuestId.cs" />
     <Compile Include="ProcessMemoryReader.cs" />
     <Compile Include="Readers\InventoryReader.cs" />
     <Compile Include="Readers\ItemReader.cs" />

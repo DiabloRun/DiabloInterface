@@ -3,10 +3,12 @@
     using System;
     using System.Collections.Generic;
     using System.Drawing;
+    using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader;
+    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
     using Zutatensuppe.DiabloInterface.Core.Logging;
@@ -74,7 +76,7 @@
             UpdateLayout(settings);
         }
 
-        protected override void UpdateLabels(Character player)
+        protected override void UpdateLabels(Character player, IList<QuestCollection> quests)
         {
             nameLabel.Text = player.Name;
             lvlLabel.Text = "LVL: " + player.Level;
@@ -99,18 +101,16 @@
             labelPoisonResVal.Text = "" + player.PoisonResist;
             UpdateLabelWidthAlignment(labelFireResVal, labelColdResVal, labelLightResVal, labelPoisonResVal);
 
-            int perc0 = (int)(100.0 * player.CompletedQuestCounts[0] / (float)D2QuestHelper.Quests.Count + .5);
-            int perc1 = (int)(100.0 * player.CompletedQuestCounts[1] / (float)D2QuestHelper.Quests.Count + .5);
-            int perc2 = (int)(100.0 * player.CompletedQuestCounts[2] / (float)D2QuestHelper.Quests.Count + .5);
+            IList<float> completions = quests.Select(q => q.CompletionProgress).ToList();
 
-            normLabelVal.Text = perc0 + "%";
-            nmLabelVal.Text = perc1 + "%";
-            hellLabelVal.Text = perc2 + "%";
+            normLabelVal.Text = $@"{completions[0]:0%}";
+            nmLabelVal.Text = $@"{completions[1]:0%}";
+            hellLabelVal.Text = $@"{completions[2]:0%}";
             UpdateLabelWidthAlignment(normLabelVal, nmLabelVal, hellLabelVal);
 
-            labelNormPerc.Text = "NO: " + perc0 + "%";
-            labelNmPerc.Text = "NM: " + perc1 + "%";
-            labelHellPerc.Text = "HE: " + perc2 + "%";
+            labelNormPerc.Text = $@"NO: {completions[0]:0%}";
+            labelNmPerc.Text = $@"NM: {completions[1]:0%}";
+            labelHellPerc.Text = $@"HE: {completions[2]:0%}";
         }
 
         void UpdateLayout(ApplicationSettings settings)

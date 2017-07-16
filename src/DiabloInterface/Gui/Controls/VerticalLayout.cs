@@ -6,6 +6,7 @@
     using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader;
+    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
     using Zutatensuppe.DiabloInterface.Core.Logging;
@@ -70,7 +71,7 @@
             UpdateLayout(settings);
         }
 
-        protected override void UpdateLabels(Character player)
+        protected override void UpdateLabels(Character player, IList<QuestCollection> quests)
         {
             nameLabel.Text = player.Name;
             lvlLabel.Text = "LVL: " + player.Level;
@@ -95,13 +96,9 @@
             labelPoisonResVal.Text = "" + player.PoisonResist;
             UpdateLabelWidthAlignment(labelFireResVal, labelColdResVal, labelLightResVal, labelPoisonResVal);
 
-            int perc0 = (int)(100.0 * player.CompletedQuestCounts[0] / (float)D2QuestHelper.Quests.Count + .5);
-            int perc1 = (int)(100.0 * player.CompletedQuestCounts[1] / (float)D2QuestHelper.Quests.Count + .5);
-            int perc2 = (int)(100.0 * player.CompletedQuestCounts[2] / (float)D2QuestHelper.Quests.Count + .5);
-
-            normLabelVal.Text = perc0 + "%";
-            nmLabelVal.Text = perc1 + "%";
-            hellLabelVal.Text = perc2 + "%";
+            normLabelVal.Text = $"{quests[0].CompletionProgress:P0}";
+            nmLabelVal.Text = $"{quests[1].CompletionProgress:P0}";
+            hellLabelVal.Text = $"{quests[2].CompletionProgress:P0}";
             UpdateLabelWidthAlignment(normLabelVal, nmLabelVal, hellLabelVal);
         }
 

@@ -1,25 +1,27 @@
-﻿using System.Collections.Generic;
-using Zutatensuppe.D2Reader;
-
-namespace Zutatensuppe.DiabloInterface.Server.Handlers
+﻿namespace Zutatensuppe.DiabloInterface.Server.Handlers
 {
+    using System;
+    using System.Collections.Generic;
+
+    using Zutatensuppe.D2Reader;
+    using Zutatensuppe.D2Reader.Models;
+
     public class QuestRequestHandler : IRequestHandler
     {
-        D2DataReader dataReader;
+        readonly D2DataReader dataReader;
 
         public QuestRequestHandler(D2DataReader dataReader)
         {
-            this.dataReader = dataReader;
+            this.dataReader = dataReader ?? throw new ArgumentNullException(nameof(dataReader));
         }
 
         public QueryResponse HandleRequest(QueryRequest request, IList<string> arguments)
         {
             int questId = int.Parse(arguments[0]);
-            var questBuffer = dataReader.CurrentQuestBuffer;
-            if (questBuffer == null)
-                return BuildQuestResponse(completed: true);
+            var quests = dataReader.CurrentQuests;
+            if (quests == null) return BuildQuestResponse(completed: true);
 
-            bool completed = D2QuestHelper.IsQuestComplete((D2QuestHelper.Quest)questId, questBuffer);
+            var completed = quests.IsQuestCompleted((QuestId)questId);
             return BuildQuestResponse(completed);
         }
 

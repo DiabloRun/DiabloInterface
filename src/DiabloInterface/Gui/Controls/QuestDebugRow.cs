@@ -1,52 +1,54 @@
-﻿using Zutatensuppe.D2Reader;
-using System;
-using System.Drawing;
-using System.Windows.Forms;
-
-namespace Zutatensuppe.DiabloInterface.Gui.Controls
+﻿namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
+    using Zutatensuppe.D2Reader.Models;
+    using Zutatensuppe.D2Reader;
+
+    using System.Drawing;
+    using System.Windows.Forms;
+
     public partial class QuestDebugRow : UserControl
     {
-        private Label[] labels = new Label[16];
+        readonly Label[] labels;
 
-        public QuestDebugRow(D2QuestHelper.D2Quest quest)
+        public QuestDebugRow(Quest quest)
         {
             InitializeComponent();
 
             lblText.Text = quest.CommonName;
 
-            labels[0] = label0;
-            labels[1] = label1;
-            labels[2] = label2;
-            labels[3] = label3;
-            labels[4] = label4;
-            labels[5] = label5;
-            labels[6] = label6;
-            labels[7] = label7;
-            labels[8] = label8;
-            labels[9] = label9;
-            labels[10] = label10;
-            labels[11] = label11;
-            labels[12] = label12;
-            labels[13] = label13;
-            labels[14] = label14;
-            labels[15] = label15;
+            labels = new[]
+            {
+                label0,
+                label1,
+                label2,
+                label3,
+                label4,
+                label5,
+                label6,
+                label7,
+                label8,
+                label9,
+                label10,
+                label11,
+                label12,
+                label13,
+                label14,
+                label15
+            };
         }
 
-        public void Update(ushort questBits)
+        public void Update(Quest quest)
         {
-            if (!IsHandleCreated)
-            {
-                return;
-            }
+            if (!IsHandleCreated) return;
 
-            for ( byte i = 0; i < 16; i++ )
+            for (var i = 0; i < 16; i++)
             {
-                labels[i].Invoke(new Action(() => { labels[i].BackColor = IsBitSet(questBits, i) ? Color.GreenYellow : Color.AliceBlue; }));
+                labels[i].BackColor = IsBitSet(quest.CompletionBits, i)
+                    ? Color.GreenYellow : Color.AliceBlue;
             }
         }
 
-        private bool IsBitSet(ushort questBits, byte bit)
+        static bool IsBitSet(ushort questBits, int bit)
         {
             return (questBits & (1 << bit)) != 0;
         }

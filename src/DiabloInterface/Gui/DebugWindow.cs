@@ -3,10 +3,12 @@
     using System;
     using System.Collections.Generic;
     using System.Drawing;
+    using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader;
+    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.D2Reader.Struct.Item;
     using Zutatensuppe.DiabloInterface.Business.AutoSplits;
     using Zutatensuppe.DiabloInterface.Business.Services;
@@ -22,30 +24,22 @@
         readonly ISettingsService settingsService;
         readonly IGameService gameService;
 
-        Label[] ActLabelsNormal;
-        Label[] ActLabelsNightmare;
-        Label[] ActLabelsHell;
-
-        QuestDebugRow[,] QuestRowsNormal;
-        QuestDebugRow[,] QuestRowsNightmare;
-        QuestDebugRow[,] QuestRowsHell;
+        readonly Dictionary<GameDifficulty, QuestDebugRow[,]> questRows =
+            new Dictionary<GameDifficulty, QuestDebugRow[,]>();
 
         List<AutosplitBinding> autoSplitBindings;
-        Dictionary<BodyLocation, string> itemStrings;
+        IReadOnlyDictionary<BodyLocation, string> itemStrings;
 
         Dictionary<Label, BodyLocation> locs;
-        private Label clickedLabel = null;
-        private Label hoveredLabel = null;
+        Label clickedLabel;
+        Label hoveredLabel;
 
         public DebugWindow(ISettingsService settingsService, IGameService gameService)
         {
             Logger.Info("Creating debug window.");
 
-            if (settingsService == null) throw new ArgumentNullException(nameof(settingsService));
-            if (gameService == null) throw new ArgumentNullException(nameof(gameService));
-
-            this.settingsService = settingsService;
-            this.gameService = gameService;
+            this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+            this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
 
             EnableReaderDebugData();
             RegisterServiceEventHandlers();
@@ -107,46 +101,30 @@
                 return;
             }
 
-            // Fill in quest data.
-            for (int difficulty = 0; difficulty < 3; ++difficulty)
+            foreach (GameDifficulty difficulty in Enum.GetValues(typeof(GameDifficulty)))
             {
-                if (e.QuestBuffers.ContainsKey(difficulty))
-                {
-                    UpdateQuestData(e.QuestBuffers[difficulty], difficulty);
-                }
+                var quests = e.Quests.ElementAtOrDefault((int)difficulty);
+                if (quests == null) continue;
+
+                UpdateQuestData(quests, difficulty);
             }
 
             UpdateItemStats(e.ItemStrings);
         }
 
-        void UpdateQuestData(ushort[] questBuffer, int difficulty)
+        void UpdateQuestData(QuestCollection quests, GameDifficulty difficulty)
         {
-            QuestDebugRow[,] questRows;
-            ushort questBits;
+            QuestDebugRow[,] rows = questRows[difficulty];
 
-            switch (difficulty)
+            foreach (var quest in quests)
             {
-                case 2: questRows = QuestRowsHell; break;
-                case 1: questRows = QuestRowsNightmare; break;
-                case 0:
-                default: questRows = QuestRowsNormal; break;
-            }
-
-            for (int i = 0; i < questBuffer.Length; i++)
-            {
-                questBits = questBuffer[i];
-
-                D2QuestHelper.D2Quest q = D2QuestHelper.GetByQuestBufferIndex(i);
-                if (q != null)
+                try
                 {
-                    try
-                    {
-                        questRows[q.Act - 1, q.Quest - 1].Update(questBits);
-                    }
-                    catch (NullReferenceException)
-                    {
-                        // System.NullReferenceException
-                    }
+                    rows[quest.Act - 1, quest.ActOrder - 1].Update(quest);
+                }
+                catch (NullReferenceException)
+                {
+                    // System.NullReferenceException
                 }
             }
         }
@@ -193,70 +171,67 @@
             }
         }
 
-        private void LoadQuests(Label[] actLabels, QuestDebugRow[,] questRows, TabPage tabPage)
-        {
-            int y;
-            for (int i = 0; i < 5; i++)
-            {
-                y = i * 100 - (i > 3 ? 3 * 16 : 0);
-                actLabels[i] = new Label();
-                actLabels[i].Text = "Act " + (i + 1);
-                actLabels[i].Width = 40;
-                actLabels[i].Location = new Point(20, y);
-                tabPage.Controls.Add(actLabels[i]);
-                for (int j = 0; j < (i == 3 ? 3 : 6); j++)
-                {
-                    questRows[i, j] = new QuestDebugRow(D2QuestHelper.GetByActAndQuest(i + 1, j + 1));
-                    questRows[i, j].Location = new Point(60, y + (j * 16));
-                    tabPage.Controls.Add(questRows[i, j]);
-                }
-            }
-        }
-
-        private void DebugWindow_Load(object sender, EventArgs e)
+        void DebugWindow_Load(object sender, EventArgs e)
         {
             if (DesignMode) return;
-            ActLabelsNormal = new Label[5];
-            QuestRowsNormal = new QuestDebugRow[5, 6];
-            LoadQuests(ActLabelsNormal, QuestRowsNormal, tabPage1);
 
-            ActLabelsNightmare = new Label[5];
-            QuestRowsNightmare = new QuestDebugRow[5, 6];
-            LoadQuests(ActLabelsNightmare, QuestRowsNightmare, tabPage2);
+            questRows[GameDifficulty.Normal] = CreateQuestRow(tabPage1);
+            questRows[GameDifficulty.Nightmare] = CreateQuestRow(tabPage2);
+            questRows[GameDifficulty.Hell] = CreateQuestRow(tabPage3);
 
-            ActLabelsHell = new Label[5];
-            QuestRowsHell = new QuestDebugRow[5, 6];
-            LoadQuests(ActLabelsHell, QuestRowsHell, tabPage3);
-
-            locs = new Dictionary<Label, BodyLocation>();
-            locs.Add(label1, BodyLocation.Head);
-            locs.Add(label10, BodyLocation.Amulet);
-            locs.Add(label3, BodyLocation.PrimaryRight);
-            locs.Add(label2, BodyLocation.PrimaryLeft);
-            locs.Add(label4, BodyLocation.BodyArmor);
-            locs.Add(label7, BodyLocation.RingLeft);
-            locs.Add(label8, BodyLocation.RingRight);
-            locs.Add(label5, BodyLocation.Gloves);
-            locs.Add(label6, BodyLocation.Belt);
-            locs.Add(label9, BodyLocation.Boots);
+            locs = new Dictionary<Label, BodyLocation>
+            {
+                {label1, BodyLocation.Head},
+                {label10, BodyLocation.Amulet},
+                {label3, BodyLocation.PrimaryRight},
+                {label2, BodyLocation.PrimaryLeft},
+                {label4, BodyLocation.BodyArmor},
+                {label7, BodyLocation.RingLeft},
+                {label8, BodyLocation.RingRight},
+                {label5, BodyLocation.Gloves},
+                {label6, BodyLocation.Belt},
+                {label9, BodyLocation.Boots}
+            };
         }
 
-        void UpdateItemStats(Dictionary<BodyLocation, string> itemStrings)
+        static QuestDebugRow[,] CreateQuestRow(TabPage tabPage)
+        {
+            var questRows = new QuestDebugRow[5, 6];
+
+            for (int actIndex = 0; actIndex < 5; actIndex++)
+            {
+                int y = actIndex * 100 - (actIndex > 3 ? 3 * 16 : 0);
+
+                tabPage.Controls.Add(new Label
+                {
+                    Text = "Act " + (actIndex + 1),
+                    Width = 40,
+                    Location = new Point(20, y)
+                });
+
+                for (int questIndex = 0; questIndex < (actIndex == 3 ? 3 : 6); questIndex++)
+                {
+                    var quest = QuestFactory.CreateByActAndOrder(actIndex + 1, questIndex + 1);
+                    var row = new QuestDebugRow(quest);
+                    row.Location = new Point(60, y + (questIndex * 16));
+                    tabPage.Controls.Add(row);
+
+                    questRows[actIndex, questIndex] = row;
+                }
+            }
+
+            return questRows;
+        }
+
+        void UpdateItemStats(IReadOnlyDictionary<BodyLocation, string> itemStrings)
         {
             if (DesignMode) return;
             this.itemStrings = itemStrings;
             UpdateItemDebugInformation();
         }
         
-        private void UpdateItemDebugInformation()
+        void UpdateItemDebugInformation()
         {
-            if (InvokeRequired)
-            {
-                // Delegate call to UI thread.
-                Invoke((Action)(() => UpdateItemDebugInformation()));
-                return;
-            }
-
             // hover has precedence vs clicked labels
             Label l = hoveredLabel != null ? hoveredLabel : (clickedLabel != null ? clickedLabel : null);
             if (l == null || itemStrings == null || !locs.ContainsKey(l) || !itemStrings.ContainsKey(locs[l]))
