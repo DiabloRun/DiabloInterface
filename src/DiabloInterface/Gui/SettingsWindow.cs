@@ -8,8 +8,6 @@
     using System.Reflection;
     using System.Windows.Forms;
 
-    using Newtonsoft.Json;
-
     using Zutatensuppe.DiabloInterface.Business;
     using Zutatensuppe.DiabloInterface.Business.AutoSplits;
     using Zutatensuppe.DiabloInterface.Business.Services;
@@ -23,9 +21,9 @@
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        readonly ISettingsService settingsService;
+        static readonly string SettingsFilePath = Application.StartupPath + @"\Settings";
 
-        string SettingsFilePath = Application.StartupPath + @"\Settings";
+        readonly ISettingsService settingsService;
 
         AutoSplitTable autoSplitTable;
 
@@ -40,7 +38,6 @@
             RegisterServiceEventHandlers();
             InitializeComponent();
             InitializeAutoSplitTable();
-            InitializeRunes();
             PopulateSettingsFileList(settingsService.SettingsFileCollection);
 
             // Unregister event handlers when we are done.
@@ -50,10 +47,6 @@
                 UnregisterServiceEventHandlers();
             };
 
-            // Select first rune (don't leave combo box empty).
-            RuneComboBox.SelectedIndex = 0;
-            cbRuneWord.SelectedIndex = 0;
-
             ReloadComponentsWithCurrentSettings();
 
             // Loading the settings will dirty mark pretty much everything, here
@@ -61,7 +54,7 @@
             MarkClean();
         }
 
-        public bool IsDirty
+        bool IsDirty
         {
             get
             {
@@ -69,6 +62,8 @@
 
                 return dirty
                     || (autoSplitTable != null && autoSplitTable.IsDirty)
+                    || !CompareClassRuneSettings(settings)
+
                     || settings.FontName != GetFontName()
                     || settings.FontSize != (int)fontSizeNumeric.Value
                     || settings.FontSizeTitle != (int)titleFontSizeNumeric.Value
@@ -87,7 +82,6 @@
                     || settings.AutosplitHotkey != autoSplitHotkeyControl.Hotkey
                     || settings.DisplayDifficultyPercentages != chkDisplayDifficultyPercents.Checked
                     || settings.DisplayLayoutHorizontal != (comboBoxLayout.SelectedIndex == 0)
-                    || !Enumerable.SequenceEqual(settings.Runes, RunesList())
                     || settings.VerticalLayoutPadding != (int)numericUpDownPaddingInVerticalLayout.Value
                     || settings.DisplayRealFrwIas != chkShowRealValues.Checked
 
@@ -105,6 +99,27 @@
 
                     || button2.BackColor != settings.ColorBackground;
             }
+        }
+
+        bool CompareClassRuneSettings(ApplicationSettings settings)
+        {
+            IReadOnlyList<ClassRuneSettings> a = settings.ClassRunes;
+            IReadOnlyList<ClassRuneSettings> b = runeSettingsPage.SettingsList;
+
+            if (a.Count != b.Count) return false;
+
+            for (var i = 0; i < a.Count; ++i)
+            {
+                var settingsA = a[i];
+                var settingsB = b[i];
+
+                if (settingsA.Class != settingsB.Class) return false;
+                if (settingsA.Difficulty != settingsB.Difficulty) return false;
+                if (settingsA.Runes.Count != settingsB.Runes.Count) return false;
+                if (!settingsA.Runes.SequenceEqual(settingsB.Runes)) return false;
+            }
+
+            return true;
         }
 
         void RegisterServiceEventHandlers()
@@ -155,7 +170,9 @@
         {
             UpdateTitle();
 
-            var settings = settingsService.CurrentSettings;
+            var settings = settingsService.CurrentSettings.DeepCopy();
+
+            runeSettingsPage.SettingsList = settings.ClassRunes;
 
             fontComboBox.SelectedIndex = fontComboBox.Items.IndexOf(settings.FontName);
 
@@ -201,25 +218,12 @@
             {
                 AddAutoSplit(a);
             }
-
-            RuneDisplayPanel.Controls.Clear();
-            foreach (int rune in settings.Runes)
-            {
-                if (rune >= 0)
-                {
-                    RuneDisplayElement element = new RuneDisplayElement((Rune)rune);
-                    RuneDisplayPanel.Controls.Add(element);
-                }
-            }
         }
 
         void MarkClean()
         {
             dirty = false;
-            if (autoSplitTable != null)
-            {
-                autoSplitTable.MarkClean();
-            }
+            autoSplitTable?.MarkClean();
         }
 
         private string GetFontName()
@@ -243,22 +247,12 @@
             return fontName;
         }
 
-        private List<int> RunesList()
-        {
-            List<int> runesList = new List<int>();
-            foreach (RuneDisplayElement c in RuneDisplayPanel.Controls)
-            {
-                runesList.Add((int)c.Rune);
-            }
-            return runesList;
-        }
-
         ApplicationSettings CopyModifiedSettings()
         {
             var settings = settingsService.CurrentSettings.DeepCopy();
 
-            settings.Runes = RunesList();
             settings.Autosplits = autoSplitTable.AutoSplits.ToList();
+            settings.ClassRunes = runeSettingsPage.SettingsList ?? new List<ClassRuneSettings>();
             settings.CreateFiles = CreateFilesCheckBox.Checked;
             settings.CheckUpdates = CheckUpdatesCheckBox.Checked;
             settings.DoAutosplit = EnableAutosplitCheckBox.Checked;
@@ -353,16 +347,6 @@
             KeyManager.TriggerHotkey(autoSplitHotkeyControl.Hotkey);
         }
 
-        private void AddRuneButton_Click(object sender, EventArgs e)
-        {
-            int rune = RuneComboBox.SelectedIndex;
-            if (rune >= 0)
-            {
-                RuneDisplayElement element = new RuneDisplayElement((Rune)rune);
-                RuneDisplayPanel.Controls.Add(element);
-            }
-        }
-
         void SaveSettings(string path = null)
         {
             path = path ?? settingsService.CurrentSettingsFile;
@@ -412,44 +396,6 @@
         private void btnSave_Click(object sender, EventArgs e)
         {
             SaveSettings();
-        }
-
-        private void InitializeRunes()
-        {
-            foreach ( Rune r in Enum.GetValues(typeof(Rune)))
-            {
-                RuneComboBox.Items.Add(r.ToString());
-            }
-
-            List<Runeword> runeWords;
-            
-            JsonSerializer serializer = new JsonSerializer();
-
-            using ( MemoryStream stream = new MemoryStream(Properties.Resources.runewords))
-            {
-                using (StreamReader sr = new StreamReader(stream))
-                {
-                    using (JsonReader reader = new JsonTextReader(sr))
-                    {
-                        runeWords = serializer.Deserialize<List<Runeword>>(reader);
-                    }
-                }
-            }
-
-            runeWords.ForEach(y => cbRuneWord.Items.Add(y));
-        }
-
-        private void btnAddRuneWord_Click(object sender, EventArgs e)
-        {
-            Runeword rw = (Runeword)cbRuneWord.SelectedItem;
-
-            rw.Runes.ForEach(r => AddIndividualRune(r));
-        }
-
-        void AddIndividualRune(Rune rune)
-        {
-            RuneDisplayElement element = new RuneDisplayElement(rune);
-            RuneDisplayPanel.Controls.Add(element);
         }
 
         void SettingsServiceOnSettingsCollectionChanged(object sender, SettingsCollectionEventArgs e)

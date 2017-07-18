@@ -7,13 +7,11 @@
 
     public class JsonLegacySettings : ILegacySettingsObject
     {
-        JToken token;
+        readonly JToken token;
 
         public JsonLegacySettings(JToken token)
         {
-            if (token == null) throw new ArgumentNullException(nameof(token));
-
-            this.token = token;
+            this.token = token ?? throw new ArgumentNullException(nameof(token));
         }
 
         public bool Contains(string key)

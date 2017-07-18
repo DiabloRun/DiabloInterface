@@ -109,6 +109,12 @@
     <Compile Include="Gui\Controls\HotkeyControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Gui\Controls\RuneSettingsPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Controls\RuneSettingsPage.Designer.cs">
+      <DependentUpon>RuneSettingsPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Gui\Forms\SimpleSaveDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -169,6 +175,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Controls\AutoSplitTable.resx">
       <DependentUpon>AutoSplitTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Controls\RuneSettingsPage.resx">
+      <DependentUpon>RuneSettingsPage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Forms\SimpleSaveDialog.resx">
       <DependentUpon>SimpleSaveDialog.cs</DependentUpon>

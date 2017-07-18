@@ -9,6 +9,7 @@
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
+    using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
     public partial class VerticalLayout : AbstractLayout
@@ -102,6 +103,14 @@
             UpdateLabelWidthAlignment(normLabelVal, nmLabelVal, hellLabelVal);
         }
 
+        protected override void UpdateRuneList(ApplicationSettings settings, IReadOnlyList<Rune> runes)
+        {
+            panelRuneDisplay2.Visible = runes.Count > 0;
+            panelRuneDisplay2.Controls.Clear();
+            runes.ForEach(rune => panelRuneDisplay2.Controls.Add(
+                new RuneDisplayElement(rune, settings.DisplayRunesHighContrast, false, false)));
+        }
+
         void UpdateLayout(ApplicationSettings settings)
         {
             bool first = true;
@@ -165,22 +174,12 @@
                 panelDiffPercentages.Margin = new Padding(panelDiffPercentages.Margin.Left, first ? 0 : settings.VerticalLayoutPadding, panelDiffPercentages.Margin.Right, panelDiffPercentages.Margin.Bottom);
                 first = false;
             }
-
         }
 
         void ApplyRuneSettings(ApplicationSettings settings)
         {
-            if (settings.DisplayRunes && settings.Runes.Count > 0)
-            {
-                panelRuneDisplay2.Controls.Clear();
-                settings.Runes.ForEach(r => { panelRuneDisplay2.Controls.Add(new RuneDisplayElement((Rune)r, settings.DisplayRunesHighContrast, false, false)); });
-
-                panelRuneDisplay2.Show();
-            }
-            else
-            {
+            if (!settings.DisplayRunes)
                 panelRuneDisplay2.Hide();
-            }
         }
 
         void ApplyLabelSettings(ApplicationSettings settings)

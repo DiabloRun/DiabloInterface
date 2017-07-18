@@ -4,6 +4,10 @@
     using System.Drawing;
     using System.Windows.Forms;
 
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
+
+    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.AutoSplits;
 
     public class ApplicationSettings
@@ -20,7 +24,7 @@
         public bool CheckUpdates { get; set; } = true;
         public Keys AutosplitHotkey { get; set; } = Keys.None;
         public List<AutoSplit> Autosplits { get; set; } = new List<AutoSplit>();
-        public List<int> Runes { get; set; } = new List<int>();
+        public IReadOnlyList<ClassRuneSettings> ClassRunes { get; set; } = new List<ClassRuneSettings>();
         public bool DisplayName { get; set; } = true;
         public bool DisplayLevel { get; set; } = true;
         public bool DisplayDeathCounter { get; set; } = true;
@@ -50,5 +54,17 @@
         public Color ColorPoisonRes { get; set; } = Color.YellowGreen;
 
         public Color ColorBackground { get; set; } = Color.Black;
+    }
+
+    public class ClassRuneSettings
+    {
+        [JsonConverter(typeof(StringEnumConverter))]
+        public CharacterClass? Class { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public GameDifficulty? Difficulty { get; set; }
+
+        [JsonProperty(ItemConverterType = typeof(StringEnumConverter))]
+        public IReadOnlyList<Rune> Runes { get; set; } = new List<Rune>();
     }
 }

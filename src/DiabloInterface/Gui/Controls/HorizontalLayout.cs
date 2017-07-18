@@ -11,6 +11,7 @@
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
+    using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
     public partial class HorizontalLayout : AbstractLayout
@@ -18,6 +19,7 @@
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
         bool realFrwIas;
+        FlowLayoutPanel activeRuneLayoutPanel;
 
         public HorizontalLayout(ISettingsService settingsService, IGameService gameService)
             : base(settingsService, gameService)
@@ -26,6 +28,9 @@
 
             InitializeComponent();
             InitializeElements();
+
+            panelRuneDisplayHorizontal.Hide();
+            panelRuneDisplayVertical.Hide();
         }
 
         void InitializeElements()
@@ -113,6 +118,16 @@
             labelHellPerc.Text = $@"HE: {completions[2]:0%}";
         }
 
+        protected override void UpdateRuneList(ApplicationSettings settings, IReadOnlyList<Rune> runes)
+        {
+            if (activeRuneLayoutPanel == null) return;
+
+            activeRuneLayoutPanel.Visible = runes.Count > 0;
+            activeRuneLayoutPanel.Controls.Clear();
+            runes.ForEach(rune => activeRuneLayoutPanel.Controls.Add(
+                new RuneDisplayElement(rune, settings.DisplayRunesHighContrast, false, false)));
+        }
+
         void UpdateLayout(ApplicationSettings settings)
         {
             int padding = 0;
@@ -176,35 +191,25 @@
         
         void ApplyRuneSettings(ApplicationSettings settings)
         {
-            if (settings.DisplayRunes && settings.DisplayRunesHorizontal && settings.Runes.Count > 0)
-            {
-                panelRuneDisplayHorizontal.Controls.Clear();
-                settings.Runes.ForEach(r => { panelRuneDisplayHorizontal.Controls.Add(new RuneDisplayElement((Rune)r, settings.DisplayRunesHighContrast, false, false)); });
+            FlowLayoutPanel nextRuneLayoutPanel = null;
 
-                panelRuneDisplayHorizontal.Show();
-            }
-            else
-            {
-                panelRuneDisplayHorizontal.Hide();
-            }
+            if (settings.DisplayRunes && settings.DisplayRunesHorizontal)
+                nextRuneLayoutPanel = panelRuneDisplayHorizontal;
+            else if (settings.DisplayRunes && !settings.DisplayLayoutHorizontal)
+                nextRuneLayoutPanel = panelRuneDisplayVertical;
 
-            if (settings.DisplayRunes && !settings.DisplayRunesHorizontal && settings.Runes.Count > 0)
-            {
-                panelRuneDisplayVertical.Controls.Clear();
-                settings.Runes.ForEach(r => { panelRuneDisplayVertical.Controls.Add(new RuneDisplayElement((Rune)r, settings.DisplayRunesHighContrast, false, false)); });
-                panelRuneDisplayVertical.Show();
-            }
-            else
-            {
-                panelRuneDisplayVertical.Hide();
-            }
+            // Only hide panels when the panels were changed.
+            if (activeRuneLayoutPanel == nextRuneLayoutPanel) return;
+
+            activeRuneLayoutPanel?.Hide();
+            activeRuneLayoutPanel = nextRuneLayoutPanel;
         }
 
         void ApplyLabelSettings(ApplicationSettings settings)
         {
             realFrwIas = settings.DisplayRealFrwIas;
 
-            this.BackColor = settings.ColorBackground;
+            BackColor = settings.ColorBackground;
 
             nameLabel.Font = new Font(settings.FontName, settings.FontSizeTitle);
             Font infoFont = new Font(settings.FontName, settings.FontSize);

@@ -1,7 +1,11 @@
 ﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Windows.Forms;
+
+    using Zutatensuppe.D2Reader.Models;
 
     public class DefaultLegacySettingsResolver : ILegacySettingsResolver
     {
@@ -16,6 +20,8 @@
         {
             if (settings == null) throw new ArgumentNullException(nameof(settings));
             if (obj == null) throw new ArgumentNullException(nameof(obj));
+
+            ConvertRuneSettings(settings, obj);
 
             // Already has hotkeys, no need to resolve.
             if (settings.AutosplitHotkey != Keys.None)
@@ -43,8 +49,7 @@
                 }
 
                 // Combine modifiers and key.
-                Keys key = Keys.None;
-                if (Enum.TryParse(keyValue, true, out key))
+                if (Enum.TryParse(keyValue, true, out Keys key))
                 {
                     hotkey |= key;
                 }
@@ -52,6 +57,24 @@
 
             // Assign specified hotkey.
             settings.AutosplitHotkey = hotkey;
+        }
+
+        void ConvertRuneSettings(ApplicationSettings settings, ILegacySettingsObject legacy)
+        {
+            if (!legacy.Contains("Runes")) return;
+
+            List<int> runes = legacy.Values<int>("Runes").ToList();
+            if (runes.Count == 0) return;
+
+            settings.ClassRunes = new List<ClassRuneSettings>
+            {
+                new ClassRuneSettings()
+                {
+                    Class = null,
+                    Difficulty = null,
+                    Runes = runes.Select(runeId => (Rune)runeId).ToList()
+                }
+            };
         }
     }
 }

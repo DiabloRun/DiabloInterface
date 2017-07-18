@@ -3,28 +3,26 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Text;
 
+    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.AutoSplits;
 
     public class LegacySettingsReader : ISettingsReader
     {
-        ILegacySettingsResolver resolver;
-        StreamReader reader;
+        readonly ILegacySettingsResolver resolver;
+        readonly StreamReader reader;
 
         public LegacySettingsReader(ILegacySettingsResolver resolver, string filename)
         {
-            if (resolver == null) throw new ArgumentNullException(nameof(resolver));
-
-            this.resolver = resolver;
+            this.resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
             reader = new StreamReader(filename);
         }
 
         public LegacySettingsReader(ILegacySettingsResolver resolver, string filename, Encoding encoding)
         {
-            if (resolver == null) throw new ArgumentNullException(nameof(resolver));
-
-            this.resolver = resolver;
+            this.resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
             reader = new StreamReader(filename, encoding);
         }
 
@@ -53,26 +51,28 @@
             Dictionary<string, object> data = ReadToDict();
 
             // Helper methods for assigning fields.
-            Func<string, bool, bool> getBoolDefault = (field, default_value) =>
-                data.ContainsKey(field) ? (string)data[field] == "1" : default_value;
-            Func<string, string, string> getStringDefault = (field, default_value) =>
-                data.ContainsKey(field) ? (string)data[field] : default_value;
-            Func<string, int, int> getIntDefault = (field, default_value) => {
-                int value;
-                object obj;
-                if (!data.TryGetValue(field, out obj))
-                    return default_value;
-                return int.TryParse((string)obj, out value) ? value : default_value;
-            };
+            bool GetBoolDefault(string field, bool defaultValue) =>
+                data.ContainsKey(field) ? (string)data[field] == "1" : defaultValue;
+
+            string GetStringDefault(string field, string defaultValue) =>
+                data.ContainsKey(field) ? (string)data[field] : defaultValue;
+
+            int GetIntDefault(string field, int defaultValue)
+            {
+                if (!data.TryGetValue(field, out var obj))
+                    return defaultValue;
+                return int.TryParse((string)obj, out int value) ? value : defaultValue;
+            }
 
             // Assign fields from settings.
-            settings.FontName = getStringDefault("Font", settings.FontName);
-            settings.FontSize = getIntDefault("FontSize", settings.FontSize);
-            settings.FontSizeTitle = getIntDefault("FontSizeTitle", settings.FontSizeTitle);
-            settings.CheckUpdates = getBoolDefault("CheckUpdates", settings.CheckUpdates);
-            settings.CreateFiles = getBoolDefault("CreateFiles", settings.CreateFiles);
-            settings.DoAutosplit = getBoolDefault("DoAutosplit", settings.DoAutosplit);
-            settings.Runes = data.ContainsKey("Runes") ? (List<int>)data["Runes"] : settings.Runes;
+            settings.FontName = GetStringDefault("Font", settings.FontName);
+            settings.FontSize = GetIntDefault("FontSize", settings.FontSize);
+            settings.FontSizeTitle = GetIntDefault("FontSizeTitle", settings.FontSizeTitle);
+            settings.CheckUpdates = GetBoolDefault("CheckUpdates", settings.CheckUpdates);
+            settings.CreateFiles = GetBoolDefault("CreateFiles", settings.CreateFiles);
+            settings.DoAutosplit = GetBoolDefault("DoAutosplit", settings.DoAutosplit);
+
+            ConvertRuneData(settings, data);
 
             // Handle auto splits.
             if (data.ContainsKey("AutoSplits"))
@@ -81,7 +81,7 @@
                 var splits = (List<string>)data["AutoSplits"];
                 foreach (var autoSplitData in splits)
                 {
-                    string[] splitParts = autoSplitData.Split(new string[] { "|" }, 4, StringSplitOptions.None);
+                    string[] splitParts = autoSplitData.Split(new[] { "|" }, 4, StringSplitOptions.None);
                     if (splitParts.Length < 3) continue;
 
                     string splitName = splitParts[0];
@@ -109,6 +109,23 @@
             return resolver.ResolveSettings(settings, legacyObject);
         }
 
+        void ConvertRuneData(ApplicationSettings settings, IReadOnlyDictionary<string, object> data)
+        {
+            List<int> runes = data.ContainsKey("Runes")
+                ? (List<int>)data["Runes"]
+                : new List<int>();
+
+            settings.ClassRunes = new List<ClassRuneSettings>
+            {
+                new ClassRuneSettings()
+                {
+                    Class = null,
+                    Difficulty = null,
+                    Runes = runes.Select(runeId => (Rune)runeId).ToList()
+                }
+            };
+        }
+
         Dictionary<string, object> ReadToDict()
         {
             var data = new Dictionary<string, object>();
@@ -117,7 +134,7 @@
                 string line = reader.ReadLine();
                 if (line == null) break;
 
-                string[] parts = line.Split(new string[] { ": " }, 2, StringSplitOptions.None);
+                string[] parts = line.Split(new[] { ": " }, 2, StringSplitOptions.None);
                 if (parts.Length < 2) continue;
 
                 string key = parts[0].Trim();

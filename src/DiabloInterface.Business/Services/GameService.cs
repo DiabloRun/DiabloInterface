@@ -5,6 +5,7 @@
     using System.Threading;
 
     using Zutatensuppe.D2Reader;
+    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
     public class GameService : IGameService, IDisposable
@@ -31,6 +32,8 @@
         {
             Dispose(false);
         }
+
+        public GameDifficulty TargetDifficulty { get; set; } = GameDifficulty.Normal;
 
         public event EventHandler<CharacterCreatedEventArgs> CharacterCreated;
 
