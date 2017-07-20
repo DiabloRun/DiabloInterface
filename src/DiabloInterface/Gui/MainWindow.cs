@@ -180,26 +180,27 @@
 
         void DifficultyNormalToolStripMenuItemOnClick(object sender, EventArgs e)
         {
-            UnheckDifficultyMenuItems();
-            gameService.TargetDifficulty = GameDifficulty.Normal;
-            normalToolStripMenuItem.Checked = true;
+            GameDifficultyClick(sender, GameDifficulty.Normal);
         }
 
         void NightmareToolStripMenuItemOnClick(object sender, EventArgs e)
         {
-            UnheckDifficultyMenuItems();
-            gameService.TargetDifficulty = GameDifficulty.Nightmare;
-            nightmareToolStripMenuItem.Checked = true;
+            GameDifficultyClick(sender, GameDifficulty.Nightmare);
         }
 
         void HellToolStripMenuItemOnClick(object sender, EventArgs e)
         {
-            UnheckDifficultyMenuItems();
-            gameService.TargetDifficulty = GameDifficulty.Hell;
-            hellToolStripMenuItem.Checked = true;
+            GameDifficultyClick(sender, GameDifficulty.Hell);
         }
 
-        void UnheckDifficultyMenuItems()
+        void GameDifficultyClick(object sender, GameDifficulty difficulty)
+        {
+            UncheckDifficultyMenuItems();
+            gameService.TargetDifficulty = difficulty;
+            ((ToolStripMenuItem)sender).Checked = true;
+        }
+
+        void UncheckDifficultyMenuItems()
         {
             foreach (ToolStripMenuItem item in difficultyToolStripMenuItem.DropDownItems)
             {
