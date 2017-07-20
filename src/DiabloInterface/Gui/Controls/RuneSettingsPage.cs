@@ -41,6 +41,11 @@
                 IList<CharacterClassListItem> items =
                     settingsList.Select(item => new CharacterClassListItem(item)).ToList();
                 characterListBox.Items.AddRange(items.OfType<object>().ToArray());
+                if (index >= characterListBox.Items.Count)
+                {
+                    index = characterListBox.Items.Count - 1;
+                }
+                
                 characterListBox.SelectedIndex = items.Any() ? (index < 0 ? 0 : index) : -1;
 
                 DisplayCharacterClassSettings();

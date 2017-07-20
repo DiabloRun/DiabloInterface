@@ -122,10 +122,17 @@
         {
             if (activeRuneLayoutPanel == null) return;
 
-            activeRuneLayoutPanel.Visible = runes.Count > 0;
             activeRuneLayoutPanel.Controls.Clear();
-            runes.ForEach(rune => activeRuneLayoutPanel.Controls.Add(
-                new RuneDisplayElement(rune, settings.DisplayRunesHighContrast, false, false)));
+            if (runes == null)
+            {
+                activeRuneLayoutPanel.Visible = false;
+            }
+            else
+            {
+                activeRuneLayoutPanel.Visible = runes.Count > 0;
+                runes.ForEach(rune => activeRuneLayoutPanel.Controls.Add(
+                    new RuneDisplayElement(rune, settings.DisplayRunesHighContrast, false, false)));
+            }
         }
 
         void UpdateLayout(ApplicationSettings settings)
