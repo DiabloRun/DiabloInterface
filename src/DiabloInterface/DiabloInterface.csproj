@@ -80,7 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationStorage.cs" />
-    <Compile Include="D2Level.cs" />
+    <Compile Include="Gui\Controls\Area.cs" />
     <Compile Include="Framework\NetFrameworkVersion.cs" />
     <Compile Include="Framework\NetFrameworkVersionComparator.cs" />
     <Compile Include="Framework\NetFrameworkVersionExtension.cs" />
@@ -234,7 +234,7 @@
     <None Include="Resources\Images\Icons\cross.png" />
     <None Include="Resources\Images\Icons\wrench_orange.png" />
     <None Include="Resources\Images\Icons\arrow_refresh.png" />
-    <None Include="Resources\Levels.txt" />
+    <None Include="Resources\areas.json" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">

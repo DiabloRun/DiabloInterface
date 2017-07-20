@@ -234,7 +234,7 @@
             this.AutoSplitLayout.RowCount = 2;
             this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.AutoSplitLayout.Size = new System.Drawing.Size(497, 439);
+            this.AutoSplitLayout.Size = new System.Drawing.Size(497, 440);
             this.AutoSplitLayout.TabIndex = 21;
             // 
             // AutoSplitToolbar
@@ -246,7 +246,7 @@
             this.AutoSplitToolbar.Controls.Add(this.EnableAutosplitCheckBox);
             this.AutoSplitToolbar.Controls.Add(this.AddAutoSplitButton);
             this.AutoSplitToolbar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AutoSplitToolbar.Location = new System.Drawing.Point(0, 408);
+            this.AutoSplitToolbar.Location = new System.Drawing.Point(0, 409);
             this.AutoSplitToolbar.Margin = new System.Windows.Forms.Padding(0);
             this.AutoSplitToolbar.Name = "AutoSplitToolbar";
             this.AutoSplitToolbar.Size = new System.Drawing.Size(497, 31);
@@ -359,7 +359,7 @@
             this.VerticalSplitContainer.Name = "VerticalSplitContainer";
             this.VerticalSplitContainer.RowCount = 1;
             this.VerticalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.VerticalSplitContainer.Size = new System.Drawing.Size(686, 471);
+            this.VerticalSplitContainer.Size = new System.Drawing.Size(686, 472);
             this.VerticalSplitContainer.TabIndex = 20;
             // 
             // grpConfigFiles
@@ -368,7 +368,7 @@
             this.grpConfigFiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grpConfigFiles.Location = new System.Drawing.Point(3, 3);
             this.grpConfigFiles.Name = "grpConfigFiles";
-            this.grpConfigFiles.Size = new System.Drawing.Size(169, 465);
+            this.grpConfigFiles.Size = new System.Drawing.Size(169, 466);
             this.grpConfigFiles.TabIndex = 3;
             this.grpConfigFiles.TabStop = false;
             this.grpConfigFiles.Text = "Config Files";
@@ -380,7 +380,7 @@
             this.lstConfigFiles.FormattingEnabled = true;
             this.lstConfigFiles.Location = new System.Drawing.Point(3, 16);
             this.lstConfigFiles.Name = "lstConfigFiles";
-            this.lstConfigFiles.Size = new System.Drawing.Size(163, 446);
+            this.lstConfigFiles.Size = new System.Drawing.Size(163, 447);
             this.lstConfigFiles.TabIndex = 2;
             this.lstConfigFiles.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstConfigFiles_MouseDoubleClick);
             this.lstConfigFiles.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstConfigFiles_MouseUp);
@@ -444,7 +444,7 @@
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.HorizontalSplitContainer.Size = new System.Drawing.Size(511, 471);
+            this.HorizontalSplitContainer.Size = new System.Drawing.Size(511, 472);
             this.HorizontalSplitContainer.TabIndex = 0;
             // 
             // tabControl1
@@ -457,7 +457,7 @@
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(505, 465);
+            this.tabControl1.Size = new System.Drawing.Size(505, 466);
             this.tabControl1.TabIndex = 13;
             // 
             // tabPageSettingsLayout
@@ -468,7 +468,7 @@
             this.tabPageSettingsLayout.Location = new System.Drawing.Point(4, 22);
             this.tabPageSettingsLayout.Name = "tabPageSettingsLayout";
             this.tabPageSettingsLayout.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSettingsLayout.Size = new System.Drawing.Size(497, 439);
+            this.tabPageSettingsLayout.Size = new System.Drawing.Size(497, 440);
             this.tabPageSettingsLayout.TabIndex = 1;
             this.tabPageSettingsLayout.Text = "Layout";
             this.tabPageSettingsLayout.UseVisualStyleBackColor = true;
@@ -781,7 +781,7 @@
             this.chkDisplayLevel.Name = "chkDisplayLevel";
             this.chkDisplayLevel.Size = new System.Drawing.Size(52, 17);
             this.chkDisplayLevel.TabIndex = 4;
-            this.chkDisplayLevel.Text = "Level";
+            this.chkDisplayLevel.Text = "Character Level";
             this.chkDisplayLevel.UseVisualStyleBackColor = true;
             // 
             // chkDisplayGold
@@ -888,7 +888,7 @@
             this.tabPageSettingsAutosplit.Controls.Add(this.AutoSplitLayout);
             this.tabPageSettingsAutosplit.Location = new System.Drawing.Point(4, 22);
             this.tabPageSettingsAutosplit.Name = "tabPageSettingsAutosplit";
-            this.tabPageSettingsAutosplit.Size = new System.Drawing.Size(497, 439);
+            this.tabPageSettingsAutosplit.Size = new System.Drawing.Size(497, 440);
             this.tabPageSettingsAutosplit.TabIndex = 0;
             this.tabPageSettingsAutosplit.Text = "Auto-Split";
             this.tabPageSettingsAutosplit.UseVisualStyleBackColor = true;
@@ -973,7 +973,7 @@
             this.mainPanel.RowCount = 2;
             this.mainPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.mainPanel.Size = new System.Drawing.Size(686, 503);
+            this.mainPanel.Size = new System.Drawing.Size(686, 504);
             this.mainPanel.TabIndex = 23;
             // 
             // panel1
@@ -982,7 +982,7 @@
             this.panel1.Controls.Add(this.btnUndo);
             this.panel1.Controls.Add(this.btnSave);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 471);
+            this.panel1.Location = new System.Drawing.Point(0, 472);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(686, 32);
@@ -1025,7 +1025,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(686, 503);
+            this.ClientSize = new System.Drawing.Size(686, 504);
             this.Controls.Add(this.mainPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(702, 542);

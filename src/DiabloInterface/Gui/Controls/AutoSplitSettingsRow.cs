@@ -111,9 +111,9 @@
                     }
                     break;
                 case AutoSplit.SplitType.Area:
-                    foreach (D2Level lvl in D2Level.getAll())
+                    foreach (Area area in Area.getAreaList())
                     {
-                        if (lvl.id > 0) cmbValue.Items.Add(new Item(lvl.name, lvl.id));
+                        if (area.Id > 0) cmbValue.Items.Add(new Item(area.ToString(), area.Id));
                     }
                     break;
                 case AutoSplit.SplitType.Item:
