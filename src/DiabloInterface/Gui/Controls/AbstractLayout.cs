@@ -195,25 +195,22 @@
 
         void UpdateRuneDisplay(IEnumerable<int> itemIds)
         {
-            foreach (FlowLayoutPanel fp in RunePanels)
+            var panel = RuneLayoutPanel;
+            if (panel == null) return;
+
+            // Count number of items of each type.
+            Dictionary<int, int> itemClassCounts = itemIds
+                .GroupBy(id => id)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            foreach (RuneDisplayElement runeElement in panel.Controls)
             {
-                if (fp.Controls.Count <= 0)
-                    continue;
+                var itemClassId = (int)runeElement.Rune + 610;
 
-                // Used for keeping track of how many items of each type there is.
-                Dictionary<int, int> itemClassCounts = itemIds
-                    .GroupBy(id => id)
-                    .ToDictionary(g => g.Key, g => g.Count());
-
-                foreach (RuneDisplayElement c in fp.Controls)
+                if (itemClassCounts.ContainsKey(itemClassId) && itemClassCounts[itemClassId] > 0)
                 {
-                    int eClass = (int)c.Rune + 610;
-
-                    if (itemClassCounts.ContainsKey(eClass) && itemClassCounts[eClass] > 0)
-                    {
-                        itemClassCounts[eClass]--;
-                        c.SetHaveRune(true);
-                    }
+                    itemClassCounts[itemClassId]--;
+                    runeElement.SetHaveRune(true);
                 }
             }
         }
