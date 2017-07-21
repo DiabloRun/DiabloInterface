@@ -167,7 +167,7 @@
 
         void RuneButtonOnClick(object sender, EventArgs e)
         {
-            if (runeComboBox.SelectedIndex <= 0) return;
+            if (runeComboBox.SelectedIndex < 0) return;
             AddRune((Rune)runeComboBox.SelectedItem);
         }
 
