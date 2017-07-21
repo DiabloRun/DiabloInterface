@@ -43,6 +43,8 @@
             this.difficultyLabel = new System.Windows.Forms.Label();
             this.runeComboBox = new System.Windows.Forms.ComboBox();
             this.runeButton = new System.Windows.Forms.Button();
+            this.runewordComboBox = new System.Windows.Forms.ComboBox();
+            this.runewordButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -123,12 +125,13 @@
             // 
             // runesGroupBox
             // 
-            this.runesGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.runesGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.runesGroupBox.Controls.Add(this.runeFlowLayout);
             this.runesGroupBox.Location = new System.Drawing.Point(3, 3);
             this.runesGroupBox.Name = "runesGroupBox";
-            this.runesGroupBox.Size = new System.Drawing.Size(337, 344);
+            this.runesGroupBox.Size = new System.Drawing.Size(337, 313);
             this.runesGroupBox.TabIndex = 0;
             this.runesGroupBox.TabStop = false;
             this.runesGroupBox.Text = "Runes";
@@ -138,7 +141,7 @@
             this.runeFlowLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.runeFlowLayout.Location = new System.Drawing.Point(3, 16);
             this.runeFlowLayout.Name = "runeFlowLayout";
-            this.runeFlowLayout.Size = new System.Drawing.Size(331, 325);
+            this.runeFlowLayout.Size = new System.Drawing.Size(331, 294);
             this.runeFlowLayout.TabIndex = 0;
             // 
             // runeListEditBox
@@ -148,16 +151,18 @@
             this.runeListEditBox.Controls.Add(this.tableLayoutPanel1);
             this.runeListEditBox.Controls.Add(this.runeComboBox);
             this.runeListEditBox.Controls.Add(this.runeButton);
-            this.runeListEditBox.Location = new System.Drawing.Point(3, 353);
+            this.runeListEditBox.Controls.Add(this.runewordComboBox);
+            this.runeListEditBox.Controls.Add(this.runewordButton);
+            this.runeListEditBox.Location = new System.Drawing.Point(3, 322);
             this.runeListEditBox.Name = "runeListEditBox";
-            this.runeListEditBox.Size = new System.Drawing.Size(337, 84);
+            this.runeListEditBox.Size = new System.Drawing.Size(337, 115);
             this.runeListEditBox.TabIndex = 0;
             this.runeListEditBox.TabStop = false;
             this.runeListEditBox.Text = "Edit";
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -219,7 +224,7 @@
             // 
             // runeComboBox
             // 
-            this.runeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.runeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.runeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.runeComboBox.FormattingEnabled = true;
@@ -227,12 +232,10 @@
             this.runeComboBox.Name = "runeComboBox";
             this.runeComboBox.Size = new System.Drawing.Size(229, 21);
             this.runeComboBox.TabIndex = 3;
-            this.runeComboBox.SelectedValueChanged += new System.EventHandler(this.RuneComboBoxOnSelectedValueChanged);
             // 
             // runeButton
             // 
-            this.runeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.runeButton.Enabled = false;
+            this.runeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.runeButton.Location = new System.Drawing.Point(241, 55);
             this.runeButton.Name = "runeButton";
             this.runeButton.Size = new System.Drawing.Size(90, 23);
@@ -240,6 +243,28 @@
             this.runeButton.Text = "Add";
             this.runeButton.UseVisualStyleBackColor = true;
             this.runeButton.Click += new System.EventHandler(this.RuneButtonOnClick);
+            // 
+            // runewordComboBox
+            // 
+            this.runewordComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.runewordComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.runewordComboBox.FormattingEnabled = true;
+            this.runewordComboBox.Location = new System.Drawing.Point(6, 86);
+            this.runewordComboBox.Name = "runewordComboBox";
+            this.runewordComboBox.Size = new System.Drawing.Size(229, 21);
+            this.runewordComboBox.TabIndex = 10;
+            // 
+            // runewordButton
+            // 
+            this.runewordButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.runewordButton.Location = new System.Drawing.Point(241, 84);
+            this.runewordButton.Name = "runewordButton";
+            this.runewordButton.Size = new System.Drawing.Size(90, 23);
+            this.runewordButton.TabIndex = 9;
+            this.runewordButton.Text = "Add";
+            this.runewordButton.UseVisualStyleBackColor = true;
+            this.runewordButton.Click += new System.EventHandler(this.RunewordButtonOnClick);
             // 
             // RuneSettingsPage
             // 
@@ -278,5 +303,7 @@
         private System.Windows.Forms.Button deleteSettingsButton;
         private System.Windows.Forms.Button addSettingsButton;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.ComboBox runewordComboBox;
+        private System.Windows.Forms.Button runewordButton;
     }
 }

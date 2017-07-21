@@ -59,7 +59,8 @@
                 currentSettings = value;
                 if (currentSettings == null)
                 {
-                    runeComboBox.Enabled = false;
+                    runeButton.Enabled = false;
+                    runewordButton.Enabled = false;
                     characterClassComboBox.Enabled = false;
                     characterClassComboBox.SelectedIndex = -1;
                     difficultyComboBox.Enabled = false;
@@ -69,7 +70,8 @@
                     return;
                 }
 
-                runeComboBox.Enabled = true;
+                runeButton.Enabled = true;
+                runewordButton.Enabled = true;
 
                 characterClassComboBox.Enabled = true;
                 characterClassComboBox.SelectedIndex = currentSettings.Class.HasValue
@@ -89,6 +91,7 @@
             InitializeCharacterClassComboBox();
             InitializeDifficultyComboBox();
             InitializeRuneComboBox();
+            InitializeRunewordComboBox();
         }
 
         void InitializeCharacterClassComboBox()
@@ -108,27 +111,24 @@
         void InitializeRuneComboBox()
         {
             runeComboBox.Items.Clear();
-
-            AddRunes(runeComboBox);
-            runeComboBox.Items.Add(new RuneListItem {Tag = "Separator"});
-            AddRunewords(runeComboBox);
+            AddEnumValues(runeComboBox, typeof(Rune));
+            runeComboBox.SelectedIndex = Math.Min(runeComboBox.Items.Count, 0);
         }
 
-        void AddRunes(ComboBox comboBox)
+        void InitializeRunewordComboBox()
         {
-            IEnumerable<RuneListItem> runes =
-                from rune in Enum.GetValues(typeof(Rune)).OfType<Rune>()
-                select RuneListItem.CreateRune(rune);
-            comboBox.Items.AddRange(runes.OfType<object>().ToArray());
+            runewordComboBox.Items.Clear();
+            AddRunewords(runewordComboBox);
+            runewordComboBox.SelectedIndex = Math.Min(runewordComboBox.Items.Count, 0);
         }
 
         void AddRunewords(ComboBox comboBox)
         {
-            IEnumerable<Runeword> runeWords = ReadRuneworsFile();
-            object[] items = (from runeWord in runeWords
-                    select RuneListItem.CreateRuneword(runeWord))
-                .OfType<object>().ToArray();
-            comboBox.Items.AddRange(items);
+            IEnumerable<Runeword> runewords = ReadRuneworsFile();
+            IEnumerable<RunewordListItem> items =
+                from runeword in runewords
+                select new RunewordListItem(runeword);
+            comboBox.Items.AddRange(items.OfType<object>().ToArray());
         }
 
         void AddEnumValues(ComboBox comboBox, Type enumType)
@@ -167,20 +167,14 @@
 
         void RuneButtonOnClick(object sender, EventArgs e)
         {
-            var item = runeComboBox.SelectedItem as RuneListItem;
-            if (item == null) return;
+            if (runeComboBox.SelectedIndex <= 0) return;
+            AddRune((Rune)runeComboBox.SelectedItem);
+        }
 
-            switch (item.Tag)
-            {
-                case "Rune":
-                    AddRune(item.Rune);
-                    break;
-                case "Runeword":
-                    item.Runeword.Runes.ForEach(AddRune);
-                    break;
-                default:
-                    return;
-            }
+        void RunewordButtonOnClick(object sender, EventArgs e)
+        {
+            var item = runewordComboBox.SelectedItem as RunewordListItem;
+            item?.Runeword.Runes.ForEach(AddRune);
         }
 
         void AddRune(Rune rune)
@@ -208,22 +202,6 @@
             currentSettings.Runes =
                 (from RuneDisplayElement element in runeFlowLayout.Controls
                  select element.Rune).ToList();
-        }
-
-        void RuneComboBoxOnSelectedValueChanged(object sender, EventArgs e)
-        {
-            var comboBox = sender as ComboBox;
-
-            var item = comboBox?.SelectedItem as RuneListItem;
-            if (item == null)
-            {
-                runeButton.Enabled = false;
-                return;
-            }
-
-            if (item.Tag == "Separator")
-                comboBox.SelectedIndex = -1;
-            else runeButton.Enabled = true;
         }
 
         void CharacterClassComboBoxOnSelectedValueChanged(object sender, EventArgs e)
@@ -320,37 +298,16 @@
             }
         }
 
-        class RuneListItem
+        class RunewordListItem
         {
-            public string Tag { get; set; }
-            public Runeword Runeword { get; private set; }
-            public Rune Rune { get; private set; }
+            public Runeword Runeword { get; }
 
-            public static RuneListItem CreateRuneword(Runeword runeword)
+            public RunewordListItem(Runeword runeword)
             {
-                return new RuneListItem()
-                {
-                    Tag = "Runeword",
-                    Runeword = runeword
-                };
+                Runeword = runeword ?? throw new ArgumentNullException(nameof(runeword));
             }
 
-            public static RuneListItem CreateRune(Rune rune)
-            {
-                return new RuneListItem()
-                {
-                    Tag = "Rune",
-                    Rune = rune
-                };
-            }
-
-            public override string ToString()
-            {
-                if (Tag == "Runeword") return Runeword?.Name ?? "Unknown Runeword";
-                if (Tag == "Rune") return Rune.ToString();
-
-                return new string('-', 20);
-            }
+            public override string ToString() => Runeword.Name;
         }
     }
 }
