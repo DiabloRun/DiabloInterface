@@ -57,18 +57,29 @@
             set
             {
                 currentSettings = value;
-                if (currentSettings == null) return;
+                if (currentSettings == null)
+                {
+                    runeComboBox.Enabled = false;
+                    characterClassComboBox.Enabled = false;
+                    characterClassComboBox.SelectedIndex = -1;
+                    difficultyComboBox.Enabled = false;
+                    difficultyComboBox.SelectedIndex = -1;
+                    runeFlowLayout.Controls.ClearAndDispose();
 
+                    return;
+                }
+
+                runeComboBox.Enabled = true;
+
+                characterClassComboBox.Enabled = true;
                 characterClassComboBox.SelectedIndex = currentSettings.Class.HasValue
                     ? (int)currentSettings.Class.Value + 1 : 0;
 
+                difficultyComboBox.Enabled = true;
                 difficultyComboBox.SelectedIndex = currentSettings.Difficulty.HasValue
                     ? (int)currentSettings.Difficulty.Value + 1 : 0;
 
-                foreach (Control control in runeFlowLayout.Controls)
-                    control.Dispose();
-                runeFlowLayout.Controls.Clear();
-
+                runeFlowLayout.Controls.ClearAndDispose();
                 currentSettings.Runes.ForEach(AddRune);
             }
         }
@@ -141,7 +152,12 @@
         void DisplayCharacterClassSettings()
         {
             if (characterListBox.SelectedIndex < 0)
+            {
+                if (characterListBox.Items.Count <= 0)
+                    CurrentSettings = null;
+
                 return;
+            }
 
             var item = characterListBox.SelectedItem as CharacterClassListItem;
             if (item?.Settings == null) return;
@@ -212,6 +228,7 @@
 
         void CharacterClassComboBoxOnSelectedValueChanged(object sender, EventArgs e)
         {
+            if (currentSettings == null) return;
             var comboBox = sender as ComboBox;
             if (comboBox == null) return;
 
@@ -224,6 +241,7 @@
 
         void DifficultyComboBoxOnSelectedValueChanged(object sender, EventArgs e)
         {
+            if (currentSettings == null) return;
             var comboBox = sender as ComboBox;
             if (comboBox == null) return;
 
