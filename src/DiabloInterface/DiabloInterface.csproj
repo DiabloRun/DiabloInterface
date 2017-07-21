@@ -84,6 +84,7 @@
     <Compile Include="Framework\NetFrameworkVersion.cs" />
     <Compile Include="Framework\NetFrameworkVersionComparator.cs" />
     <Compile Include="Framework\NetFrameworkVersionExtension.cs" />
+    <Compile Include="Gui\ControlCollectionExtension.cs" />
     <Compile Include="Gui\Controls\AbstractLayout.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -108,6 +109,12 @@
     <Compile Include="Gui\Controls\Gem.cs" />
     <Compile Include="Gui\Controls\HotkeyControl.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Gui\Controls\RuneSettingsPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Controls\RuneSettingsPage.Designer.cs">
+      <DependentUpon>RuneSettingsPage.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Forms\SimpleSaveDialog.cs">
       <SubType>Form</SubType>
@@ -169,6 +176,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Controls\AutoSplitTable.resx">
       <DependentUpon>AutoSplitTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Controls\RuneSettingsPage.resx">
+      <DependentUpon>RuneSettingsPage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Forms\SimpleSaveDialog.resx">
       <DependentUpon>SimpleSaveDialog.cs</DependentUpon>

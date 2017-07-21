@@ -1,20 +1,10 @@
-﻿using Zutatensuppe.D2Reader.Struct.Stat;
-using System;
-using System.Collections.Generic;
-
-namespace Zutatensuppe.D2Reader
+﻿namespace Zutatensuppe.D2Reader
 {
-    public enum CharacterClass
-    {
-        // Order as found in charstats.txt
-        Amazon,      // 0
-        Sorceress,   // 1
-        Necromancer, // 2
-        Paladin,     // 3
-        Barbarian,   // 4
-        Druid,       // 5
-        Assassin     // 6
-    }
+    using System;
+    using System.Collections.Generic;
+
+    using Zutatensuppe.D2Reader.Models;
+    using Zutatensuppe.D2Reader.Struct.Stat;
 
     public class Character
     {

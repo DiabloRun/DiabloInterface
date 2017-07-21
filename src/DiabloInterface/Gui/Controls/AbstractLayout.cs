@@ -4,25 +4,30 @@
     using System.Collections.Generic;
     using System.Drawing;
     using System.Linq;
+    using System.Reflection;
     using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
+    using Zutatensuppe.DiabloInterface.Core.Extensions;
+    using Zutatensuppe.DiabloInterface.Core.Logging;
 
-    public partial class AbstractLayout : UserControl
+    public abstract partial class AbstractLayout : UserControl
     {
+        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+
         readonly ISettingsService settingsService;
         readonly IGameService gameService;
 
+        GameDifficulty? activeDifficulty;
+        CharacterClass? activeCharacterClass;
+
         protected AbstractLayout(ISettingsService settingsService, IGameService gameService)
         {
-            if (settingsService == null) throw new ArgumentNullException(nameof(settingsService));
-            if (gameService == null) throw new ArgumentNullException(nameof(gameService));
-
-            this.settingsService = settingsService;
-            this.gameService = gameService;
+            this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+            this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
 
             RegisterServiceEventHandlers();
             InitializeComponent();
@@ -39,6 +44,8 @@
         protected IEnumerable<FlowLayoutPanel> RunePanels { get; set; }
 
         protected Dictionary<Control, string> DefaultTexts { get; set; }
+
+        protected abstract Panel RuneLayoutPanel { get; }
 
         void InitializeElements()
         {
@@ -70,6 +77,8 @@
                 return;
             }
 
+            activeCharacterClass = null;
+
             UpdateSettings(e.Settings);
         }
 
@@ -93,6 +102,7 @@
             }
 
             UpdateLabels(e.Character, e.Quests);
+            UpdateClassRuneList(e.Character.CharClass);
             UpdateRuneDisplay(e.ItemIds);
         }
 
@@ -115,13 +125,9 @@
             }
         }
 
-        protected virtual void UpdateSettings(ApplicationSettings settings)
-        {
-        }
+        protected abstract void UpdateSettings(ApplicationSettings settings);
 
-        protected virtual void UpdateLabels(Character player, IList<QuestCollection> quests)
-        {
-        }
+        protected abstract void UpdateLabels(Character player, IList<QuestCollection> quests);
 
         protected void UpdateLabelWidthAlignment(params Label[] labels)
         {
@@ -139,27 +145,72 @@
             }
         }
 
+        void UpdateClassRuneList(CharacterClass characterClass)
+        {
+            var settings = settingsService.CurrentSettings;
+            if (!settings.DisplayRunes) return;
+
+            var targetDifficulty = gameService.TargetDifficulty;
+            var isCharacterClassChanged = activeCharacterClass == null || activeCharacterClass != characterClass;
+            var isGameDifficultyChanged = activeDifficulty != targetDifficulty;
+
+            if (!isCharacterClassChanged && !isGameDifficultyChanged)
+                return;
+
+            Logger.Info("Loading rune list.");
+            
+            var runeSettings = GetMostSpecificRuneSettings(characterClass, targetDifficulty);
+            UpdateRuneList(settings, runeSettings?.Runes?.ToList());
+
+            activeDifficulty = targetDifficulty;
+            activeCharacterClass = characterClass;
+        }
+
+        void UpdateRuneList(ApplicationSettings settings, IReadOnlyList<Rune> runes)
+        {
+            var panel = RuneLayoutPanel;
+            if (panel == null) return;
+
+            panel.Controls.ClearAndDispose();
+            panel.Visible = runes?.Count > 0;
+            runes?.ForEach(rune => panel.Controls.Add(
+                new RuneDisplayElement(rune, settings.DisplayRunesHighContrast, false, false)));
+        }
+
+        /// <summary>
+        /// Gets the most specific rune settings in the order:
+        ///     Class+Difficulty > Class > Difficulty > None
+        /// </summary>
+        /// <param name="characterClass">Active character class.</param>
+        /// <param name="targetDifficulty">Manual difficulty selection.</param>
+        /// <returns>The rune settings.</returns>
+        ClassRuneSettings GetMostSpecificRuneSettings(CharacterClass characterClass, GameDifficulty targetDifficulty)
+        {
+            IEnumerable<ClassRuneSettings> runeClassSettings = settingsService.CurrentSettings.ClassRunes.ToList();
+            return runeClassSettings.FirstOrDefault(rs => rs.Class == characterClass && rs.Difficulty == targetDifficulty)
+                ?? runeClassSettings.FirstOrDefault(rs => rs.Class == characterClass && rs.Difficulty == null)
+                ?? runeClassSettings.FirstOrDefault(rs => rs.Class == null && rs.Difficulty == targetDifficulty)
+                ?? runeClassSettings.FirstOrDefault(rs => rs.Class == null && rs.Difficulty == null);
+        }
+
         void UpdateRuneDisplay(IEnumerable<int> itemIds)
         {
-            foreach (FlowLayoutPanel fp in RunePanels)
+            var panel = RuneLayoutPanel;
+            if (panel == null) return;
+
+            // Count number of items of each type.
+            Dictionary<int, int> itemClassCounts = itemIds
+                .GroupBy(id => id)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            foreach (RuneDisplayElement runeElement in panel.Controls)
             {
-                if (fp.Controls.Count <= 0)
-                    continue;
+                var itemClassId = (int)runeElement.Rune + 610;
 
-                // Used for keeping track of how many items of each type there is.
-                Dictionary<int, int> itemClassCounts = itemIds
-                    .GroupBy(id => id)
-                    .ToDictionary(g => g.Key, g => g.Count());
-
-                foreach (RuneDisplayElement c in fp.Controls)
+                if (itemClassCounts.ContainsKey(itemClassId) && itemClassCounts[itemClassId] > 0)
                 {
-                    int eClass = (int)c.Rune + 610;
-
-                    if (itemClassCounts.ContainsKey(eClass) && itemClassCounts[eClass] > 0)
-                    {
-                        itemClassCounts[eClass]--;
-                        c.SetHaveRune(true);
-                    }
+                    itemClassCounts[itemClassId]--;
+                    runeElement.SetHaveRune(true);
                 }
             }
         }

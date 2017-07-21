@@ -18,6 +18,7 @@
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
         bool realFrwIas;
+        FlowLayoutPanel activeRuneLayoutPanel;
 
         public HorizontalLayout(ISettingsService settingsService, IGameService gameService)
             : base(settingsService, gameService)
@@ -26,7 +27,12 @@
 
             InitializeComponent();
             InitializeElements();
+
+            panelRuneDisplayHorizontal.Hide();
+            panelRuneDisplayVertical.Hide();
         }
+
+        protected override Panel RuneLayoutPanel => activeRuneLayoutPanel;
 
         void InitializeElements()
         {
@@ -69,11 +75,9 @@
 
         protected override void UpdateSettings(ApplicationSettings settings)
         {
-            base.UpdateSettings(settings);
-
             ApplyLabelSettings(settings);
             ApplyRuneSettings(settings);
-            UpdateLayout(settings);
+            UpdateLayout();
         }
 
         protected override void UpdateLabels(Character player, IList<QuestCollection> quests)
@@ -113,15 +117,14 @@
             labelHellPerc.Text = $@"HE: {completions[2]:0%}";
         }
 
-        void UpdateLayout(ApplicationSettings settings)
+        void UpdateLayout()
         {
-            int padding = 0;
             // Calculate maximum sizes that the labels can possible get.
             Size nameSize = TextRenderer.MeasureText(new string('W', 15), nameLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
 
             // base stats have 3 char label (STR, VIT, ect.) and realistically a max value < 500 (lvl 99*5 + alkor quest... items can increase this tho)
             // we will assume the "longest" string is DEX: 499 (most likely dex or ene will be longest str.)
-            padding = (panelAdvancedStats.Visible || panelResistances.Visible) ? 8 : 0;
+            var padding = (panelAdvancedStats.Visible || panelResistances.Visible) ? 8 : 0;
             Size statSize = TextRenderer.MeasureText("DEX: 499", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
             Size basePanelSize = new Size(statSize.Width + padding, statSize.Height * panelBaseStats.RowCount);
 
@@ -153,7 +156,7 @@
                 + ((count < 3 && panelDiffPercentages.Visible) ? panelDiffPercentages.Width : 0)
             ;
 
-            float ratio = (float)nameSize.Width / (float)statsWidth;
+            float ratio = nameSize.Width / (float)statsWidth;
 
             if (ratio > 1.0f)
             {
@@ -176,35 +179,25 @@
         
         void ApplyRuneSettings(ApplicationSettings settings)
         {
-            if (settings.DisplayRunes && settings.DisplayRunesHorizontal && settings.Runes.Count > 0)
-            {
-                panelRuneDisplayHorizontal.Controls.Clear();
-                settings.Runes.ForEach(r => { panelRuneDisplayHorizontal.Controls.Add(new RuneDisplayElement((Rune)r, settings.DisplayRunesHighContrast, false, false)); });
+            FlowLayoutPanel nextRuneLayoutPanel = null;
 
-                panelRuneDisplayHorizontal.Show();
-            }
-            else
-            {
-                panelRuneDisplayHorizontal.Hide();
-            }
+            if (settings.DisplayRunes && settings.DisplayRunesHorizontal)
+                nextRuneLayoutPanel = panelRuneDisplayHorizontal;
+            else if (settings.DisplayRunes && !settings.DisplayLayoutHorizontal)
+                nextRuneLayoutPanel = panelRuneDisplayVertical;
 
-            if (settings.DisplayRunes && !settings.DisplayRunesHorizontal && settings.Runes.Count > 0)
-            {
-                panelRuneDisplayVertical.Controls.Clear();
-                settings.Runes.ForEach(r => { panelRuneDisplayVertical.Controls.Add(new RuneDisplayElement((Rune)r, settings.DisplayRunesHighContrast, false, false)); });
-                panelRuneDisplayVertical.Show();
-            }
-            else
-            {
-                panelRuneDisplayVertical.Hide();
-            }
+            // Only hide panels when the panels were changed.
+            if (activeRuneLayoutPanel == nextRuneLayoutPanel) return;
+
+            activeRuneLayoutPanel?.Hide();
+            activeRuneLayoutPanel = nextRuneLayoutPanel;
         }
 
         void ApplyLabelSettings(ApplicationSettings settings)
         {
             realFrwIas = settings.DisplayRealFrwIas;
 
-            this.BackColor = settings.ColorBackground;
+            BackColor = settings.ColorBackground;
 
             nameLabel.Font = new Font(settings.FontName, settings.FontSizeTitle);
             Font infoFont = new Font(settings.FontName, settings.FontSize);

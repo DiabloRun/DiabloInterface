@@ -26,6 +26,8 @@
             InitializeElements();
         }
 
+        protected override Panel RuneLayoutPanel => panelRuneDisplay2;
+
         void InitializeElements()
         {
             InfoLabels = new[]
@@ -64,8 +66,6 @@
 
         protected override void UpdateSettings(ApplicationSettings settings)
         {
-            base.UpdateSettings(settings);
-
             ApplyLabelSettings(settings);
             ApplyRuneSettings(settings);
             UpdateLayout(settings);
@@ -165,22 +165,12 @@
                 panelDiffPercentages.Margin = new Padding(panelDiffPercentages.Margin.Left, first ? 0 : settings.VerticalLayoutPadding, panelDiffPercentages.Margin.Right, panelDiffPercentages.Margin.Bottom);
                 first = false;
             }
-
         }
 
         void ApplyRuneSettings(ApplicationSettings settings)
         {
-            if (settings.DisplayRunes && settings.Runes.Count > 0)
-            {
-                panelRuneDisplay2.Controls.Clear();
-                settings.Runes.ForEach(r => { panelRuneDisplay2.Controls.Add(new RuneDisplayElement((Rune)r, settings.DisplayRunesHighContrast, false, false)); });
-
-                panelRuneDisplay2.Show();
-            }
-            else
-            {
+            if (!settings.DisplayRunes)
                 panelRuneDisplay2.Hide();
-            }
         }
 
         void ApplyLabelSettings(ApplicationSettings settings)

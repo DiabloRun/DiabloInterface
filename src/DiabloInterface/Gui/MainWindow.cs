@@ -7,6 +7,7 @@
     using System.Reflection;
     using System.Windows.Forms;
 
+    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
     using Zutatensuppe.DiabloInterface.Core.Logging;
@@ -175,6 +176,38 @@
             }
 
             debugWindow.Show();
+        }
+
+        void DifficultyNormalToolStripMenuItemOnClick(object sender, EventArgs e)
+        {
+            GameDifficultyClick(sender, GameDifficulty.Normal);
+        }
+
+        void NightmareToolStripMenuItemOnClick(object sender, EventArgs e)
+        {
+            GameDifficultyClick(sender, GameDifficulty.Nightmare);
+        }
+
+        void HellToolStripMenuItemOnClick(object sender, EventArgs e)
+        {
+            GameDifficultyClick(sender, GameDifficulty.Hell);
+        }
+
+        void GameDifficultyClick(object sender, GameDifficulty difficulty)
+        {
+            Logger.Info($"Setting target difficulty to {difficulty}.");
+
+            UncheckDifficultyMenuItems();
+            gameService.TargetDifficulty = difficulty;
+            ((ToolStripMenuItem)sender).Checked = true;
+        }
+
+        void UncheckDifficultyMenuItems()
+        {
+            foreach (ToolStripMenuItem item in difficultyToolStripMenuItem.DropDownItems)
+            {
+                item.Checked = false;
+            }
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
