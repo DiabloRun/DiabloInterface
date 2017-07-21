@@ -195,6 +195,8 @@
 
         void GameDifficultyClick(object sender, GameDifficulty difficulty)
         {
+            Logger.Info($"Setting target difficulty to {difficulty}.");
+
             UncheckDifficultyMenuItems();
             gameService.TargetDifficulty = difficulty;
             ((ToolStripMenuItem)sender).Checked = true;
