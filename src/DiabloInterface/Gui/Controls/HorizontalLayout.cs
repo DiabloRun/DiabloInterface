@@ -11,7 +11,6 @@
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
-    using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
     public partial class HorizontalLayout : AbstractLayout
@@ -32,6 +31,8 @@
             panelRuneDisplayHorizontal.Hide();
             panelRuneDisplayVertical.Hide();
         }
+
+        protected override Panel RuneLayoutPanel => activeRuneLayoutPanel;
 
         void InitializeElements()
         {
@@ -74,11 +75,9 @@
 
         protected override void UpdateSettings(ApplicationSettings settings)
         {
-            base.UpdateSettings(settings);
-
             ApplyLabelSettings(settings);
             ApplyRuneSettings(settings);
-            UpdateLayout(settings);
+            UpdateLayout();
         }
 
         protected override void UpdateLabels(Character player, IList<QuestCollection> quests)
@@ -118,32 +117,14 @@
             labelHellPerc.Text = $@"HE: {completions[2]:0%}";
         }
 
-        protected override void UpdateRuneList(ApplicationSettings settings, IReadOnlyList<Rune> runes)
+        void UpdateLayout()
         {
-            if (activeRuneLayoutPanel == null) return;
-
-            activeRuneLayoutPanel.Controls.Clear();
-            if (runes == null)
-            {
-                activeRuneLayoutPanel.Visible = false;
-            }
-            else
-            {
-                activeRuneLayoutPanel.Visible = runes.Count > 0;
-                runes.ForEach(rune => activeRuneLayoutPanel.Controls.Add(
-                    new RuneDisplayElement(rune, settings.DisplayRunesHighContrast, false, false)));
-            }
-        }
-
-        void UpdateLayout(ApplicationSettings settings)
-        {
-            int padding = 0;
             // Calculate maximum sizes that the labels can possible get.
             Size nameSize = TextRenderer.MeasureText(new string('W', 15), nameLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
 
             // base stats have 3 char label (STR, VIT, ect.) and realistically a max value < 500 (lvl 99*5 + alkor quest... items can increase this tho)
             // we will assume the "longest" string is DEX: 499 (most likely dex or ene will be longest str.)
-            padding = (panelAdvancedStats.Visible || panelResistances.Visible) ? 8 : 0;
+            var padding = (panelAdvancedStats.Visible || panelResistances.Visible) ? 8 : 0;
             Size statSize = TextRenderer.MeasureText("DEX: 499", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
             Size basePanelSize = new Size(statSize.Width + padding, statSize.Height * panelBaseStats.RowCount);
 
@@ -175,7 +156,7 @@
                 + ((count < 3 && panelDiffPercentages.Visible) ? panelDiffPercentages.Width : 0)
             ;
 
-            float ratio = (float)nameSize.Width / (float)statsWidth;
+            float ratio = nameSize.Width / (float)statsWidth;
 
             if (ratio > 1.0f)
             {

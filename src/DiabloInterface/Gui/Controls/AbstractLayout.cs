@@ -11,9 +11,10 @@
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
+    using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
-    public partial class AbstractLayout : UserControl
+    public abstract partial class AbstractLayout : UserControl
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -43,6 +44,8 @@
         protected IEnumerable<FlowLayoutPanel> RunePanels { get; set; }
 
         protected Dictionary<Control, string> DefaultTexts { get; set; }
+
+        protected abstract Panel RuneLayoutPanel { get; }
 
         void InitializeElements()
         {
@@ -122,17 +125,9 @@
             }
         }
 
-        protected virtual void UpdateSettings(ApplicationSettings settings)
-        {
-        }
+        protected abstract void UpdateSettings(ApplicationSettings settings);
 
-        protected virtual void UpdateLabels(Character player, IList<QuestCollection> quests)
-        {
-        }
-
-        protected virtual void UpdateRuneList(ApplicationSettings settings, IReadOnlyList<Rune> runes)
-        {
-        }
+        protected abstract void UpdateLabels(Character player, IList<QuestCollection> quests);
 
         protected void UpdateLabelWidthAlignment(params Label[] labels)
         {
@@ -169,6 +164,17 @@
 
             activeDifficulty = targetDifficulty;
             activeCharacterClass = characterClass;
+        }
+
+        void UpdateRuneList(ApplicationSettings settings, IReadOnlyList<Rune> runes)
+        {
+            var panel = RuneLayoutPanel;
+            if (panel == null) return;
+
+            panel.Controls.ClearAndDispose();
+            panel.Visible = runes?.Count > 0;
+            runes?.ForEach(rune => panel.Controls.Add(
+                new RuneDisplayElement(rune, settings.DisplayRunesHighContrast, false, false)));
         }
 
         /// <summary>

@@ -9,7 +9,6 @@
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
-    using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
     public partial class VerticalLayout : AbstractLayout
@@ -26,6 +25,8 @@
             InitializeComponent();
             InitializeElements();
         }
+
+        protected override Panel RuneLayoutPanel => panelRuneDisplay2;
 
         void InitializeElements()
         {
@@ -65,8 +66,6 @@
 
         protected override void UpdateSettings(ApplicationSettings settings)
         {
-            base.UpdateSettings(settings);
-
             ApplyLabelSettings(settings);
             ApplyRuneSettings(settings);
             UpdateLayout(settings);
@@ -101,14 +100,6 @@
             nmLabelVal.Text = $@"{quests[1].CompletionProgress:0%}";
             hellLabelVal.Text = $@"{quests[2].CompletionProgress:0%}";
             UpdateLabelWidthAlignment(normLabelVal, nmLabelVal, hellLabelVal);
-        }
-
-        protected override void UpdateRuneList(ApplicationSettings settings, IReadOnlyList<Rune> runes)
-        {
-            panelRuneDisplay2.Visible = runes.Count > 0;
-            panelRuneDisplay2.Controls.Clear();
-            runes.ForEach(rune => panelRuneDisplay2.Controls.Add(
-                new RuneDisplayElement(rune, settings.DisplayRunesHighContrast, false, false)));
         }
 
         void UpdateLayout(ApplicationSettings settings)
