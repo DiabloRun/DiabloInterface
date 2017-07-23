@@ -22,34 +22,12 @@ namespace Zutatensuppe.D2Reader.Readers
             itemReader = new ItemReader(processReader, memory);
         }
 
-        public void ResetCache()
+        public IEnumerable<D2Unit> EnumerateInventory(Func<D2ItemData, bool> filter)
         {
-            ItemReader.ResetCache();
-        }
-
-        public D2Inventory GetPlayerInventory()
-        {
-            var playerAddress = processReader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
-            if (playerAddress == IntPtr.Zero) return null;
-
-            var playerUnit = processReader.Read<D2Unit>(playerAddress);
-            if (playerUnit == null) return null;
-
-            return processReader.Read<D2Inventory>(playerUnit.pInventory.Address);
-        }
-
-        D2Unit GetUnit(DataPointer pointer)
-        {
-            if (pointer.IsNull) return null;
-            return processReader.Read<D2Unit>(pointer.Address, AddressingMode.Absolute);
-        }
-
-        D2Unit GetPreviousItem(D2Unit item)
-        {
-            var itemData = itemReader.GetItemData(item);
-            if (itemData == null) return null;
-
-            return GetUnit(itemData.PreviousItem);
+            return from item in EnumerateInventory()
+                   let itemData = itemReader.GetItemData(item)
+                   where itemData != null && filter(itemData)
+                   select item;
         }
 
         public IEnumerable<D2Unit> EnumerateInventory()
@@ -65,15 +43,39 @@ namespace Zutatensuppe.D2Reader.Readers
             }
         }
 
-        public IEnumerable<D2Unit> EnumerateInventory(Func<D2ItemData, bool> filter)
+        private D2Inventory GetPlayerInventory()
         {
-            return from item in EnumerateInventory()
-                   let itemData = itemReader.GetItemData(item)
-                   where itemData != null && filter(itemData)
-                   select item;
+            var playerAddress = processReader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
+            if (playerAddress == IntPtr.Zero) return null;
+
+            var playerUnit = processReader.Read<D2Unit>(playerAddress);
+            if (playerUnit == null) return null;
+
+            return processReader.Read<D2Inventory>(playerUnit.pInventory.Address);
         }
 
-        public string GetEquippedItemSlot(BodyLocation slot)
+        private D2Unit GetUnit(DataPointer pointer)
+        {
+            if (pointer.IsNull) return null;
+            return processReader.Read<D2Unit>(pointer.Address, AddressingMode.Absolute);
+        }
+
+        private D2Unit GetPreviousItem(D2Unit item)
+        {
+            var itemData = itemReader.GetItemData(item);
+            if (itemData == null) return null;
+
+            return GetUnit(itemData.PreviousItem);
+        }
+
+        // TODO: not used, maybe remove?
+        public void ResetCache()
+        {
+            ItemReader.ResetCache();
+        }
+
+        // TODO: not used, maybe remove?
+        private string GetEquippedItemSlot(BodyLocation slot)
         {
             // Get all items at the target location.
             var itemsInSlot = from item in EnumerateInventory()

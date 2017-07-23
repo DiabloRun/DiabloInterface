@@ -152,12 +152,11 @@ namespace Zutatensuppe.D2Reader.Readers
         public bool TryHandleStat(D2Stat stat, out string description)
         {
             description = null;
-            StatIdentifier statId = 0;
-            if (Enum.IsDefined(typeof(StatIdentifier), stat.LoStatID))
-                statId = (StatIdentifier)stat.LoStatID;
-            else return false;
 
-            switch (statId)
+            if (stat.HasValidLoStatIdentifier())
+                return false;
+
+            switch ((StatIdentifier)stat.LoStatID)
             {
                 //Handle one and two handed damage.
                 case StatIdentifier.DamageMin:

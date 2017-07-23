@@ -57,10 +57,11 @@
     <Compile Include="RequestProcessorTest.cs" />
     <Compile Include="StructTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QuestFactoryTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\D2Reader\D2Reader.csproj">
-      <Project>{C5F081D7-FB83-4934-908F-53CE986AB08C}</Project>
+      <Project>{c5f081d7-fb83-4934-908f-53ce986ab08c}</Project>
       <Name>D2Reader</Name>
     </ProjectReference>
     <ProjectReference Include="..\DiabloInterface.Business\DiabloInterface.Business.csproj">

@@ -27,13 +27,6 @@ namespace Zutatensuppe.D2Reader
             SEQUENCE,
             KNOCK_BACK,
         };
-
-        public enum Penalty
-        {
-            NORMAL = 0,
-            NIGHTMARE = -40,
-            HELL = -100,
-        }
         
         public enum ItemId
         {

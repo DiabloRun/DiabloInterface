@@ -228,38 +228,32 @@
 
         public short ReadInt16(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
         {
-            var buffer = Read(address, 2, addressingMode);
-            return BitConverter.ToInt16(buffer, 0);
+            return BitConverter.ToInt16(Read(address, 2, addressingMode), 0);
         }
 
         public ushort ReadUInt16(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
         {
-            var buffer = Read(address, 2, addressingMode);
-            return BitConverter.ToUInt16(buffer, 0);
+            return BitConverter.ToUInt16(Read(address, 2, addressingMode), 0);
         }
 
         public int ReadInt32(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
         {
-            var buffer = Read(address, 4, addressingMode);
-            return BitConverter.ToInt32(buffer, 0);
+            return BitConverter.ToInt32(Read(address, 4, addressingMode), 0);
         }
 
         public uint ReadUInt32(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
         {
-            var buffer = Read(address, 4, addressingMode);
-            return BitConverter.ToUInt32(buffer, 0);
+            return BitConverter.ToUInt32(Read(address, 4, addressingMode), 0);
         }
 
         public long ReadInt64(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
         {
-            var buffer = Read(address, 8, addressingMode);
-            return BitConverter.ToInt64(buffer, 0);
+            return BitConverter.ToInt64(Read(address, 8, addressingMode), 0);
         }
 
         public ulong ReadUInt64(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
         {
-            var buffer = Read(address, 8, addressingMode);
-            return BitConverter.ToUInt64(buffer, 0);
+            return BitConverter.ToUInt64(Read(address, 8, addressingMode), 0);
         }
 
         public IntPtr ReadAddress32(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
@@ -269,8 +263,7 @@
 
         public string ReadStringRaw(IntPtr address, int size, Encoding encoding, AddressingMode addressing = AddressingMode.Absolute)
         {
-            byte[] buffer = Read(address, size, addressing);
-            return encoding.GetString(buffer);
+            return encoding.GetString(Read(address, size, addressing));
         }
 
         /// <summary>
@@ -310,10 +303,11 @@
         public string GetNullTerminatedString(IntPtr address, int size, int maximumSize, Encoding encoding, AddressingMode addressing = AddressingMode.Absolute)
         {
             string value = null;
+            int nullTerminatorIndex;
             for (int bufferSize = size; bufferSize <= maximumSize; bufferSize *= 2)
             {
                 value = ReadStringRaw(address, bufferSize, encoding, addressing);
-                int nullTerminatorIndex = value.IndexOf('\0');
+                nullTerminatorIndex = value.IndexOf('\0');
                 if (nullTerminatorIndex >= 0)
                 {
                     // Found end of null terminated string, return it.

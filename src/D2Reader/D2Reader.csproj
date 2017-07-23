@@ -49,6 +49,7 @@
     <Compile Include="GameMemoryTable.cs" />
     <Compile Include="Models\CharacterClass.cs" />
     <Compile Include="Models\Rune.cs" />
+    <Compile Include="Models\ResistancePenalty.cs" />
     <Compile Include="QuestFactory.cs" />
     <Compile Include="GameMemoryTableFactory.cs" />
     <Compile Include="Models\GameDifficulty.cs" />

@@ -135,7 +135,7 @@ namespace Zutatensuppe.D2Reader.Readers
             if (stats == null) return null;
 
             return (from stat in stats
-                    where Enum.IsDefined(typeof(StatIdentifier), stat.LoStatID)
+                    where stat.HasValidLoStatIdentifier()
                     group stat by (StatIdentifier)stat.LoStatID into g
                     select g).ToDictionary(x => x.Key, x => x.Single());
         }
@@ -151,15 +151,10 @@ namespace Zutatensuppe.D2Reader.Readers
 
             foreach ( D2Stat stat in stats )
             {
-                if (!Enum.IsDefined(typeof(StatIdentifier), stat.LoStatID))
-                {
+                if (!stat.HasValidLoStatIdentifier())
                     continue;
-                }
 
-                D2Stat s = new D2Stat();
-                s.LoStatID = stat.LoStatID;
-                s.HiStatID = stat.HiStatID;
-                s.Value = stat.Value;
+                D2Stat s = new D2Stat(stat);
 
                 if (dict.ContainsKey((StatIdentifier)stat.LoStatID))
                 {

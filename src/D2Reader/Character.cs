@@ -1,4 +1,9 @@
-﻿namespace Zutatensuppe.D2Reader
+﻿using Zutatensuppe.D2Reader.Struct.Stat;
+using System;
+using System.Collections.Generic;
+using Zutatensuppe.D2Reader.Models;
+
+namespace Zutatensuppe.D2Reader
 {
     using System;
     using System.Collections.Generic;
@@ -50,13 +55,11 @@
         public int RealFRW()
         {
             return FasterRunWalk + ((VelocityPercent - (Mode == D2Data.Mode.RUN ? 50 : 0))-100);
-            // return (int)Math.Round(FasterRunWalk *  / 100.0);
         }
 
         public int RealIAS()
         {
             return IncreasedAttackSpeed + (AttackRate - 100);
-            //return (int)Math.Round(IncreasedAttackSpeed * AttackRate / 100.0);
         }
 
         /// <summary>
@@ -72,7 +75,7 @@
 
             CharClass = (CharacterClass)gameInfo.Player.eClass;
 
-            int penalty = GetResistancePenalty(gameInfo.Game.Difficulty);
+            int penalty = (int)ResistancePenalty.GetPenaltyByGameDifficulty((GameDifficulty)gameInfo.Game.Difficulty);
             Func<StatIdentifier, int> getStat = statID =>
             {
                 D2Stat stat;
@@ -127,34 +130,18 @@
             else return value;
         }
 
-        private int GetResistancePenalty(int gameDifficulty)
-        {
-            switch (gameDifficulty)
-            {
-                case 1: return -40;
-                case 2: return -100;
-                default: return 0;
-            }
-        }
-
         public void UpdateMode(D2Data.Mode mode)
         {
             Mode = mode;
 
-            // Handle player death.
-            if (Level > 0 && (Mode == D2Data.Mode.DEAD || Mode == D2Data.Mode.DEATH))
+            bool wasDead = IsDead;
+
+            IsDead = (Mode == D2Data.Mode.DEAD || Mode == D2Data.Mode.DEATH) && Level > 0;
+
+            if (IsDead && !wasDead)
             {
-                if (!IsDead)
-                {
-                    IsDead = true;
-                    Deaths++;
-                }
-            }
-            else
-            {
-                IsDead = false;
+                Deaths++;
             }
         }
-
     }
 }
