@@ -58,6 +58,7 @@
     <Compile Include="StructTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuestFactoryTest.cs" />
+    <Compile Include="D2StatTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\D2Reader\D2Reader.csproj">

@@ -11,6 +11,10 @@ namespace Zutatensuppe.D2Reader.Struct.Stat
         [ExpectOffset(0x02)] public ushort LoStatID;
         [ExpectOffset(0x04)] public int Value;
 
+        public D2Stat()
+        {
+        }
+
         public D2Stat(D2Stat other)
         {
             LoStatID = other.LoStatID;
