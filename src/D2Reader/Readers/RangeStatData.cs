@@ -153,7 +153,7 @@ namespace Zutatensuppe.D2Reader.Readers
         {
             description = null;
 
-            if (stat.HasValidLoStatIdentifier())
+            if (!stat.HasValidLoStatIdentifier())
                 return false;
 
             switch ((StatIdentifier)stat.LoStatID)
