@@ -25,7 +25,7 @@ namespace Zutatensuppe.D2Reader.Struct.Stat
 
         public bool HasValidLoStatIdentifier()
         {
-            return !Enum.IsDefined(typeof(StatIdentifier), LoStatID);
+            return Enum.IsDefined(typeof(StatIdentifier), LoStatID);
         }
     }
 }
