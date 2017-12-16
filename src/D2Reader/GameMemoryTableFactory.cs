@@ -1,10 +1,11 @@
 namespace Zutatensuppe.D2Reader
 {
     using System;
+    using System.Collections.Generic;
 
     public interface IGameMemoryTableFactory
     {
-        GameMemoryTable CreateForVersion(string gameVersion);
+        GameMemoryTable CreateForVersion(string gameVersion, Dictionary<Models.D2Module, IntPtr> moduleBaseAddresses);
     }
 
     public class GameVersionUnsupportedException : Exception
@@ -19,7 +20,7 @@ namespace Zutatensuppe.D2Reader
 
     public class GameMemoryTableFactory : IGameMemoryTableFactory
     {
-        public GameMemoryTable CreateForVersion(string gameVersion)
+        public GameMemoryTable CreateForVersion(string gameVersion, Dictionary<Models.D2Module, IntPtr> moduleBaseAddresses)
         {
             var memoryTable = new GameMemoryTable
             {
@@ -33,30 +34,38 @@ namespace Zutatensuppe.D2Reader
             {
                 case Models.GameVersion.V113C:
                     int baseAddress = 0x400000;
-                    int d2CommonAddress = 0x6FD50000 - baseAddress; // D2Common.dll
-                    int d2LaunchAddress = 0x6FA40000 - baseAddress; // D2Launch.dll
-                    int d2LangAddress = 0x520000 - baseAddress; // D2Lang.dll
-                    int d2NetAddress = 0x48D0000 - baseAddress; // D2Net.dll
-                    int d2GameAddress = 0x06D00000 - baseAddress; // D2Game.dll
-                    int d2ClientAddress = 0x6FAB0000 - baseAddress; // D2Client.dll
+                    try
+                    {
+                        int d2CommonAddress = moduleBaseAddresses[Models.D2Module.D2Common].ToInt32() - baseAddress; // D2Common.dll
+                        int d2LaunchAddress = moduleBaseAddresses[Models.D2Module.D2Launch].ToInt32() - baseAddress; // D2Launch.dll
+                        int d2LangAddress = moduleBaseAddresses[Models.D2Module.D2Lang].ToInt32(); // D2Lang.dll
+                        int d2NetAddress = moduleBaseAddresses[Models.D2Module.D2Net].ToInt32() - baseAddress; // D2Net.dll
+                        int d2GameAddress = moduleBaseAddresses[Models.D2Module.D2Game].ToInt32() - baseAddress; // D2Game.dll
+                        int d2ClientAddress = moduleBaseAddresses[Models.D2Module.D2Client].ToInt32() - baseAddress; // D2Client.dll
+                        memoryTable.Address.GlobalData = new IntPtr(d2CommonAddress + 0x00099E1C);
 
-                    memoryTable.Address.GlobalData = new IntPtr(d2CommonAddress + 0x00099E1C);
+                        memoryTable.Address.World = new IntPtr(d2GameAddress + 0x111C24);
+                        memoryTable.Address.GameId = new IntPtr(d2NetAddress + 0xB428);
+                        memoryTable.Address.LowQualityItems = new IntPtr(d2CommonAddress + 0x9FD98);
+                        memoryTable.Address.ItemDescriptions = new IntPtr(d2CommonAddress + 0x9FB94);
+                        memoryTable.Address.MagicModifierTable = new IntPtr(d2CommonAddress + 0x9FBB8);
+                        memoryTable.Address.RareModifierTable = new IntPtr(d2CommonAddress + 0x9FBDC);
 
-                    memoryTable.Address.World = new IntPtr(d2GameAddress + 0x111C24);
-                    memoryTable.Address.GameId = new IntPtr(d2NetAddress + 0xB428);
-                    memoryTable.Address.LowQualityItems = new IntPtr(d2CommonAddress + 0x9FD98);
-                    memoryTable.Address.ItemDescriptions = new IntPtr(d2CommonAddress + 0x9FB94);
-                    memoryTable.Address.MagicModifierTable = new IntPtr(d2CommonAddress + 0x9FBB8);
-                    memoryTable.Address.RareModifierTable = new IntPtr(d2CommonAddress + 0x9FBDC);
+                        memoryTable.Address.PlayerUnit = new IntPtr(d2ClientAddress + 0x0010A60C);
+                        memoryTable.Address.Area = new IntPtr(d2ClientAddress + 0x0011C310);
 
-                    memoryTable.Address.PlayerUnit = new IntPtr(0x0010A60C);
-                    memoryTable.Address.Area = new IntPtr(d2ClientAddress + 0x0011C310);
-                    memoryTable.Address.StringIndexerTable = new IntPtr(d2LangAddress + 0xA340);
-                    memoryTable.Address.StringAddressTable = new IntPtr(d2LangAddress + 0xA344);
-                    memoryTable.Address.PatchStringIndexerTable = new IntPtr(0); // TODO!!!
-                    memoryTable.Address.PatchStringAddressTable = new IntPtr(0); // TODO!!!
-                    memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(d2LangAddress + 0x10A84);
-                    memoryTable.Address.ExpansionStringAddressTable = new IntPtr(d2LangAddress + 0x10A70);
+                        memoryTable.Address.StringIndexerTable = new IntPtr(-baseAddress + d2LangAddress + 0x10A64);
+                        memoryTable.Address.StringAddressTable = new IntPtr(-baseAddress + d2LangAddress + 0x10a68);
+                        memoryTable.Address.PatchStringIndexerTable = new IntPtr(-baseAddress + d2LangAddress + 0x10A6C);
+                        memoryTable.Address.PatchStringAddressTable = new IntPtr(-baseAddress + d2LangAddress + 0x10A80);
+                        memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(-baseAddress + d2LangAddress + 0x10A84);
+                        memoryTable.Address.ExpansionStringAddressTable = new IntPtr(-baseAddress + d2LangAddress + 0x10A70);
+                    } catch(KeyNotFoundException ex)
+                    {
+                        // TODO: throw ProcessMemoryReadException instead...
+                        throw new GameVersionUnsupportedException(gameVersion);
+                    }
+
 
                     break;
                 case Models.GameVersion.V113D:

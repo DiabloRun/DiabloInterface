@@ -156,9 +156,9 @@ namespace Zutatensuppe.D2Reader
 
         #endregion
 
-        GameMemoryTable CreateGameMemoryTableForVersion(string gameVersion)
+        GameMemoryTable CreateGameMemoryTableForReader(ProcessMemoryReader reader)
         {
-            return memoryTableFactory.CreateForVersion(gameVersion);
+            return memoryTableFactory.CreateForVersion(reader.FileVersion, reader.ModuleBaseAddresses);
         }
 
         bool ValidateGameDataReaders()
@@ -183,7 +183,7 @@ namespace Zutatensuppe.D2Reader
             {
                 reader = new ProcessMemoryReader(DiabloProcessName, DiabloModuleName);
                 
-                memory = CreateGameMemoryTableForVersion(reader.FileVersion);
+                memory = CreateGameMemoryTableForReader(reader);
 
                 unitReader = new UnitReader(reader, memory);
                 inventoryReader = new InventoryReader(reader, memory);

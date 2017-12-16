@@ -1,4 +1,4 @@
-﻿using Zutatensuppe.D2Reader.Struct;
+using Zutatensuppe.D2Reader.Struct;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -72,6 +72,7 @@ namespace Zutatensuppe.D2Reader.Readers
             var tableInfo = reader.Read<D2StringTableInfo>(indexerTable);
 
             // We use the identifier 0x1F4 for invalid identifiers.
+            // because this is also what happens in D2Lang.dll
             if (identifier >= tableInfo.IdentifierCount)
                 identifier = 0x01F4;
 
@@ -117,14 +118,14 @@ namespace Zutatensuppe.D2Reader.Readers
             IntPtr addressTable = IntPtr.Zero;
 
             // Handle expansion strings.
-            if (identifier >= 0x4E20)
+            if (identifier >= 0x4E20) // 20.000
             {
                 identifier -= 0x4E20;
                 indexerTable = memory.ExpansionStringIndexerTable;
                 addressTable = memory.ExpansionStringAddressTable;
             }
             // Handle patch strings.
-            else if (identifier >= 0x2710)
+            else if (identifier >= 0x2710) // 10.000
             {
                 identifier -= 0x2710;
                 indexerTable = memory.PatchStringIndexerTable;
@@ -139,8 +140,9 @@ namespace Zutatensuppe.D2Reader.Readers
 
             // Get tables pointers.
             indexerTable = reader.ReadAddress32(indexerTable, AddressingMode.Relative);
-            addressTable = reader.ReadAddress32(addressTable, AddressingMode.Relative);
             if (indexerTable == IntPtr.Zero) return null;
+
+            addressTable = reader.ReadAddress32(addressTable, AddressingMode.Relative);
             if (addressTable == IntPtr.Zero) return null;
 
             // Look up the string using the correct tables.

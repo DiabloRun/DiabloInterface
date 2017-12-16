@@ -48,6 +48,8 @@
     <Compile Include="GameMemoryOffsetTable.cs" />
     <Compile Include="GameMemoryTable.cs" />
     <Compile Include="Models\CharacterClass.cs" />
+    <Compile Include="Models\D2Module.cs" />
+    <Compile Include="Models\GameVersion.cs" />
     <Compile Include="Models\Rune.cs" />
     <Compile Include="Models\ResistancePenalty.cs" />
     <Compile Include="QuestFactory.cs" />

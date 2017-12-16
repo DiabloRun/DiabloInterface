@@ -1,6 +1,7 @@
-﻿namespace Zutatensuppe.D2Reader
+namespace Zutatensuppe.D2Reader
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -29,10 +30,106 @@
 
     public class ProcessMemoryReader : IDisposable
     {
+        [DllImport("kernel32.dll")]
+        static extern int VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION64 lpBuffer, uint dwLength);
+
+        [DllImport("psapi.dll")]
+        static extern uint GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName, [In] [MarshalAs(UnmanagedType.U4)] int nSize);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MEMORY_BASIC_INFORMATION
+        {
+            public int BaseAddress;
+            public int AllocationBase;
+            public int AllocationProtect;
+            public int RegionSize;
+            public int State;
+            public int Protect;
+            public int lType;
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MEMORY_BASIC_INFORMATION64
+        {
+            public ulong BaseAddress;
+            public IntPtr AllocationBase;
+            public int AllocationProtect;
+            public int __alignment1;
+            public ulong RegionSize;
+            public int State;
+            public int Protect;
+            public int Type;
+            public int __alignment2;
+        }
+        private enum AllocationProtect : uint
+        {
+            PAGE_EXECUTE = 0x00000010,
+            PAGE_EXECUTE_READ = 0x00000020,
+            PAGE_EXECUTE_READWRITE = 0x00000040,
+            PAGE_EXECUTE_WRITECOPY = 0x00000080,
+            PAGE_NOACCESS = 0x00000001,
+            PAGE_READONLY = 0x00000002,
+            PAGE_READWRITE = 0x00000004,
+            PAGE_WRITECOPY = 0x00000008,
+            PAGE_GUARD = 0x00000100,
+            PAGE_NOCACHE = 0x00000200,
+            PAGE_WRITECOMBINE = 0x00000400
+        }
+
         const uint ProcessStillActive = 259;
 
         IntPtr baseAddress;
         IntPtr processHandle;
+        public Dictionary<Models.D2Module, IntPtr> ModuleBaseAddresses { get; }
+
+        public string FileVersion { get; }
+
+        public bool IsValid
+        {
+            get
+            {
+                uint exitCode = 0;
+                if (!GetExitCodeProcess(processHandle, out exitCode))
+                    return false;
+                return exitCode == ProcessStillActive;
+            }
+        }
+
+        private Dictionary<Models.D2Module, IntPtr> FindModuleAddresses(Process p)
+        {
+            Dictionary<Models.D2Module, IntPtr> addresses = new Dictionary<Models.D2Module, IntPtr>();
+            long MaxAddress = 0x7fffffff;
+            long address = 0;
+            const int nChars = 1024;
+            do
+            {
+                StringBuilder filename = new StringBuilder(nChars);
+                MEMORY_BASIC_INFORMATION64 m;
+                int result = VirtualQueryEx(p.Handle, (IntPtr)address, out m, (uint)Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION64)));
+                if (address == (long)m.BaseAddress + (long)m.RegionSize)
+                {
+                    break;
+                }
+
+                address = (long)m.BaseAddress + (long)m.RegionSize;
+
+                GetModuleFileNameEx(p.Handle, m.AllocationBase, filename, nChars);
+
+                foreach (Models.D2Module module in Enum.GetValues(typeof(Models.D2Module)))
+                {
+                    if (addresses.ContainsKey(module))
+                    {
+                        continue;
+                    }
+
+                    if (!filename.ToString().Contains(Enum.GetName(typeof(Models.D2Module), module) + ".dll"))
+                    {
+                        continue;
+                    }
+                    addresses.Add(module, m.AllocationBase);
+                }
+            } while (address <= MaxAddress);
+            return addresses;
+        }
 
         public ProcessMemoryReader(string processName, string moduleName)
         {
@@ -42,20 +139,25 @@
             IntPtr foundBaseAddress = IntPtr.Zero;
 
             Process[] processes = Process.GetProcessesByName(processName);
-
             try
             {
                 foreach (var process in processes)
                 {
                     foreach (ProcessModule module in process.Modules)
                     {
-                        if (module.ModuleName == moduleName)
+                        if (module.ModuleName != moduleName)
                         {
-                            foundModule = true;
-                            foundProcessId = (uint)process.Id;
-                            foundBaseAddress = module.BaseAddress;
-                            foundFileVersion = module.FileVersionInfo.FileVersion;
+                            continue;
                         }
+
+                        foundModule = true;
+                        foundProcessId = (uint)process.Id;
+                        foundBaseAddress = module.BaseAddress;
+                        foundFileVersion = module.FileVersionInfo.FileVersion;
+
+                        // the modules we are looking for are managed in the game.exe in older d2 versions.
+                        // cant get them via process.Modules
+                        ModuleBaseAddresses = FindModuleAddresses(process);
                     }
                 }
             }
@@ -75,19 +177,6 @@
 
             // Make sure we succeeded in opening the handle.
             if (processHandle == IntPtr.Zero) throw new ProcessNotFoundException(processName, moduleName);
-        }
-
-        public string FileVersion { get; }
-
-        public bool IsValid
-        {
-            get
-            {
-                uint exitCode = 0;
-                if (!GetExitCodeProcess(processHandle, out exitCode))
-                    return false;
-                return exitCode == ProcessStillActive;
-            }
         }
 
         #region Disposable
