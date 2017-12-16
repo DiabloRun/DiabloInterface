@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.D2Reader
+namespace Zutatensuppe.D2Reader
 {
     using System;
 
@@ -31,6 +31,36 @@
             // for information about how to find addresses for a different version of the game.
             switch (gameVersion)
             {
+                case "1, 0, 13, 60": // 1.13c
+                    int baseAddress = 0x400000;
+                    int d2CommonAddress = 0x6FD50000 - baseAddress; // D2Common.dll
+                    int d2LaunchAddress = 0x6FA40000 - baseAddress; // D2Launch.dll
+                    int d2LangAddress = 0x520000 - baseAddress; // D2Lang.dll
+                    int d2NetAddress = 0x48D0000 - baseAddress; // D2Net.dll
+                    int d2GameAddress = 0x06D00000 - baseAddress; // D2Game.dll
+                    int d2ClientAddress = 0x6FAB0000 - baseAddress; // D2Client.dll
+
+                    memoryTable.Address.GlobalData = new IntPtr(d2CommonAddress + 0x00099E1C);
+
+                    memoryTable.Address.World = new IntPtr(d2GameAddress + 0x111C24);
+                    memoryTable.Address.GameId = new IntPtr(d2NetAddress + 0xB428);
+                    memoryTable.Address.LowQualityItems = new IntPtr(d2CommonAddress + 0x9FD98);
+                    memoryTable.Address.ItemDescriptions = new IntPtr(d2CommonAddress + 0x9FB94);
+                    memoryTable.Address.MagicModifierTable = new IntPtr(d2CommonAddress + 0x9FBB8);
+                    memoryTable.Address.RareModifierTable = new IntPtr(d2CommonAddress + 0x9FBDC);
+
+                    memoryTable.Address.PlayerUnit = new IntPtr(0x0010A60C);
+                    memoryTable.Address.Area = new IntPtr(0); // TODO!!!
+                    memoryTable.Address.StringIndexerTable = new IntPtr(d2LangAddress + 0xA340);
+                    memoryTable.Address.StringAddressTable = new IntPtr(d2LangAddress + 0xA344);
+                    memoryTable.Address.PatchStringIndexerTable = new IntPtr(0); // TODO!!!
+                    memoryTable.Address.PatchStringAddressTable = new IntPtr(0); // TODO!!!
+                    memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(d2LangAddress + 0x10A84);
+                    memoryTable.Address.ExpansionStringAddressTable = new IntPtr(d2LangAddress + 0x10A70);
+
+                    break;
+                case "1, 0, 13, 64": // 1.13d
+                    break;
                 case "1.14.1.68": // 1.14b
                     memoryTable.Address.GlobalData = new IntPtr(0x00340D78);
 
