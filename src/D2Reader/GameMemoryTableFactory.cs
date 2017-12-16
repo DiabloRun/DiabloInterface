@@ -38,7 +38,7 @@ namespace Zutatensuppe.D2Reader
                     {
                         int d2CommonAddress = moduleBaseAddresses[Models.D2Module.D2Common].ToInt32() - baseAddress; // D2Common.dll
                         int d2LaunchAddress = moduleBaseAddresses[Models.D2Module.D2Launch].ToInt32() - baseAddress; // D2Launch.dll
-                        int d2LangAddress = moduleBaseAddresses[Models.D2Module.D2Lang].ToInt32(); // D2Lang.dll
+                        int d2LangAddress = moduleBaseAddresses[Models.D2Module.D2Lang].ToInt32() - baseAddress; // D2Lang.dll
                         int d2NetAddress = moduleBaseAddresses[Models.D2Module.D2Net].ToInt32() - baseAddress; // D2Net.dll
                         int d2GameAddress = moduleBaseAddresses[Models.D2Module.D2Game].ToInt32() - baseAddress; // D2Game.dll
                         int d2ClientAddress = moduleBaseAddresses[Models.D2Module.D2Client].ToInt32() - baseAddress; // D2Client.dll
@@ -54,12 +54,12 @@ namespace Zutatensuppe.D2Reader
                         memoryTable.Address.PlayerUnit = new IntPtr(d2ClientAddress + 0x0010A60C);
                         memoryTable.Address.Area = new IntPtr(d2ClientAddress + 0x0011C310);
 
-                        memoryTable.Address.StringIndexerTable = new IntPtr(-baseAddress + d2LangAddress + 0x10A64);
-                        memoryTable.Address.StringAddressTable = new IntPtr(-baseAddress + d2LangAddress + 0x10a68);
-                        memoryTable.Address.PatchStringIndexerTable = new IntPtr(-baseAddress + d2LangAddress + 0x10A6C);
-                        memoryTable.Address.PatchStringAddressTable = new IntPtr(-baseAddress + d2LangAddress + 0x10A80);
-                        memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(-baseAddress + d2LangAddress + 0x10A84);
-                        memoryTable.Address.ExpansionStringAddressTable = new IntPtr(-baseAddress + d2LangAddress + 0x10A70);
+                        memoryTable.Address.StringIndexerTable = new IntPtr(d2LangAddress + 0x10A64);
+                        memoryTable.Address.StringAddressTable = new IntPtr(d2LangAddress + 0x10a68);
+                        memoryTable.Address.PatchStringIndexerTable = new IntPtr(d2LangAddress + 0x10A80);
+                        memoryTable.Address.PatchStringAddressTable = new IntPtr(d2LangAddress + 0x10A6C);
+                        memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(d2LangAddress + 0x10A84);
+                        memoryTable.Address.ExpansionStringAddressTable = new IntPtr(d2LangAddress + 0x10A70);
                     } catch(KeyNotFoundException ex)
                     {
                         // TODO: throw ProcessMemoryReadException instead...
