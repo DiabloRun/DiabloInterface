@@ -1,8 +1,3 @@
-﻿using Zutatensuppe.D2Reader.Struct.Stat;
-using System;
-using System.Collections.Generic;
-using Zutatensuppe.D2Reader.Models;
-
 namespace Zutatensuppe.D2Reader
 {
     using System;
@@ -10,6 +5,7 @@ namespace Zutatensuppe.D2Reader
 
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.D2Reader.Struct.Stat;
+    using Zutatensuppe.DiabloInterface.Core;
 
     public class Character
     {
@@ -107,10 +103,10 @@ namespace Zutatensuppe.D2Reader
             int maxLightning = BASE_MAX_RESIST + getStat(StatIdentifier.ResistLightningMax);
             int maxPoison = BASE_MAX_RESIST + getStat(StatIdentifier.ResistPoisonMax);
 
-            FireResist = Clamp(getStat(StatIdentifier.ResistFire) + penalty, MIN_RESIST, maxFire);
-            ColdResist = Clamp(getStat(StatIdentifier.ResistCold) + penalty, MIN_RESIST, maxCold);
-            LightningResist = Clamp(getStat(StatIdentifier.ResistLightning) + penalty, MIN_RESIST, maxLightning);
-            PoisonResist = Clamp(getStat(StatIdentifier.ResistPoison) + penalty, MIN_RESIST, maxPoison);
+            FireResist = Utility.Clamp(getStat(StatIdentifier.ResistFire) + penalty, MIN_RESIST, maxFire);
+            ColdResist = Utility.Clamp(getStat(StatIdentifier.ResistCold) + penalty, MIN_RESIST, maxCold);
+            LightningResist = Utility.Clamp(getStat(StatIdentifier.ResistLightning) + penalty, MIN_RESIST, maxLightning);
+            PoisonResist = Utility.Clamp(getStat(StatIdentifier.ResistPoison) + penalty, MIN_RESIST, maxPoison);
 
             FasterHitRecovery = getItemStat(StatIdentifier.FasterHitRecovery);
             FasterRunWalk = getItemStat(StatIdentifier.FasterRunWalk);
@@ -119,15 +115,6 @@ namespace Zutatensuppe.D2Reader
 
             Gold = getStat(StatIdentifier.Gold);
             GoldStash = getStat(StatIdentifier.GoldStash);
-        }
-
-        static T Clamp<T>(T value, T min, T max) where T : IComparable<T>
-        {
-            if (value.CompareTo(min) < 0)
-                return min;
-            else if (value.CompareTo(max) > 0)
-                return max;
-            else return value;
         }
 
         public void UpdateMode(D2Data.Mode mode)

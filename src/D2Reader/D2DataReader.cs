@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.D2Reader
+namespace Zutatensuppe.D2Reader
 {
     using System;
     using System.Collections.Generic;

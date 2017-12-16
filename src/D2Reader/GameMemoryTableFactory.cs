@@ -31,7 +31,7 @@ namespace Zutatensuppe.D2Reader
             // for information about how to find addresses for a different version of the game.
             switch (gameVersion)
             {
-                case "1, 0, 13, 60": // 1.13c
+                case Models.GameVersion.V113C:
                     int baseAddress = 0x400000;
                     int d2CommonAddress = 0x6FD50000 - baseAddress; // D2Common.dll
                     int d2LaunchAddress = 0x6FA40000 - baseAddress; // D2Launch.dll
@@ -50,7 +50,7 @@ namespace Zutatensuppe.D2Reader
                     memoryTable.Address.RareModifierTable = new IntPtr(d2CommonAddress + 0x9FBDC);
 
                     memoryTable.Address.PlayerUnit = new IntPtr(0x0010A60C);
-                    memoryTable.Address.Area = new IntPtr(0); // TODO!!!
+                    memoryTable.Address.Area = new IntPtr(d2ClientAddress + 0x0011C310);
                     memoryTable.Address.StringIndexerTable = new IntPtr(d2LangAddress + 0xA340);
                     memoryTable.Address.StringAddressTable = new IntPtr(d2LangAddress + 0xA344);
                     memoryTable.Address.PatchStringIndexerTable = new IntPtr(0); // TODO!!!
@@ -59,9 +59,9 @@ namespace Zutatensuppe.D2Reader
                     memoryTable.Address.ExpansionStringAddressTable = new IntPtr(d2LangAddress + 0x10A70);
 
                     break;
-                case "1, 0, 13, 64": // 1.13d
-                    break;
-                case "1.14.1.68": // 1.14b
+                case Models.GameVersion.V113D:
+                    throw new GameVersionUnsupportedException(gameVersion);
+                case Models.GameVersion.V114B:
                     memoryTable.Address.GlobalData = new IntPtr(0x00340D78);
 
                     memoryTable.Address.World = new IntPtr(0x0047BD78);
@@ -81,7 +81,7 @@ namespace Zutatensuppe.D2Reader
                     memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x47AB00);
 
                     break;
-                case "1.14.2.70": // 1.14c
+                case Models.GameVersion.V114C:
                     memoryTable.Address.GlobalData = new IntPtr(0x33FD78);
 
                     memoryTable.Address.World = new IntPtr(0x0047ACC0);
@@ -101,7 +101,7 @@ namespace Zutatensuppe.D2Reader
                     memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x479A48);
 
                     break;
-                case "1.14.3.71": // 1.14d
+                case Models.GameVersion.V114D:
                     memoryTable.Address.GlobalData = new IntPtr(0x00344304);
 
                     memoryTable.Address.World = new IntPtr(0x00483D38);

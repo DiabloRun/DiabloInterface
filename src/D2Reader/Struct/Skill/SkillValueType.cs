@@ -1,4 +1,4 @@
-﻿
+
 namespace Zutatensuppe.D2Reader.Struct.Skill
 {
     // when a value for a skill is read, this is used in a switch case to determine, 
@@ -21,6 +21,6 @@ namespace Zutatensuppe.D2Reader.Struct.Skill
         // 13
         PARAM_7 = 14,
         PARAM_8 = 15,
-        TOTAL_SKILLPOINTS = 16, // returns just param 4, which is the curret total numbper of skill points for the skill
+        TOTAL_SKILLPOINTS = 16, // returns just param 4, which is the curret total number of skill points for the skill
     }
 }
