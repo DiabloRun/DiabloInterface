@@ -1,4 +1,4 @@
-﻿using Zutatensuppe.D2Reader.Struct;
+using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Stat;
 using System;
 using System.Collections.Generic;
@@ -123,32 +123,6 @@ namespace Zutatensuppe.D2Reader.Readers
             HasPoisonRange = HasRangeFor(PoisonMinDamage, PoisonMaxDamage);
         }
 
-        bool HasRangeFor(int min, int max)
-        {
-            return min != 0 && max != 0;
-        }
-
-        string FormatSimpleDamage(int min, int max, ushort equalStringId, ushort differStringId)
-        {
-            int arguments;
-            if (min == max)
-            {
-                // Example: "Adds 1 to minimum damage"
-                string format = stringReader.GetString(equalStringId);
-                format = stringReader.ConvertCFormatString(format, out arguments).TrimEnd();
-                if (arguments != 1) return null;
-                return string.Format(format, min);
-            }
-            else
-            {
-                // Example: "Adds 1-2 damage"
-                string format = stringReader.GetString(differStringId);
-                format = stringReader.ConvertCFormatString(format, out arguments).TrimEnd();
-                if (arguments != 2) return null;
-                return string.Format(format, min, max);
-            }
-        }
-
         public bool TryHandleStat(D2Stat stat, out string description)
         {
             description = null;
@@ -187,13 +161,11 @@ namespace Zutatensuppe.D2Reader.Readers
 
                 // Handle enhanced damage.
                 case StatIdentifier.ItemDamageMinPercent:
-                    {
-                        if (!HasDamagePercentRange)
-                            return false;
-                        string enhanced = stringReader.GetString(StringConstants.EnhancedDamage);
-                        description = string.Format("+{0}% {1}", stat.Value, enhanced.TrimEnd());
-                        return true;
-                    }
+                    if (!HasDamagePercentRange)
+                        return false;
+                    string enhanced = stringReader.GetString(StringConstants.EnhancedDamage);
+                    description = string.Format("+{0}% {1}", stat.Value, enhanced.TrimEnd());
+                    return true;
                 case StatIdentifier.ItemDamageMaxPercent:
                     return HasDamagePercentRange;
 
@@ -250,39 +222,56 @@ namespace Zutatensuppe.D2Reader.Readers
                 case StatIdentifier.PoisonDamageDuration:
                     return HasPoisonRange;
                 case StatIdentifier.PoisonDamageMin:
-                    {
-                        if (!HasPoisonRange) return false;
-                        int divisor = PoisonDivisor == 0 ? 1 : PoisonDivisor;
-                        int duration = PoisonDuration / divisor;
-                        int min = (PoisonMinDamage * duration + 128) / 256;
-                        int max = (PoisonMaxDamage * duration + 128) / 256;
-                        duration /= 25;
-
-                        if (min == max)
-                        {
-                            // Example: "6 Poison damage over 2 seconds"
-                            int arguments;
-                            string format = stringReader.GetString(StringConstants.PoisonOverTimeSame);
-                            format = stringReader.ConvertCFormatString(format, out arguments);
-                            if (arguments != 2) return true;
-                            description = string.Format(format, min, duration).TrimEnd();
-                        }
-                        else
-                        {
-                            // Example: "2-10 Poison damage over 2 seconds"
-                            int arguments;
-                            string format = stringReader.GetString(StringConstants.PoisonOverTime);
-                            format = stringReader.ConvertCFormatString(format, out arguments);
-                            if (arguments != 3) return true;
-                            description = string.Format(format, min, max, duration).TrimEnd();
-                        }
-
-                        return true;
-                    }
+                    if (!HasPoisonRange) return false;
+                    int divisor = PoisonDivisor == 0 ? 1 : PoisonDivisor;
+                    int duration = PoisonDuration / divisor;
+                    int min = (PoisonMinDamage * duration + 128) / 256;
+                    int max = (PoisonMaxDamage * duration + 128) / 256;
+                    duration /= 25;
+                    description = FormatPoisonDamage(min, max, duration);
+                    return true;
 
                     // By default, the stat is not handled.
                 default: return false;
             }
+        }
+
+        private string FormatDamage(int[] args, ushort stringId)
+        {
+            int arguments;
+            string format = stringReader.GetString(stringId);
+            format = stringReader.ConvertCFormatString(format, out arguments);
+            if (arguments != args.Length) return null;
+            return string.Format(format, args).TrimEnd();
+        }
+
+        private string FormatSimpleDamage(int min, int max, ushort equalStringId, ushort differStringId)
+        {
+            if (min == max)
+            {
+                // Example: "Adds 1 to minimum damage"
+                return FormatDamage(new int[] { min }, equalStringId);
+            }
+
+            // Example: "Adds 1-2 damage"
+            return FormatDamage(new int[] { min, max }, differStringId);
+        }
+
+        private string FormatPoisonDamage(int min, int max, int duration)
+        {
+            if (min == max)
+            {
+                // Example: "6 Poison damage over 2 seconds"
+                return FormatDamage(new int[] { min, duration }, StringConstants.PoisonOverTimeSame);
+            }
+
+            // Example: "2-10 Poison damage over 2 seconds"
+            return FormatDamage(new int[] { min, max, duration }, StringConstants.PoisonOverTime);
+        }
+
+        private bool HasRangeFor(int min, int max)
+        {
+            return min != 0 && max != 0;
         }
     }
 }

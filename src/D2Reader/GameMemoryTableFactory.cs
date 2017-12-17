@@ -32,16 +32,17 @@ namespace Zutatensuppe.D2Reader
             // for information about how to find addresses for a different version of the game.
             switch (gameVersion)
             {
-                case Models.GameVersion.V113C:
-                    int baseAddress = 0x400000;
+                case Models.GameVersion.Version_1_13_C:
                     try
                     {
-                        int d2CommonAddress = moduleBaseAddresses[Models.D2Module.D2Common].ToInt32() - baseAddress; // D2Common.dll
-                        int d2LaunchAddress = moduleBaseAddresses[Models.D2Module.D2Launch].ToInt32() - baseAddress; // D2Launch.dll
-                        int d2LangAddress = moduleBaseAddresses[Models.D2Module.D2Lang].ToInt32() - baseAddress; // D2Lang.dll
-                        int d2NetAddress = moduleBaseAddresses[Models.D2Module.D2Net].ToInt32() - baseAddress; // D2Net.dll
-                        int d2GameAddress = moduleBaseAddresses[Models.D2Module.D2Game].ToInt32() - baseAddress; // D2Game.dll
-                        int d2ClientAddress = moduleBaseAddresses[Models.D2Module.D2Client].ToInt32() - baseAddress; // D2Client.dll
+                        int baseAddress = 0x400000;
+                        int d2CommonAddress = moduleBaseAddresses[Models.D2Module.D2Common].ToInt32() - baseAddress;
+                        int d2LaunchAddress = moduleBaseAddresses[Models.D2Module.D2Launch].ToInt32() - baseAddress;
+                        int d2LangAddress = moduleBaseAddresses[Models.D2Module.D2Lang].ToInt32() - baseAddress;
+                        int d2NetAddress = moduleBaseAddresses[Models.D2Module.D2Net].ToInt32() - baseAddress;
+                        int d2GameAddress = moduleBaseAddresses[Models.D2Module.D2Game].ToInt32() - baseAddress;
+                        int d2ClientAddress = moduleBaseAddresses[Models.D2Module.D2Client].ToInt32() - baseAddress;
+
                         memoryTable.Address.GlobalData = new IntPtr(d2CommonAddress + 0x00099E1C);
 
                         memoryTable.Address.World = new IntPtr(d2GameAddress + 0x111C24);
@@ -60,17 +61,49 @@ namespace Zutatensuppe.D2Reader
                         memoryTable.Address.PatchStringAddressTable = new IntPtr(d2LangAddress + 0x10A6C);
                         memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(d2LangAddress + 0x10A84);
                         memoryTable.Address.ExpansionStringAddressTable = new IntPtr(d2LangAddress + 0x10A70);
-                    } catch(KeyNotFoundException ex)
+                    }
+                    catch (KeyNotFoundException)
                     {
                         // TODO: throw ProcessMemoryReadException instead...
                         throw new GameVersionUnsupportedException(gameVersion);
                     }
-
-
                     break;
-                case Models.GameVersion.V113D:
-                    throw new GameVersionUnsupportedException(gameVersion);
-                case Models.GameVersion.V114B:
+                case Models.GameVersion.Version_1_13_D:
+                    try
+                    {
+                        int baseAddress = 0x400000;
+                        int d2CommonAddress = moduleBaseAddresses[Models.D2Module.D2Common].ToInt32() - baseAddress;
+                        int d2LaunchAddress = moduleBaseAddresses[Models.D2Module.D2Launch].ToInt32() - baseAddress;
+                        int d2LangAddress = moduleBaseAddresses[Models.D2Module.D2Lang].ToInt32() - baseAddress;
+                        int d2NetAddress = moduleBaseAddresses[Models.D2Module.D2Net].ToInt32() - baseAddress;
+                        int d2GameAddress = moduleBaseAddresses[Models.D2Module.D2Game].ToInt32() - baseAddress;
+                        int d2ClientAddress = moduleBaseAddresses[Models.D2Module.D2Client].ToInt32() - baseAddress;
+
+                        memoryTable.Address.GlobalData = new IntPtr(d2CommonAddress + 0x000A33F0);
+                        memoryTable.Address.World = new IntPtr(d2GameAddress + 0x111C10);
+                        memoryTable.Address.GameId = new IntPtr(d2NetAddress + 0xB420); //  and the pointer to that address is: new IntPtr(d2NetAddress + 0x70A8);
+                        memoryTable.Address.LowQualityItems = new IntPtr(d2CommonAddress + 0xA4EB0);
+                        memoryTable.Address.ItemDescriptions = new IntPtr(d2CommonAddress + 0xA4CB0);
+                        memoryTable.Address.MagicModifierTable = new IntPtr(d2CommonAddress + 0xA4CD4);
+                        memoryTable.Address.RareModifierTable = new IntPtr(d2CommonAddress + 0xA4CF8);
+
+                        memoryTable.Address.PlayerUnit = new IntPtr(d2ClientAddress + 0x00101024);
+                        memoryTable.Address.Area = new IntPtr(d2ClientAddress + 0x0008F66C);
+
+                        memoryTable.Address.StringIndexerTable = new IntPtr(d2LangAddress + 0x10A64); //TODO
+                        memoryTable.Address.StringAddressTable = new IntPtr(d2LangAddress + 0x10a68); //TODO
+                        memoryTable.Address.PatchStringIndexerTable = new IntPtr(d2LangAddress + 0x10A80); //TODO
+                        memoryTable.Address.PatchStringAddressTable = new IntPtr(d2LangAddress + 0x10A6C); //TODO
+                        memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(d2LangAddress + 0x10A84); //TODO
+                        memoryTable.Address.ExpansionStringAddressTable = new IntPtr(d2LangAddress + 0x10A70); //TODO
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        // TODO: throw ProcessMemoryReadException instead...
+                        throw new GameVersionUnsupportedException(gameVersion);
+                    }
+                    break;
+                case Models.GameVersion.Version_1_14_B:
                     memoryTable.Address.GlobalData = new IntPtr(0x00340D78);
 
                     memoryTable.Address.World = new IntPtr(0x0047BD78);
@@ -90,7 +123,7 @@ namespace Zutatensuppe.D2Reader
                     memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x47AB00);
 
                     break;
-                case Models.GameVersion.V114C:
+                case Models.GameVersion.Version_1_14_C:
                     memoryTable.Address.GlobalData = new IntPtr(0x33FD78);
 
                     memoryTable.Address.World = new IntPtr(0x0047ACC0);
@@ -110,7 +143,7 @@ namespace Zutatensuppe.D2Reader
                     memoryTable.Address.ExpansionStringAddressTable = new IntPtr(0x479A48);
 
                     break;
-                case Models.GameVersion.V114D:
+                case Models.GameVersion.Version_1_14_D:
                     memoryTable.Address.GlobalData = new IntPtr(0x00344304);
 
                     memoryTable.Address.World = new IntPtr(0x00483D38);

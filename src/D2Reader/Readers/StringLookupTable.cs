@@ -41,6 +41,20 @@ namespace Zutatensuppe.D2Reader.Readers
         public const ushort ItemSkillLevel      = 0x5301;
     }
 
+    class StringTable
+    {
+        public IntPtr indexTable;
+        public IntPtr addressTable;
+        public ushort identifierOffset;
+
+        public StringTable(IntPtr i, IntPtr a, ushort io = 0)
+        {
+            indexTable = i;
+            addressTable = a;
+            identifierOffset = io;
+        }
+    }
+
     public class StringLookupTable
     {
         ProcessMemoryReader reader;
@@ -54,8 +68,33 @@ namespace Zutatensuppe.D2Reader.Readers
             this.memory = memory;
         }
 
-        private string LookupStringTable(ushort identifier, IntPtr indexerTable, IntPtr addressTable)
+        public string GetString(ushort identifier)
         {
+            // Check cache before reading from process.
+            string identifierString;
+            if (StringCache.TryGetValue(identifier, out identifierString))
+                return identifierString;
+
+            // Look up the string using the correct tables.
+            identifierString = LookupStringTable(identifier);
+
+            // Only cache valid strings.
+            if (identifierString != null)
+                StringCache[identifier] = identifierString;
+            return identifierString;
+        }
+
+        private string LookupStringTable(ushort identifier)
+        {
+            StringTable strTable = GetStringTableByIdentifier(identifier);
+            identifier -= strTable.identifierOffset;
+
+            IntPtr indexerTable = reader.ReadAddress32(strTable.indexTable, AddressingMode.Relative);
+            if (indexerTable == IntPtr.Zero) return null;
+
+            IntPtr addressTable = reader.ReadAddress32(strTable.addressTable, AddressingMode.Relative);
+            if (addressTable == IntPtr.Zero) return null;
+
             /*
                 Info by [qhris].
 
@@ -107,51 +146,22 @@ namespace Zutatensuppe.D2Reader.Readers
             return reader.GetNullTerminatedString(stringAddress, 0x100, 0x4000, Encoding.Unicode, AddressingMode.Absolute);
         }
 
-        public string GetString(ushort identifier)
+        private StringTable GetStringTableByIdentifier(ushort identifier)
         {
-            // Check cache before reading from process.
-            string identifierString;
-            if (StringCache.TryGetValue(identifier, out identifierString))
-                return identifierString;
-
-            IntPtr indexerTable = IntPtr.Zero;
-            IntPtr addressTable = IntPtr.Zero;
-
             // Handle expansion strings.
             if (identifier >= 0x4E20) // 20.000
             {
-                identifier -= 0x4E20;
-                indexerTable = memory.ExpansionStringIndexerTable;
-                addressTable = memory.ExpansionStringAddressTable;
+                return new StringTable(memory.ExpansionStringIndexerTable, memory.ExpansionStringAddressTable, 0x4E20);
             }
+
             // Handle patch strings.
-            else if (identifier >= 0x2710) // 10.000
+            if (identifier >= 0x2710) // 10.000
             {
-                identifier -= 0x2710;
-                indexerTable = memory.PatchStringIndexerTable;
-                addressTable = memory.PatchStringAddressTable;
+                return new StringTable(memory.PatchStringIndexerTable, memory.PatchStringAddressTable, 0x2710);
             }
+
             // Handle default strings.
-            else
-            {
-                indexerTable = memory.StringIndexerTable;
-                addressTable = memory.StringAddressTable;
-            }
-
-            // Get tables pointers.
-            indexerTable = reader.ReadAddress32(indexerTable, AddressingMode.Relative);
-            if (indexerTable == IntPtr.Zero) return null;
-
-            addressTable = reader.ReadAddress32(addressTable, AddressingMode.Relative);
-            if (addressTable == IntPtr.Zero) return null;
-
-            // Look up the string using the correct tables.
-            identifierString = LookupStringTable(identifier, indexerTable, addressTable);
-
-            // Only cache valid strings.
-            if (identifierString != null)
-                StringCache[identifier] = identifierString;
-            return identifierString;
+            return new StringTable(memory.StringIndexerTable, memory.StringAddressTable);
         }
 
         /// <summary>

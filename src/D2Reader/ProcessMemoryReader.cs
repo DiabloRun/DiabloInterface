@@ -210,9 +210,12 @@ namespace Zutatensuppe.D2Reader
         {
             // Get relative address if wanted.
             if (addressingMode == AddressingMode.Relative)
+            {
                 return new IntPtr((long)baseAddress + (long)address);
+            }
+
             // Already in absolute form.
-            else return address;
+            return address;
         }
 
         public IntPtr ResolveAddressPath(IntPtr baseAddress, int[] pathOffsets, AddressingMode addressing = AddressingMode.Absolute)
