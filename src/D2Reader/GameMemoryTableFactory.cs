@@ -5,7 +5,7 @@ namespace Zutatensuppe.D2Reader
 
     public interface IGameMemoryTableFactory
     {
-        GameMemoryTable CreateForVersion(string gameVersion, Dictionary<Models.D2Module, IntPtr> moduleBaseAddresses);
+        GameMemoryTable CreateForVersion(string gameVersion, Dictionary<string, IntPtr> moduleBaseAddresses);
     }
 
     public class GameVersionUnsupportedException : Exception
@@ -20,7 +20,7 @@ namespace Zutatensuppe.D2Reader
 
     public class GameMemoryTableFactory : IGameMemoryTableFactory
     {
-        public GameMemoryTable CreateForVersion(string gameVersion, Dictionary<Models.D2Module, IntPtr> moduleBaseAddresses)
+        public GameMemoryTable CreateForVersion(string gameVersion, Dictionary<string, IntPtr> moduleBaseAddresses)
         {
             var memoryTable = new GameMemoryTable
             {
@@ -36,12 +36,12 @@ namespace Zutatensuppe.D2Reader
                     try
                     {
                         int baseAddress = 0x400000;
-                        int d2CommonAddress = moduleBaseAddresses[Models.D2Module.D2Common].ToInt32() - baseAddress;
-                        int d2LaunchAddress = moduleBaseAddresses[Models.D2Module.D2Launch].ToInt32() - baseAddress;
-                        int d2LangAddress = moduleBaseAddresses[Models.D2Module.D2Lang].ToInt32() - baseAddress;
-                        int d2NetAddress = moduleBaseAddresses[Models.D2Module.D2Net].ToInt32() - baseAddress;
-                        int d2GameAddress = moduleBaseAddresses[Models.D2Module.D2Game].ToInt32() - baseAddress;
-                        int d2ClientAddress = moduleBaseAddresses[Models.D2Module.D2Client].ToInt32() - baseAddress;
+                        int d2CommonAddress = moduleBaseAddresses["D2Common.dll"].ToInt32() - baseAddress;
+                        int d2LaunchAddress = moduleBaseAddresses["D2Launch.dll"].ToInt32() - baseAddress;
+                        int d2LangAddress = moduleBaseAddresses["D2Lang.dll"].ToInt32() - baseAddress;
+                        int d2NetAddress = moduleBaseAddresses["D2Net.dll"].ToInt32() - baseAddress;
+                        int d2GameAddress = moduleBaseAddresses["D2Game.dll"].ToInt32() - baseAddress;
+                        int d2ClientAddress = moduleBaseAddresses["D2Client.dll"].ToInt32() - baseAddress;
 
                         memoryTable.Address.GlobalData = new IntPtr(d2CommonAddress + 0x00099E1C);
 
@@ -72,12 +72,12 @@ namespace Zutatensuppe.D2Reader
                     try
                     {
                         int baseAddress = 0x400000;
-                        int d2CommonAddress = moduleBaseAddresses[Models.D2Module.D2Common].ToInt32() - baseAddress;
-                        int d2LaunchAddress = moduleBaseAddresses[Models.D2Module.D2Launch].ToInt32() - baseAddress;
-                        int d2LangAddress = moduleBaseAddresses[Models.D2Module.D2Lang].ToInt32() - baseAddress;
-                        int d2NetAddress = moduleBaseAddresses[Models.D2Module.D2Net].ToInt32() - baseAddress;
-                        int d2GameAddress = moduleBaseAddresses[Models.D2Module.D2Game].ToInt32() - baseAddress;
-                        int d2ClientAddress = moduleBaseAddresses[Models.D2Module.D2Client].ToInt32() - baseAddress;
+                        int d2CommonAddress = moduleBaseAddresses["D2Common.dll"].ToInt32() - baseAddress;
+                        int d2LaunchAddress = moduleBaseAddresses["D2Launch.dll"].ToInt32() - baseAddress;
+                        int d2LangAddress = moduleBaseAddresses["D2Lang.dll"].ToInt32() - baseAddress;
+                        int d2NetAddress = moduleBaseAddresses["D2Net.dll"].ToInt32() - baseAddress;
+                        int d2GameAddress = moduleBaseAddresses["D2Game.dll"].ToInt32() - baseAddress;
+                        int d2ClientAddress = moduleBaseAddresses["D2Client.dll"].ToInt32() - baseAddress;
 
                         memoryTable.Address.GlobalData = new IntPtr(d2CommonAddress + 0x000A33F0);
                         memoryTable.Address.World = new IntPtr(d2GameAddress + 0x111C10);

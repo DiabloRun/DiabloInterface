@@ -5,34 +5,104 @@ using System.Collections.Generic;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
+
+    class RangeStatDamage
+    {
+        public int min;
+        public int max;
+
+        public ushort equalStringId;
+        public ushort differStringId;
+
+        public RangeStatDamage(ushort equalStringId, ushort differStringId)
+        {
+            this.equalStringId = equalStringId;
+            this.differStringId = differStringId;
+        }
+
+        public bool HasRange()
+        {
+            return min != 0 && max != 0;
+        }
+
+        public string ToString(StringLookupTable stringLookupTable)
+        {
+            if (min == max)
+            {
+                // Example: "Adds 1 to minimum damage"
+                return _toString(stringLookupTable, new int[] { min }, equalStringId);
+            }
+
+            // Example: "Adds 1-2 damage"
+            return _toString(stringLookupTable, new int[] { min, max }, differStringId);
+        }
+
+        protected string _toString(StringLookupTable stringLookupTable, int[] args, ushort stringId)
+        {
+            string str = stringLookupTable.GetString(stringId);
+            int arguments;
+            string format = stringLookupTable.ConvertCFormatString(str, out arguments);
+            if (arguments != args.Length)
+            {
+                return null;
+            }
+            return string.Format(format, args).TrimEnd();
+        }
+
+    }
+
+    class RangeStatPoisonDamage : RangeStatDamage
+    {
+        public int duration;
+        public int divisor;
+
+        public RangeStatPoisonDamage() : base(StringConstants.PoisonOverTimeSame, StringConstants.PoisonOverTime)
+        {
+        }
+
+        public new string ToString(StringLookupTable stringLookupTable)
+        {
+            int min = calculatedDamage(this.min);
+            int max = calculatedDamage(this.max);
+            if (min == max)
+            {
+                // Example: "6 Poison damage over 2 seconds"
+                return _toString(stringLookupTable, new int[] { min, calculatedDuration() }, equalStringId);
+            }
+
+            // Example: "2-10 Poison damage over 2 seconds"
+            return _toString(stringLookupTable, new int[] { min, max, calculatedDuration() }, differStringId);
+        }
+
+        private int calculatedDuration()
+        {
+            return effectiveDuration() / 25;
+        }
+
+        private int calculatedDamage(int dmg)
+        {
+            return (dmg * effectiveDuration() + 128) / 256;
+        }
+
+        private int effectiveDuration()
+        {
+            return duration / (divisor == 0 ? 1 : divisor);
+        }
+    }
+
     class RangeStatData
     {
-        public int DamageMin { get; private set; }
-        public bool IsDamageMinSecondary { get; private set; }
-        public int DamageMax { get; private set; }
-        public bool IsDamageMaxSecondary { get; private set; }
-        public bool HasDamageRange { get; private set; }
-        public bool HasHandledDamageRange { get; private set; }
-        public int DamagePercentMin { get; private set; }
-        public int DamagePercentMax { get; private set; }
-        public bool HasDamagePercentRange { get; private set; }
-        public int FireMinDamage { get; private set; }
-        public int FireMaxDamage { get; private set; }
-        public bool HasFireRange { get; private set; }
-        public int LightningMinDamage { get; private set; }
-        public int LightningMaxDamage { get; private set; }
-        public bool HasLightningRange { get; private set; }
-        public int ColdMinDamage { get; private set; }
-        public int ColdMaxDamage { get; private set; }
-        public bool HasColdRange { get; private set; }
-        public int PoisonMinDamage { get; private set; }
-        public int PoisonMaxDamage { get; private set; }
-        public int PoisonDuration { get; private set; }
-        public int PoisonDivisor { get; private set; }
-        public bool HasPoisonRange { get; private set; }
-        public int MagicMinDamage { get; private set; }
-        public int MagicMaxDamage { get; private set; }
-        public bool HasMagicRange { get; private set; }
+        private RangeStatDamage damage;
+        private RangeStatDamage damagePercent;
+        private RangeStatDamage fireDamage;
+        private RangeStatDamage lightningDamage;
+        private RangeStatDamage coldDamage;
+        private RangeStatDamage magicDamage;
+        private RangeStatPoisonDamage poisonDamage;
+
+        private bool IsDamageMinSecondary;
+        private bool IsDamageMaxSecondary;
+        private bool HasHandledDamageRange;
 
         private StringLookupTable stringReader;
 
@@ -40,7 +110,21 @@ namespace Zutatensuppe.D2Reader.Readers
         {
             stringReader = reader;
 
-            Func<StatIdentifier, D2Stat> findStat = id => {
+            damage = new RangeStatDamage(StringConstants.DamageRange, StringConstants.DamageRange);
+            damagePercent = new RangeStatDamage(0, 0);
+            fireDamage = new RangeStatDamage(StringConstants.FireDamage, StringConstants.FireDamageRange);
+            lightningDamage = new RangeStatDamage(StringConstants.LightningDamage, StringConstants.LightningDamageRange);
+            coldDamage = new RangeStatDamage(StringConstants.ColdDamage, StringConstants.ColdDamageRange);
+            magicDamage = new RangeStatDamage(StringConstants.MagicDamage, StringConstants.MagicDamageRange);
+            poisonDamage = new RangeStatPoisonDamage();
+
+            ReadStatData(stats);
+        }
+
+        private void ReadStatData(List<D2Stat> stats)
+        {
+            Func<StatIdentifier, D2Stat> findStat = id =>
+            {
                 int index = stats.FindIndex(x => x.LoStatID == (ushort)id);
                 return index >= 0 ? stats[index] : null;
             };
@@ -53,74 +137,62 @@ namespace Zutatensuppe.D2Reader.Readers
                 switch ((StatIdentifier)stat.LoStatID)
                 {
                     case StatIdentifier.DamageMin:
-                        DamageMin = stat.Value;
-                        if (DamageMin == 0)
+                        damage.min = stat.Value;
+                        if (damage.min == 0)
                         {
                             var twoHandDamage = findStat(StatIdentifier.SecondaryDamageMin);
-                            if (twoHandDamage != null) DamageMin = twoHandDamage.Value;
+                            if (twoHandDamage != null) damage.min = twoHandDamage.Value;
 
-                            IsDamageMinSecondary = DamageMin != 0;
+                            IsDamageMinSecondary = damage.min != 0;
                         }
                         break;
                     case StatIdentifier.DamageMax:
-                        DamageMax = stat.Value;
-                        if (DamageMax == 0)
+                        damage.max = stat.Value;
+                        if (damage.max == 0)
                         {
                             var twoHandDamage = findStat(StatIdentifier.SecondaryDamageMax);
-                            if (twoHandDamage != null) DamageMax = twoHandDamage.Value;
+                            if (twoHandDamage != null) damage.max = twoHandDamage.Value;
 
-                            IsDamageMaxSecondary = DamageMax != 0;
+                            IsDamageMaxSecondary = damage.max != 0;
                         }
                         break;
                     case StatIdentifier.SecondaryDamageMin:
-                        {
-                            var oneHandDamage = findStat(StatIdentifier.DamageMin);
-                            if (oneHandDamage != null) DamageMin = oneHandDamage.Value;
+                        var oneHandDamageMin = findStat(StatIdentifier.DamageMin);
+                        if (oneHandDamageMin != null) damage.min = oneHandDamageMin.Value;
 
-                            if (DamageMin == 0)
-                            {
-                                DamageMin = stat.Value;
-                                IsDamageMinSecondary = stat.Value != 0;
-                            }
-                            break;
+                        if (damage.min == 0)
+                        {
+                            damage.min = stat.Value;
+                            IsDamageMinSecondary = stat.Value != 0;
                         }
+                        break;
                     case StatIdentifier.SecondaryDamageMax:
-                        {
-                            var oneHandDamage = findStat(StatIdentifier.DamageMax);
-                            if (oneHandDamage != null) DamageMax = oneHandDamage.Value;
+                        var oneHandDamageMax = findStat(StatIdentifier.DamageMax);
+                        if (oneHandDamageMax != null) damage.max = oneHandDamageMax.Value;
 
-                            if (DamageMax == 0)
-                            {
-                                DamageMax = stat.Value;
-                                IsDamageMaxSecondary = stat.Value != 0;
-                            }
-                            break;
+                        if (damage.max == 0)
+                        {
+                            damage.max = stat.Value;
+                            IsDamageMaxSecondary = stat.Value != 0;
                         }
-                    case StatIdentifier.ItemDamageMinPercent:   DamagePercentMin = stat.Value; break;
-                    case StatIdentifier.ItemDamageMaxPercent:   DamagePercentMax = stat.Value; break;
-                    case StatIdentifier.FireDamageMin:          FireMinDamage = stat.Value; break;
-                    case StatIdentifier.FireDamageMax:          FireMaxDamage = stat.Value; break;
-                    case StatIdentifier.LightningDamageMin:     LightningMinDamage = stat.Value; break;
-                    case StatIdentifier.LightningDamageMax:     LightningMaxDamage = stat.Value; break;
-                    case StatIdentifier.MagicDamageMin:         MagicMinDamage = stat.Value; break;
-                    case StatIdentifier.MagicDamageMax:         MagicMaxDamage = stat.Value; break;
-                    case StatIdentifier.ColdDamageMin:          ColdMinDamage = stat.Value; break;
-                    case StatIdentifier.ColdDamageMax:          ColdMaxDamage = stat.Value; break;
-                    case StatIdentifier.PoisonDamageMin:        PoisonMinDamage = stat.Value; break;
-                    case StatIdentifier.PoisonDamageMax:        PoisonMaxDamage = stat.Value; break;
-                    case StatIdentifier.PoisonDamageDuration:   PoisonDuration = stat.Value; break;
-                    case StatIdentifier.PoisonDivisor:          PoisonDivisor = stat.Value; break;
+                        break;
+                    case StatIdentifier.ItemDamageMinPercent: damagePercent.min = stat.Value; break;
+                    case StatIdentifier.ItemDamageMaxPercent: damagePercent.max = stat.Value; break;
+                    case StatIdentifier.FireDamageMin: fireDamage.min = stat.Value; break;
+                    case StatIdentifier.FireDamageMax: fireDamage.max = stat.Value; break;
+                    case StatIdentifier.LightningDamageMin: lightningDamage.min = stat.Value; break;
+                    case StatIdentifier.LightningDamageMax: lightningDamage.max = stat.Value; break;
+                    case StatIdentifier.MagicDamageMin: magicDamage.min = stat.Value; break;
+                    case StatIdentifier.MagicDamageMax: magicDamage.max = stat.Value; break;
+                    case StatIdentifier.ColdDamageMin: coldDamage.min = stat.Value; break;
+                    case StatIdentifier.ColdDamageMax: coldDamage.max = stat.Value; break;
+                    case StatIdentifier.PoisonDamageMin: poisonDamage.min = stat.Value; break;
+                    case StatIdentifier.PoisonDamageMax: poisonDamage.max = stat.Value; break;
+                    case StatIdentifier.PoisonDamageDuration: poisonDamage.duration = stat.Value; break;
+                    case StatIdentifier.PoisonDivisor: poisonDamage.divisor = stat.Value; break;
                     default: break;
                 }
             }
-
-            HasDamageRange = HasRangeFor(DamageMin, DamageMax);
-            HasDamagePercentRange = HasRangeFor(DamagePercentMin, DamagePercentMax);
-            HasFireRange = HasRangeFor(FireMinDamage, FireMaxDamage);
-            HasLightningRange = HasRangeFor(LightningMinDamage, LightningMaxDamage);
-            HasMagicRange = HasRangeFor(MagicMinDamage, MagicMaxDamage);
-            HasColdRange = HasRangeFor(ColdMinDamage, ColdMaxDamage);
-            HasPoisonRange = HasRangeFor(PoisonMinDamage, PoisonMaxDamage);
         }
 
         public bool TryHandleStat(D2Stat stat, out string description)
@@ -132,7 +204,7 @@ namespace Zutatensuppe.D2Reader.Readers
 
             switch ((StatIdentifier)stat.LoStatID)
             {
-                //Handle one and two handed damage.
+                // Handle one and two handed damage.
                 case StatIdentifier.DamageMin:
                 case StatIdentifier.DamageMax:
                 case StatIdentifier.SecondaryDamageMin:
@@ -148,130 +220,76 @@ namespace Zutatensuppe.D2Reader.Readers
                         return true;
 
                     // If not a range, print normally.
-                    if (!HasDamageRange) return false;
+                    if (!damage.HasRange())
+                        return false;
+
                     // We also print twice if they are the same.
-                    if (DamageMin == DamageMax)
+                    if (damage.min == damage.max)
                         return false;
 
                     HasHandledDamageRange = true;
-                    description = FormatSimpleDamage(DamageMin, DamageMax,
-                        StringConstants.DamageRange,
-                        StringConstants.DamageRange);
+                    description = damage.ToString(stringReader);
                     return true;
 
                 // Handle enhanced damage.
                 case StatIdentifier.ItemDamageMinPercent:
-                    if (!HasDamagePercentRange)
+                    if (!damagePercent.HasRange())
                         return false;
-                    string enhanced = stringReader.GetString(StringConstants.EnhancedDamage);
-                    description = string.Format("+{0}% {1}", stat.Value, enhanced.TrimEnd());
+                    description = string.Format("+{0}% {1}", stat.Value, stringReader.GetString(StringConstants.EnhancedDamage).TrimEnd());
                     return true;
                 case StatIdentifier.ItemDamageMaxPercent:
-                    return HasDamagePercentRange;
+                    return damagePercent.HasRange();
 
                 // Handle fire damage ranges.
                 case StatIdentifier.FireDamageMin:
-                    if (!HasFireRange) return false;
-                    description = FormatSimpleDamage(
-                        FireMinDamage,
-                        FireMaxDamage,
-                        StringConstants.FireDamageRange,
-                        StringConstants.FireDamage);
+                    if (!fireDamage.HasRange())
+                        return false;
+                    description = fireDamage.ToString(stringReader);
                     return true;
                 case StatIdentifier.FireDamageMax:
-                    return HasFireRange;
+                    return fireDamage.HasRange();
 
                 // Handle lightning damage ranges.
                 case StatIdentifier.LightningDamageMin:
-                    if (!HasLightningRange) return false;
-                    description = FormatSimpleDamage(
-                        LightningMinDamage,
-                        LightningMaxDamage,
-                        StringConstants.LightningDamageRange,
-                        StringConstants.LightningDamage);
+                    if (!lightningDamage.HasRange())
+                        return false;
+                    description = lightningDamage.ToString(stringReader);
                     return true;
                 case StatIdentifier.LightningDamageMax:
-                    return HasLightningRange;
+                    return lightningDamage.HasRange();
 
                 // Handle magic damage ranges.
                 case StatIdentifier.MagicDamageMin:
-                    if (!HasMagicRange) return false;
-                    description = FormatSimpleDamage(
-                        MagicMinDamage,
-                        MagicMaxDamage,
-                        StringConstants.MagicDamageRange,
-                        StringConstants.MagicDamage);
+                    if (!magicDamage.HasRange())
+                        return false;
+                    description = magicDamage.ToString(stringReader);
                     return true;
                 case StatIdentifier.MagicDamageMax:
-                    return HasMagicRange;
+                    return magicDamage.HasRange();
 
                 // Handle cold damage ranges.
                 case StatIdentifier.ColdDamageMin:
-                    if (!HasColdRange) return false;
-                    description = FormatSimpleDamage(
-                        ColdMinDamage,
-                        ColdMaxDamage,
-                        StringConstants.ColdDamageRange,
-                        StringConstants.ColdDamage);
+                    if (!coldDamage.HasRange())
+                        return false;
+                    description = coldDamage.ToString(stringReader);
                     return true;
                 case StatIdentifier.ColdDamageMax:
-                    return HasColdRange;
+                    return coldDamage.HasRange();
 
                 // Handle poison damage ranges.
                 case StatIdentifier.PoisonDamageMax:
                 case StatIdentifier.PoisonDamageDuration:
-                    return HasPoisonRange;
+                    return poisonDamage.HasRange();
                 case StatIdentifier.PoisonDamageMin:
-                    if (!HasPoisonRange) return false;
-                    int divisor = PoisonDivisor == 0 ? 1 : PoisonDivisor;
-                    int duration = PoisonDuration / divisor;
-                    int min = (PoisonMinDamage * duration + 128) / 256;
-                    int max = (PoisonMaxDamage * duration + 128) / 256;
-                    duration /= 25;
-                    description = FormatPoisonDamage(min, max, duration);
+                    if (!poisonDamage.HasRange())
+                        return false;
+                    description = poisonDamage.ToString(stringReader);
                     return true;
 
                     // By default, the stat is not handled.
-                default: return false;
+                default:
+                    return false;
             }
-        }
-
-        private string FormatDamage(int[] args, ushort stringId)
-        {
-            int arguments;
-            string format = stringReader.GetString(stringId);
-            format = stringReader.ConvertCFormatString(format, out arguments);
-            if (arguments != args.Length) return null;
-            return string.Format(format, args).TrimEnd();
-        }
-
-        private string FormatSimpleDamage(int min, int max, ushort equalStringId, ushort differStringId)
-        {
-            if (min == max)
-            {
-                // Example: "Adds 1 to minimum damage"
-                return FormatDamage(new int[] { min }, equalStringId);
-            }
-
-            // Example: "Adds 1-2 damage"
-            return FormatDamage(new int[] { min, max }, differStringId);
-        }
-
-        private string FormatPoisonDamage(int min, int max, int duration)
-        {
-            if (min == max)
-            {
-                // Example: "6 Poison damage over 2 seconds"
-                return FormatDamage(new int[] { min, duration }, StringConstants.PoisonOverTimeSame);
-            }
-
-            // Example: "2-10 Poison damage over 2 seconds"
-            return FormatDamage(new int[] { min, max, duration }, StringConstants.PoisonOverTime);
-        }
-
-        private bool HasRangeFor(int min, int max)
-        {
-            return min != 0 && max != 0;
         }
     }
 }

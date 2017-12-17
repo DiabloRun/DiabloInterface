@@ -1,4 +1,4 @@
-﻿using Zutatensuppe.D2Reader.Struct;
+using Zutatensuppe.D2Reader.Struct;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -57,12 +57,12 @@ namespace Zutatensuppe.D2Reader.Readers
             cachedDescriptions.Clear();
         }
 
-        public bool IsValidItem(D2Unit item)
+        private bool IsValidItem(D2Unit item)
         {
-            return (item != null && item.eType == D2UnitType.Item);
+            return item != null && item.eType == D2UnitType.Item;
         }
 
-        public string GetItemName(D2Unit item)
+        private string GetItemName(D2Unit item)
         {
             if (!IsValidItem(item)) return null;
 
@@ -174,8 +174,7 @@ namespace Zutatensuppe.D2Reader.Readers
         {
             if (!IsItemOfQuality(item, ItemQuality.Magic))
                 return null;
-
-            var itemName = GetItemName(item);
+            
             var prefixName = GetMagicPrefixName(item);
             var suffixName = GetMagicSuffixName(item);
 
@@ -186,7 +185,7 @@ namespace Zutatensuppe.D2Reader.Readers
                 nameBuilder.Append(prefixName);
                 nameBuilder.Append(' ');
             }
-            nameBuilder.Append(itemName);
+            nameBuilder.Append(GetItemName(item));
             if (suffixName != null)
             {
                 nameBuilder.Append(' ');
@@ -204,7 +203,6 @@ namespace Zutatensuppe.D2Reader.Readers
                 quality != ItemQuality.Tempered)
                 return null;
 
-            var itemName = GetItemName(item);
             var prefix = GetRarePrefixName(item);
             var suffix = GetRareSuffixName(item);
 
@@ -219,7 +217,7 @@ namespace Zutatensuppe.D2Reader.Readers
                 nameBuilder.Append(suffix);
                 nameBuilder.Append(' ');
             }
-            nameBuilder.Append(itemName);
+            nameBuilder.Append(GetItemName(item));
             return nameBuilder.ToString();
         }
 
@@ -520,22 +518,18 @@ namespace Zutatensuppe.D2Reader.Readers
 
         private int EvaluateStat(D2Stat stat, D2ItemStatCost statCost)
         {
-            int value = stat.Value;
-            if (statCost.Op >= 2 && statCost.Op <= 5)
-            {
-                if (statCost.OpBase < 0 || statCost.OpBase >= ItemStatCost.Length)
-                    return 0;
-                D2ItemStatCost baseStatCost = ItemStatCost[statCost.OpBase];
+            if (statCost.Op < 2 || statCost.Op > 5)
+                return stat.Value >> statCost.ValShift;
 
-                // Get the player stat.
-                D2Unit player = GetPlayer();
-                int playerStat = GetStatValue(player, statCost.OpBase) ?? 0;
-                playerStat >>= baseStatCost.ValShift;
+            if (statCost.OpBase < 0 || statCost.OpBase >= ItemStatCost.Length)
+                return 0;
 
-                // Evaluate based on the player stat (e.g. player level)
-                value = (value * playerStat) >> statCost.OpParam;
-            }
+            // Get the player stat.
+            int playerStat = GetStatValue(GetPlayer(), statCost.OpBase) ?? 0;
+            playerStat >>= ItemStatCost[statCost.OpBase].ValShift;
 
+            // Evaluate based on the player stat (e.g. player level)
+            int value = (stat.Value * playerStat) >> statCost.OpParam;
             return value >> statCost.ValShift;
         }
 
@@ -824,25 +818,23 @@ namespace Zutatensuppe.D2Reader.Readers
                 default: break;
             }
 
-            if (format != null)
+            if (format == null) return null;
+
+            string description = string.Format(format, value, stringReader.GetString(printStringId));
+
+            if (printFunction >= 0x6 && printFunction < 0xA || printFunction == 0x15)
             {
-                string description = stringReader.GetString(printStringId);
-                description = string.Format(format, value, description);
+                string extraDescription;
+                if (printDescription == 0x1506)
+                    extraDescription = stringReader.GetString(0x2B53);
+                else
+                    extraDescription = stringReader.GetString(printDescription);
 
-                if (printFunction >= 0x6 && printFunction < 0xA || printFunction == 0x15)
-                {
-                    string extraDescription;
-                    if (printDescription == 0x1506)
-                        extraDescription = stringReader.GetString(0x2B53);
-                    else extraDescription = stringReader.GetString(printDescription);
-
-                    // Example: ... + "(Increases with Character Level)"
-                    description += " " + extraDescription;
-                }
-
-                return description;
+                // Example: ... + "(Increases with Character Level)"
+                description += " " + extraDescription;
             }
-            return null;
+
+            return description;
         }
 
         public List<D2Stat> GetMagicalStats(D2Unit item)
@@ -854,29 +846,9 @@ namespace Zutatensuppe.D2Reader.Readers
             CombineNodeStats(stats, FindStatListNode(item, 0x00));
             CombineNodeStats(stats, FindStatListNode(item, 0xAB));
 
-            // Helper for iterating item inventory.
-            Func<D2Unit, D2Unit> getNextInventoryItem = subItem => {
-                var subItemData = GetItemData(subItem);
-                if (subItemData == null) return null;
-                if (subItemData.NextItem.IsNull) return null;
-                return reader.Read<D2Unit>(subItemData.NextItem);
-            };
-
-            // Combine with socketed item stats (runes, gems).
-            // This is also done for runewords and such, without this an "Ancient's Pledge" runeword
-            // would be missing a few resistances...
-            if (!item.pInventory.IsNull)
+            foreach(D2Unit socketedItem in GetSocketedItems(item))
             {
-                var inventory = reader.Read<D2Inventory>(item.pInventory);
-                if (!inventory.pFirstItem.IsNull)
-                {
-                    D2Unit subItem = reader.Read<D2Unit>(inventory.pFirstItem);
-                    for (; subItem != null; subItem = getNextInventoryItem(subItem))
-                    {
-                        var node = FindStatListNode(subItem, 0x00);
-                        CombineNodeStats(stats, node);
-                    }
-                }
+                CombineNodeStats(stats, FindStatListNode(socketedItem, 0x00));
             }
 
             return stats;
@@ -885,10 +857,7 @@ namespace Zutatensuppe.D2Reader.Readers
         public List<string> GetMagicalStrings(D2Unit item)
         {
             List<D2Stat> stats = GetMagicalStats(item);
-            if (stats == null)
-            {
-                return null;
-            }
+            if (stats == null) return null;
 
             // Perform special handling for some stats such as damage ranges.
             // Example: "1-80 lightning damage" comes from 2 stats.
@@ -926,34 +895,26 @@ namespace Zutatensuppe.D2Reader.Readers
         public IEnumerable<D2Unit> GetSocketedItems(D2Unit item)
         {
             var items = new List<D2Unit>();
-            if (!IsValidItem(item)) return items;
+            if (!IsValidItem(item) || item.pInventory.IsNull) return items;
 
-            // Helper for iterating item inventory.
-            Func<D2Unit, D2Unit> getNextInventoryItem = subItem =>
-            {
-                var subItemData = GetItemData(subItem);
-                if (subItemData == null) return null;
-                if (subItemData.NextItem.IsNull) return null;
-                return reader.Read<D2Unit>(subItemData.NextItem);
-            };
+            var inventory = reader.Read<D2Inventory>(item.pInventory);
+            if (inventory.pFirstItem.IsNull) return items;
 
-            // Combine with socketed item stats (runes, gems).
-            // This is also done for runewords and such, without this an "Ancient's Pledge" runeword
-            // would be missing a few resistances...
-            if (!item.pInventory.IsNull)
+            var subItem = reader.Read<D2Unit>(inventory.pFirstItem);
+            for (; subItem != null; subItem = getNextInventoryItem(subItem))
             {
-                var inventory = reader.Read<D2Inventory>(item.pInventory);
-                if (!inventory.pFirstItem.IsNull)
-                {
-                    var subItem = reader.Read<D2Unit>(inventory.pFirstItem);
-                    for (; subItem != null; subItem = getNextInventoryItem(subItem))
-                    {
-                        items.Add(subItem);
-                    }
-                }
+                items.Add(subItem);
             }
-
             return items;
+        }
+
+        // Helper for iterating item inventory.
+        private D2Unit getNextInventoryItem(D2Unit subItem)
+        {
+            var subItemData = GetItemData(subItem);
+            if (subItemData == null) return null;
+            if (subItemData.NextItem.IsNull) return null;
+            return reader.Read<D2Unit>(subItemData.NextItem);
         }
     }
 }

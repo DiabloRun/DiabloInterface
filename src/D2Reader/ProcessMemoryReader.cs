@@ -33,6 +33,9 @@ namespace Zutatensuppe.D2Reader
         [DllImport("kernel32.dll")]
         static extern int VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION64 lpBuffer, uint dwLength);
 
+        [DllImport("kernel32.dll")]
+        static extern int VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION lpBuffer, uint dwLength);
+
         [DllImport("psapi.dll")]
         static extern uint GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName, [In] [MarshalAs(UnmanagedType.U4)] int nSize);
 
@@ -79,7 +82,7 @@ namespace Zutatensuppe.D2Reader
 
         IntPtr baseAddress;
         IntPtr processHandle;
-        public Dictionary<Models.D2Module, IntPtr> ModuleBaseAddresses { get; }
+        public Dictionary<string, IntPtr> ModuleBaseAddresses { get; }
 
         public string FileVersion { get; }
 
@@ -94,9 +97,9 @@ namespace Zutatensuppe.D2Reader
             }
         }
 
-        private Dictionary<Models.D2Module, IntPtr> FindModuleAddresses(Process p)
+        private Dictionary<string, IntPtr> FindModuleAddresses(Process p, string[] modules)
         {
-            Dictionary<Models.D2Module, IntPtr> addresses = new Dictionary<Models.D2Module, IntPtr>();
+            Dictionary<string, IntPtr> addresses = new Dictionary<string, IntPtr>();
             long MaxAddress = 0x7fffffff;
             long address = 0;
             const int nChars = 1024;
@@ -114,24 +117,17 @@ namespace Zutatensuppe.D2Reader
 
                 GetModuleFileNameEx(p.Handle, m.AllocationBase, filename, nChars);
 
-                foreach (Models.D2Module module in Enum.GetValues(typeof(Models.D2Module)))
+                foreach (string module in modules)
                 {
-                    if (addresses.ContainsKey(module))
-                    {
-                        continue;
-                    }
-
-                    if (!filename.ToString().Contains(Enum.GetName(typeof(Models.D2Module), module) + ".dll"))
-                    {
-                        continue;
-                    }
+                    if (addresses.ContainsKey(module)) continue;
+                    if (!filename.ToString().Contains(module)) continue;
                     addresses.Add(module, m.AllocationBase);
                 }
             } while (address <= MaxAddress);
             return addresses;
         }
 
-        public ProcessMemoryReader(string processName, string moduleName)
+        public ProcessMemoryReader(string processName, string moduleName, string[] submodules)
         {
             bool foundModule = false;
             uint foundProcessId = 0;
@@ -157,7 +153,7 @@ namespace Zutatensuppe.D2Reader
 
                         // the modules we are looking for are managed in the game.exe in older d2 versions.
                         // cant get them via process.Modules
-                        ModuleBaseAddresses = FindModuleAddresses(process);
+                        ModuleBaseAddresses = FindModuleAddresses(process, submodules);
                     }
                 }
             }
@@ -171,8 +167,11 @@ namespace Zutatensuppe.D2Reader
 
             // Open up handle.
             baseAddress = foundBaseAddress;
-            ProcessAccessFlags flags = ProcessAccessFlags.QueryLimitedInfo | ProcessAccessFlags.MemoryRead;
-            processHandle = OpenProcess(flags, false, foundProcessId);
+            processHandle = OpenProcess(
+                ProcessAccessFlags.QueryLimitedInfo | ProcessAccessFlags.MemoryRead,
+                false,
+                foundProcessId
+            );
             FileVersion = foundFileVersion;
 
             // Make sure we succeeded in opening the handle.
@@ -227,8 +226,7 @@ namespace Zutatensuppe.D2Reader
             foreach (int offset in pathOffsets)
             {
                 // Read at the current address and then offset.
-                address = ReadAddress32(address, addressing);
-                address = IntPtr.Add(address, offset);
+                address = IntPtr.Add(ReadAddress32(address, addressing), offset);
 
                 // Assume all subsequent addressing to be absolute.
                 addressing = AddressingMode.Absolute;

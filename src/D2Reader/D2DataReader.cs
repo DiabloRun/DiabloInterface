@@ -70,6 +70,14 @@ namespace Zutatensuppe.D2Reader
     {
         const string DiabloProcessName = "game";
         const string DiabloModuleName = "Game.exe";
+        readonly string[] DiabloSubModules = {
+            "D2Common.dll",
+            "D2Launch.dll",
+            "D2Lang.dll",
+            "D2Net.dll",
+            "D2Game.dll",
+            "D2Client.dll"
+        };
 
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -181,7 +189,7 @@ namespace Zutatensuppe.D2Reader
         {
             try
             {
-                reader = new ProcessMemoryReader(DiabloProcessName, DiabloModuleName);
+                reader = new ProcessMemoryReader(DiabloProcessName, DiabloModuleName, DiabloSubModules);
                 
                 memory = CreateGameMemoryTableForReader(reader);
 
