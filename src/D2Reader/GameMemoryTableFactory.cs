@@ -90,12 +90,12 @@ namespace Zutatensuppe.D2Reader
                         memoryTable.Address.PlayerUnit = new IntPtr(d2ClientAddress + 0x00101024);
                         memoryTable.Address.Area = new IntPtr(d2ClientAddress + 0x0008F66C);
 
-                        memoryTable.Address.StringIndexerTable = new IntPtr(d2LangAddress + 0x10A64); //TODO
-                        memoryTable.Address.StringAddressTable = new IntPtr(d2LangAddress + 0x10a68); //TODO
-                        memoryTable.Address.PatchStringIndexerTable = new IntPtr(d2LangAddress + 0x10A80); //TODO
-                        memoryTable.Address.PatchStringAddressTable = new IntPtr(d2LangAddress + 0x10A6C); //TODO
-                        memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(d2LangAddress + 0x10A84); //TODO
-                        memoryTable.Address.ExpansionStringAddressTable = new IntPtr(d2LangAddress + 0x10A70); //TODO
+                        memoryTable.Address.StringIndexerTable = new IntPtr(d2LangAddress + 0x10A84);
+                        memoryTable.Address.StringAddressTable = new IntPtr(d2LangAddress + 0x10A88);
+                        memoryTable.Address.PatchStringIndexerTable = new IntPtr(d2LangAddress + 0x10AA0);
+                        memoryTable.Address.PatchStringAddressTable = new IntPtr(d2LangAddress + 0x10A8C);
+                        memoryTable.Address.ExpansionStringIndexerTable = new IntPtr(d2LangAddress + 0x10AA4);
+                        memoryTable.Address.ExpansionStringAddressTable = new IntPtr(d2LangAddress + 0x10A90);
                     }
                     catch (KeyNotFoundException)
                     {
