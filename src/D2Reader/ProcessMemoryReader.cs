@@ -90,8 +90,7 @@ namespace Zutatensuppe.D2Reader
         {
             get
             {
-                uint exitCode = 0;
-                if (!GetExitCodeProcess(processHandle, out exitCode))
+                if (!GetExitCodeProcess(processHandle, out uint exitCode))
                     return false;
                 return exitCode == ProcessStillActive;
             }
@@ -103,11 +102,11 @@ namespace Zutatensuppe.D2Reader
             long MaxAddress = 0x7fffffff;
             long address = 0;
             const int nChars = 1024;
+            StringBuilder filename;
             do
             {
-                StringBuilder filename = new StringBuilder(nChars);
-                MEMORY_BASIC_INFORMATION64 m;
-                int result = VirtualQueryEx(p.Handle, (IntPtr)address, out m, (uint)Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION64)));
+                filename = new StringBuilder(nChars);
+                int result = VirtualQueryEx(p.Handle, (IntPtr)address, out MEMORY_BASIC_INFORMATION64 m, (uint)Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION64)));
                 if (address == (long)m.BaseAddress + (long)m.RegionSize)
                 {
                     break;
@@ -237,15 +236,14 @@ namespace Zutatensuppe.D2Reader
 
         public byte[] Read(IntPtr address, int size, AddressingMode addressingMode = AddressingMode.Absolute)
         {
-            uint bytesRead;
             byte[] data = new byte[size];
             address = ResolveAddress(address, addressingMode);
-            bool success = ReadProcessMemory(processHandle, address, data, (uint)data.Length, out bytesRead);
+            bool success = ReadProcessMemory(processHandle, address, data, (uint)data.Length, out uint bytesRead);
 
             // Make sure we read successfully.
             if (!success || bytesRead != (uint)data.Length)
             {
-              throw new ProcessMemoryReadException(address);
+                throw new ProcessMemoryReadException(address);
             }
             return data;
         }

@@ -328,8 +328,7 @@ namespace Zutatensuppe.D2Reader.Readers
                 return null;
 
             string fullName;
-            string grammarCase;
-            string name = GetGrammaticalName(GetItemName(item), out grammarCase);
+            string name = GetGrammaticalName(GetItemName(item), out string grammarCase);
             List<string> words = new List<string>();
 
             // Non identified items just get the base item name.
@@ -489,8 +488,7 @@ namespace Zutatensuppe.D2Reader.Readers
             if (!IsValidItem(item)) return null;
             if (item.UnitData.IsNull) return null;
 
-            D2ItemData itemData;
-            if (cachedItemData.TryGetValue(item.UnitData, out itemData))
+            if (cachedItemData.TryGetValue(item.UnitData, out D2ItemData itemData))
                 return itemData;
 
             // Item data not cached, read from memory.
@@ -862,14 +860,14 @@ namespace Zutatensuppe.D2Reader.Readers
             // Perform special handling for some stats such as damage ranges.
             // Example: "1-80 lightning damage" comes from 2 stats.
             var rangeData = new RangeStatData(stringReader, stats);
-            Func<D2Stat, string> getDescription = stat => {
-                string description;
-                if (rangeData.TryHandleStat(stat, out description))
+            string getDescription(D2Stat stat)
+            {
+                if (rangeData.TryHandleStat(stat, out string description))
                     return description;
 
                 // If not handled specially, do default handling.
                 return GetStatPropertyDescription(stats, stat);
-            };
+            }
 
             // Only get stat descriptions for stat identifiers contained in the opNestings array.
             // This also orders stats into the same order that the game displays the stats.
@@ -901,7 +899,7 @@ namespace Zutatensuppe.D2Reader.Readers
             if (inventory.pFirstItem.IsNull) return items;
 
             var subItem = reader.Read<D2Unit>(inventory.pFirstItem);
-            for (; subItem != null; subItem = getNextInventoryItem(subItem))
+            for (; subItem != null; subItem = GetNextInventoryItem(subItem))
             {
                 items.Add(subItem);
             }
@@ -909,7 +907,7 @@ namespace Zutatensuppe.D2Reader.Readers
         }
 
         // Helper for iterating item inventory.
-        private D2Unit getNextInventoryItem(D2Unit subItem)
+        private D2Unit GetNextInventoryItem(D2Unit subItem)
         {
             var subItemData = GetItemData(subItem);
             if (subItemData == null) return null;

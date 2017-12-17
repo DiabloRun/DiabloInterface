@@ -39,9 +39,10 @@ namespace Zutatensuppe.D2Reader.Readers
 
         protected string _toString(StringLookupTable stringLookupTable, int[] args, ushort stringId)
         {
-            string str = stringLookupTable.GetString(stringId);
-            int arguments;
-            string format = stringLookupTable.ConvertCFormatString(str, out arguments);
+            string format = stringLookupTable.ConvertCFormatString(
+                stringLookupTable.GetString(stringId),
+                out int arguments
+            );
             if (arguments != args.Length)
             {
                 return null;
@@ -62,29 +63,29 @@ namespace Zutatensuppe.D2Reader.Readers
 
         public new string ToString(StringLookupTable stringLookupTable)
         {
-            int min = calculatedDamage(this.min);
-            int max = calculatedDamage(this.max);
+            int min = CalculatedDamage(this.min);
+            int max = CalculatedDamage(this.max);
             if (min == max)
             {
                 // Example: "6 Poison damage over 2 seconds"
-                return _toString(stringLookupTable, new int[] { min, calculatedDuration() }, equalStringId);
+                return _toString(stringLookupTable, new int[] { min, CalculatedDuration() }, equalStringId);
             }
 
             // Example: "2-10 Poison damage over 2 seconds"
-            return _toString(stringLookupTable, new int[] { min, max, calculatedDuration() }, differStringId);
+            return _toString(stringLookupTable, new int[] { min, max, CalculatedDuration() }, differStringId);
         }
 
-        private int calculatedDuration()
+        private int CalculatedDuration()
         {
-            return effectiveDuration() / 25;
+            return EffectiveDuration() / 25;
         }
 
-        private int calculatedDamage(int dmg)
+        private int CalculatedDamage(int dmg)
         {
-            return (dmg * effectiveDuration() + 128) / 256;
+            return (dmg * EffectiveDuration() + 128) / 256;
         }
 
-        private int effectiveDuration()
+        private int EffectiveDuration()
         {
             return duration / (divisor == 0 ? 1 : divisor);
         }
@@ -123,11 +124,11 @@ namespace Zutatensuppe.D2Reader.Readers
 
         private void ReadStatData(List<D2Stat> stats)
         {
-            Func<StatIdentifier, D2Stat> findStat = id =>
+            D2Stat findStat(StatIdentifier id)
             {
                 int index = stats.FindIndex(x => x.LoStatID == (ushort)id);
                 return index >= 0 ? stats[index] : null;
-            };
+            }
 
             foreach (var stat in stats)
             {

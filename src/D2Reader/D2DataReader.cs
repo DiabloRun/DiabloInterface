@@ -480,8 +480,7 @@ namespace Zutatensuppe.D2Reader
             int experience = unitReader.GetStatValue(gameInfo.Player, StatIdentifier.Experience) ?? 0;
 
             // We encountered this character name before.
-            Character character;
-            if (characters.TryGetValue(playerName, out character))
+            if (characters.TryGetValue(playerName, out Character character))
             {
                 // We were just in the title screen and came back to a new character.
                 bool resetOnBeginning = wasInTitleScreen && experience == 0;

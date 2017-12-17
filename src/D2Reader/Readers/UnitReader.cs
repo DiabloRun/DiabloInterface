@@ -1,4 +1,4 @@
-﻿using Zutatensuppe.D2Reader.Struct;
+using Zutatensuppe.D2Reader.Struct;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -45,9 +45,9 @@ namespace Zutatensuppe.D2Reader.Readers
             InventoryReader inventoryReader = new InventoryReader(reader, memory);
 
             // Build filter to get only equipped items and items in inventory
-            Func<D2ItemData, bool> filter = data =>
-               !data.ItemFlags.HasFlag(ItemFlag.RequirementsNotMet) 
-               && 
+            bool filter(D2ItemData data) =>
+               !data.ItemFlags.HasFlag(ItemFlag.RequirementsNotMet)
+               &&
                (
                    (data.InvPage == InventoryPage.Equipped && data.BodyLoc != BodyLocation.SecondaryLeft && data.BodyLoc != BodyLocation.SecondaryRight)
                    ||
@@ -208,10 +208,11 @@ namespace Zutatensuppe.D2Reader.Readers
             if (statsPointer.IsNull) return null;
 
             // Get previous node in the linked list (belonging to this list).
-            Func<D2StatList, D2StatList> getPreviousNode = x => {
+            D2StatList getPreviousNode(D2StatList x)
+            {
                 if (x.PreviousList.IsNull) return null;
                 return reader.Read<D2StatList>(x.PreviousList);
-            };
+            }
 
             // Iterate stat nodes until we find the node we're looking for.
             D2StatList statNode = reader.Read<D2StatList>(statsPointer);
