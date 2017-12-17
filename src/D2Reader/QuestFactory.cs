@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.D2Reader
+namespace Zutatensuppe.D2Reader
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -9,40 +9,40 @@
     {
         static readonly IReadOnlyDictionary<QuestId, QuestDetails> Quests = new Dictionary<QuestId, QuestDetails>()
         {
-            { QuestId.Andariel, new QuestDetails { Act=1, ActOrder=6, Name="Sisters to the Slaughter", CommonName="Andariel", IsBossQuest=true, } },
-            { QuestId.Duriel, new QuestDetails { Act=2, ActOrder=6, Name="The Seven Tombs", CommonName="Duriel", IsBossQuest=true, AutoSplitBitMask=(1 << 5), } },
-            { QuestId.Mephisto, new QuestDetails { Act=3, ActOrder=6, Name="The Guardian", CommonName="Mephisto", IsBossQuest=true, } },
-            { QuestId.Diablo, new QuestDetails { Act=4, ActOrder=3, Name="Terror's End", CommonName="Diablo", IsBossQuest=true, } },
-            { QuestId.Baal, new QuestDetails { Act=5, ActOrder=6, Name="Eve of Destruction", CommonName="Baal", IsBossQuest=true, } },
+            { QuestId.Andariel, new QuestDetails { Id=QuestId.Andariel, Act=1, ActOrder=6, Name="Sisters to the Slaughter", CommonName="Andariel", IsBossQuest=true, } },
+            { QuestId.Duriel, new QuestDetails { Id=QuestId.Duriel, Act=2, ActOrder=6, Name="The Seven Tombs", CommonName="Duriel", IsBossQuest=true, AutoSplitBitMask=(1 << 5), } },
+            { QuestId.Mephisto, new QuestDetails { Id=QuestId.Mephisto, Act=3, ActOrder=6, Name="The Guardian", CommonName="Mephisto", IsBossQuest=true, } },
+            { QuestId.Diablo, new QuestDetails { Id=QuestId.Diablo, Act=4, ActOrder=3, Name="Terror's End", CommonName="Diablo", IsBossQuest=true, } },
+            { QuestId.Baal, new QuestDetails { Id=QuestId.Baal, Act=5, ActOrder=6, Name="Eve of Destruction", CommonName="Baal", IsBossQuest=true, } },
 
-            { QuestId.DenOfEvil, new QuestDetails { Act=1, ActOrder=1, Name="Den of Evil", CommonName="Den of Evil", } },
-            { QuestId.SistersBurialGrounds, new QuestDetails { Act=1, ActOrder=2, Name="Sisters' Burial Grounds", CommonName="Blood Raven", } },
-            { QuestId.ToolsOfTheTrade, new QuestDetails { Act=1, ActOrder=5, Name="Tools of the Trade", CommonName="Charsie Imbue", } },
-            { QuestId.TheSearchForCain, new QuestDetails { Act=1, ActOrder=3, Name="The Search for Cain", CommonName="Cain", } },
-            { QuestId.TheForgottenTower, new QuestDetails { Act=1, ActOrder=4, Name="The Forgotten Tower", CommonName="Countess", } },
+            { QuestId.DenOfEvil, new QuestDetails { Id=QuestId.DenOfEvil, Act=1, ActOrder=1, Name="Den of Evil", CommonName="Den of Evil", } },
+            { QuestId.SistersBurialGrounds, new QuestDetails { Id=QuestId.SistersBurialGrounds, Act=1, ActOrder=2, Name="Sisters' Burial Grounds", CommonName="Blood Raven", } },
+            { QuestId.ToolsOfTheTrade, new QuestDetails { Id=QuestId.ToolsOfTheTrade, Act=1, ActOrder=5, Name="Tools of the Trade", CommonName="Charsie Imbue", } },
+            { QuestId.TheSearchForCain, new QuestDetails { Id=QuestId.TheSearchForCain, Act=1, ActOrder=3, Name="The Search for Cain", CommonName="Cain", } },
+            { QuestId.TheForgottenTower, new QuestDetails { Id=QuestId.TheForgottenTower, Act=1, ActOrder=4, Name="The Forgotten Tower", CommonName="Countess", } },
 
-            { QuestId.RadamentsLair, new QuestDetails { Act=2, ActOrder=1, Name="Radament's Lair", CommonName="Radament", } },
-            { QuestId.TheHoradricStaff, new QuestDetails { Act=2, ActOrder=2, Name="The Horadric Staff", CommonName="Horadric Staff", } },
-            { QuestId.TaintedSun, new QuestDetails { Act=2, ActOrder=3, Name="Tainted Sun", CommonName="Claw Viper Temple", } },
-            { QuestId.ArcaneSanctuary, new QuestDetails { Act=2, ActOrder=4, Name="Arcane Sanctuary", CommonName="Arcane Sancuary", } },
-            { QuestId.TheSummoner, new QuestDetails { Act=2, ActOrder=5, Name="The Summoner", CommonName="Horazon", } },
+            { QuestId.RadamentsLair, new QuestDetails { Id=QuestId.RadamentsLair, Act=2, ActOrder=1, Name="Radament's Lair", CommonName="Radament", } },
+            { QuestId.TheHoradricStaff, new QuestDetails { Id=QuestId.TheHoradricStaff, Act=2, ActOrder=2, Name="The Horadric Staff", CommonName="Horadric Staff", } },
+            { QuestId.TaintedSun, new QuestDetails { Id=QuestId.TaintedSun, Act=2, ActOrder=3, Name="Tainted Sun", CommonName="Claw Viper Temple", } },
+            { QuestId.ArcaneSanctuary, new QuestDetails { Id=QuestId.ArcaneSanctuary, Act=2, ActOrder=4, Name="Arcane Sanctuary", CommonName="Arcane Sancuary", } },
+            { QuestId.TheSummoner, new QuestDetails { Id=QuestId.TheSummoner, Act=2, ActOrder=5, Name="The Summoner", CommonName="Horazon", } },
 
-            { QuestId.LamEsensTome, new QuestDetails { Act=3, ActOrder=4, Name="Lam Esen's Tome", CommonName="Battlemaid Sarina", } },
-            { QuestId.KhalimsWill, new QuestDetails { Act=3, ActOrder=3, Name="Khalim's Will", CommonName="Khalim's Will", } },
-            { QuestId.BladeOfTheOldReligion, new QuestDetails { Act=3, ActOrder=2, Name="Blade of the Old Religion", CommonName="Gibdinn", } },
-            { QuestId.TheGoldenBird, new QuestDetails { Act=3, ActOrder=1, Name="The Golden Bird", CommonName="Alkor Quest", } },
-            { QuestId.TheBlackenedTemple, new QuestDetails { Act=3, ActOrder=5, Name="The Blackened Temple", CommonName="Travincal Council", } },
+            { QuestId.LamEsensTome, new QuestDetails { Id=QuestId.LamEsensTome, Act=3, ActOrder=4, Name="Lam Esen's Tome", CommonName="Battlemaid Sarina", } },
+            { QuestId.KhalimsWill, new QuestDetails { Id=QuestId.KhalimsWill, Act=3, ActOrder=3, Name="Khalim's Will", CommonName="Khalim's Will", } },
+            { QuestId.BladeOfTheOldReligion, new QuestDetails { Id=QuestId.BladeOfTheOldReligion, Act=3, ActOrder=2, Name="Blade of the Old Religion", CommonName="Gibdinn", } },
+            { QuestId.TheGoldenBird, new QuestDetails { Id=QuestId.TheGoldenBird, Act=3, ActOrder=1, Name="The Golden Bird", CommonName="Alkor Quest", } },
+            { QuestId.TheBlackenedTemple, new QuestDetails { Id=QuestId.TheBlackenedTemple, Act=3, ActOrder=5, Name="The Blackened Temple", CommonName="Travincal Council", } },
 
-            { QuestId.TheFallenAngel, new QuestDetails { Act=4, ActOrder=1, Name="The Fallen Angel", CommonName="Izual", } },
-            { QuestId.HellsForge, new QuestDetails { Act=4, ActOrder=2, Name="Hell's Forge", CommonName="Hell Forge", } },
+            { QuestId.TheFallenAngel, new QuestDetails { Id=QuestId.TheFallenAngel, Act=4, ActOrder=1, Name="The Fallen Angel", CommonName="Izual", } },
+            { QuestId.HellsForge, new QuestDetails { Id=QuestId.HellsForge, Act=4, ActOrder=2, Name="Hell's Forge", CommonName="Hell Forge", } },
 
-            { QuestId.SiegeOnHarrogath, new QuestDetails { Act=5, ActOrder=1, Name="Siege on Harrogath", CommonName="Shenk", } },
-            { QuestId.RescueOnMountArreat, new QuestDetails { Act=5, ActOrder=2, Name="Rescue on Mount Arreat", CommonName="Rescue Barbs", } },
-            { QuestId.PrisonOfIce, new QuestDetails { Act=5, ActOrder=3, Name="Prison of Ice", CommonName="Rescue Anya", } },
-            { QuestId.BetrayalOfHarrogath, new QuestDetails { Act=5, ActOrder=4, Name="Betrayal of Harrogath", CommonName="Kill Nihlathak", } },
-            { QuestId.RiteOfPassage, new QuestDetails { Act=5, ActOrder=5, Name="Rite of Passage", CommonName="Ancients" } },
+            { QuestId.SiegeOnHarrogath, new QuestDetails { Id=QuestId.SiegeOnHarrogath, Act=5, ActOrder=1, Name="Siege on Harrogath", CommonName="Shenk", } },
+            { QuestId.RescueOnMountArreat, new QuestDetails { Id=QuestId.RescueOnMountArreat, Act=5, ActOrder=2, Name="Rescue on Mount Arreat", CommonName="Rescue Barbs", } },
+            { QuestId.PrisonOfIce, new QuestDetails { Id=QuestId.PrisonOfIce, Act=5, ActOrder=3, Name="Prison of Ice", CommonName="Rescue Anya", } },
+            { QuestId.BetrayalOfHarrogath, new QuestDetails { Id=QuestId.BetrayalOfHarrogath, Act=5, ActOrder=4, Name="Betrayal of Harrogath", CommonName="Kill Nihlathak", } },
+            { QuestId.RiteOfPassage, new QuestDetails { Id=QuestId.RiteOfPassage, Act=5, ActOrder=5, Name="Rite of Passage", CommonName="Ancients" } },
 
-            { QuestId.CowKing, new QuestDetails { Act=0, ActOrder=0, Name="Cow King", CommonName="Cow King", AutoSplitBitMask=(1 << 10), CompletionBitMask=(1 << 10), } },
+            { QuestId.CowKing, new QuestDetails { Id=QuestId.CowKing, Act=0, ActOrder=0, Name="Cow King", CommonName="Cow King", AutoSplitBitMask=(1 << 10), CompletionBitMask=(1 << 10), } },
         };
 
         static readonly IReadOnlyDictionary<int, QuestId> QuestBufferIndexLookup = new Dictionary<int, QuestId>()
