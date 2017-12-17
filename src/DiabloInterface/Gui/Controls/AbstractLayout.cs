@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Gui.Controls
+namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
     using System;
     using System.Collections.Generic;
@@ -40,6 +40,13 @@
         }
 
         protected IEnumerable<Label> InfoLabels { get; set; }
+        protected IEnumerable<Label> FireLabels { get; set; }
+        protected IEnumerable<Label> ColdLabels { get; set; }
+        protected IEnumerable<Label> LighLabels { get; set; }
+        protected IEnumerable<Label> PoisLabels { get; set; }
+        protected IEnumerable<Label> BaseStatLabels { get; set; }
+        protected IEnumerable<Label> AdvancedStatLabels { get; set; }
+        protected IEnumerable<Label> DifficultyLabels { get; set; }
 
         protected IEnumerable<FlowLayoutPanel> RunePanels { get; set; }
 
@@ -50,6 +57,14 @@
         void InitializeElements()
         {
             InfoLabels = Enumerable.Empty<Label>();
+            FireLabels = Enumerable.Empty<Label>();
+            ColdLabels = Enumerable.Empty<Label>();
+            LighLabels = Enumerable.Empty<Label>();
+            PoisLabels = Enumerable.Empty<Label>();
+            BaseStatLabels = Enumerable.Empty<Label>();
+            AdvancedStatLabels = Enumerable.Empty<Label>();
+            DifficultyLabels = Enumerable.Empty<Label>();
+
             RunePanels = Enumerable.Empty<FlowLayoutPanel>();
             DefaultTexts = new Dictionary<Control, string>();
         }
@@ -213,6 +228,30 @@
                     runeElement.SetHaveRune(true);
                 }
             }
+        }
+
+        protected void UpdateLabelColors(ApplicationSettings settings)
+        {
+            foreach (Label l in FireLabels)
+                l.ForeColor = settings.ColorFireRes;
+
+            foreach (Label l in ColdLabels)
+                l.ForeColor = settings.ColorColdRes;
+
+            foreach (Label l in LighLabels)
+                l.ForeColor = settings.ColorLightningRes;
+
+            foreach (Label l in PoisLabels)
+                l.ForeColor = settings.ColorPoisonRes;
+
+            foreach (Label l in BaseStatLabels)
+                l.ForeColor = settings.ColorBaseStats;
+
+            foreach (Label l in AdvancedStatLabels)
+                l.ForeColor = settings.ColorAdvancedStats;
+
+            foreach (Label l in DifficultyLabels)
+                l.ForeColor = settings.ColorDifficultyPercentages;
         }
     }
 }

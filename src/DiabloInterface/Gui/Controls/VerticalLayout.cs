@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Gui.Controls
+namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
     using System.Collections.Generic;
     using System.Drawing;
@@ -42,6 +42,26 @@
                 labelStrVal, labelDexVal, labelVitVal, labelEneVal,
                 normLabel, nmLabel, hellLabel,
                 normLabelVal, nmLabelVal, hellLabelVal,
+            };
+
+            FireLabels = new[] { fireLabel, labelFireResVal };
+            ColdLabels = new[] { coldLabel, labelColdResVal };
+            LighLabels = new[] { lighLabel, labelLightResVal };
+            PoisLabels = new[] { poisLabel, labelPoisonResVal };
+
+            BaseStatLabels = new[] {
+                strLabel,labelStrVal,vitLabel,labelVitVal,
+                dexLabel, labelDexVal, eneLabel, labelEneVal
+            };
+
+            AdvancedStatLabels = new[] {
+                fcrLabel, labelFcrVal, fhrLabel, labelFhrVal,
+                iasLabel, labelIasVal, frwLabel, labelFrwVal
+            };
+
+            DifficultyLabels = new[] {
+                normLabel, normLabelVal, nmLabel, nmLabelVal,
+                hellLabel, hellLabelVal,
             };
 
             RunePanels = new[]
@@ -199,39 +219,7 @@
             deathsLabel.ForeColor = settings.ColorDeaths;
             lvlLabel.ForeColor = settings.ColorLevel;
 
-            fireLabel.ForeColor = settings.ColorFireRes;
-            labelFireResVal.ForeColor = settings.ColorFireRes;
-            coldLabel.ForeColor = settings.ColorColdRes;
-            labelColdResVal.ForeColor = settings.ColorColdRes;
-            lighLabel.ForeColor = settings.ColorLightningRes;
-            labelLightResVal.ForeColor = settings.ColorLightningRes;
-            poisLabel.ForeColor = settings.ColorPoisonRes;
-            labelPoisonResVal.ForeColor = settings.ColorPoisonRes;
-
-            strLabel.ForeColor = settings.ColorBaseStats;
-            labelStrVal.ForeColor = settings.ColorBaseStats;
-            vitLabel.ForeColor = settings.ColorBaseStats;
-            labelVitVal.ForeColor = settings.ColorBaseStats;
-            dexLabel.ForeColor = settings.ColorBaseStats;
-            labelDexVal.ForeColor = settings.ColorBaseStats;
-            eneLabel.ForeColor = settings.ColorBaseStats;
-            labelEneVal.ForeColor = settings.ColorBaseStats;
-
-            fcrLabel.ForeColor = settings.ColorAdvancedStats;
-            labelFcrVal.ForeColor = settings.ColorAdvancedStats;
-            fhrLabel.ForeColor = settings.ColorAdvancedStats;
-            labelFhrVal.ForeColor = settings.ColorAdvancedStats;
-            iasLabel.ForeColor = settings.ColorAdvancedStats;
-            labelIasVal.ForeColor = settings.ColorAdvancedStats;
-            frwLabel.ForeColor = settings.ColorAdvancedStats;
-            labelFrwVal.ForeColor = settings.ColorAdvancedStats;
-            
-            normLabel.ForeColor = settings.ColorDifficultyPercentages;
-            normLabelVal.ForeColor = settings.ColorDifficultyPercentages;
-            nmLabel.ForeColor = settings.ColorDifficultyPercentages;
-            nmLabelVal.ForeColor = settings.ColorDifficultyPercentages;
-            hellLabel.ForeColor = settings.ColorDifficultyPercentages;
-            hellLabelVal.ForeColor = settings.ColorDifficultyPercentages;
+            UpdateLabelColors(settings);
         }
     }
 }
