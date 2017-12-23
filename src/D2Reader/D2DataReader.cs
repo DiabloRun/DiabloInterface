@@ -236,7 +236,7 @@ namespace Zutatensuppe.D2Reader
             if (reader == null) return;
 
             // Add all items found in the slots.
-            bool FilterSlots(D2ItemData data) => slots.FindIndex(x => x == data.BodyLoc) >= 0;
+            bool FilterSlots(D2ItemData data) => slots.FindIndex(x => x == data.BodyLoc && data.InvPage == InventoryPage.Equipped) >= 0;
 
             foreach (var item in inventoryReader.EnumerateInventory(FilterSlots))
             {

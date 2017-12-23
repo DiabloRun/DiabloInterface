@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Zutatensuppe.D2Reader;
 
@@ -26,11 +26,9 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
                 case "active":
                     payload = BuildPayload(dataReader.ActiveCharacter, dataReader.ActiveCharacterTimestamp);
                     break;
-
                 case "current":
                     payload = BuildPayload(dataReader.CurrentCharacter, DateTime.Now);
                     break;
-
                 default:
                     throw new RequestHandlerInvalidException(InvalidMessage);
             }
@@ -38,7 +36,7 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             return new QueryResponse()
             {
                 Payload = payload,
-                Status = QueryStatus.Success,
+                Status = payload != null ? QueryStatus.Success : QueryStatus.NotFound,
             };
         }
 

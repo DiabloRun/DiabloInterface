@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Server.Handlers
+namespace Zutatensuppe.DiabloInterface.Server.Handlers
 {
     using System;
     using System.Collections.Generic;
@@ -19,9 +19,7 @@
         {
             int questId = int.Parse(arguments[0]);
             var quests = dataReader.CurrentQuests;
-            if (quests == null) return BuildQuestResponse(completed: true);
-
-            var completed = quests.IsQuestCompleted((QuestId)questId);
+            var completed = quests == null || quests.IsQuestCompleted((QuestId)questId);
             return BuildQuestResponse(completed);
         }
 

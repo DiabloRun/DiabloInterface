@@ -1,6 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Zutatensuppe.D2Reader;
+using Zutatensuppe.D2Reader.Readers;
+using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Item;
 
 namespace Zutatensuppe.DiabloInterface.Server.Handlers
@@ -11,9 +13,20 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
         public List<string> Properties { get; set; }
         public BodyLocation Location { get; set; }
 
-        public ItemInfo()
+        public ItemInfo(ItemReader itemReader, D2Unit item)
         {
-            Properties = new List<string>();
+            ItemName = itemReader.GetFullItemName(item);
+            Properties = itemReader.GetMagicalStrings(item);
+            Location = itemReader.GetItemData(item)?.BodyLoc ?? BodyLocation.None;
+        }
+
+        public static List<ItemInfo> GetItemsByLocations(D2DataReader dataReader, List<BodyLocation> locations)
+        {
+            List<ItemInfo> Items = new List<ItemInfo>();
+            dataReader.ItemSlotAction(locations, (itemReader, item) => {
+                Items.Add(new ItemInfo(itemReader, item));
+            });
+            return Items;
         }
     }
 
@@ -43,17 +56,8 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             var responsePayload = new ItemResponsePayload()
             {
                 IsValidSlot = true,
-                Items = new List<ItemInfo>()
+                Items = ItemInfo.GetItemsByLocations(dataReader, equipmentLocations)
             };
-
-            dataReader.ItemSlotAction(equipmentLocations, (itemReader, item) => {
-                responsePayload.Items.Add(new ItemInfo()
-                {
-                    ItemName = itemReader.GetFullItemName(item),
-                    Properties = itemReader.GetMagicalStrings(item),
-                    Location = itemReader.GetItemData(item)?.BodyLoc ?? BodyLocation.None,
-                });
-            });
 
             return BuildResponse(responsePayload);
         }
