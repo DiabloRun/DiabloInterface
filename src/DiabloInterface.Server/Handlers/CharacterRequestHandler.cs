@@ -15,7 +15,7 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             this.dataReader = dataReader;
         }
 
-        public QueryResponse HandleRequest(QueryRequest request, IList<string> arguments)
+        public Response HandleRequest(Request request, IList<string> arguments)
         {
             if (arguments.Count == 0)
                 throw new RequestHandlerInvalidException(InvalidMessage);
@@ -33,10 +33,10 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
                     throw new RequestHandlerInvalidException(InvalidMessage);
             }
 
-            return new QueryResponse()
+            return new Response()
             {
                 Payload = payload,
-                Status = payload != null ? QueryStatus.Success : QueryStatus.NotFound,
+                Status = payload != null ? ResponseStatus.Success : ResponseStatus.NotFound,
             };
         }
 

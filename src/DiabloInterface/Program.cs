@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface
+namespace Zutatensuppe.DiabloInterface
 {
     using System;
     using System.Reflection;

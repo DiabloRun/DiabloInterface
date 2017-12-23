@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System.IO;
 using System.Text;
 
@@ -26,8 +26,7 @@ namespace Zutatensuppe.DiabloInterface.Server
 
         public void WriteJson(object json)
         {
-            string jsonData = JsonConvert.SerializeObject(json, converters);
-            WriteJsonString(jsonData);
+            WriteJsonString(JsonConvert.SerializeObject(json, converters));
         }
 
         public void Flush()

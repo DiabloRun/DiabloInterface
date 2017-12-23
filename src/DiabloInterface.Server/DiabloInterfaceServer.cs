@@ -1,4 +1,4 @@
-﻿using Zutatensuppe.DiabloInterface.Core.Logging;
+using Zutatensuppe.DiabloInterface.Core.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,35 +28,16 @@ namespace Zutatensuppe.DiabloInterface.Server
             listenThread.Start();
         }
 
-        /// <summary>
-        /// Adds or overrides a request handler resource.
-        /// </summary>
-        /// <param name="resource">The resource to handle.</param>
-        /// <param name="handlerFactory">The factory that creates a new handler for each request.</param>
-        public void AddRequestHandler(string resource, Func<IRequestHandler> handlerFactory)
+        public void AddRequestHandler(string resource, Func<IRequestHandler> handler)
         {
             if (string.IsNullOrEmpty(resource))
                 throw new ArgumentNullException(nameof(resource));
-            if (handlerFactory == null)
-                throw new ArgumentNullException(nameof(handlerFactory));
+            if (handler == null)
+                throw new ArgumentNullException(nameof(handler));
 
             // Always use lower case resources.
             resource = resource.Trim().ToLowerInvariant();
-            requestHandlers[resource] = handlerFactory;
-        }
-
-        /// <summary>
-        /// Removes a request handler if it exists. Does nothing if the resource does not exist.
-        /// </summary>
-        /// <param name="resource"></param>
-        public void RemoveRequestHandler(string resource)
-        {
-            if (string.IsNullOrEmpty(resource))
-                throw new ArgumentNullException(nameof(resource));
-
-            resource = resource.Trim().ToLowerInvariant();
-            if (requestHandlers.ContainsKey(resource))
-                requestHandlers.Remove(resource);
+            requestHandlers[resource] = handler;
         }
 
         public void Stop()
@@ -106,7 +87,7 @@ namespace Zutatensuppe.DiabloInterface.Server
         {
             // Read query request.
             var reader = new JsonStreamReader(pipe, Encoding.UTF8);
-            var request = reader.ReadJson<QueryRequest>();
+            var request = reader.ReadJson<Request>();
 
             // Get response and write.
             var response = HandleRequest(request);
@@ -116,10 +97,9 @@ namespace Zutatensuppe.DiabloInterface.Server
             writer.Flush();
         }
 
-        QueryResponse HandleRequest(QueryRequest request)
+        Response HandleRequest(Request request)
         {
-            var processor = new RequestProcessor();
-            return processor.HandleRequest(requestHandlers, request);
+            return new RequestProcessor().HandleRequest(requestHandlers, request);
         }
     }
 }

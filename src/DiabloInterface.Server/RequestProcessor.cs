@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -11,13 +11,13 @@ namespace Zutatensuppe.DiabloInterface.Server
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public QueryResponse HandleRequest(IReadOnlyDictionary<string, Func<IRequestHandler>> handlers, QueryRequest request)
+        public Response HandleRequest(IReadOnlyDictionary<string, Func<IRequestHandler>> handlers, Request request)
         {
             if (string.IsNullOrEmpty(request?.Resource))
             {
-                return new QueryResponse()
+                return new Response()
                 {
-                    Status = QueryStatus.NotFound,
+                    Status = ResponseStatus.NotFound,
                     Errors = new[] { "No resource specified." },
                 };
             }
@@ -35,10 +35,10 @@ namespace Zutatensuppe.DiabloInterface.Server
 
             if (resourceData?.Handler == null)
             {
-                return new QueryResponse()
+                return new Response()
                 {
                     Resource = resource,
-                    Status = QueryStatus.NotFound,
+                    Status = ResponseStatus.NotFound,
                     Errors = new[] { $"Resource '{resource}' not found." },
                 };
             }
@@ -59,10 +59,10 @@ namespace Zutatensuppe.DiabloInterface.Server
             catch (Exception e)
             {
                 Logger.Error($"Failed to process request [{resource}]", e);
-                return new QueryResponse()
+                return new Response()
                 {
                     Resource = resource,
-                    Status = QueryStatus.Error,
+                    Status = ResponseStatus.Error,
                     Errors = new[] { e.Message },
                 };
             }

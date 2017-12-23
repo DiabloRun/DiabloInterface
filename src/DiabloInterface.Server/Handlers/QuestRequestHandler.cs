@@ -15,19 +15,14 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             this.dataReader = dataReader ?? throw new ArgumentNullException(nameof(dataReader));
         }
 
-        public QueryResponse HandleRequest(QueryRequest request, IList<string> arguments)
+        public Response HandleRequest(Request request, IList<string> arguments)
         {
             int questId = int.Parse(arguments[0]);
             var quests = dataReader.CurrentQuests;
             var completed = quests == null || quests.IsQuestCompleted((QuestId)questId);
-            return BuildQuestResponse(completed);
-        }
-
-        QueryResponse BuildQuestResponse(bool completed)
-        {
-            return new QueryResponse()
+            return new Response()
             {
-                Status = QueryStatus.Success,
+                Status = ResponseStatus.Success,
                 Payload = new
                 {
                     IsCompleted = completed

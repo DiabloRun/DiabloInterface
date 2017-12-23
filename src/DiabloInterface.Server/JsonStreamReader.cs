@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -23,16 +23,9 @@ namespace Zutatensuppe.DiabloInterface.Server
             return encoding.GetString(buffer);
         }
 
-        public object ReadJson()
-        {
-            string jsonData = ReadJsonString();
-            return JsonConvert.DeserializeObject(jsonData);
-        }
-
         public T ReadJson<T>()
         {
-            string jsonData = ReadJsonString();
-            return JsonConvert.DeserializeObject<T>(jsonData);
+            return JsonConvert.DeserializeObject<T>(ReadJsonString());
         }
     }
 }

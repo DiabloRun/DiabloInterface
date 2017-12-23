@@ -27,17 +27,14 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
 
         public AllItemsRequestHandler(D2DataReader dataReader)
         {
-            if (dataReader == null)
-                throw new ArgumentNullException(nameof(dataReader));
-
-            this.dataReader = dataReader;
+            this.dataReader = dataReader ?? throw new ArgumentNullException(nameof(dataReader));
         }
 
-        public QueryResponse HandleRequest(QueryRequest request, IList<string> arguments)
+        public Response HandleRequest(Request request, IList<string> arguments)
         {
-            return new QueryResponse()
+            return new Response()
             {
-                Status = QueryStatus.Success,
+                Status = ResponseStatus.Success,
                 Payload = ItemInfo.GetItemsByLocations(dataReader, AllItemLocations),
             };
         }

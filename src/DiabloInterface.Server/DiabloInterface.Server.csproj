@@ -55,8 +55,8 @@
     <Compile Include="JsonStreamReader.cs" />
     <Compile Include="JsonStreamWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QueryRequest.cs" />
-    <Compile Include="QueryResponse.cs" />
+    <Compile Include="Request.cs" />
+    <Compile Include="Response.cs" />
     <Compile Include="RequestProcessor.cs" />
   </ItemGroup>
   <ItemGroup>

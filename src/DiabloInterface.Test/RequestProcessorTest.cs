@@ -14,12 +14,12 @@ namespace DiabloInterface.Test
         {
             public static IList<string> PreviousArguments { get; private set; }
 
-            public QueryResponse HandleRequest(QueryRequest request, IList<string> arguments)
+            public Response HandleRequest(Request request, IList<string> arguments)
             {
                 PreviousArguments = arguments;
-                return new QueryResponse()
+                return new Response()
                 {
-                    Status = QueryStatus.Success,
+                    Status = ResponseStatus.Success,
                 };
             }
         }
@@ -30,10 +30,10 @@ namespace DiabloInterface.Test
             var handlers = new Dictionary<string, Func<IRequestHandler>>();
             handlers.Add("test", () => new RequestHandlerMock());
 
-            var request = new QueryRequest() { Resource = "test" };
+            var request = new Request() { Resource = "test" };
             var response = requestProcessor.HandleRequest(handlers, request);
 
-            Assert.AreEqual(QueryStatus.Success, response.Status);
+            Assert.AreEqual(ResponseStatus.Success, response.Status);
         }
 
         [TestMethod]
@@ -42,10 +42,10 @@ namespace DiabloInterface.Test
             var handlers = new Dictionary<string, Func<IRequestHandler>>();
             handlers.Add("test", () => new RequestHandlerMock());
 
-            var request = new QueryRequest() { Resource = "test/test" };
+            var request = new Request() { Resource = "test/test" };
             var response = requestProcessor.HandleRequest(handlers, request);
 
-            Assert.AreEqual(QueryStatus.NotFound, response.Status);
+            Assert.AreEqual(ResponseStatus.NotFound, response.Status);
         }
 
         [TestMethod]
@@ -54,10 +54,10 @@ namespace DiabloInterface.Test
             var handlers = new Dictionary<string, Func<IRequestHandler>>();
             handlers.Add(@"test/(\w+)$", () => new RequestHandlerMock());
 
-            var request = new QueryRequest() { Resource = "test/item" };
+            var request = new Request() { Resource = "test/item" };
             var response = requestProcessor.HandleRequest(handlers, request);
 
-            Assert.AreEqual(QueryStatus.Success, response.Status);
+            Assert.AreEqual(ResponseStatus.Success, response.Status);
             Assert.AreEqual(1, RequestHandlerMock.PreviousArguments.Count);
             Assert.AreEqual("item", RequestHandlerMock.PreviousArguments[0]);
         }

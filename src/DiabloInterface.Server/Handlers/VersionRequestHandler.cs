@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Zutatensuppe.DiabloInterface.Server.Handlers
@@ -12,13 +12,13 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             this.assembly = assembly;
         }
 
-        public QueryResponse HandleRequest(QueryRequest request, IList<string> arguments)
+        public Response HandleRequest(Request request, IList<string> arguments)
         {
             var version = assembly.GetName().Version;
 
-            return new QueryResponse()
+            return new Response()
             {
-                Status = QueryStatus.Success,
+                Status = ResponseStatus.Success,
                 Payload = $"{version.Major}.{version.Minor}.{version.Build}"
             };
         }

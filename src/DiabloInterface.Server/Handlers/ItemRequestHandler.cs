@@ -42,31 +42,33 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
 
         public ItemRequestHandler(D2DataReader dataReader)
         {
-            if (dataReader == null) throw new ArgumentNullException(nameof(dataReader));
-
-            this.dataReader = dataReader;
+            this.dataReader = dataReader ?? throw new ArgumentNullException(nameof(dataReader));
         }
 
-        public QueryResponse HandleRequest(QueryRequest request, IList<string> arguments)
+        public Response HandleRequest(Request request, IList<string> arguments)
         {
-            List<BodyLocation> equipmentLocations = GetItemLocations(arguments[0]);
-            if (equipmentLocations.Count == 0)
-                return BuildResponse(new ItemResponsePayload() { IsValidSlot = false });
+            return BuildResponse(BuildPayload(GetItemLocations(arguments[0])));
+        }
 
-            var responsePayload = new ItemResponsePayload()
+        private ItemResponsePayload BuildPayload(List<BodyLocation> locations)
+        {
+            if (locations.Count == 0)
+            {
+                return new ItemResponsePayload() { IsValidSlot = false };
+            }
+
+            return new ItemResponsePayload()
             {
                 IsValidSlot = true,
-                Items = ItemInfo.GetItemsByLocations(dataReader, equipmentLocations)
+                Items = ItemInfo.GetItemsByLocations(dataReader, locations)
             };
-
-            return BuildResponse(responsePayload);
         }
 
-        static QueryResponse BuildResponse(ItemResponsePayload payload)
+        static Response BuildResponse(ItemResponsePayload payload)
         {
-            return new QueryResponse()
+            return new Response()
             {
-                Status = QueryStatus.Success,
+                Status = ResponseStatus.Success,
                 Payload = payload,
             };
         }
