@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Gui.Controls
+namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
     using System;
     using System.Collections.Generic;
@@ -7,6 +7,9 @@
     using System.Windows.Forms;
 
     using Zutatensuppe.DiabloInterface.Business.AutoSplits;
+    using Zutatensuppe.DiabloInterface.Business.Services;
+    using Zutatensuppe.DiabloInterface.Business.Settings;
+    using Zutatensuppe.DiabloInterface.Core.Extensions;
 
     public partial class AutoSplitTable : UserControl
     {
@@ -18,6 +21,10 @@
             "Difficulty"
         };
 
+        readonly ISettingsService settingsService;
+
+        private List<AutoSplitSettingsRow> rows = new List<AutoSplitSettingsRow>();
+
         bool Dirty = false;
         public bool IsDirty
         {
@@ -27,14 +34,8 @@
                 if (Dirty) return true;
 
                 // Check if any of the rows were changed.
-                foreach (Control control in Controls)
-                {
-                    var row = control as AutoSplitSettingsRow;
-                    if (row != null && row.IsDirty)
-                    {
-                        return true;
-                    }
-                }
+                var anyDirty = Controls.OfType<AutoSplitSettingsRow>().Any(row => row.IsDirty);
+                if (anyDirty) return true;
 
                 // Nothing changed.
                 return false;
@@ -45,19 +46,90 @@
         {
             get
             {
-                return (from control in Controls.Cast<Control>()
-                        let row = control as AutoSplitSettingsRow
-                        where row != null
-                        select row.AutoSplit);
+                return (from row in Controls.OfType<AutoSplitSettingsRow>() select row.AutoSplit);
             }
         }
 
-        public AutoSplitTable()
+        public AutoSplitTable(ISettingsService settingsService)
         {
             Layout += AutoSplitTable_Layout;
 
+            this.settingsService = settingsService;
+            RegisterServiceEventHandlers();
             InitializeComponent();
             InitializeHeader();
+
+            // Unregister event handlers when we are done.
+            Disposed += (sender, args) =>
+            {
+                UnregisterServiceEventHandlers();
+            };
+
+            ReloadWithCurrentSettings(settingsService.CurrentSettings);
+        }
+
+        void RegisterServiceEventHandlers()
+        {
+            settingsService.SettingsChanged += SettingsServiceSettingsChanged;
+        }
+
+        void UnregisterServiceEventHandlers()
+        {
+            settingsService.SettingsChanged -= SettingsServiceSettingsChanged;
+        }
+
+        void SettingsServiceSettingsChanged(object sender, ApplicationSettingsEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke((Action)(() => SettingsServiceSettingsChanged(sender, e)));
+                return;
+            }
+
+            ReloadWithCurrentSettings(e.Settings);
+
+            MarkClean();
+        }
+
+        private void ReloadWithCurrentSettings(ApplicationSettings s)
+        {
+            var settings = s.DeepCopy();
+            int autosplitCount = settings.Autosplits.Count;
+            int rowCount = rows.Count;
+            for (int i = 0; i < autosplitCount; i++)
+            {
+                if (rowCount <= i)
+                {
+                    AddAutoSplit(settings.Autosplits[i]);
+                } else
+                {
+                    rows[i].SetAutosplit(settings.Autosplits[i]);
+                }
+            }
+            for (int i = autosplitCount; i < rows.Count; i++)
+            {
+                Controls.Remove(rows[i]);
+            }
+            rows = rows.GetRange(0, autosplitCount);
+        }
+
+        public Control AddAutoSplit(AutoSplit autosplit)
+        {
+            if (autosplit == null) return null;
+
+            // Operate on a copy.
+            autosplit = new AutoSplit(autosplit);
+
+            // Create and show the autosplit row.
+            AutoSplitSettingsRow row = new AutoSplitSettingsRow(autosplit);
+            Controls.Add(row);
+            rows.Add(row);
+            row.OnDelete += (item) =>
+            {
+                Controls.Remove(row);
+                rows.Remove(row);
+            };
+            return row;
         }
 
         void InitializeHeader()
@@ -78,13 +150,9 @@
             }
 
             Dirty = false;
-            foreach (Control control in Controls)
+            foreach (AutoSplitSettingsRow row in Controls.OfType<AutoSplitSettingsRow>())
             {
-                var row = control as AutoSplitSettingsRow;
-                if (row != null)
-                {
-                    row.MarkClean();
-                }
+                row.MarkClean();
             }
         }
 
@@ -136,7 +204,6 @@
                 }
                 height += control.Height + control.Margin.Vertical;
             }
-
             return height;
         }
     }

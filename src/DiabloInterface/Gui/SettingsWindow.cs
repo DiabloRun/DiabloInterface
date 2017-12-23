@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Gui
+namespace Zutatensuppe.DiabloInterface.Gui
 {
     using System;
     using System.Collections.Generic;
@@ -47,7 +47,7 @@
                 UnregisterServiceEventHandlers();
             };
 
-            ReloadComponentsWithCurrentSettings();
+            ReloadComponentsWithCurrentSettings(settingsService.CurrentSettings);
 
             // Loading the settings will dirty mark pretty much everything, here
             // we just verify that nothing has actually changed yet.
@@ -144,20 +144,13 @@
 
             // NOTE: This may have been due to loading settings from elsewhere. For now the
             ////     behavior will be to refresh the settings window in that case.
-            ReloadComponentsWithCurrentSettings();
+            ReloadComponentsWithCurrentSettings(e.Settings);
             MarkClean();
         }
 
         void InitializeAutoSplitTable()
         {
-            if (autoSplitTable != null)
-            {
-                AutoSplitLayout.Controls.Remove(autoSplitTable);
-            }
-
-            // Create a scrollable layout.
-            autoSplitTable = new AutoSplitTable();
-            autoSplitTable.Dock = DockStyle.Fill;
+            autoSplitTable = new AutoSplitTable(settingsService) { Dock = DockStyle.Fill };
             AutoSplitLayout.Controls.Add(autoSplitTable);
         }
 
@@ -166,11 +159,11 @@
             Text = $@"Settings ({Path.GetFileName(settingsService.CurrentSettingsFile)})";
         }
 
-        void ReloadComponentsWithCurrentSettings()
+        void ReloadComponentsWithCurrentSettings(ApplicationSettings s)
         {
             UpdateTitle();
 
-            var settings = settingsService.CurrentSettings.DeepCopy();
+            var settings = s.DeepCopy();
 
             runeSettingsPage.SettingsList = settings.ClassRunes;
 
@@ -212,12 +205,6 @@
             btnSetColdResColor.ForeColor = settings.ColorColdRes;
             btnSetLightningResColor.ForeColor = settings.ColorLightningRes;
             btnSetPoisonResColor.ForeColor = settings.ColorPoisonRes;
-
-            InitializeAutoSplitTable();
-            foreach (AutoSplit a in settings.Autosplits)
-            {
-                AddAutoSplit(a);
-            }
         }
 
         void MarkClean()
@@ -228,23 +215,15 @@
 
         private string GetFontName()
         {
-            string fontName = null;
             if (fontComboBox.SelectedItem != null)
+                return fontComboBox.SelectedItem.ToString();
+
+            foreach (string comboBoxFontName in fontComboBox.Items)
             {
-                fontName = fontComboBox.SelectedItem.ToString();
+                if (comboBoxFontName.Equals(fontComboBox.Text))
+                    return fontComboBox.Text;
             }
-            else
-            {
-                foreach (string comboBoxFontName in fontComboBox.Items)
-                {
-                    if (comboBoxFontName.Equals(fontComboBox.Text))
-                    {
-                        fontName = fontComboBox.Text;
-                        break;
-                    }
-                }
-            }
-            return fontName;
+            return null;
         }
 
         ApplicationSettings CopyModifiedSettings()
@@ -299,24 +278,14 @@
             var splits = autoSplitTable.AutoSplits;
             var factory = new AutoSplitFactory();
 
-            AddAutoSplit(factory.CreateSequential(splits.LastOrDefault()));
+            var row = autoSplitTable.AddAutoSplit(factory.CreateSequential(splits.LastOrDefault()));
+            if (row != null)
+            {
+                autoSplitTable.ScrollControlIntoView(row);
+            }
 
             // Automatically enable auto splits when adding.
             EnableAutosplitCheckBox.Checked = true;
-        }
-
-        void AddAutoSplit(AutoSplit autosplit)
-        {
-            if (autosplit == null) return;
-
-            // Operate on a copy.
-            autosplit = new AutoSplit(autosplit);
-
-            // Create and show the autosplit row.
-            AutoSplitSettingsRow row = new AutoSplitSettingsRow(autosplit);
-            row.OnDelete += (item) => autoSplitTable.Controls.Remove(row);
-            autoSplitTable.Controls.Add(row);
-            autoSplitTable.ScrollControlIntoView(row);
         }
 
         void SettingsWindowOnFormClosing(object sender, FormClosingEventArgs e)
@@ -347,14 +316,11 @@
             KeyManager.TriggerHotkey(autoSplitHotkeyControl.Hotkey);
         }
 
-        void SaveSettings(string path = null)
+        void SaveSettings(string filename = null)
         {
-            path = path ?? settingsService.CurrentSettingsFile;
-            var modifiedSettings = CopyModifiedSettings();
-
             UseWaitCursor = true;
-            settingsService.SaveSettings(path, modifiedSettings);
-            settingsService.LoadSettings(path ?? settingsService.CurrentSettingsFile);
+            settingsService.SaveSettings(filename ?? settingsService.CurrentSettingsFile, CopyModifiedSettings());
+            settingsService.LoadSettings(filename ?? settingsService.CurrentSettingsFile);
             UseWaitCursor = false;
         }
 
@@ -610,7 +576,7 @@
             SelectColor(sender);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void resetColorsButton(object sender, EventArgs e)
         {
             btnSetNameColor.ForeColor = Color.RoyalBlue;
             btnSetDeathsColor.ForeColor = Color.Snow;
@@ -626,7 +592,7 @@
             SetBackgroundColor(Color.Black);
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void backgroundColorButtonClick(object sender, EventArgs e)
         {
             ColorDialog d = new ColorDialog();
             if (d.ShowDialog() == DialogResult.OK)

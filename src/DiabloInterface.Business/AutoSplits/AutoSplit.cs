@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business.AutoSplits
+namespace Zutatensuppe.DiabloInterface.Business.AutoSplits
 {
     using System;
 
@@ -136,11 +136,7 @@
         /// </summary>
         void OnReached()
         {
-            var reachedEvent = Reached;
-            if (reachedEvent != null)
-            {
-                reachedEvent(this);
-            }
+            Reached?.Invoke(this);
         }
 
         /// <summary>
@@ -148,11 +144,7 @@
         /// </summary>
         void OnReset()
         {
-            var resetEvent = Reset;
-            if (resetEvent != null)
-            {
-                resetEvent(this);
-            }
+            Reset?.Invoke(this);
         }
     }
 }

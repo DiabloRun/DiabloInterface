@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Gui
+namespace Zutatensuppe.DiabloInterface.Gui
 {
     partial class SettingsWindow
     {
@@ -569,7 +569,7 @@
             this.button2.TabIndex = 23;
             this.button2.Text = "Background color";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.Click += new System.EventHandler(this.backgroundColorButtonClick);
             // 
             // button1
             // 
@@ -579,7 +579,7 @@
             this.button1.TabIndex = 8;
             this.button1.Text = "Reset to default colors";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.resetColorsButton);
             // 
             // btnSetLevelColor
             // 

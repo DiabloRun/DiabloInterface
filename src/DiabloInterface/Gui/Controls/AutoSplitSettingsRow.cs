@@ -1,7 +1,6 @@
-﻿namespace Zutatensuppe.DiabloInterface.Gui.Controls
+namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
     using System;
-    using System.Collections.Generic;
     using System.Text.RegularExpressions;
     using System.Windows.Forms;
 
@@ -48,6 +47,7 @@
             }
         }
 
+        private bool updating;
         public event Action<AutoSplitSettingsRow> OnDelete;
         public bool IsDirty { get; private set; }
 
@@ -55,11 +55,8 @@
 
         public AutoSplitSettingsRow(AutoSplit autosplit)
         {
+            updating = false;
             InitializeComponent();
-
-            AutoSplit = autosplit;
-
-            txtName.Text = autosplit.Name;
 
             cmbType.Items.Add(new Item(LABEL_CHAR_LEVEL, (int)AutoSplit.SplitType.CharLevel));
             cmbType.Items.Add(new Item(LABEL_AREA, (int)AutoSplit.SplitType.Area));
@@ -67,9 +64,25 @@
             cmbType.Items.Add(new Item(LABEL_QUEST, (int)AutoSplit.SplitType.Quest));
             cmbType.Items.Add(new Item(LABEL_SPECIAL, (int)AutoSplit.SplitType.Special));
             cmbType.Items.Add(new Item(LABEL_GEMS, (int)AutoSplit.SplitType.Gems));
+
+            cmbDifficulty.Items.Clear();
+            cmbDifficulty.Items.Add(new Item(LABEL_NORMAL, 0));
+            cmbDifficulty.Items.Add(new Item(LABEL_NIGHTMARE, 1));
+            cmbDifficulty.Items.Add(new Item(LABEL_HELL, 2));
+
+            SetAutosplit(autosplit);
+        }
+
+        public void SetAutosplit(AutoSplit autosplit)
+        {
+            updating = true;
+            txtName.Text = autosplit.Name;
             cmbType.SelectedIndex = (int)autosplit.Type;
 
-            FillComboBoxes();
+            if (this.AutoSplit == null || autosplit.Type != this.AutoSplit.Type)
+            {
+                FillComboBoxes(autosplit);
+            }
 
             cmbDifficulty.SelectedIndex = autosplit.Difficulty;
 
@@ -83,26 +96,24 @@
                 }
                 i++;
             }
+            this.AutoSplit = autosplit;
+            updating = false;
         }
-        
-        private void FillComboBoxes()
+
+        private void FillComboBoxes(AutoSplit autosplit)
         {
-            cmbDifficulty.Items.Clear();
-            cmbDifficulty.Items.Add(new Item(LABEL_NORMAL, 0));
-            cmbDifficulty.Items.Add(new Item(LABEL_NIGHTMARE, 1));
-            cmbDifficulty.Items.Add(new Item(LABEL_HELL, 2));
-            cmbDifficulty.SelectedIndex = AutoSplit.Difficulty;
-            cmbDifficulty.Show();
-            if (AutoSplit.IsDifficultyIgnored())
+            if (autosplit.IsDifficultyIgnored())
             {
                 cmbDifficulty.Hide();
-            } else
+            }
+            else
             {
-                cmbDifficulty.SelectedIndex = AutoSplit.Difficulty;
+                cmbDifficulty.Show();
+                cmbDifficulty.SelectedIndex = autosplit.Difficulty;
             }
 
             cmbValue.Items.Clear();
-            switch (AutoSplit.Type)
+            switch (autosplit.Type)
             {
                 case AutoSplit.SplitType.CharLevel:
                     for (int i = 1; i < 100; i++)
@@ -162,16 +173,25 @@
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (updating)
+                return;
+
             ComboBox comboBox = (ComboBox)sender;
             Item selectedItem = (Item)comboBox.SelectedItem;
-            AutoSplit.Type = (AutoSplit.SplitType)selectedItem.Value;
-            FillComboBoxes();
-
-            IsDirty = true;
+            AutoSplit.SplitType type = (AutoSplit.SplitType)selectedItem.Value;
+            if (type != AutoSplit.Type)
+            {
+                AutoSplit.Type = type;
+                FillComboBoxes(AutoSplit);
+                IsDirty = true;
+            }
         }
 
         private void cmbValue_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (updating)
+                return;
+
             Item selectedValueItem = (Item)cmbValue.SelectedItem;
             if (selectedValueItem != null)
             {
@@ -202,6 +222,8 @@
 
         private void cmbDifficulty_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (updating)
+                return;
             Item selectedValueItem = (Item)cmbDifficulty.SelectedItem;
             if (selectedValueItem != null)
             {
@@ -217,6 +239,9 @@
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
+            if (updating)
+                return;
+
             AutoSplit.Name = txtName.Text;
 
             IsDirty = true;

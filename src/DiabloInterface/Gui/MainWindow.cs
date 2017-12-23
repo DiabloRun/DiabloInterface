@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Gui
+namespace Zutatensuppe.DiabloInterface.Gui
 {
     using System;
     using System.Collections.Generic;
@@ -28,14 +28,9 @@
         public MainWindow(ISettingsService settingsService, IGameService gameService, IAutoSplitService autoSplitService)
         {
             Logger.Info("Creating main window.");
-
-            if (settingsService == null) throw new ArgumentNullException(nameof(settingsService));
-            if (gameService == null) throw new ArgumentNullException(nameof(gameService));
-            if (autoSplitService == null) throw new ArgumentNullException(nameof(autoSplitService));
-
-            this.settingsService = settingsService;
-            this.gameService = gameService;
-            this.autoSplitService = autoSplitService;
+            this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+            this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
+            this.autoSplitService = autoSplitService ?? throw new ArgumentNullException(nameof(autoSplitService));
 
             RegisterServiceEventHandlers();
             InitializeComponent();
