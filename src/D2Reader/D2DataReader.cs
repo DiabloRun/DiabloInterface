@@ -206,6 +206,13 @@ namespace Zutatensuppe.D2Reader
 
                 return false;
             }
+            catch (ModuleNotLoadedException e)
+            {
+                Logger.Error($"Diablo II Process was found, but the module {e.ModuleName} was not yet loaded. Try launching a game.");
+                CleanUpDataReaders();
+
+                return false;
+            }
             catch (GameVersionUnsupportedException e)
             {
                 Logger.Error($"Diablo II Process was found, but the version {e.GameVersion} is not supported.");
