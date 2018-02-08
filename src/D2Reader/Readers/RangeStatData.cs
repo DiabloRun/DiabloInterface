@@ -1,4 +1,4 @@
-using Zutatensuppe.D2Reader.Struct;
+﻿using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Stat;
 using System;
 using System.Collections.Generic;
@@ -30,14 +30,14 @@ namespace Zutatensuppe.D2Reader.Readers
             if (min == max)
             {
                 // Example: "Adds 1 to minimum damage"
-                return _toString(stringLookupTable, new int[] { min }, equalStringId);
+                return _toString(stringLookupTable, new object[] { min }, equalStringId);
             }
 
             // Example: "Adds 1-2 damage"
-            return _toString(stringLookupTable, new int[] { min, max }, differStringId);
+            return _toString(stringLookupTable, new object[] { min, max }, differStringId);
         }
 
-        protected string _toString(StringLookupTable stringLookupTable, int[] args, ushort stringId)
+        protected string _toString(StringLookupTable stringLookupTable, object[] args, ushort stringId)
         {
             string format = stringLookupTable.ConvertCFormatString(
                 stringLookupTable.GetString(stringId),
@@ -68,11 +68,11 @@ namespace Zutatensuppe.D2Reader.Readers
             if (min == max)
             {
                 // Example: "6 Poison damage over 2 seconds"
-                return _toString(stringLookupTable, new int[] { min, CalculatedDuration() }, equalStringId);
+                return _toString(stringLookupTable, new object[] { min, CalculatedDuration() }, equalStringId);
             }
 
             // Example: "2-10 Poison damage over 2 seconds"
-            return _toString(stringLookupTable, new int[] { min, max, CalculatedDuration() }, differStringId);
+            return _toString(stringLookupTable, new object[] { min, max, CalculatedDuration() }, differStringId);
         }
 
         private int CalculatedDuration()
