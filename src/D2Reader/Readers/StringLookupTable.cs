@@ -1,4 +1,4 @@
-using Zutatensuppe.D2Reader.Struct;
+﻿using Zutatensuppe.D2Reader.Struct;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -13,14 +13,14 @@ namespace Zutatensuppe.D2Reader.Readers
         public const ushort Durability              = 0x0D81; // "Durability:"
         public const ushort Defense                 = 0x0D85; // "Defense:"
         public const ushort DurabilityBetween       = 0x0D87; // "of"
-        public const ushort FireDamageRange         = 0x0E1C;
-        public const ushort FireDamage              = 0x0E1D;
-        public const ushort ColdDamageRange         = 0x0E1E;
-        public const ushort ColdDamage              = 0x0E1F;
-        public const ushort LightningDamageRange    = 0x0E20;
-        public const ushort LightningDamage         = 0x0E21;
-        public const ushort MagicDamageRange        = 0x0E22;
-        public const ushort MagicDamage             = 0x0E23;
+        public const ushort FireDamage              = 0x0E1C;
+        public const ushort FireDamageRange         = 0x0E1D;
+        public const ushort ColdDamage              = 0x0E1E;
+        public const ushort ColdDamageRange         = 0x0E1F;
+        public const ushort LightningDamage         = 0x0E20;
+        public const ushort LightningDamageRange    = 0x0E21;
+        public const ushort MagicDamage             = 0x0E22;
+        public const ushort MagicDamageRange        = 0x0E23;
         public const ushort PoisonOverTimeSame      = 0x0E24;
         public const ushort PoisonOverTime          = 0x0E25;
         public const ushort DamageRange             = 0x0E27;
