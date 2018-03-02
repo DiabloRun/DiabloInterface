@@ -1,4 +1,4 @@
-namespace Zutatensuppe.D2Reader
+﻿namespace Zutatensuppe.D2Reader
 {
     using System;
     using System.Collections.Generic;
@@ -85,6 +85,7 @@ namespace Zutatensuppe.D2Reader
         public Dictionary<string, IntPtr> ModuleBaseAddresses { get; }
 
         public string FileVersion { get; }
+        public string ModuleName { get; }
 
         public bool IsValid
         {
@@ -172,6 +173,7 @@ namespace Zutatensuppe.D2Reader
                 foundProcessId
             );
             FileVersion = foundFileVersion;
+            ModuleName = moduleName;
 
             // Make sure we succeeded in opening the handle.
             if (processHandle == IntPtr.Zero) throw new ProcessNotFoundException(processName, moduleName);
