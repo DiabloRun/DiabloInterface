@@ -1,4 +1,4 @@
-namespace Zutatensuppe.D2Reader
+﻿namespace Zutatensuppe.D2Reader
 {
     using System;
     using System.Collections.Generic;
@@ -78,6 +78,8 @@ namespace Zutatensuppe.D2Reader
             "D2Game.dll",
             "D2Client.dll"
         };
+        const string D2SEProcessName = "d2se";
+        const string D2SEModuleName = "D2SE.exe";
 
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -166,7 +168,16 @@ namespace Zutatensuppe.D2Reader
 
         GameMemoryTable CreateGameMemoryTableForReader(ProcessMemoryReader reader)
         {
-            return memoryTableFactory.CreateForVersion(reader.FileVersion, reader.ModuleBaseAddresses);
+            string fileVersion = reader.FileVersion;
+            if (reader.ModuleName == D2SEModuleName)
+            {
+                string version = reader.ReadNullTerminatedString(new IntPtr(0x1A049), 5, Encoding.ASCII, AddressingMode.Relative);
+                if (version == "1.13c")
+                {
+                    fileVersion = GameVersion.Version_1_13_C;
+                }
+            }
+            return memoryTableFactory.CreateForVersion(fileVersion, reader.ModuleBaseAddresses);
         }
 
         bool ValidateGameDataReaders()
@@ -190,7 +201,30 @@ namespace Zutatensuppe.D2Reader
             try
             {
                 reader = new ProcessMemoryReader(DiabloProcessName, DiabloModuleName, DiabloSubModules);
-                
+            }
+            catch (ProcessNotFoundException)
+            {
+                CleanUpDataReaders();
+            }
+            if (reader == null)
+            {
+                try
+                {
+                    reader = new ProcessMemoryReader(D2SEProcessName, D2SEModuleName, DiabloSubModules);
+                }
+                catch (ProcessNotFoundException)
+                {
+                    CleanUpDataReaders();
+                }
+            }
+
+            if (reader == null)
+            {
+                return false;
+            }
+
+            try
+            {
                 memory = CreateGameMemoryTableForReader(reader);
 
                 unitReader = new UnitReader(reader, memory);
@@ -199,12 +233,6 @@ namespace Zutatensuppe.D2Reader
                 Logger.Info($"Found the Diablo II process (version {reader.FileVersion}).");
 
                 return true;
-            }
-            catch (ProcessNotFoundException)
-            {
-                CleanUpDataReaders();
-
-                return false;
             }
             catch (ModuleNotLoadedException e)
             {
