@@ -45,16 +45,16 @@ You can configure what data is displayed and how that data is presented.
 
 ### Runes
 
-A rune display is available that can track which runes that the runner still needs. The rune list can be configured per character class and difficulty setting. The rune list used is determined by the most specific configuration in the order `Class+Difficulty > Class > Difficulty > Default`. If you do not care about different rune settings just add one default `Class Settings` entry and then add your runes.
+A rune display is available to track findings of desired runes. The rune list can be configured per character class and difficulty setting. The rune list used is determined by the most specific configuration in the order `Class+Difficulty > Class > Difficulty > Default`. If you do not care about different rune settings just add one default `Class Settings` entry and then add your runes.
 
-The tool can't determine if the runner is intending on a normal/nightmare or hell run, therefore the targeted difficulty will have to be selected. Selecing the target difficulty is done by rightclicking the main interface and choosing `Difficulty->[Your Choice]` (defaults to `Normal`).
+The tool can't determine if the runner intends to do a normal, nightmare or hell run. Therefore the targeted difficulty has to be selected manually. Selecing the target difficulty is done by rightclicking the main interface and choosing `Difficulty->[Your Choice]` (defaults to `Normal`).
 
 ### Auto-Splits
 
-The tool is also able to do automatic splits in connection with a split tool like Livesplit. 
+The tool is also able to do automatic splits in connection with a split tool like [Livesplit][livesplit-link]. 
 
 1. Setup the same hotkey in DiabloInterface as your Start/Split hotkey in split tool
-2. Setup splits that should be sent to your split tool (naming and order of splits in DiabloInterface are not relevant, as only a Keypress is sent to the split tool then a split point is reached)
+2. Setup splits that should be sent to your split tool (naming and order of splits in DiabloInterface are irrelevant, as only a key press is sent to the split tool when a split point is reached)
 
 Please note that automatic splits will only work if you start a new character while the tool is running.
 
@@ -118,3 +118,4 @@ Thank you for using, testing and developing the tool!
 
 [discord-channel-link]: https://discord.gg/CVJvyAz
 [issues-link]: https://github.com/Zutatensuppe/DiabloInterface/issues
+[livesplit-link]: http://www.livesplit.org/
