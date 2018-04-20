@@ -78,6 +78,7 @@ An implementation of the API can be found at [DiabloInterfaceAPI](https://github
 
 1. The tool must be run as administrator, otherwise it cannot read the memory from another process.
 2. Because of the nature of how the tool works, there might be a warning from your Antivirus/Windows Smartscreen in precompiled exe. You can ignore the warning or compile the sources youself.
+3. There is currently no support for network play.
 
 If there are any other problems or requests, join our [Discord channel][discord-channel-link] or create an [issue][issues-link].
 
@@ -103,7 +104,7 @@ Feel free to join us in Discord in our [DiabloInterface Channel][discord-channel
 
 ## Use in Battle.net
 
-Even though DI is only reading and not manipulating game data, we discourage the use of DiabloInterface in Battle.net. We do not know, if it is seen as a cheat/hack by Blizzard. Using the tool might possibly result in a ban.
+Even though DI is only reading and not manipulating game data, we discourage the use of DiabloInterface in Battle.net. We do not know, if it is seen as a cheat/hack by Blizzard. Using the tool might possibly result in a ban. That aside, there is no multiplayer support in DiabloInterface as of now.
 
 ## Credits
 
