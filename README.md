@@ -13,7 +13,10 @@ that can be useful to viewers of the stream (because the information is not visi
 
 ### What versions of Diablo 2 are supported?
 
-DiabloInterface supports 1.13c, 1.13d, 1.14b, 1.14c and 1.14d as well as D2SE.
+- LOD 1.13c, 1.13d, 1.14b, 1.14c and 1.14d
+- D2SE
+
+It has also been reported to work with Plugy.
 
 ## Settings
 
