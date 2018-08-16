@@ -1,15 +1,15 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
+namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
     using System;
     using System.Collections.Generic;
 
     using Newtonsoft.Json.Linq;
 
-    public class JsonLegacySettings : ILegacySettingsObject
+    public class JsonLegacySettingsObject : ILegacySettingsObject
     {
         readonly JToken token;
 
-        public JsonLegacySettings(JToken token)
+        public JsonLegacySettingsObject(JToken token)
         {
             this.token = token ?? throw new ArgumentNullException(nameof(token));
         }

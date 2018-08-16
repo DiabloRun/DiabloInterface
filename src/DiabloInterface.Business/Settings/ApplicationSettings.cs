@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
+namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
     using System.Collections.Generic;
     using System.Drawing;
@@ -25,6 +25,8 @@
         public Keys AutosplitHotkey { get; set; } = Keys.None;
         public List<AutoSplit> Autosplits { get; set; } = new List<AutoSplit>();
         public IReadOnlyList<ClassRuneSettings> ClassRunes { get; set; } = new List<ClassRuneSettings>();
+
+
         public bool DisplayName { get; set; } = true;
         public bool DisplayLevel { get; set; } = true;
         public bool DisplayDeathCounter { get; set; } = true;
@@ -38,11 +40,13 @@
         public bool DisplayDifficultyPercentages { get; set; } = false;
         public bool DisplayLayoutHorizontal { get; set; } = true;
         public bool DisplayRealFrwIas { get; set; } = false;
+        public bool DisplayPlayersX { get; set; } = false;
 
         public int VerticalLayoutPadding { get; set; } = 5;
 
         public Color ColorName { get; set; } = Color.RoyalBlue;
         public Color ColorDeaths { get; set; } = Color.Snow;
+        public Color ColorPlayersX { get; set; } = Color.Snow;
         public Color ColorLevel { get; set; } = Color.Snow;
         public Color ColorDifficultyPercentages { get; set; } = Color.Snow;
         public Color ColorGold { get; set; } = Color.Gold;

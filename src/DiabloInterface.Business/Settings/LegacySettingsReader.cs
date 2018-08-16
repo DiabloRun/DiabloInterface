@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
+namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
     using System;
     using System.Collections.Generic;
@@ -82,24 +82,24 @@
                 foreach (var autoSplitData in splits)
                 {
                     string[] splitParts = autoSplitData.Split(new[] { "|" }, 4, StringSplitOptions.None);
-                    if (splitParts.Length < 3) continue;
+                    if (splitParts.Length < 3)
+                        continue;
 
-                    string splitName = splitParts[0];
-                    short splitType;
-                    short splitValue;
+                    if (!short.TryParse(splitParts[1], out short splitType))
+                        continue;
+
+                    if (!short.TryParse(splitParts[2], out short splitValue))
+                        continue;
+
                     short splitDifficulty = 0;
-
-                    if (!short.TryParse(splitParts[1], out splitType))
-                        continue;
-                    if (!short.TryParse(splitParts[2], out splitValue))
-                        continue;
-
                     if (splitParts.Length == 4)
                     {
                         if (!short.TryParse(splitParts[3], out splitDifficulty))
                             continue;
                     }
 
+
+                    string splitName = splitParts[0];
                     var autoSplit = new AutoSplit(splitName, (AutoSplit.SplitType)splitType, splitValue, splitDifficulty);
                     settings.Autosplits.Add(autoSplit);
                 }
@@ -132,10 +132,16 @@
             while (true)
             {
                 string line = reader.ReadLine();
-                if (line == null) break;
+                if (line == null)
+                {
+                    break;
+                }
 
                 string[] parts = line.Split(new[] { ": " }, 2, StringSplitOptions.None);
-                if (parts.Length < 2) continue;
+                if (parts.Length < 2)
+                {
+                    continue;
+                }
 
                 string key = parts[0].Trim();
                 string value = parts[1].Trim();
@@ -143,32 +149,13 @@
                 // Condense rune elements into an array.
                 if (key == "Rune")
                 {
-                    // Get or create rune array.
-                    object runesObj;
-                    if (!data.TryGetValue("Runes", out runesObj))
-                        runesObj = new List<int>();
-                    List<int> runes = (List<int>)runesObj;
-
-                    int rune;
-                    if (int.TryParse(value, out rune))
-                    {
-                        runes.Add(rune);
-                    }
-
-                    data["Runes"] = runes;
+                    data["Runes"] = GetRunes(data, value);
                 }
 
                 // Condense auto splits into an array.
                 else if (key == "AutoSplit")
                 {
-                    // Get or create autosplit array.
-                    object splitsObj;
-                    if (!data.TryGetValue("AutoSplits", out splitsObj))
-                        splitsObj = new List<string>();
-                    List<string> splits = (List<string>)splitsObj;
-
-                    splits.Add(value);
-                    data["AutoSplits"] = splits;
+                    data["AutoSplits"] = GetAutosplits(data, value);
                 }
 
                 // Otherwise, just add the string value.
@@ -176,6 +163,37 @@
             }
 
             return data;
+        }
+
+        private static List<string> GetAutosplits(Dictionary<string, object> data, string value)
+        {
+
+            // Get or create autosplit array.
+            if (!data.TryGetValue("AutoSplits", out object splitsObj))
+            {
+                splitsObj = new List<string>();
+            }
+            List<string> splits = (List<string>)splitsObj;
+
+            splits.Add(value);
+            return splits;
+        }
+
+        private static List<int> GetRunes(Dictionary<string, object> data, string value)
+        {
+            // Get or create rune array.
+            if (!data.TryGetValue("Runes", out object runesObj))
+            {
+                runesObj = new List<int>();
+            }
+            List<int> runes = (List<int>)runesObj;
+
+            if (int.TryParse(value, out int rune))
+            {
+                runes.Add(rune);
+            }
+
+            return runes;
         }
     }
 }

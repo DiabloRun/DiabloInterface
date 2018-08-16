@@ -73,6 +73,7 @@ namespace Zutatensuppe.D2Reader
                 {
                     GlobalData = new IntPtr(0x00344304),
                     World = new IntPtr(0x00483D38),
+                    PlayersX = new IntPtr(0x483D70),
                     GameId = new IntPtr(0x00482D0C),
                     LowQualityItems = new IntPtr(0x56CC58),
                     ItemDescriptions = new IntPtr(0x56CA58),
@@ -102,6 +103,7 @@ namespace Zutatensuppe.D2Reader
                 {
                     GlobalData = new IntPtr(0x33FD78),
                     World = new IntPtr(0x0047ACC0),
+                    PlayersX = new IntPtr(0x47ACF8),
                     GameId = new IntPtr(0x00479C94),
                     LowQualityItems = new IntPtr(0x563BE0),
                     ItemDescriptions = new IntPtr(0x5639E0),
@@ -131,6 +133,7 @@ namespace Zutatensuppe.D2Reader
                 {
                     GlobalData = new IntPtr(0x00340D78),
                     World = new IntPtr(0x0047BD78),
+                    PlayersX = new IntPtr(0x47BDB0),
                     GameId = new IntPtr(0x0047AD4C),
                     LowQualityItems = new IntPtr(0x564C98),
                     ItemDescriptions = new IntPtr(0x564A98),
@@ -167,6 +170,7 @@ namespace Zutatensuppe.D2Reader
                 {
                     GlobalData = new IntPtr(d2CommonAddress + 0x000A33F0),
                     World = new IntPtr(d2GameAddress + 0x111C10),
+                    PlayersX = new IntPtr(d2GameAddress + 0x111C44),
                     GameId = new IntPtr(d2NetAddress + 0xB420), //  and the pointer to that address is: new IntPtr(d2NetAddress + 0x70A8);
                     LowQualityItems = new IntPtr(d2CommonAddress + 0xA4EB0),
                     ItemDescriptions = new IntPtr(d2CommonAddress + 0xA4CB0),
@@ -203,6 +207,7 @@ namespace Zutatensuppe.D2Reader
                 {
                     GlobalData = new IntPtr(d2CommonAddress + 0x00099E1C),
                     World = new IntPtr(d2GameAddress + 0x111C24),
+                    PlayersX = new IntPtr(d2GameAddress + 0x111C1C),
                     GameId = new IntPtr(d2NetAddress + 0xB428),
                     LowQualityItems = new IntPtr(d2CommonAddress + 0x9FD98),
                     ItemDescriptions = new IntPtr(d2CommonAddress + 0x9FB94),

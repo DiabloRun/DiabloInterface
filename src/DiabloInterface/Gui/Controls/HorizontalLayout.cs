@@ -3,12 +3,9 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     using System;
     using System.Collections.Generic;
     using System.Drawing;
-    using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
 
-    using Zutatensuppe.D2Reader;
-    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
     using Zutatensuppe.DiabloInterface.Core.Logging;
@@ -17,7 +14,6 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        bool realFrwIas;
         FlowLayoutPanel activeRuneLayoutPanel;
 
         public HorizontalLayout(ISettingsService settingsService, IGameService gameService)
@@ -39,6 +35,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             InfoLabels = new[]
             {
                 deathsLabel,
+                playersXLabel,
                 goldLabel, lvlLabel,
                 strLabel, dexLabel, vitLabel, eneLabel,
                 frwLabel, fhrLabel, fcrLabel, iasLabel,
@@ -93,51 +90,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             }
         }
 
-        protected override void UpdateSettings(ApplicationSettings settings)
-        {
-            ApplyLabelSettings(settings);
-            ApplyRuneSettings(settings);
-            UpdateLayout();
-        }
-
-        protected override void UpdateLabels(Character player, IList<QuestCollection> quests)
-        {
-            nameLabel.Text = player.Name;
-            lvlLabel.Text = "LVL: " + player.Level;
-            goldLabel.Text = "GOLD: " + (player.Gold + player.GoldStash);
-            deathsLabel.Text = "DEATHS: " + player.Deaths;
-
-            labelStrVal.Text = "" + player.Strength;
-            labelDexVal.Text = "" + player.Dexterity;
-            labelVitVal.Text = "" + player.Vitality;
-            labelEneVal.Text = "" + player.Energy;
-            UpdateLabelWidthAlignment(labelStrVal, labelDexVal, labelVitVal, labelEneVal);
-
-            labelFrwVal.Text = "" + (realFrwIas ? player.RealFRW() : player.FasterRunWalk);
-            labelFcrVal.Text = "" + player.FasterCastRate;
-            labelFhrVal.Text = "" + player.FasterHitRecovery;
-            labelIasVal.Text = "" + (realFrwIas ? player.RealIAS() : player.IncreasedAttackSpeed);
-            UpdateLabelWidthAlignment(labelFrwVal, labelFcrVal, labelFhrVal, labelIasVal);
-
-            labelFireResVal.Text = "" + player.FireResist;
-            labelColdResVal.Text = "" + player.ColdResist;
-            labelLightResVal.Text = "" + player.LightningResist;
-            labelPoisonResVal.Text = "" + player.PoisonResist;
-            UpdateLabelWidthAlignment(labelFireResVal, labelColdResVal, labelLightResVal, labelPoisonResVal);
-
-            IList<float> completions = quests.Select(q => q.CompletionProgress).ToList();
-
-            normLabelVal.Text = $@"{completions[0]:0%}";
-            nmLabelVal.Text = $@"{completions[1]:0%}";
-            hellLabelVal.Text = $@"{completions[2]:0%}";
-            UpdateLabelWidthAlignment(normLabelVal, nmLabelVal, hellLabelVal);
-
-            labelNormPerc.Text = $@"NO: {completions[0]:0%}";
-            labelNmPerc.Text = $@"NM: {completions[1]:0%}";
-            labelHellPerc.Text = $@"HE: {completions[2]:0%}";
-        }
-
-        void UpdateLayout()
+        protected override void UpdateLayout(ApplicationSettings settings)
         {
             // Calculate maximum sizes that the labels can possible get.
             Size nameSize = TextRenderer.MeasureText(new string('W', 15), nameLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
@@ -197,7 +150,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             panelRuneDisplayHorizontal.MaximumSize = new Size(Math.Max(nameSize.Width, statsWidth), 0);
         }
         
-        void ApplyRuneSettings(ApplicationSettings settings)
+        protected override void ApplyRuneSettings(ApplicationSettings settings)
         {
             FlowLayoutPanel nextRuneLayoutPanel = null;
 
@@ -213,7 +166,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             activeRuneLayoutPanel = nextRuneLayoutPanel;
         }
 
-        void ApplyLabelSettings(ApplicationSettings settings)
+        protected override void ApplyLabelSettings(ApplicationSettings settings)
         {
             realFrwIas = settings.DisplayRealFrwIas;
 
@@ -226,12 +179,12 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
             // Hide/show labels wanted labels.
             nameLabel.Visible = settings.DisplayName;
-
             goldLabel.Visible =  settings.DisplayGold;
-            panelSimpleStats.Visible = settings.DisplayGold;
-
             deathsLabel.Visible = settings.DisplayDeathCounter;
             lvlLabel.Visible = settings.DisplayLevel;
+            playersXLabel.Visible = settings.DisplayPlayersX;
+
+            panelSimpleStats.Visible = settings.DisplayGold;
             panelDeathsLvl.Visible = settings.DisplayDeathCounter || settings.DisplayLevel;
 
             // If only death XOR lvl is to be displayed, set the col width of the non displayed col to 0
@@ -271,6 +224,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             goldLabel.ForeColor = settings.ColorGold;
             deathsLabel.ForeColor = settings.ColorDeaths;
             lvlLabel.ForeColor = settings.ColorLevel;
+            playersXLabel.ForeColor = settings.ColorPlayersX;
 
             UpdateLabelColors(settings);
         }

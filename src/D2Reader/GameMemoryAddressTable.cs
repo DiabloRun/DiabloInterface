@@ -5,6 +5,7 @@ namespace Zutatensuppe.D2Reader
     public class GameMemoryAddressTable
     {
         public IntPtr World;
+        public IntPtr PlayersX;
         public IntPtr GameId; // gameId (each time a game is started, this is increased by 1)
         public IntPtr Area;
         public IntPtr ItemDescriptions;

@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
+namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
     using System;
     using System.Collections.Generic;
@@ -11,6 +11,11 @@
     {
         public ApplicationSettings ResolveSettings(ApplicationSettings settings, ILegacySettingsObject obj)
         {
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
+            if (obj == null) throw new ArgumentNullException(nameof(obj));
+            
+            ConvertRuneSettings(settings, obj);
+
             ResolveHotkeys(settings, obj);
 
             return settings;
@@ -18,11 +23,6 @@
 
         void ResolveHotkeys(ApplicationSettings settings, ILegacySettingsObject obj)
         {
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
-            if (obj == null) throw new ArgumentNullException(nameof(obj));
-
-            ConvertRuneSettings(settings, obj);
-
             // Already has hotkeys, no need to resolve.
             if (settings.AutosplitHotkey != Keys.None)
                 return;

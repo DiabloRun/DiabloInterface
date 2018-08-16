@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
+namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
     using System;
     using System.IO;
@@ -45,7 +45,7 @@
             {
                 var data = JObject.Parse(jsonData);
                 var settings = data.ToObject<ApplicationSettings>();
-                var legacyObject = new JsonLegacySettings(data);
+                var legacyObject = new JsonLegacySettingsObject(data);
                 return resolver.ResolveSettings(settings, legacyObject);
             }
             catch (JsonException)

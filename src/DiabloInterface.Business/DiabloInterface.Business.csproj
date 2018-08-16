@@ -72,7 +72,7 @@
     <Compile Include="Settings\ILegacySettingsResolver.cs" />
     <Compile Include="Settings\ISettingsReader.cs" />
     <Compile Include="Settings\ISettingsWriter.cs" />
-    <Compile Include="Settings\JsonLegacySettings.cs" />
+    <Compile Include="Settings\JsonLegacySettingsObject.cs" />
     <Compile Include="Settings\JsonSettingsReader.cs" />
     <Compile Include="Settings\JsonSettingsWriter.cs" />
     <Compile Include="Settings\LegacySettingsObject.cs" />

@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business.Services
+namespace Zutatensuppe.DiabloInterface.Business.Services
 {
     using System;
     using System.Collections.Generic;
@@ -80,7 +80,7 @@
             // Update autosplits only if the character was a freshly started character.
             if (!eventArgs.IsAutosplitCharacter) return;
 
-            
+
             var difficulty = eventArgs.CurrentDifficulty;
             IList<QuestCollection> gameQuests = eventArgs.Quests;
             var currentQuests = gameQuests[(int)difficulty];
@@ -116,52 +116,47 @@
                 }
             }
 
-            bool haveUnreachedCharLevelSplits = false;
-            bool haveUnreachedAreaSplits = false;
-            bool haveUnreachedItemSplits = false;
-            bool haveUnreachedQuestSplits = false;
-            bool haveUnreachedGemSplits = false;
-
-            foreach (var autoSplit in settings.Autosplits)
-            {
-                if (autoSplit.IsReached || !autoSplit.MatchesDifficulty(difficulty))
-                {
-                    continue;
-                }
-
-                switch (autoSplit.Type)
-                {
-                    case AutoSplit.SplitType.CharLevel:
-                        haveUnreachedCharLevelSplits = true;
-                        break;
-                    case AutoSplit.SplitType.Area:
-                        haveUnreachedAreaSplits = true;
-                        break;
-                    case AutoSplit.SplitType.Item:
-                        haveUnreachedItemSplits = true;
-                        break;
-                    case AutoSplit.SplitType.Quest:
-                        haveUnreachedQuestSplits = true;
-                        break;
-                    case AutoSplit.SplitType.Gems:
-                        haveUnreachedGemSplits = true;
-                        break;
-                }
-            }
-
             // if no unreached splits, return
-            if (!(haveUnreachedCharLevelSplits
-                || haveUnreachedAreaSplits
-                || haveUnreachedItemSplits
-                || haveUnreachedQuestSplits
-                || haveUnreachedGemSplits))
+            if (!HaveUnreachedSplits(settings.Autosplits, difficulty))
             {
                 return;
             }
 
-            var character = eventArgs.Character;
-
             foreach (var autoSplit in settings.Autosplits)
+            {
+                if(IsCompleteableAutosplit(autoSplit, currentQuests, eventArgs, difficulty))
+                {
+                    CompleteAutoSplit(autoSplit);
+                }
+            }
+        }
+
+        private static bool IsCompleteableAutosplit(AutoSplit autoSplit, QuestCollection currentQuests, DataReadEventArgs eventArgs, GameDifficulty difficulty)
+        {
+            if (autoSplit.IsReached || !autoSplit.MatchesDifficulty(difficulty))
+            {
+                return false;
+            }
+
+            switch (autoSplit.Type)
+            {
+                case AutoSplit.SplitType.CharLevel:
+                    return autoSplit.Value <= eventArgs.Character.Level;
+                case AutoSplit.SplitType.Area:
+                    return autoSplit.Value == eventArgs.CurrentArea;
+                case AutoSplit.SplitType.Item:
+                    return eventArgs.ItemIds.Contains(autoSplit.Value);
+                case AutoSplit.SplitType.Quest:
+                    return currentQuests != null && currentQuests.IsQuestCompleted((QuestId)autoSplit.Value);
+                case AutoSplit.SplitType.Gems:
+                    return eventArgs.ItemIds.Contains(autoSplit.Value);
+            }
+            return false;
+        }
+
+        private static bool HaveUnreachedSplits(List<AutoSplit> autoSplits, GameDifficulty difficulty)
+        {
+            foreach (var autoSplit in autoSplits)
             {
                 if (autoSplit.IsReached || !autoSplit.MatchesDifficulty(difficulty))
                 {
@@ -171,43 +166,19 @@
                 switch (autoSplit.Type)
                 {
                     case AutoSplit.SplitType.CharLevel:
-                        if (autoSplit.Value <= character.Level)
-                        {
-                            CompleteAutoSplit(autoSplit);
-                        }
-
-                        break;
+                        return true;
                     case AutoSplit.SplitType.Area:
-                        if (autoSplit.Value == eventArgs.CurrentArea)
-                        {
-                            CompleteAutoSplit(autoSplit);
-                        }
-
-                        break;
+                        return true;
                     case AutoSplit.SplitType.Item:
-                        if (eventArgs.ItemIds.Contains(autoSplit.Value))
-                        {
-                            CompleteAutoSplit(autoSplit);
-                        }
-
-                        break;
+                        return true;
                     case AutoSplit.SplitType.Quest:
-                        if (currentQuests == null) continue;
-                        if (currentQuests.IsQuestCompleted((QuestId)autoSplit.Value))
-                        {
-                            CompleteAutoSplit(autoSplit);
-                        }
-
-                        break;
+                        return true;
                     case AutoSplit.SplitType.Gems:
-                        if (eventArgs.ItemIds.Contains(autoSplit.Value))
-                        {
-                            CompleteAutoSplit(autoSplit);
-                        }
-
-                        break;
+                        return true;
                 }
             }
+
+            return false;
         }
 
         void CompleteAutoSplit(AutoSplit autosplit)

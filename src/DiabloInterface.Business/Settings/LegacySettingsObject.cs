@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
+namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
     using System;
     using System.Collections.Generic;
@@ -9,9 +9,7 @@
 
         public LegacySettingsObject(Dictionary<string, object> data)
         {
-            if (data == null) throw new ArgumentNullException(nameof(data));
-
-            this.data = data;
+            this.data = data ?? throw new ArgumentNullException(nameof(data));
         }
 
         public bool Contains(string key)
