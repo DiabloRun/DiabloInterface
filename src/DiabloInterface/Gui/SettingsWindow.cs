@@ -354,7 +354,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
    
         private void CheckUpdatesButton_Click(object sender, EventArgs e)
         {
-            VersionChecker.CheckForUpdate(true);
+            VersionChecker.ManuallyCheckForUpdate();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

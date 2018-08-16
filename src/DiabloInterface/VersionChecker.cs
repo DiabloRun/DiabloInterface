@@ -11,7 +11,17 @@ namespace Zutatensuppe.DiabloInterface
         const string ReleasesUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases";
         const string ReleasesLatestUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases/latest";
 
-        public static void CheckForUpdate(bool userTriggered)
+        public static void ManuallyCheckForUpdate()
+        {
+            CheckForUpdate(true);
+        }
+
+        public static void AutomaticallyCheckForUpdate()
+        {
+            CheckForUpdate(false);
+        }
+
+        private static void CheckForUpdate(bool userTriggered)
         {
             string updateUrl = GetUpdateUrl();
 
@@ -43,24 +53,12 @@ namespace Zutatensuppe.DiabloInterface
             }
         }
 
-
         static string GetUpdateUrl()
         {
             Match verMatch = Regex.Match(Application.ProductVersion, @"^(\d+)\.(\d+)\.(\d+)(?:\.PR\.(\d+))?$");
             if (!verMatch.Success)
             {
                 return null;
-            }
-            int major = Convert.ToInt32(verMatch.Groups[1].Value);
-            int minor = Convert.ToInt32(verMatch.Groups[2].Value);
-            int patch = Convert.ToInt32(verMatch.Groups[3].Value);
-            int pre;
-            try
-            {
-                pre = Convert.ToInt32(verMatch.Groups[4].Value);
-            }
-            catch {
-                pre = 0;
             }
 
             string location;
@@ -89,48 +87,62 @@ namespace Zutatensuppe.DiabloInterface
             }
 
             Match tagMatch = Regex.Match(location, @"/releases/tag/v(\d+)\.(\d+)\.(\d+)$");
-
             if (!tagMatch.Success)
             {
                 return null;
             }
 
-            int majorNew = Convert.ToInt32(tagMatch.Groups[1].Value);
-            int minorNew = Convert.ToInt32(tagMatch.Groups[2].Value);
-            int patchNew = Convert.ToInt32(tagMatch.Groups[3].Value);
-
             // version compare.
 
+            int major = Convert.ToInt32(verMatch.Groups[1].Value);
+            int majorNew = Convert.ToInt32(tagMatch.Groups[1].Value);
             if (majorNew > major)
             {
                 return location;
             }
-            else if (majorNew < major)
+
+            if (majorNew < major)
             {
                 return null;
             }
-            else if (minorNew > minor)
+
+            int minor = Convert.ToInt32(verMatch.Groups[2].Value);
+            int minorNew = Convert.ToInt32(tagMatch.Groups[2].Value);
+            if (minorNew > minor)
             {
                 return location;
             }
-            else if (minorNew < minor)
+
+            if (minorNew < minor)
             {
                 return null;
             }
-            else if (patchNew > patch)
+
+            int patch = Convert.ToInt32(verMatch.Groups[3].Value);
+            int patchNew = Convert.ToInt32(tagMatch.Groups[3].Value);
+            if (patchNew > patch)
             {
                 return location;
             }
-            else if (patchNew < patch)
-            {
-                return null;
-            } else if ( pre > 0 )
-            {
-                return location;
-            } else
+
+            if (patchNew < patch)
             {
                 return null;
             }
+
+            try
+            {
+                int pre = Convert.ToInt32(verMatch.Groups[4].Value);
+                if (pre > 0)
+                {
+                    return location;
+                }
+            }
+            catch
+            {
+            }
+
+            return null;
         }
     }
 }

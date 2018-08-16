@@ -99,7 +99,7 @@ namespace Zutatensuppe.DiabloInterface
         {
             if (settingsService.CurrentSettings.CheckUpdates)
             {
-                VersionChecker.CheckForUpdate(false);
+                VersionChecker.AutomaticallyCheckForUpdate();
             }
         }
 
