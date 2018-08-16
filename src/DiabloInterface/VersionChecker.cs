@@ -1,4 +1,4 @@
-﻿using Zutatensuppe.DiabloInterface.Core.Logging;
+using Zutatensuppe.DiabloInterface.Core.Logging;
 using System;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -67,6 +67,12 @@ namespace Zutatensuppe.DiabloInterface
 
             try
             {
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
+                       | SecurityProtocolType.Tls11
+                       | SecurityProtocolType.Tls12
+                       | SecurityProtocolType.Ssl3;
+
                 HttpWebRequest r = (HttpWebRequest)WebRequest.Create(ReleasesLatestUrl);
                 r.Method = WebRequestMethods.Http.Head;
                 r.AllowAutoRedirect = false;
