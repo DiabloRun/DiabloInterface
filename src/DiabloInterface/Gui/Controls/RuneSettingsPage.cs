@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Gui.Controls
+namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
     using System;
     using System.Collections.Generic;
@@ -34,7 +34,13 @@
             get => settingsList;
             set
             {
-                settingsList = value;
+                if (value == null)
+                {
+                    settingsList = new List<ClassRuneSettings>();
+                } else
+                {
+                    settingsList = value;
+                }
 
                 var index = characterListBox.SelectedIndex;
                 characterListBox.Items.Clear();

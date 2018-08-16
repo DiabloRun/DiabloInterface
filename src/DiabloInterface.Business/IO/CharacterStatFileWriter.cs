@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business.IO
+namespace Zutatensuppe.DiabloInterface.Business.IO
 {
     using System;
     using System.IO;
@@ -12,11 +12,8 @@
 
         public CharacterStatFileWriter(ITextFileWriter writer, string directoryPath)
         {
-            if (writer == null) throw new ArgumentNullException(nameof(writer));
-            if (directoryPath == null) throw new ArgumentNullException(nameof(directoryPath));
-
-            this.writer = writer;
-            this.directoryPath = directoryPath;
+            this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
+            this.directoryPath = directoryPath ?? throw new ArgumentNullException(nameof(directoryPath));
         }
 
         public void WriteFiles(ICharacterStats characterData)

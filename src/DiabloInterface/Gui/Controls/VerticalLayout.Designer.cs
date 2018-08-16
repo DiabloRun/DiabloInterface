@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Gui.Controls
+namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
     partial class VerticalLayout
     {
@@ -26,57 +26,16 @@
         /// Erforderliche Methode für die Designerunterstützung. 
         /// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
         /// </summary>
-        private void InitializeComponent()
+        new protected void InitializeComponent()
         {
-            this.outerLeftRightPanel = new System.Windows.Forms.FlowLayoutPanel();
+            base.InitializeComponent();
+
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this.deathsLabel = new System.Windows.Forms.Label();
-            this.lvlLabel = new System.Windows.Forms.Label();
-            this.goldLabel = new System.Windows.Forms.Label();
-            this.panelBaseStats = new System.Windows.Forms.TableLayoutPanel();
-            this.vitLabel = new System.Windows.Forms.Label();
-            this.dexLabel = new System.Windows.Forms.Label();
-            this.strLabel = new System.Windows.Forms.Label();
-            this.eneLabel = new System.Windows.Forms.Label();
-            this.labelStrVal = new System.Windows.Forms.Label();
-            this.labelDexVal = new System.Windows.Forms.Label();
-            this.labelVitVal = new System.Windows.Forms.Label();
-            this.labelEneVal = new System.Windows.Forms.Label();
-            this.panelAdvancedStats = new System.Windows.Forms.TableLayoutPanel();
-            this.iasLabel = new System.Windows.Forms.Label();
-            this.frwLabel = new System.Windows.Forms.Label();
-            this.fcrLabel = new System.Windows.Forms.Label();
-            this.fhrLabel = new System.Windows.Forms.Label();
-            this.labelFrwVal = new System.Windows.Forms.Label();
-            this.labelFhrVal = new System.Windows.Forms.Label();
-            this.labelFcrVal = new System.Windows.Forms.Label();
-            this.labelIasVal = new System.Windows.Forms.Label();
-            this.panelResistances = new System.Windows.Forms.TableLayoutPanel();
-            this.coldLabel = new System.Windows.Forms.Label();
-            this.lighLabel = new System.Windows.Forms.Label();
-            this.poisLabel = new System.Windows.Forms.Label();
-            this.fireLabel = new System.Windows.Forms.Label();
-            this.labelFireResVal = new System.Windows.Forms.Label();
-            this.labelLightResVal = new System.Windows.Forms.Label();
-            this.labelPoisonResVal = new System.Windows.Forms.Label();
-            this.labelColdResVal = new System.Windows.Forms.Label();
-            this.panelDiffPercentages = new System.Windows.Forms.TableLayoutPanel();
-            this.normLabel = new System.Windows.Forms.Label();
-            this.nmLabel = new System.Windows.Forms.Label();
-            this.hellLabel = new System.Windows.Forms.Label();
-            this.normLabelVal = new System.Windows.Forms.Label();
-            this.nmLabelVal = new System.Windows.Forms.Label();
-            this.hellLabelVal = new System.Windows.Forms.Label();
-            this.nameLabel = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.panelRuneDisplay2 = new System.Windows.Forms.FlowLayoutPanel();
-            this.outerLeftRightPanel.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
-            this.panelBaseStats.SuspendLayout();
-            this.panelAdvancedStats.SuspendLayout();
-            this.panelResistances.SuspendLayout();
-            this.panelDiffPercentages.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+
             this.SuspendLayout();
             // 
             // outerLeftRightPanel
@@ -625,11 +584,24 @@
             this.nameLabel.TabIndex = 6;
             this.nameLabel.Text = "Name";
             // 
+            // playersXLabel
+            // 
+            this.playersXLabel.AutoSize = true;
+            this.playersXLabel.Font = new System.Drawing.Font("Courier New", 9.75F);
+            this.playersXLabel.ForeColor = System.Drawing.Color.White;
+            this.playersXLabel.Location = new System.Drawing.Point(3, 0);
+            this.playersXLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
+            this.playersXLabel.Name = "playersXLabel";
+            this.playersXLabel.Size = new System.Drawing.Size(68, 27);
+            this.playersXLabel.TabIndex = 6;
+            this.playersXLabel.Text = "/players X";
+            // 
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.flowLayoutPanel1.Controls.Add(this.nameLabel);
+            this.flowLayoutPanel1.Controls.Add(this.playersXLabel);
             this.flowLayoutPanel1.Controls.Add(this.outerLeftRightPanel);
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
@@ -682,48 +654,8 @@
 
         #endregion
 
-
-        protected System.Windows.Forms.FlowLayoutPanel outerLeftRightPanel;
-        protected System.Windows.Forms.Label nameLabel;
-        protected System.Windows.Forms.Label deathsLabel;
-        protected System.Windows.Forms.Label lvlLabel;
-        protected System.Windows.Forms.Label goldLabel;
-        protected System.Windows.Forms.TableLayoutPanel panelBaseStats;
-        protected System.Windows.Forms.Label vitLabel;
-        protected System.Windows.Forms.Label dexLabel;
-        protected System.Windows.Forms.Label strLabel;
-        protected System.Windows.Forms.Label eneLabel;
-        protected System.Windows.Forms.Label labelStrVal;
-        protected System.Windows.Forms.Label labelDexVal;
-        protected System.Windows.Forms.Label labelVitVal;
-        protected System.Windows.Forms.Label labelEneVal;
-        protected System.Windows.Forms.TableLayoutPanel panelAdvancedStats;
-        protected System.Windows.Forms.Label iasLabel;
-        protected System.Windows.Forms.Label frwLabel;
-        protected System.Windows.Forms.Label fcrLabel;
-        protected System.Windows.Forms.Label fhrLabel;
-        protected System.Windows.Forms.Label labelFrwVal;
-        protected System.Windows.Forms.Label labelFhrVal;
-        protected System.Windows.Forms.Label labelFcrVal;
-        protected System.Windows.Forms.Label labelIasVal;
-        protected System.Windows.Forms.TableLayoutPanel panelResistances;
-        protected System.Windows.Forms.Label coldLabel;
-        protected System.Windows.Forms.Label lighLabel;
-        protected System.Windows.Forms.Label poisLabel;
-        protected System.Windows.Forms.Label fireLabel;
-        protected System.Windows.Forms.Label labelFireResVal;
-        protected System.Windows.Forms.Label labelLightResVal;
-        protected System.Windows.Forms.Label labelPoisonResVal;
-        protected System.Windows.Forms.Label labelColdResVal;
-        protected System.Windows.Forms.TableLayoutPanel panelDiffPercentages;
-        protected System.Windows.Forms.Label normLabel;
-        protected System.Windows.Forms.Label nmLabel;
-        protected System.Windows.Forms.Label hellLabel;
-        protected System.Windows.Forms.Label normLabelVal;
-        protected System.Windows.Forms.Label nmLabelVal;
-        protected System.Windows.Forms.Label hellLabelVal;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.FlowLayoutPanel panelRuneDisplay2;
     }
 }

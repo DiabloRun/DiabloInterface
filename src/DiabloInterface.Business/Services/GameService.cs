@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business.Services
+namespace Zutatensuppe.DiabloInterface.Business.Services
 {
     using System;
     using System.Reflection;
@@ -16,7 +16,6 @@
 
         bool isDisposed;
         D2DataReader dataReader;
-        Thread dataReaderThread;
 
         public GameService(ISettingsService settingsService)
         {
@@ -80,8 +79,7 @@
         void InitializeDataReaderThread()
         {
             Logger.Info("Initializing data reader thread.");
-            dataReaderThread = new Thread(dataReader.RunReadOperation) { IsBackground = true };
-            dataReaderThread.Start();
+            new Thread(dataReader.RunReadOperation) { IsBackground = true }.Start();
         }
 
         void OnCharacterCreated(object sender, CharacterCreatedEventArgs e) =>

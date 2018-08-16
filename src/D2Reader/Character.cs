@@ -72,18 +72,15 @@ namespace Zutatensuppe.D2Reader
             CharClass = (CharacterClass)gameInfo.Player.eClass;
 
             int penalty = (int)ResistancePenalty.GetPenaltyByGameDifficulty((GameDifficulty)gameInfo.Game.Difficulty);
-            Func<StatIdentifier, int> getStat = statID =>
+
+            Func<Dictionary<StatIdentifier, D2Stat>, StatIdentifier, int> ValueByStatID = (d, statID) =>
             {
-                D2Stat stat;
                 // Get the value if if the key exists, else assume zero.
-                return data.TryGetValue(statID, out stat) ? stat.Value : 0;
+                return d.TryGetValue(statID, out D2Stat stat) ? stat.Value : 0;
             };
-            Func<StatIdentifier, int> getItemStat = statID =>
-            {
-                D2Stat stat;
-                // Get the value if if the key exists, else assume zero.
-                return itemData.TryGetValue(statID, out stat) ? stat.Value : 0;
-            };
+
+            Func<StatIdentifier, int> getStat = statID => ValueByStatID(data, statID);
+            Func<StatIdentifier, int> getItemStat = statID => ValueByStatID(itemData, statID);
 
             Level = getStat(StatIdentifier.Level);
             Experience = getStat(StatIdentifier.Experience);

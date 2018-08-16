@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.D2Reader
+namespace Zutatensuppe.D2Reader
 {
     using System;
     using System.Collections.Generic;
@@ -25,6 +25,7 @@
         QuestBuffers = 1 << 2,
         InventoryItemIds = 1 << 3,
         EquippedItemStrings = 1 << 4,
+        CurrentPlayersX = 1 << 5,
     }
 
     public class CharacterCreatedEventArgs : EventArgs
@@ -44,6 +45,7 @@
             Dictionary<BodyLocation, string> itemStrings,
             int currentArea,
             GameDifficulty currentDifficulty,
+            int currentPlayersX,
             List<int> itemIds,
             bool isAutosplitCharacter,
             IList<QuestCollection> quests)
@@ -52,6 +54,7 @@
             ItemStrings = itemStrings;
             CurrentArea = currentArea;
             CurrentDifficulty = currentDifficulty;
+            CurrentPlayersX = currentPlayersX;
             ItemIds = itemIds;
             IsAutosplitCharacter = isAutosplitCharacter;
             Quests = quests;
@@ -60,6 +63,7 @@
         public Character Character { get; }
         public Dictionary<BodyLocation, string> ItemStrings { get; }
         public int CurrentArea { get; }
+        public int CurrentPlayersX { get; }
         public GameDifficulty CurrentDifficulty { get; }
         public List<int> ItemIds { get; }
         public bool IsAutosplitCharacter { get; }
@@ -118,6 +122,7 @@
         public DataReaderEnableFlags ReadFlags { get; set; } =
             DataReaderEnableFlags.CurrentArea
             | DataReaderEnableFlags.CurrentDifficulty
+            | DataReaderEnableFlags.CurrentPlayersX
             | DataReaderEnableFlags.QuestBuffers
             | DataReaderEnableFlags.InventoryItemIds;
 
@@ -373,6 +378,7 @@
             ProcessCharacterData(gameInfo);
             ProcessQuests(gameInfo);
             var currentArea = ProcessCurrentArea();
+            var currentPlayersX = ProcessCurrentPlayersX();
             ProcessCurrentDifficulty(gameInfo);
             Dictionary<BodyLocation, string> itemStrings = ProcessEquippedItemStrings();
             List<int> inventoryItemIds = ProcessInventoryItemIds();
@@ -382,6 +388,7 @@
                 itemStrings,
                 currentArea,
                 currentDifficulty,
+                currentPlayersX,
                 inventoryItemIds,
                 IsAutosplitCharacter(character),
                 gameQuests));
@@ -438,6 +445,13 @@
         {
             return ReadFlags.HasFlag(DataReaderEnableFlags.CurrentArea)
                 ? reader.ReadByte(memory.Address.Area, AddressingMode.Relative)
+                : -1;
+        }
+
+        int ProcessCurrentPlayersX()
+        {
+            return ReadFlags.HasFlag(DataReaderEnableFlags.CurrentPlayersX)
+                ? Math.Max(reader.ReadByte(memory.Address.PlayersX, AddressingMode.Relative), (byte)1)
                 : -1;
         }
 

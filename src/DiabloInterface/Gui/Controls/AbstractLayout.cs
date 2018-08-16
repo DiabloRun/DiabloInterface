@@ -21,6 +21,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         readonly ISettingsService settingsService;
         readonly IGameService gameService;
 
+        protected bool realFrwIas;
         GameDifficulty? activeDifficulty;
         CharacterClass? activeCharacterClass;
 
@@ -116,7 +117,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 return;
             }
 
-            UpdateLabels(e.Character, e.Quests);
+            UpdateLabels(e.Character, e.Quests, e.CurrentPlayersX);
             UpdateClassRuneList(e.Character.CharClass);
             UpdateRuneDisplay(e.ItemIds);
         }
@@ -139,10 +140,58 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 pair.Key.Text = pair.Value;
             }
         }
+        
+        protected void UpdateSettings(ApplicationSettings settings)
+        {
+            ApplyLabelSettings(settings);
+            ApplyRuneSettings(settings);
+            UpdateLayout(settings);
+        }
 
-        protected abstract void UpdateSettings(ApplicationSettings settings);
+        abstract protected void ApplyLabelSettings(ApplicationSettings settings);
 
-        protected abstract void UpdateLabels(Character player, IList<QuestCollection> quests);
+        abstract protected void ApplyRuneSettings(ApplicationSettings settings);
+
+        abstract protected void UpdateLayout(ApplicationSettings settings);
+
+        protected void UpdateLabels(Character player, IList<QuestCollection> quests, int currentPlayersX)
+        {
+            nameLabel.Text = player.Name;
+            lvlLabel.Text = "LVL: " + player.Level;
+            goldLabel.Text = "GOLD: " + (player.Gold + player.GoldStash);
+            deathsLabel.Text = "DEATHS: " + player.Deaths;
+
+            playersXLabel.Text = "/players " + currentPlayersX;
+
+            labelStrVal.Text = "" + player.Strength;
+            labelDexVal.Text = "" + player.Dexterity;
+            labelVitVal.Text = "" + player.Vitality;
+            labelEneVal.Text = "" + player.Energy;
+            UpdateLabelWidthAlignment(labelStrVal, labelDexVal, labelVitVal, labelEneVal);
+
+            labelFrwVal.Text = "" + (realFrwIas ? player.RealFRW() : player.FasterRunWalk);
+            labelFcrVal.Text = "" + player.FasterCastRate;
+            labelFhrVal.Text = "" + player.FasterHitRecovery;
+            labelIasVal.Text = "" + (realFrwIas ? player.RealIAS() : player.IncreasedAttackSpeed);
+            UpdateLabelWidthAlignment(labelFrwVal, labelFcrVal, labelFhrVal, labelIasVal);
+
+            labelFireResVal.Text = "" + player.FireResist;
+            labelColdResVal.Text = "" + player.ColdResist;
+            labelLightResVal.Text = "" + player.LightningResist;
+            labelPoisonResVal.Text = "" + player.PoisonResist;
+            UpdateLabelWidthAlignment(labelFireResVal, labelColdResVal, labelLightResVal, labelPoisonResVal);
+
+            IList<float> completions = quests.Select(q => q.CompletionProgress).ToList();
+
+            normLabelVal.Text = $@"{completions[0]:0%}";
+            nmLabelVal.Text = $@"{completions[1]:0%}";
+            hellLabelVal.Text = $@"{completions[2]:0%}";
+            UpdateLabelWidthAlignment(normLabelVal, nmLabelVal, hellLabelVal);
+
+            labelNormPerc.Text = $@"NO: {completions[0]:0%}";
+            labelNmPerc.Text = $@"NM: {completions[1]:0%}";
+            labelHellPerc.Text = $@"HE: {completions[2]:0%}";
+        }
 
         protected void UpdateLabelWidthAlignment(params Label[] labels)
         {
