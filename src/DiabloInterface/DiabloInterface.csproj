@@ -152,9 +152,6 @@
     <Compile Include="Gui\Controls\QuestDebugRow.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\Controls\QuestDebugRow.Designer.cs">
-      <DependentUpon>QuestDebugRow.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Controls\RuneDisplayElement.cs" />
     <Compile Include="Gui\Controls\RuneDisplayElement.Designer.cs">
       <DependentUpon>RuneDisplayElement.cs</DependentUpon>
@@ -194,9 +191,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Controls\QuestDebugRow.resx">
-      <DependentUpon>QuestDebugRow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Controls\RuneDisplayElement.resx">
       <DependentUpon>RuneDisplayElement.cs</DependentUpon>
