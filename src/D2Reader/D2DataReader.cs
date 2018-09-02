@@ -396,12 +396,6 @@ namespace Zutatensuppe.D2Reader
         void ProcessCharacterData(D2GameInfo gameInfo)
         {
             CurrentCharacter = GetCurrentCharacter(gameInfo);
-            CurrentCharacter.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
-            CurrentCharacter.ParseStats(
-                unitReader.GetStatsMap(gameInfo.Player),
-                unitReader.GetItemStatsMap(gameInfo.Player),
-                gameInfo
-            );
         }
 
         void ProcessQuests(D2GameInfo gameInfo)
@@ -560,6 +554,13 @@ namespace Zutatensuppe.D2Reader
             // Not in title screen anymore.
             wasInTitleScreen = false;
 
+            character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
+
+            // Don't update stats while dead.
+            if (!character.IsDead)
+            {
+                character.ParseStats(unitReader, gameInfo);
+            }
             return character;
         }
 

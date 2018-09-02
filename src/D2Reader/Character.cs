@@ -4,6 +4,7 @@ namespace Zutatensuppe.D2Reader
     using System.Collections.Generic;
 
     using Zutatensuppe.D2Reader.Models;
+    using Zutatensuppe.D2Reader.Readers;
     using Zutatensuppe.D2Reader.Struct.Stat;
     using Zutatensuppe.DiabloInterface.Core;
 
@@ -58,17 +59,22 @@ namespace Zutatensuppe.D2Reader
             return IncreasedAttackSpeed + (AttackRate - 100);
         }
 
+        internal void ParseStats(UnitReader unitReader, D2GameInfo gameInfo)
+        {
+            ParseStats(
+                unitReader.GetStatsMap(gameInfo.Player),
+                unitReader.GetItemStatsMap(gameInfo.Player),
+                gameInfo
+            );
+        }
+
         /// <summary>
         /// fill the player data by dictionary
         /// </summary>
         /// <param name="dict"></param>
         /// <param name="resistancPenalty"></param>
-        internal void ParseStats(Dictionary<StatIdentifier, D2Stat> data, Dictionary<StatIdentifier, D2Stat> itemData, D2GameInfo gameInfo)
+        private void ParseStats(Dictionary<StatIdentifier, D2Stat> data, Dictionary<StatIdentifier, D2Stat> itemData, D2GameInfo gameInfo)
         {
-            // Don't update stats while dead.
-            if (IsDead)
-                return;
-
             CharClass = (CharacterClass)gameInfo.Player.eClass;
 
             int penalty = (int)ResistancePenalty.GetPenaltyByGameDifficulty((GameDifficulty)gameInfo.Game.Difficulty);
