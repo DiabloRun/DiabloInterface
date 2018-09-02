@@ -895,8 +895,8 @@ namespace Zutatensuppe.D2Reader.Readers
 
         public IEnumerable<D2Unit> GetSocketedItems(D2Unit item)
         {
-            var items = new List<D2Unit>();
-            if (!IsValidItem(item)) return new List<D2Unit>();
+            if (!IsValidItem(item))
+                return new List<D2Unit>();
 
             return inventoryReader.EnumerateInventoryForward(item);
         }
