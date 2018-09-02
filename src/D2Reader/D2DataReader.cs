@@ -397,10 +397,11 @@ namespace Zutatensuppe.D2Reader
         {
             CurrentCharacter = GetCurrentCharacter(gameInfo);
             CurrentCharacter.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
-
-            Dictionary<StatIdentifier, D2Stat> playerStats = unitReader.GetStatsMap(gameInfo.Player);
-            Dictionary<StatIdentifier, D2Stat> itemStats = unitReader.GetItemStatsMap(gameInfo.Player);
-            CurrentCharacter.ParseStats(playerStats, itemStats, gameInfo);
+            CurrentCharacter.ParseStats(
+                unitReader.GetStatsMap(gameInfo.Player),
+                unitReader.GetItemStatsMap(gameInfo.Player),
+                gameInfo
+            );
         }
 
         void ProcessQuests(D2GameInfo gameInfo)
