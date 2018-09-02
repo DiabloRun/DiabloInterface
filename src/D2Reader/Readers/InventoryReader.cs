@@ -9,28 +9,26 @@ namespace Zutatensuppe.D2Reader.Readers
 {
     class InventoryReader
     {
-        GameMemoryTable memory;
         ProcessMemoryReader processReader;
         public ItemReader ItemReader { get; }
 
-        public InventoryReader(ProcessMemoryReader reader, GameMemoryTable memory)
+        public InventoryReader(ProcessMemoryReader reader, ItemReader itemReader)
         {
             processReader = reader;
-            this.memory = memory;
-            ItemReader = new ItemReader(processReader, memory);
+            ItemReader = itemReader;
         }
 
-        public IEnumerable<D2Unit> EnumerateInventory(Func<D2ItemData, bool> filter)
+        public IEnumerable<D2Unit> EnumerateInventory(D2Unit unit, Func<D2ItemData, bool> filter)
         {
-            return from item in EnumerateInventory()
+            return from item in EnumerateInventory(unit)
                    let itemData = ItemReader.GetItemData(item)
                    where itemData != null && filter(itemData)
                    select item;
         }
 
-        public IEnumerable<D2Unit> EnumerateInventory()
+        public IEnumerable<D2Unit> EnumerateInventory(D2Unit unit)
         {
-            var inventory = GetPlayerInventory();
+            var inventory = processReader.Read<D2Inventory>(unit.pInventory.Address);
             if (inventory == null) yield break;
 
             // Traverse the linked list of inventory items.
@@ -39,17 +37,6 @@ namespace Zutatensuppe.D2Reader.Readers
             {
                 yield return item;
             }
-        }
-
-        private D2Inventory GetPlayerInventory()
-        {
-            var playerAddress = processReader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
-            if (playerAddress == IntPtr.Zero) return null;
-
-            var playerUnit = processReader.Read<D2Unit>(playerAddress);
-            if (playerUnit == null) return null;
-
-            return processReader.Read<D2Inventory>(playerUnit.pInventory.Address);
         }
 
         private D2Unit GetUnit(DataPointer pointer)
@@ -76,7 +63,7 @@ namespace Zutatensuppe.D2Reader.Readers
         private string GetEquippedItemSlot(BodyLocation slot)
         {
             // Get all items at the target location.
-            var itemsInSlot = from item in EnumerateInventory()
+            var itemsInSlot = from item in EnumerateInventory(ItemReader.GetPlayer())
                               let itemData = ItemReader.GetItemData(item)
                               where itemData != null && itemData.BodyLoc == slot
                               select item;

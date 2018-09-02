@@ -28,7 +28,7 @@ namespace Zutatensuppe.D2Reader.Readers
             player = null;
         }
 
-        protected D2Unit GetPlayer()
+        public D2Unit GetPlayer()
         {
             if (player == null)
             {
@@ -42,7 +42,7 @@ namespace Zutatensuppe.D2Reader.Readers
         public List<D2Stat> GetItemStats(D2Unit unit)
         {
             List<D2Stat> statList = new List<D2Stat>();
-            InventoryReader inventoryReader = new InventoryReader(reader, memory);
+            InventoryReader inventoryReader = new InventoryReader(reader, new ItemReader(reader, memory));
 
             // Build filter to get only equipped items and items in inventory
             bool filter(D2ItemData data) =>
@@ -54,7 +54,7 @@ namespace Zutatensuppe.D2Reader.Readers
                    (data.InvPage == InventoryPage.Inventory)
                )
             ;
-            foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))
+            foreach (D2Unit item in inventoryReader.EnumerateInventory(GetPlayer(), filter))
             {
                 List<D2Stat> itemStats = GetStats(item);
                 if (itemStats == null)

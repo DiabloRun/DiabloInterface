@@ -230,7 +230,7 @@ namespace Zutatensuppe.D2Reader
                 memory = CreateGameMemoryTableForReader(reader);
 
                 unitReader = new UnitReader(reader, memory);
-                inventoryReader = new InventoryReader(reader, memory);
+                inventoryReader = new InventoryReader(reader, new ItemReader(reader, memory));
 
                 Logger.Info($"Found the Diablo II process (version {reader.FileVersion}).");
 
@@ -275,7 +275,7 @@ namespace Zutatensuppe.D2Reader
             // Add all items found in the slots.
             bool FilterSlots(D2ItemData data) => slots.FindIndex(x => x == data.BodyLoc && data.InvPage == InventoryPage.Equipped) >= 0;
 
-            foreach (var item in inventoryReader.EnumerateInventory(FilterSlots))
+            foreach (var item in inventoryReader.EnumerateInventory(unitReader.GetPlayer(), FilterSlots))
             {
                 action?.Invoke(inventoryReader.ItemReader, item);
             }
@@ -394,7 +394,7 @@ namespace Zutatensuppe.D2Reader
         void ClearReaderCache()
         {
             unitReader = new UnitReader(reader, memory);
-            inventoryReader = new InventoryReader(reader, memory);
+            inventoryReader = new InventoryReader(reader, new ItemReader(reader, memory));
         }
 
         void ProcessCharacterData(D2GameInfo gameInfo)
@@ -471,7 +471,7 @@ namespace Zutatensuppe.D2Reader
             // Build filter to get only equipped items.
             bool Filter(D2ItemData data) => data.BodyLoc != BodyLocation.None;
 
-            foreach (D2Unit item in inventoryReader.EnumerateInventory(Filter))
+            foreach (D2Unit item in inventoryReader.EnumerateInventory(unitReader.GetPlayer(), Filter))
             {
                 List<D2Stat> itemStats = unitReader.GetStats(item);
                 if (itemStats == null) continue;
@@ -506,7 +506,7 @@ namespace Zutatensuppe.D2Reader
 
         List<int> ReadInventoryItemIds()
         {
-            IReadOnlyCollection<D2Unit> baseItems = inventoryReader.EnumerateInventory().ToList();
+            IReadOnlyCollection<D2Unit> baseItems = inventoryReader.EnumerateInventory(unitReader.GetPlayer()).ToList();
             IEnumerable<D2Unit> socketedItems = baseItems.SelectMany(item => inventoryReader.ItemReader.GetSocketedItems(item));
             IEnumerable<D2Unit> allItems = baseItems.Concat(socketedItems);
             return (from item in allItems select item.eClass).ToList();
