@@ -1,4 +1,4 @@
-﻿using Zutatensuppe.D2Reader.Struct;
+using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Inventory;
 using Zutatensuppe.D2Reader.Struct.Item;
 using System;
@@ -11,21 +11,19 @@ namespace Zutatensuppe.D2Reader.Readers
     {
         GameMemoryTable memory;
         ProcessMemoryReader processReader;
-        ItemReader itemReader;
-
-        public ItemReader ItemReader { get { return itemReader; } }
+        public ItemReader ItemReader { get; }
 
         public InventoryReader(ProcessMemoryReader reader, GameMemoryTable memory)
         {
             processReader = reader;
             this.memory = memory;
-            itemReader = new ItemReader(processReader, memory);
+            ItemReader = new ItemReader(processReader, memory);
         }
 
         public IEnumerable<D2Unit> EnumerateInventory(Func<D2ItemData, bool> filter)
         {
             return from item in EnumerateInventory()
-                   let itemData = itemReader.GetItemData(item)
+                   let itemData = ItemReader.GetItemData(item)
                    where itemData != null && filter(itemData)
                    select item;
         }
@@ -62,7 +60,7 @@ namespace Zutatensuppe.D2Reader.Readers
 
         private D2Unit GetPreviousItem(D2Unit item)
         {
-            var itemData = itemReader.GetItemData(item);
+            var itemData = ItemReader.GetItemData(item);
             if (itemData == null) return null;
 
             return GetUnit(itemData.PreviousItem);
@@ -79,7 +77,7 @@ namespace Zutatensuppe.D2Reader.Readers
         {
             // Get all items at the target location.
             var itemsInSlot = from item in EnumerateInventory()
-                              let itemData = itemReader.GetItemData(item)
+                              let itemData = ItemReader.GetItemData(item)
                               where itemData != null && itemData.BodyLoc == slot
                               select item;
 
@@ -88,7 +86,7 @@ namespace Zutatensuppe.D2Reader.Readers
             if (itemInSlot == null) return null;
 
             // Just return the full name of the item.
-            return itemReader.GetFullItemName(itemInSlot);
+            return ItemReader.GetFullItemName(itemInSlot);
         }
     }
 }

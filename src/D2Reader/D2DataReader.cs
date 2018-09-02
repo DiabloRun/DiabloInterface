@@ -100,9 +100,6 @@ namespace Zutatensuppe.D2Reader
 
         GameDifficulty currentDifficulty;
         bool wasInTitleScreen;
-        DateTime activeCharacterTimestamp;
-        Character activeCharacter;
-        Character character;
         IList<QuestCollection> gameQuests = new List<QuestCollection>();
 
         public D2DataReader(IGameMemoryTableFactory memoryTableFactory)
@@ -126,11 +123,11 @@ namespace Zutatensuppe.D2Reader
             | DataReaderEnableFlags.QuestBuffers
             | DataReaderEnableFlags.InventoryItemIds;
 
-        public DateTime ActiveCharacterTimestamp => activeCharacterTimestamp;
+        public DateTime ActiveCharacterTimestamp { get; private set; }
 
-        public Character ActiveCharacter => activeCharacter;
+        public Character ActiveCharacter { get; private set; }
 
-        public Character CurrentCharacter => character;
+        public Character CurrentCharacter { get; private set; }
 
         /// <summary>
         /// Gets or sets reader polling rate.
@@ -384,13 +381,13 @@ namespace Zutatensuppe.D2Reader
             List<int> inventoryItemIds = ProcessInventoryItemIds();
 
             OnDataRead(new DataReadEventArgs(
-                character,
+                CurrentCharacter,
                 itemStrings,
                 currentArea,
                 currentDifficulty,
                 currentPlayersX,
                 inventoryItemIds,
-                IsAutosplitCharacter(character),
+                IsAutosplitCharacter(CurrentCharacter),
                 gameQuests));
         }
 
@@ -402,12 +399,12 @@ namespace Zutatensuppe.D2Reader
 
         void ProcessCharacterData(D2GameInfo gameInfo)
         {
-            character = GetCurrentCharacter(gameInfo);
-            character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
+            CurrentCharacter = GetCurrentCharacter(gameInfo);
+            CurrentCharacter.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
 
             Dictionary<StatIdentifier, D2Stat> playerStats = unitReader.GetStatsMap(gameInfo.Player);
             Dictionary<StatIdentifier, D2Stat> itemStats = unitReader.GetItemStatsMap(gameInfo.Player);
-            character.ParseStats(playerStats, itemStats, gameInfo);
+            CurrentCharacter.ParseStats(playerStats, itemStats, gameInfo);
         }
 
         void ProcessQuests(D2GameInfo gameInfo)
@@ -517,7 +514,7 @@ namespace Zutatensuppe.D2Reader
 
         bool IsAutosplitCharacter(Character character)
         {
-            return activeCharacter == character;
+            return ActiveCharacter == character;
         }
 
         Character GetCurrentCharacter(D2GameInfo gameInfo)
@@ -557,8 +554,8 @@ namespace Zutatensuppe.D2Reader
                 // A brand new character has been started.
                 if (experience == 0 && level == 1)
                 {
-                    activeCharacterTimestamp = DateTime.Now;
-                    activeCharacter = character;
+                    ActiveCharacterTimestamp = DateTime.Now;
+                    ActiveCharacter = character;
                     OnCharacterCreated(new CharacterCreatedEventArgs(character));
                 }
             }
