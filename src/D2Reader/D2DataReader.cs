@@ -391,11 +391,6 @@ namespace Zutatensuppe.D2Reader
             unitReader = new UnitReader(reader, memory, new StringLookupTable(reader, memory.Address));
         }
 
-        Character ProcessCharacterData(D2GameInfo gameInfo)
-        {
-            return GetCurrentCharacter(gameInfo);
-        }
-
         List<QuestCollection> ProcessQuests(D2GameInfo gameInfo)
         {
             return ReadFlags.HasFlag(DataReaderEnableFlags.QuestBuffers)
@@ -507,7 +502,53 @@ namespace Zutatensuppe.D2Reader
             return ActiveCharacter == character;
         }
 
-        Character GetCurrentCharacter(D2GameInfo gameInfo)
+        bool HasStartingEquipment()
+        {
+            D2Unit p = unitReader.GetPlayer();
+
+            int[] list = (
+                from item
+                in unitReader.inventoryReader.EnumerateInventoryForward(p)
+                select item.eClass
+            ).ToArray();
+
+            // every class starts with:
+            // 4 potions (0x24b)
+            // 1 scroll ident (0x212)
+            // 1 scroll tp (0x211)
+            // and most also start with a 1 buckler (0x148) except necro and sorc
+            // actually the order of the items in the inventory changes after restarting the game with the same char!
+            // so we can be pretty sure if we found a new char or not.
+
+            // but... sometimes, the char is not ready for being read and 0 items are returned...
+            // not sure what to do about that.. todo: maybe read the list again after some ms if it is empty
+
+            Dictionary<CharacterClass, int[]> startingItems = new Dictionary<CharacterClass, int[]>
+            {
+                // jav, buckler
+                { CharacterClass.Amazon, new int[] { 0x2f, 0x148, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
+                // katar, buckler
+                { CharacterClass.Assassin, new int[] { 0xaf, 0x148, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
+                // wand (no buckler)
+                { CharacterClass.Necromancer, new int[] { 0xa, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
+                // hand axe, buckler
+                { CharacterClass.Barbarian, new int[] { 0x0, 0x148, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
+                // short sword, buckler
+                { CharacterClass.Paladin, new int[] { 0x19, 0x148, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
+                // short staff (no buckler)
+                { CharacterClass.Sorceress, new int[] { 0x3f, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
+                // club, buckler
+                { CharacterClass.Druid, new int[] { 0xe, 0x148, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }}
+            };
+
+            if (!list.SequenceEqual(startingItems[(CharacterClass)p.eClass]))
+                return false;
+            ;
+
+            return true;
+        }
+
+        Character ProcessCharacterData(D2GameInfo gameInfo)
         {
             string playerName = gameInfo.PlayerData.PlayerName;
 
@@ -519,15 +560,26 @@ namespace Zutatensuppe.D2Reader
             if (characters.TryGetValue(playerName, out Character character))
             {
                 // We were just in the title screen and came back to a new character.
-                bool resetOnBeginning = wasInTitleScreen && experience == 0;
+                bool resetOnBeginning = experience == 0;
 
                 // If we lost experience on level 1 we have a reset. Level 1 check is important or
                 // this might think we reset when losing experience in nightmare or hell after dying.
-                bool resetOnLevelOne = character.Level == 1 && experience < character.Experience;
+                bool resetOnLvl1 = character.Level == 1 && experience < character.Experience;
+
+                // When starting with -act5 switch, char level is 33 and xp is 7383752
+                bool resetOnLvl33 = character.Level == 33 && experience == 7383752;
 
                 // Check for reset with same character name.
-                if (resetOnBeginning || resetOnLevelOne || level < character.Level)
-                {
+                if (
+                    (
+                        resetOnBeginning
+                        || resetOnLvl1
+                        || resetOnLvl33
+                        || level < character.Level
+                    )
+                    && wasInTitleScreen
+                    && HasStartingEquipment()
+                ) {
                     // Recreate character.
                     characters.Remove(playerName);
                     character = null;
@@ -541,8 +593,12 @@ namespace Zutatensuppe.D2Reader
                 character = new Character {Name = playerName};
                 characters[playerName] = character;
 
+                bool startedOnLvl1 = level == 1 && experience == 0;
+
+                bool startedOnLvl33 = level == 33 && experience == 7383752;
+
                 // A brand new character has been started.
-                if (experience == 0 && level == 1)
+                if ((startedOnLvl1 || startedOnLvl33) && HasStartingEquipment())
                 {
                     ActiveCharacterTimestamp = DateTime.Now;
                     ActiveCharacter = character;
