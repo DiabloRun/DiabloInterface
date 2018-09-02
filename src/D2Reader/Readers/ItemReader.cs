@@ -8,7 +8,6 @@ using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.D2Reader.Struct.Item.Modifier;
 using Zutatensuppe.D2Reader.Struct.Stat;
 using Zutatensuppe.D2Reader.Struct.Skill;
-using Zutatensuppe.D2Reader.Struct.Inventory;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
@@ -24,7 +23,6 @@ namespace Zutatensuppe.D2Reader.Readers
         D2SafeArray lowQualityTable;
         ModifierTable magicModifiers;
         ModifierTable rareModifiers;
-        SkillReader skillReader;
 
         ushort[] opNestings;
 
@@ -42,7 +40,6 @@ namespace Zutatensuppe.D2Reader.Readers
             descriptionTable = reader.Read<D2SafeArray>(memory.Address.ItemDescriptions, AddressingMode.Relative);
             magicModifiers = reader.Read<ModifierTable>(memory.Address.MagicModifierTable, AddressingMode.Relative);
             rareModifiers = reader.Read<ModifierTable>(memory.Address.RareModifierTable, AddressingMode.Relative);
-            skillReader = new SkillReader(reader, memory);
             if (globals != null)
             {
 

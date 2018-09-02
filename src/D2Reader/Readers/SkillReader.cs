@@ -5,9 +5,8 @@ using System.Collections.Generic;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
-    class SkillReader
+    internal class SkillReader
     {
-
         ProcessMemoryReader reader;
         protected StringLookupTable stringReader;
         D2GlobalData globals;

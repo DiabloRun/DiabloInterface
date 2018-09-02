@@ -11,6 +11,7 @@ namespace Zutatensuppe.D2Reader
     using Zutatensuppe.D2Reader.Readers;
     using Zutatensuppe.D2Reader.Struct;
     using Zutatensuppe.D2Reader.Struct.Item;
+    using Zutatensuppe.D2Reader.Struct.Skill;
     using Zutatensuppe.D2Reader.Struct.Stat;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
@@ -502,112 +503,83 @@ namespace Zutatensuppe.D2Reader
             return ActiveCharacter == character;
         }
 
-        bool HasStartingEquipment()
+        bool IsNewChar()
         {
             D2Unit p = unitReader.GetPlayer();
+            return MatchesStartingProps(p)
+                && MatchesStartingItems(p)
+                && MatchesStartingSkills(p);
+        }
+        private bool MatchesStartingProps(D2Unit p)
+        {
+            // check -act2/3/4/5 level|xp
+            int level = unitReader.GetStatValue(p, StatIdentifier.Level) ?? 0;
+            int experience = unitReader.GetStatValue(p, StatIdentifier.Experience) ?? 0;
 
+            // first we will check the level and XP
+            // act should be set to the act we are currently in
+            return 
+                (level == 1 && experience == 0 && p.actNo == 0)
+                || (level == 16 && experience == 220165 && p.actNo == 1)
+                || (level == 21 && experience == 839864 && p.actNo == 2)
+                || (level == 27 && experience == 2563061 && p.actNo == 3)
+                || (level == 33 && experience == 7383752 && p.actNo == 4);
+        }
+
+        private bool MatchesStartingItems(D2Unit p)
+        {
             int[] list = (
                 from item
                 in unitReader.inventoryReader.EnumerateInventoryForward(p)
                 select item.eClass
             ).ToArray();
 
-            // every class starts with:
-            // 4 potions (0x24b)
-            // 1 scroll ident (0x212)
-            // 1 scroll tp (0x211)
-            // and most also start with a 1 buckler (0x148) except necro and sorc
-            // actually the order of the items in the inventory changes after restarting the game with the same char!
-            // so we can be pretty sure if we found a new char or not.
+            return list.SequenceEqual(Character.StartingItems[(CharacterClass)p.eClass]);
+        }
 
-            // but... sometimes, the char is not ready for being read and 0 items are returned...
-            // not sure what to do about that.. todo: maybe read the list again after some ms if it is empty
-
-            Dictionary<CharacterClass, int[]> startingItems = new Dictionary<CharacterClass, int[]>
+        private bool MatchesStartingSkills(D2Unit p)
+        {
+            int skillCount = 0;
+            foreach (D2Skill skill in unitReader.skillReader.EnumerateSkills(p))
             {
-                // jav, buckler
-                { CharacterClass.Amazon, new int[] { 0x2f, 0x148, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
-                // katar, buckler
-                { CharacterClass.Assassin, new int[] { 0xaf, 0x148, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
-                // wand (no buckler)
-                { CharacterClass.Necromancer, new int[] { 0xa, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
-                // hand axe, buckler
-                { CharacterClass.Barbarian, new int[] { 0x0, 0x148, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
-                // short sword, buckler
-                { CharacterClass.Paladin, new int[] { 0x19, 0x148, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
-                // short staff (no buckler)
-                { CharacterClass.Sorceress, new int[] { 0x3f, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
-                // club, buckler
-                { CharacterClass.Druid, new int[] { 0xe, 0x148, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }}
-            };
+                var skillData = unitReader.skillReader.ReadSkillData(skill);
+                Skill skillId = (Skill)skillData.SkillId;
+                if (!Character.StartingSkills[(CharacterClass)p.eClass].ContainsKey(skillId))
+                {
+                    return false;
+                }
 
-            if (!list.SequenceEqual(startingItems[(CharacterClass)p.eClass]))
-                return false;
-            ;
+                if (Character.StartingSkills[(CharacterClass)p.eClass][skillId] != unitReader.skillReader.GetTotalNumberOfSkillPoints(skill))
+                {
+                    return false;
+                }
+                skillCount++;
+            }
 
-            return true;
+            return skillCount == Character.StartingSkills[(CharacterClass)p.eClass].Count;
         }
 
         Character ProcessCharacterData(D2GameInfo gameInfo)
         {
             string playerName = gameInfo.PlayerData.PlayerName;
+            Character character;
 
-            // Read character stats.
-            int level = unitReader.GetStatValue(gameInfo.Player, StatIdentifier.Level) ?? 0;
-            int experience = unitReader.GetStatValue(gameInfo.Player, StatIdentifier.Experience) ?? 0;
-
-            // We encountered this character name before.
-            if (characters.TryGetValue(playerName, out Character character))
+            if (wasInTitleScreen || !characters.TryGetValue(playerName, out character))
             {
-                // We were just in the title screen and came back to a new character.
-                bool resetOnBeginning = experience == 0;
-
-                // If we lost experience on level 1 we have a reset. Level 1 check is important or
-                // this might think we reset when losing experience in nightmare or hell after dying.
-                bool resetOnLvl1 = character.Level == 1 && experience < character.Experience;
-
-                // When starting with -act5 switch, char level is 33 and xp is 7383752
-                bool resetOnLvl33 = character.Level == 33 && experience == 7383752;
-
-                // Check for reset with same character name.
-                if (
-                    (
-                        resetOnBeginning
-                        || resetOnLvl1
-                        || resetOnLvl33
-                        || level < character.Level
-                    )
-                    && wasInTitleScreen
-                    && HasStartingEquipment()
-                ) {
-                    // Recreate character.
-                    characters.Remove(playerName);
-                    character = null;
-                }
-            }
-
-            // If this character has not been read before, or if the character was reset
-            // with the same name as a previous character.
-            if (character == null)
-            {
-                character = new Character {Name = playerName};
+                character = new Character { Name = playerName };
                 characters[playerName] = character;
 
-                bool startedOnLvl1 = level == 1 && experience == 0;
-
-                bool startedOnLvl33 = level == 33 && experience == 7383752;
-
                 // A brand new character has been started.
-                if ((startedOnLvl1 || startedOnLvl33) && HasStartingEquipment())
+                if (IsNewChar())
                 {
                     ActiveCharacterTimestamp = DateTime.Now;
                     ActiveCharacter = character;
                     OnCharacterCreated(new CharacterCreatedEventArgs(character));
                 }
-            }
 
-            // Not in title screen anymore.
-            wasInTitleScreen = false;
+                // Not in title screen anymore.
+                wasInTitleScreen = false;
+            }
 
             character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
 

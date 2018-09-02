@@ -14,6 +14,7 @@ namespace Zutatensuppe.D2Reader.Readers
         protected GameMemoryTable memory;
         protected StringLookupTable stringReader;
 
+        internal SkillReader skillReader;
         public InventoryReader inventoryReader;
 
         D2Unit player = null;
@@ -26,6 +27,7 @@ namespace Zutatensuppe.D2Reader.Readers
             this.reader = reader;
             this.memory = memory;
             this.stringReader = stringReader;
+            skillReader = new SkillReader(reader, memory);
             inventoryReader = createInventoryReader();
         }
 
@@ -121,16 +123,15 @@ namespace Zutatensuppe.D2Reader.Readers
         public Dictionary<int, D2Skill> GetSkillMap(D2Unit unit)
         {
             Dictionary<int, D2Skill> skills = new Dictionary<int, D2Skill>();
-            SkillReader skillsReader = new SkillReader(reader, memory);
-            foreach (D2Skill skill in skillsReader.EnumerateSkills(unit))
+            foreach (D2Skill skill in skillReader.EnumerateSkills(unit))
             {
-                int numberOfSkillPoints = skillsReader.GetTotalNumberOfSkillPoints(skill);
+                int numberOfSkillPoints = skillReader.GetTotalNumberOfSkillPoints(skill);
                 if (numberOfSkillPoints > 0)
                 {
-                    D2SkillData skillData = skillsReader.ReadSkillData(skill);
+                    D2SkillData skillData = skillReader.ReadSkillData(skill);
                     if (skillData.ClassId >= 0 && skillData.ClassId <= 6)
                     {
-                        string skillName = skillsReader.GetSkillName((ushort)skillData.SkillId);
+                        string skillName = skillReader.GetSkillName((ushort)skillData.SkillId);
                         int skillPoints = skill.numberOfSkillPoints;
                     }
                 }
