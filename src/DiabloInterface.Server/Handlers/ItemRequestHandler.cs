@@ -13,11 +13,43 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
         public List<string> Properties { get; set; }
         public BodyLocation Location { get; set; }
 
+        // backwards compatibility with D2ID
+        public string BaseItem { get; set; }
+        public string Quality { get; set; }
+
         public ItemInfo(ItemReader itemReader, D2Unit item)
         {
             ItemName = itemReader.GetFullItemName(item);
             Properties = itemReader.GetMagicalStrings(item);
             Location = itemReader.GetItemData(item)?.BodyLoc ?? BodyLocation.None;
+
+            // backwards compatibility with D2ID
+            BaseItem = itemReader.GetGrammaticalName(itemReader.GetItemName(item), out string grammerCase);
+            Quality = QualityColor(itemReader.GetItemQuality(item));
+        }
+
+        private string QualityColor(ItemQuality quality)
+        {
+            switch (quality)
+            {
+                case ItemQuality.Low:
+                case ItemQuality.Normal:
+                case ItemQuality.Superior:
+                    return "WHITE";
+                case ItemQuality.Magic:
+                    return "BLUE";
+                case ItemQuality.Rare:
+                    return "YELLOW";
+                case ItemQuality.Crafted:
+                case ItemQuality.Tempered:
+                    return "ORANGE";
+                case ItemQuality.Unique:
+                    return "GOLD";
+                case ItemQuality.Set:
+                    return "GREEN";
+                default:
+                    return "";
+            }
         }
 
         public static List<ItemInfo> GetItemsByLocations(D2DataReader dataReader, List<BodyLocation> locations)

@@ -67,6 +67,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.label1 = new System.Windows.Forms.Label();
             this.comboBoxLayout = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnSetPlayersXColor = new System.Windows.Forms.Button();
+            this.chkShowPlayersX = new System.Windows.Forms.CheckBox();
             this.chkShowRealValues = new System.Windows.Forms.CheckBox();
             this.chkHighContrastRunes = new System.Windows.Forms.CheckBox();
             this.chkDisplayRunes = new System.Windows.Forms.CheckBox();
@@ -105,8 +107,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSaveAs = new System.Windows.Forms.Button();
             this.btnUndo = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
-            this.btnSetPlayersXColor = new System.Windows.Forms.Button();
-            this.chkShowPlayersX = new System.Windows.Forms.CheckBox();
+            this.groupBoxPipeServer = new System.Windows.Forms.GroupBox();
+            this.labelPipeName = new System.Windows.Forms.Label();
+            this.textBoxPipeName = new System.Windows.Forms.TextBox();
             this.FontGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
@@ -128,6 +131,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.UpdateGroup.SuspendLayout();
             this.mainPanel.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBoxPipeServer.SuspendLayout();
             this.SuspendLayout();
             // 
             // FontLabel
@@ -151,7 +155,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.FontGroup.Location = new System.Drawing.Point(12, 7);
             this.FontGroup.Margin = new System.Windows.Forms.Padding(0);
             this.FontGroup.Name = "FontGroup";
-            this.FontGroup.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.FontGroup.Padding = new System.Windows.Forms.Padding(4);
             this.FontGroup.Size = new System.Drawing.Size(308, 128);
             this.FontGroup.TabIndex = 5;
             this.FontGroup.TabStop = false;
@@ -163,7 +167,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.fontComboBox.DropDownWidth = 250;
             this.fontComboBox.FormattingEnabled = true;
             this.fontComboBox.Location = new System.Drawing.Point(140, 26);
-            this.fontComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.fontComboBox.Margin = new System.Windows.Forms.Padding(4);
             this.fontComboBox.Name = "fontComboBox";
             this.fontComboBox.Size = new System.Drawing.Size(155, 23);
             this.fontComboBox.Sorted = true;
@@ -172,7 +176,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // titleFontSizeNumeric
             // 
             this.titleFontSizeNumeric.Location = new System.Drawing.Point(140, 91);
-            this.titleFontSizeNumeric.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.titleFontSizeNumeric.Margin = new System.Windows.Forms.Padding(4);
             this.titleFontSizeNumeric.Minimum = new decimal(new int[] {
             4,
             0,
@@ -191,7 +195,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.fontSizeNumeric.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.fontSizeNumeric.Location = new System.Drawing.Point(140, 59);
-            this.fontSizeNumeric.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.fontSizeNumeric.Margin = new System.Windows.Forms.Padding(4);
             this.fontSizeNumeric.Minimum = new decimal(new int[] {
             4,
             0,
@@ -238,7 +242,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.AutoSplitLayout.RowCount = 2;
             this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.AutoSplitLayout.Size = new System.Drawing.Size(665, 545);
+            this.AutoSplitLayout.Size = new System.Drawing.Size(666, 589);
             this.AutoSplitLayout.TabIndex = 21;
             // 
             // AutoSplitToolbar
@@ -250,17 +254,17 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.AutoSplitToolbar.Controls.Add(this.EnableAutosplitCheckBox);
             this.AutoSplitToolbar.Controls.Add(this.AddAutoSplitButton);
             this.AutoSplitToolbar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AutoSplitToolbar.Location = new System.Drawing.Point(0, 507);
+            this.AutoSplitToolbar.Location = new System.Drawing.Point(0, 551);
             this.AutoSplitToolbar.Margin = new System.Windows.Forms.Padding(0);
             this.AutoSplitToolbar.Name = "AutoSplitToolbar";
-            this.AutoSplitToolbar.Size = new System.Drawing.Size(665, 38);
+            this.AutoSplitToolbar.Size = new System.Drawing.Size(666, 38);
             this.AutoSplitToolbar.TabIndex = 20;
             // 
             // autoSplitHotkeyControl
             // 
             this.autoSplitHotkeyControl.Hotkey = System.Windows.Forms.Keys.None;
             this.autoSplitHotkeyControl.Location = new System.Drawing.Point(107, 9);
-            this.autoSplitHotkeyControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.autoSplitHotkeyControl.Margin = new System.Windows.Forms.Padding(4);
             this.autoSplitHotkeyControl.Name = "autoSplitHotkeyControl";
             this.autoSplitHotkeyControl.Size = new System.Drawing.Size(108, 22);
             this.autoSplitHotkeyControl.TabIndex = 3;
@@ -281,7 +285,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // AutoSplitTestHotkeyButton
             // 
             this.AutoSplitTestHotkeyButton.Location = new System.Drawing.Point(224, 6);
-            this.AutoSplitTestHotkeyButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AutoSplitTestHotkeyButton.Margin = new System.Windows.Forms.Padding(4);
             this.AutoSplitTestHotkeyButton.Name = "AutoSplitTestHotkeyButton";
             this.AutoSplitTestHotkeyButton.Size = new System.Drawing.Size(100, 28);
             this.AutoSplitTestHotkeyButton.TabIndex = 18;
@@ -293,8 +297,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.EnableAutosplitCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.EnableAutosplitCheckBox.AutoSize = true;
-            this.EnableAutosplitCheckBox.Location = new System.Drawing.Point(474, 11);
-            this.EnableAutosplitCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.EnableAutosplitCheckBox.Location = new System.Drawing.Point(475, 11);
+            this.EnableAutosplitCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.EnableAutosplitCheckBox.Name = "EnableAutosplitCheckBox";
             this.EnableAutosplitCheckBox.Size = new System.Drawing.Size(74, 21);
             this.EnableAutosplitCheckBox.TabIndex = 1;
@@ -304,8 +308,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // AddAutoSplitButton
             // 
             this.AddAutoSplitButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddAutoSplitButton.Location = new System.Drawing.Point(555, 6);
-            this.AddAutoSplitButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.AddAutoSplitButton.Location = new System.Drawing.Point(556, 6);
+            this.AddAutoSplitButton.Margin = new System.Windows.Forms.Padding(4);
             this.AddAutoSplitButton.Name = "AddAutoSplitButton";
             this.AddAutoSplitButton.Size = new System.Drawing.Size(105, 28);
             this.AddAutoSplitButton.TabIndex = 11;
@@ -334,9 +338,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.grpConfigFiles.Controls.Add(this.lstConfigFiles);
             this.grpConfigFiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grpConfigFiles.Location = new System.Drawing.Point(4, 4);
-            this.grpConfigFiles.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpConfigFiles.Margin = new System.Windows.Forms.Padding(4);
             this.grpConfigFiles.Name = "grpConfigFiles";
-            this.grpConfigFiles.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpConfigFiles.Padding = new System.Windows.Forms.Padding(4);
             this.grpConfigFiles.Size = new System.Drawing.Size(225, 618);
             this.grpConfigFiles.TabIndex = 3;
             this.grpConfigFiles.TabStop = false;
@@ -349,7 +353,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.lstConfigFiles.FormattingEnabled = true;
             this.lstConfigFiles.ItemHeight = 16;
             this.lstConfigFiles.Location = new System.Drawing.Point(4, 19);
-            this.lstConfigFiles.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lstConfigFiles.Margin = new System.Windows.Forms.Padding(4);
             this.lstConfigFiles.Name = "lstConfigFiles";
             this.lstConfigFiles.Size = new System.Drawing.Size(217, 595);
             this.lstConfigFiles.TabIndex = 2;
@@ -427,7 +431,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabControl1.Controls.Add(this.tabPageSettingsMisc);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(4, 4);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(674, 618);
@@ -439,9 +443,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPageSettingsLayout.Controls.Add(this.FontGroup);
             this.tabPageSettingsLayout.Controls.Add(this.groupBox1);
             this.tabPageSettingsLayout.Location = new System.Drawing.Point(4, 25);
-            this.tabPageSettingsLayout.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageSettingsLayout.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageSettingsLayout.Name = "tabPageSettingsLayout";
-            this.tabPageSettingsLayout.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageSettingsLayout.Padding = new System.Windows.Forms.Padding(4);
             this.tabPageSettingsLayout.Size = new System.Drawing.Size(666, 589);
             this.tabPageSettingsLayout.TabIndex = 1;
             this.tabPageSettingsLayout.Text = "Layout";
@@ -456,9 +460,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.comboBoxLayout);
             this.groupBox2.Location = new System.Drawing.Point(332, 7);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox2.Size = new System.Drawing.Size(321, 128);
             this.groupBox2.TabIndex = 25;
             this.groupBox2.TabStop = false;
@@ -467,7 +471,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // numericUpDownPaddingInVerticalLayout
             // 
             this.numericUpDownPaddingInVerticalLayout.Location = new System.Drawing.Point(193, 92);
-            this.numericUpDownPaddingInVerticalLayout.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.numericUpDownPaddingInVerticalLayout.Margin = new System.Windows.Forms.Padding(4);
             this.numericUpDownPaddingInVerticalLayout.Name = "numericUpDownPaddingInVerticalLayout";
             this.numericUpDownPaddingInVerticalLayout.Size = new System.Drawing.Size(107, 22);
             this.numericUpDownPaddingInVerticalLayout.TabIndex = 23;
@@ -490,7 +494,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             "Horizontal",
             "Vertical"});
             this.comboBoxRunesOrientation.Location = new System.Drawing.Point(193, 59);
-            this.comboBoxRunesOrientation.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.comboBoxRunesOrientation.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxRunesOrientation.Name = "comboBoxRunesOrientation";
             this.comboBoxRunesOrientation.Size = new System.Drawing.Size(105, 24);
             this.comboBoxRunesOrientation.TabIndex = 22;
@@ -523,7 +527,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             "Horizontal",
             "Vertical"});
             this.comboBoxLayout.Location = new System.Drawing.Point(193, 26);
-            this.comboBoxLayout.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.comboBoxLayout.Margin = new System.Windows.Forms.Padding(4);
             this.comboBoxLayout.Name = "comboBoxLayout";
             this.comboBoxLayout.Size = new System.Drawing.Size(105, 24);
             this.comboBoxLayout.TabIndex = 22;
@@ -560,17 +564,40 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.groupBox1.Location = new System.Drawing.Point(12, 135);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox1.Size = new System.Drawing.Size(641, 450);
             this.groupBox1.TabIndex = 18;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Display";
             // 
+            // btnSetPlayersXColor
+            // 
+            this.btnSetPlayersXColor.Location = new System.Drawing.Point(169, 335);
+            this.btnSetPlayersXColor.Margin = new System.Windows.Forms.Padding(0);
+            this.btnSetPlayersXColor.Name = "btnSetPlayersXColor";
+            this.btnSetPlayersXColor.Size = new System.Drawing.Size(99, 31);
+            this.btnSetPlayersXColor.TabIndex = 29;
+            this.btnSetPlayersXColor.Text = "Color";
+            this.btnSetPlayersXColor.UseVisualStyleBackColor = true;
+            this.btnSetPlayersXColor.Click += new System.EventHandler(this.btnSetColorPlayersX_Click);
+            // 
+            // chkShowPlayersX
+            // 
+            this.chkShowPlayersX.AutoSize = true;
+            this.chkShowPlayersX.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.chkShowPlayersX.Location = new System.Drawing.Point(19, 341);
+            this.chkShowPlayersX.Margin = new System.Windows.Forms.Padding(4);
+            this.chkShowPlayersX.Name = "chkShowPlayersX";
+            this.chkShowPlayersX.Size = new System.Drawing.Size(93, 21);
+            this.chkShowPlayersX.TabIndex = 28;
+            this.chkShowPlayersX.Text = "/players X";
+            this.chkShowPlayersX.UseVisualStyleBackColor = true;
+            // 
             // chkShowRealValues
             // 
             this.chkShowRealValues.AutoSize = true;
             this.chkShowRealValues.Location = new System.Drawing.Point(276, 148);
-            this.chkShowRealValues.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkShowRealValues.Margin = new System.Windows.Forms.Padding(4);
             this.chkShowRealValues.Name = "chkShowRealValues";
             this.chkShowRealValues.Size = new System.Drawing.Size(216, 21);
             this.chkShowRealValues.TabIndex = 27;
@@ -581,7 +608,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.chkHighContrastRunes.AutoSize = true;
             this.chkHighContrastRunes.Location = new System.Drawing.Point(169, 420);
-            this.chkHighContrastRunes.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkHighContrastRunes.Margin = new System.Windows.Forms.Padding(4);
             this.chkHighContrastRunes.Name = "chkHighContrastRunes";
             this.chkHighContrastRunes.Size = new System.Drawing.Size(114, 21);
             this.chkHighContrastRunes.TabIndex = 25;
@@ -592,18 +619,18 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.chkDisplayRunes.AutoSize = true;
             this.chkDisplayRunes.Location = new System.Drawing.Point(19, 420);
-            this.chkDisplayRunes.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkDisplayRunes.Margin = new System.Windows.Forms.Padding(4);
             this.chkDisplayRunes.Name = "chkDisplayRunes";
             this.chkDisplayRunes.Size = new System.Drawing.Size(71, 21);
             this.chkDisplayRunes.TabIndex = 26;
             this.chkDisplayRunes.Text = "Runes";
             this.chkDisplayRunes.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // btnSetBackgroundColor
             // 
             this.btnSetBackgroundColor.Location = new System.Drawing.Point(169, 376);
-            this.btnSetBackgroundColor.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.btnSetBackgroundColor.Name = "button2";
+            this.btnSetBackgroundColor.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSetBackgroundColor.Name = "btnSetBackgroundColor";
             this.btnSetBackgroundColor.Size = new System.Drawing.Size(205, 28);
             this.btnSetBackgroundColor.TabIndex = 23;
             this.btnSetBackgroundColor.Text = "Background color";
@@ -613,7 +640,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(383, 376);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(205, 28);
             this.button1.TabIndex = 8;
@@ -747,7 +774,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.chkDisplayDifficultyPercents.AutoSize = true;
             this.chkDisplayDifficultyPercents.ForeColor = System.Drawing.SystemColors.ControlText;
             this.chkDisplayDifficultyPercents.Location = new System.Drawing.Point(19, 300);
-            this.chkDisplayDifficultyPercents.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkDisplayDifficultyPercents.Margin = new System.Windows.Forms.Padding(4);
             this.chkDisplayDifficultyPercents.Name = "chkDisplayDifficultyPercents";
             this.chkDisplayDifficultyPercents.Size = new System.Drawing.Size(99, 21);
             this.chkDisplayDifficultyPercents.TabIndex = 5;
@@ -759,7 +786,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.chkDisplayAdvancedStats.AutoSize = true;
             this.chkDisplayAdvancedStats.ForeColor = System.Drawing.SystemColors.ControlText;
             this.chkDisplayAdvancedStats.Location = new System.Drawing.Point(19, 148);
-            this.chkDisplayAdvancedStats.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkDisplayAdvancedStats.Margin = new System.Windows.Forms.Padding(4);
             this.chkDisplayAdvancedStats.Name = "chkDisplayAdvancedStats";
             this.chkDisplayAdvancedStats.Size = new System.Drawing.Size(135, 21);
             this.chkDisplayAdvancedStats.TabIndex = 5;
@@ -770,7 +797,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.chkDisplayLevel.AutoSize = true;
             this.chkDisplayLevel.Location = new System.Drawing.Point(19, 224);
-            this.chkDisplayLevel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkDisplayLevel.Margin = new System.Windows.Forms.Padding(4);
             this.chkDisplayLevel.Name = "chkDisplayLevel";
             this.chkDisplayLevel.Size = new System.Drawing.Size(130, 21);
             this.chkDisplayLevel.TabIndex = 4;
@@ -781,7 +808,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.chkDisplayGold.AutoSize = true;
             this.chkDisplayGold.Location = new System.Drawing.Point(19, 70);
-            this.chkDisplayGold.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkDisplayGold.Margin = new System.Windows.Forms.Padding(4);
             this.chkDisplayGold.Name = "chkDisplayGold";
             this.chkDisplayGold.Size = new System.Drawing.Size(60, 21);
             this.chkDisplayGold.TabIndex = 4;
@@ -792,7 +819,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.chkDisplayResistances.AutoSize = true;
             this.chkDisplayResistances.Location = new System.Drawing.Point(19, 262);
-            this.chkDisplayResistances.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkDisplayResistances.Margin = new System.Windows.Forms.Padding(4);
             this.chkDisplayResistances.Name = "chkDisplayResistances";
             this.chkDisplayResistances.Size = new System.Drawing.Size(107, 21);
             this.chkDisplayResistances.TabIndex = 3;
@@ -803,7 +830,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.chkDisplayBaseStats.AutoSize = true;
             this.chkDisplayBaseStats.Location = new System.Drawing.Point(19, 110);
-            this.chkDisplayBaseStats.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkDisplayBaseStats.Margin = new System.Windows.Forms.Padding(4);
             this.chkDisplayBaseStats.Name = "chkDisplayBaseStats";
             this.chkDisplayBaseStats.Size = new System.Drawing.Size(137, 21);
             this.chkDisplayBaseStats.TabIndex = 2;
@@ -814,7 +841,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.chkDisplayDeathCounter.AutoSize = true;
             this.chkDisplayDeathCounter.Location = new System.Drawing.Point(19, 186);
-            this.chkDisplayDeathCounter.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkDisplayDeathCounter.Margin = new System.Windows.Forms.Padding(4);
             this.chkDisplayDeathCounter.Name = "chkDisplayDeathCounter";
             this.chkDisplayDeathCounter.Size = new System.Drawing.Size(75, 21);
             this.chkDisplayDeathCounter.TabIndex = 1;
@@ -825,7 +852,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.chkDisplayName.AutoSize = true;
             this.chkDisplayName.Location = new System.Drawing.Point(19, 30);
-            this.chkDisplayName.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkDisplayName.Margin = new System.Windows.Forms.Padding(4);
             this.chkDisplayName.Name = "chkDisplayName";
             this.chkDisplayName.Size = new System.Drawing.Size(67, 21);
             this.chkDisplayName.TabIndex = 0;
@@ -836,7 +863,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.tabPageSettingsRunes.Controls.Add(this.runeSettingsPage);
             this.tabPageSettingsRunes.Location = new System.Drawing.Point(4, 25);
-            this.tabPageSettingsRunes.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageSettingsRunes.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageSettingsRunes.Name = "tabPageSettingsRunes";
             this.tabPageSettingsRunes.Size = new System.Drawing.Size(666, 589);
             this.tabPageSettingsRunes.TabIndex = 2;
@@ -847,7 +874,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.runeSettingsPage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.runeSettingsPage.Location = new System.Drawing.Point(0, 0);
-            this.runeSettingsPage.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.runeSettingsPage.Margin = new System.Windows.Forms.Padding(5);
             this.runeSettingsPage.Name = "runeSettingsPage";
             this.runeSettingsPage.SettingsList = null;
             this.runeSettingsPage.Size = new System.Drawing.Size(666, 589);
@@ -857,22 +884,23 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.tabPageSettingsAutosplit.Controls.Add(this.AutoSplitLayout);
             this.tabPageSettingsAutosplit.Location = new System.Drawing.Point(4, 25);
-            this.tabPageSettingsAutosplit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageSettingsAutosplit.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageSettingsAutosplit.Name = "tabPageSettingsAutosplit";
-            this.tabPageSettingsAutosplit.Size = new System.Drawing.Size(665, 545);
+            this.tabPageSettingsAutosplit.Size = new System.Drawing.Size(666, 589);
             this.tabPageSettingsAutosplit.TabIndex = 0;
             this.tabPageSettingsAutosplit.Text = "Auto-Split";
             this.tabPageSettingsAutosplit.UseVisualStyleBackColor = true;
             // 
             // tabPageSettingsMisc
             // 
+            this.tabPageSettingsMisc.Controls.Add(this.groupBoxPipeServer);
             this.tabPageSettingsMisc.Controls.Add(this.DataGroup);
             this.tabPageSettingsMisc.Controls.Add(this.UpdateGroup);
             this.tabPageSettingsMisc.Location = new System.Drawing.Point(4, 25);
-            this.tabPageSettingsMisc.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPageSettingsMisc.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageSettingsMisc.Name = "tabPageSettingsMisc";
-            this.tabPageSettingsMisc.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.tabPageSettingsMisc.Size = new System.Drawing.Size(665, 545);
+            this.tabPageSettingsMisc.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPageSettingsMisc.Size = new System.Drawing.Size(666, 589);
             this.tabPageSettingsMisc.TabIndex = 3;
             this.tabPageSettingsMisc.Text = "Misc";
             this.tabPageSettingsMisc.UseVisualStyleBackColor = true;
@@ -883,17 +911,17 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.DataGroup.Location = new System.Drawing.Point(4, 4);
             this.DataGroup.Margin = new System.Windows.Forms.Padding(0);
             this.DataGroup.Name = "DataGroup";
-            this.DataGroup.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.DataGroup.Size = new System.Drawing.Size(308, 53);
+            this.DataGroup.Padding = new System.Windows.Forms.Padding(4);
+            this.DataGroup.Size = new System.Drawing.Size(369, 53);
             this.DataGroup.TabIndex = 17;
             this.DataGroup.TabStop = false;
-            this.DataGroup.Text = "Data";
+            this.DataGroup.Text = "Files";
             // 
             // CreateFilesCheckBox
             // 
             this.CreateFilesCheckBox.AutoSize = true;
             this.CreateFilesCheckBox.Location = new System.Drawing.Point(13, 23);
-            this.CreateFilesCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.CreateFilesCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.CreateFilesCheckBox.Name = "CreateFilesCheckBox";
             this.CreateFilesCheckBox.Size = new System.Drawing.Size(101, 21);
             this.CreateFilesCheckBox.TabIndex = 8;
@@ -904,11 +932,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.UpdateGroup.Controls.Add(this.CheckUpdatesButton);
             this.UpdateGroup.Controls.Add(this.CheckUpdatesCheckBox);
-            this.UpdateGroup.Location = new System.Drawing.Point(4, 80);
+            this.UpdateGroup.Location = new System.Drawing.Point(4, 140);
             this.UpdateGroup.Margin = new System.Windows.Forms.Padding(0);
             this.UpdateGroup.Name = "UpdateGroup";
-            this.UpdateGroup.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.UpdateGroup.Size = new System.Drawing.Size(308, 86);
+            this.UpdateGroup.Padding = new System.Windows.Forms.Padding(4);
+            this.UpdateGroup.Size = new System.Drawing.Size(369, 86);
             this.UpdateGroup.TabIndex = 18;
             this.UpdateGroup.TabStop = false;
             this.UpdateGroup.Text = "Updates";
@@ -918,9 +946,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.CheckUpdatesButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.CheckUpdatesButton.Location = new System.Drawing.Point(8, 52);
-            this.CheckUpdatesButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.CheckUpdatesButton.Margin = new System.Windows.Forms.Padding(4);
             this.CheckUpdatesButton.Name = "CheckUpdatesButton";
-            this.CheckUpdatesButton.Size = new System.Drawing.Size(292, 28);
+            this.CheckUpdatesButton.Size = new System.Drawing.Size(353, 28);
             this.CheckUpdatesButton.TabIndex = 2;
             this.CheckUpdatesButton.Text = "Check for updates now";
             this.CheckUpdatesButton.UseVisualStyleBackColor = true;
@@ -930,7 +958,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.CheckUpdatesCheckBox.AutoSize = true;
             this.CheckUpdatesCheckBox.Location = new System.Drawing.Point(13, 23);
-            this.CheckUpdatesCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.CheckUpdatesCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.CheckUpdatesCheckBox.Name = "CheckUpdatesCheckBox";
             this.CheckUpdatesCheckBox.Size = new System.Drawing.Size(193, 21);
             this.CheckUpdatesCheckBox.TabIndex = 1;
@@ -969,7 +997,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.btnSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSaveAs.Location = new System.Drawing.Point(683, 7);
-            this.btnSaveAs.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSaveAs.Margin = new System.Windows.Forms.Padding(4);
             this.btnSaveAs.Name = "btnSaveAs";
             this.btnSaveAs.Size = new System.Drawing.Size(100, 28);
             this.btnSaveAs.TabIndex = 1;
@@ -981,7 +1009,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.btnUndo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUndo.Location = new System.Drawing.Point(791, 7);
-            this.btnUndo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnUndo.Margin = new System.Windows.Forms.Padding(4);
             this.btnUndo.Name = "btnUndo";
             this.btnUndo.Size = new System.Drawing.Size(120, 28);
             this.btnUndo.TabIndex = 0;
@@ -993,7 +1021,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSave.Location = new System.Drawing.Point(575, 7);
-            this.btnSave.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSave.Margin = new System.Windows.Forms.Padding(4);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(100, 28);
             this.btnSave.TabIndex = 0;
@@ -1001,28 +1029,32 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // btnSetColorPlayersX
+            // groupBoxPipeServer
             // 
-            this.btnSetPlayersXColor.Location = new System.Drawing.Point(169, 335);
-            this.btnSetPlayersXColor.Margin = new System.Windows.Forms.Padding(0);
-            this.btnSetPlayersXColor.Name = "btnSetColorPlayersX";
-            this.btnSetPlayersXColor.Size = new System.Drawing.Size(99, 31);
-            this.btnSetPlayersXColor.TabIndex = 29;
-            this.btnSetPlayersXColor.Text = "Color";
-            this.btnSetPlayersXColor.UseVisualStyleBackColor = true;
-            this.btnSetPlayersXColor.Click += new System.EventHandler(this.btnSetColorPlayersX_Click);
+            this.groupBoxPipeServer.Controls.Add(this.textBoxPipeName);
+            this.groupBoxPipeServer.Controls.Add(this.labelPipeName);
+            this.groupBoxPipeServer.Location = new System.Drawing.Point(7, 72);
+            this.groupBoxPipeServer.Name = "groupBoxPipeServer";
+            this.groupBoxPipeServer.Size = new System.Drawing.Size(366, 65);
+            this.groupBoxPipeServer.TabIndex = 19;
+            this.groupBoxPipeServer.TabStop = false;
+            this.groupBoxPipeServer.Text = "Pipe Server";
             // 
-            // chkShowPlayersX
+            // labelPipeName
             // 
-            this.chkShowPlayersX.AutoSize = true;
-            this.chkShowPlayersX.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkShowPlayersX.Location = new System.Drawing.Point(19, 341);
-            this.chkShowPlayersX.Margin = new System.Windows.Forms.Padding(4);
-            this.chkShowPlayersX.Name = "chkShowPlayersX";
-            this.chkShowPlayersX.Size = new System.Drawing.Size(93, 21);
-            this.chkShowPlayersX.TabIndex = 28;
-            this.chkShowPlayersX.Text = "/players X";
-            this.chkShowPlayersX.UseVisualStyleBackColor = true;
+            this.labelPipeName.AutoSize = true;
+            this.labelPipeName.Location = new System.Drawing.Point(4, 30);
+            this.labelPipeName.Name = "labelPipeName";
+            this.labelPipeName.Size = new System.Drawing.Size(81, 17);
+            this.labelPipeName.TabIndex = 0;
+            this.labelPipeName.Text = "Pipe Name:";
+            // 
+            // textBoxPipeName
+            // 
+            this.textBoxPipeName.Location = new System.Drawing.Point(91, 30);
+            this.textBoxPipeName.Name = "textBoxPipeName";
+            this.textBoxPipeName.Size = new System.Drawing.Size(257, 22);
+            this.textBoxPipeName.TabIndex = 1;
             // 
             // SettingsWindow
             // 
@@ -1031,7 +1063,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.ClientSize = new System.Drawing.Size(915, 665);
             this.Controls.Add(this.mainPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MinimumSize = new System.Drawing.Size(930, 656);
             this.Name = "SettingsWindow";
             this.Text = "Settings";
@@ -1064,6 +1096,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.UpdateGroup.PerformLayout();
             this.mainPanel.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.groupBoxPipeServer.ResumeLayout(false);
+            this.groupBoxPipeServer.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1143,5 +1177,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private Controls.RuneSettingsPage runeSettingsPage;
         private System.Windows.Forms.Button btnSetPlayersXColor;
         private System.Windows.Forms.CheckBox chkShowPlayersX;
+        private System.Windows.Forms.GroupBox groupBoxPipeServer;
+        private System.Windows.Forms.TextBox textBoxPipeName;
+        private System.Windows.Forms.Label labelPipeName;
     }
 }

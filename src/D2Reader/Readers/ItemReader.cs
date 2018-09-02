@@ -68,7 +68,7 @@ namespace Zutatensuppe.D2Reader.Readers
             return item != null && item.eType == D2UnitType.Item;
         }
 
-        private string GetItemName(D2Unit item)
+        public string GetItemName(D2Unit item)
         {
             if (!IsValidItem(item)) return null;
 
@@ -289,7 +289,7 @@ namespace Zutatensuppe.D2Reader.Readers
             return stringReader.GetString(description.StringIdentifier);
         }
 
-        string GetGrammaticalName(string name, out string grammarCase)
+        public string GetGrammaticalName(string name, out string grammarCase)
         {
             if (name == null)
             {

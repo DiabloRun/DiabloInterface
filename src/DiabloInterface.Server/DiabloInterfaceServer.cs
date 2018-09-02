@@ -87,10 +87,19 @@ namespace Zutatensuppe.DiabloInterface.Server
         {
             // Read query request.
             var reader = new JsonStreamReader(pipe, Encoding.UTF8);
-            var request = reader.ReadJson<Request>();
+            var legacyRequest = reader.ReadJson<LegacyRequest>();
+            if (!string.IsNullOrEmpty(legacyRequest.EquipmentSlot))
+            {
+                writeResponse(pipe, new LegacyResponse(HandleRequest(legacyRequest.AsRequest())));
+            } else
+            {
+                writeResponse(pipe, HandleRequest(reader.ReadJson<Request>()));
+            }
+        }
 
+        void writeResponse(NamedPipeServerStream pipe, object response)
+        {
             // Get response and write.
-            var response = HandleRequest(request);
             var writer = new JsonStreamWriter(pipe, Encoding.UTF8,
                 new IsoDateTimeConverter());
             writer.WriteJson(response);
