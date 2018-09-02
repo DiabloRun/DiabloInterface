@@ -228,7 +228,7 @@ namespace Zutatensuppe.D2Reader
             {
                 memory = CreateGameMemoryTableForReader(reader);
 
-                unitReader = new UnitReader(reader, memory, new StringLookupTable(reader, memory.Address));
+                CreateUnitReader();
 
                 Logger.Info($"Found the Diablo II process (version {reader.FileVersion}).");
 
@@ -324,8 +324,9 @@ namespace Zutatensuppe.D2Reader
 
                 // Read player with player data.
                 var player = reader.Read<D2Unit>(unitAddress);
-                var playerData = player.UnitData.IsNull ?
-                    null : reader.Read<D2PlayerData>(player.UnitData);
+                var playerData = player.UnitData.IsNull
+                    ? null
+                    : reader.Read<D2PlayerData>(player.UnitData);
 
                 return new D2GameInfo(game, player, playerData);
             }
@@ -367,44 +368,39 @@ namespace Zutatensuppe.D2Reader
                 return;
             }
 
-            ClearReaderCache();
+            CreateUnitReader();
 
-            ProcessCharacterData(gameInfo);
-            ProcessQuests(gameInfo);
-            var currentArea = ProcessCurrentArea();
-            var currentPlayersX = ProcessCurrentPlayersX();
-            ProcessCurrentDifficulty(gameInfo);
-            Dictionary<BodyLocation, string> itemStrings = ProcessEquippedItemStrings();
-            List<int> inventoryItemIds = ProcessInventoryItemIds();
+            CurrentCharacter = ProcessCharacterData(gameInfo);
+            gameQuests = ProcessQuests(gameInfo);
+            currentDifficulty = ProcessCurrentDifficulty(gameInfo);
 
             OnDataRead(new DataReadEventArgs(
                 CurrentCharacter,
-                itemStrings,
-                currentArea,
+                ProcessEquippedItemStrings(),
+                ProcessCurrentArea(),
                 currentDifficulty,
-                currentPlayersX,
-                inventoryItemIds,
+                ProcessCurrentPlayersX(),
+                ProcessInventoryItemIds(),
                 IsAutosplitCharacter(CurrentCharacter),
-                gameQuests));
+                gameQuests
+            ));
         }
 
-        void ClearReaderCache()
+        void CreateUnitReader()
         {
             unitReader = new UnitReader(reader, memory, new StringLookupTable(reader, memory.Address));
         }
 
-        void ProcessCharacterData(D2GameInfo gameInfo)
+        Character ProcessCharacterData(D2GameInfo gameInfo)
         {
-            CurrentCharacter = GetCurrentCharacter(gameInfo);
+            return GetCurrentCharacter(gameInfo);
         }
 
-        void ProcessQuests(D2GameInfo gameInfo)
+        List<QuestCollection> ProcessQuests(D2GameInfo gameInfo)
         {
-            gameQuests = new List<QuestCollection>();
-            if (ReadFlags.HasFlag(DataReaderEnableFlags.QuestBuffers))
-            {
-                gameQuests = ReadQuests(gameInfo);
-            }
+            return ReadFlags.HasFlag(DataReaderEnableFlags.QuestBuffers)
+                ? ReadQuests(gameInfo)
+                : new List<QuestCollection>();
         }
 
         List<QuestCollection> ReadQuests(D2GameInfo gameInfo) => (
@@ -443,16 +439,18 @@ namespace Zutatensuppe.D2Reader
                 : -1;
         }
 
-        void ProcessCurrentDifficulty(D2GameInfo gameInfo)
+        GameDifficulty ProcessCurrentDifficulty(D2GameInfo gameInfo)
         {
-            currentDifficulty = ReadFlags.HasFlag(DataReaderEnableFlags.CurrentDifficulty)
-                ? (GameDifficulty)gameInfo.Game.Difficulty : GameDifficulty.Normal;
+            return ReadFlags.HasFlag(DataReaderEnableFlags.CurrentDifficulty)
+                ? (GameDifficulty)gameInfo.Game.Difficulty
+                : GameDifficulty.Normal;
         }
 
         Dictionary<BodyLocation, string> ProcessEquippedItemStrings()
         {
-            var enabled = ReadFlags.HasFlag(DataReaderEnableFlags.EquippedItemStrings);
-            return enabled ? ReadEquippedItemStrings() : new Dictionary<BodyLocation, string>();
+            return ReadFlags.HasFlag(DataReaderEnableFlags.EquippedItemStrings)
+                ? ReadEquippedItemStrings()
+                : new Dictionary<BodyLocation, string>();
         }
 
         Dictionary<BodyLocation, string> ReadEquippedItemStrings()
@@ -491,8 +489,9 @@ namespace Zutatensuppe.D2Reader
 
         List<int> ProcessInventoryItemIds()
         {
-            var enabled = ReadFlags.HasFlag(DataReaderEnableFlags.InventoryItemIds);
-            return enabled ? ReadInventoryItemIds() : new List<int>();
+            return ReadFlags.HasFlag(DataReaderEnableFlags.InventoryItemIds)
+                ? ReadInventoryItemIds()
+                : new List<int>();
         }
 
         List<int> ReadInventoryItemIds()

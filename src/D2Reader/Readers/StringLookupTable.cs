@@ -1,4 +1,4 @@
-﻿using Zutatensuppe.D2Reader.Struct;
+using Zutatensuppe.D2Reader.Struct;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
