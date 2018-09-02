@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
-    class InventoryReader
+    public class InventoryReader
     {
         ProcessMemoryReader processReader;
         public ItemReader ItemReader { get; }

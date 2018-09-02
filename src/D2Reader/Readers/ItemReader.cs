@@ -26,15 +26,16 @@ namespace Zutatensuppe.D2Reader.Readers
         ModifierTable rareModifiers;
         SkillReader skillReader;
 
-        InventoryReader inventoryReader;
-
         ushort[] opNestings;
 
-        public ItemReader(ProcessMemoryReader reader, GameMemoryTable memory) : base(reader, memory)
+        public ItemReader(
+            ProcessMemoryReader reader,
+            GameMemoryTable memory,
+            StringLookupTable stringReader
+        ) : base(reader, memory, stringReader)
         {
             cachedItemData = new Dictionary<IntPtr, D2ItemData>();
             cachedDescriptions = new Dictionary<int, D2ItemDescription>();
-            inventoryReader = new InventoryReader(reader, this);
 
             globals = reader.Read<D2GlobalData>(reader.ReadAddress32(memory.Address.GlobalData, AddressingMode.Relative));
             lowQualityTable = reader.Read<D2SafeArray>(memory.Address.LowQualityItems, AddressingMode.Relative);
@@ -52,6 +53,11 @@ namespace Zutatensuppe.D2Reader.Readers
                     ItemStatCost = reader.ReadArray<D2ItemStatCost>(globals.ItemStatCost, (int)globals.ItemStatCostCount);
                 }
             }
+        }
+
+        protected override InventoryReader createInventoryReader()
+        {
+            return new InventoryReader(reader, this);
         }
 
         public override void ResetCache()
@@ -899,6 +905,59 @@ namespace Zutatensuppe.D2Reader.Readers
                 return new List<D2Unit>();
 
             return inventoryReader.EnumerateInventoryForward(item);
+        }
+
+        public D2StatList FindStatListNode(D2Unit item, uint state)
+        {
+            if (item.StatListNode.IsNull)
+                return null;
+
+            var statNodeEx = reader.Read<D2StatListEx>(item.StatListNode);
+
+            // Get the appropriate stat node.
+            DataPointer statsPointer = statNodeEx.pMyStats;
+            if (statNodeEx.ListFlags.HasFlag(StatListFlag.HasCompleteStats))
+                statsPointer = statNodeEx.pMyLastList;
+
+            if (statsPointer.IsNull) return null;
+
+            // Get previous node in the linked list (belonging to this list).
+            D2StatList getPreviousNode(D2StatList x)
+            {
+                if (x.PreviousList.IsNull) return null;
+                return reader.Read<D2StatList>(x.PreviousList);
+            }
+
+            // Iterate stat nodes until we find the node we're looking for.
+            D2StatList statNode = reader.Read<D2StatList>(statsPointer);
+            for (; statNode != null; statNode = getPreviousNode(statNode))
+            {
+                if (statNode.State != state)
+                    continue;
+                if (statNode.Flags.HasFlag(StatListFlag.HasProperties))
+                    break;
+            }
+
+            return statNode;
+        }
+
+        public void CombineNodeStats(List<D2Stat> stats, D2StatList node)
+        {
+            if (node == null || node.Stats.Address.IsNull) return;
+            D2Stat[] nodeStats = reader.ReadArray<D2Stat>(node.Stats.Address, node.Stats.Length);
+            foreach (D2Stat nodeStat in nodeStats)
+            {
+                int index = stats.FindIndex(x =>
+                    x.HiStatID == nodeStat.HiStatID &&
+                    x.LoStatID == nodeStat.LoStatID);
+                // Already have the stat, increase value.
+                if (index >= 0)
+                {
+                    stats[index].Value += nodeStat.Value;
+                }
+                // Stat not found, add to list.
+                else stats.Add(nodeStat);
+            }
         }
     }
 }

@@ -95,7 +95,6 @@ namespace Zutatensuppe.D2Reader
 
         ProcessMemoryReader reader;
         UnitReader unitReader;
-        InventoryReader inventoryReader;
         GameMemoryTable memory;
 
         GameDifficulty currentDifficulty;
@@ -229,8 +228,7 @@ namespace Zutatensuppe.D2Reader
             {
                 memory = CreateGameMemoryTableForReader(reader);
 
-                unitReader = new UnitReader(reader, memory);
-                inventoryReader = new InventoryReader(reader, new ItemReader(reader, memory));
+                unitReader = new UnitReader(reader, memory, new StringLookupTable(reader, memory.Address));
 
                 Logger.Info($"Found the Diablo II process (version {reader.FileVersion}).");
 
@@ -264,7 +262,6 @@ namespace Zutatensuppe.D2Reader
                 reader = null;
                 memory = null;
                 unitReader = null;
-                inventoryReader = null;
             }
         }
 
@@ -275,9 +272,9 @@ namespace Zutatensuppe.D2Reader
             // Add all items found in the slots.
             bool FilterSlots(D2ItemData data) => slots.FindIndex(x => x == data.BodyLoc && data.InvPage == InventoryPage.Equipped) >= 0;
 
-            foreach (var item in inventoryReader.EnumerateInventoryBackward(unitReader.GetPlayer(), FilterSlots))
+            foreach (var item in unitReader.inventoryReader.EnumerateInventoryBackward(unitReader.GetPlayer(), FilterSlots))
             {
-                action?.Invoke(inventoryReader.ItemReader, item);
+                action?.Invoke(unitReader.inventoryReader.ItemReader, item);
             }
         }
 
@@ -393,8 +390,7 @@ namespace Zutatensuppe.D2Reader
 
         void ClearReaderCache()
         {
-            unitReader = new UnitReader(reader, memory);
-            inventoryReader = new InventoryReader(reader, new ItemReader(reader, memory));
+            unitReader = new UnitReader(reader, memory, new StringLookupTable(reader, memory.Address));
         }
 
         void ProcessCharacterData(D2GameInfo gameInfo)
@@ -471,16 +467,16 @@ namespace Zutatensuppe.D2Reader
             // Build filter to get only equipped items.
             bool Filter(D2ItemData data) => data.BodyLoc != BodyLocation.None;
 
-            foreach (D2Unit item in inventoryReader.EnumerateInventoryBackward(unitReader.GetPlayer(), Filter))
+            foreach (D2Unit item in unitReader.inventoryReader.EnumerateInventoryBackward(unitReader.GetPlayer(), Filter))
             {
                 List<D2Stat> itemStats = unitReader.GetStats(item);
                 if (itemStats == null) continue;
 
                 StringBuilder statBuilder = new StringBuilder();
-                statBuilder.Append(inventoryReader.ItemReader.GetFullItemName(item));
+                statBuilder.Append(unitReader.inventoryReader.ItemReader.GetFullItemName(item));
 
                 statBuilder.Append(Environment.NewLine);
-                List<string> magicalStrings = inventoryReader.ItemReader.GetMagicalStrings(item);
+                List<string> magicalStrings = unitReader.inventoryReader.ItemReader.GetMagicalStrings(item);
                 foreach (string str in magicalStrings)
                 {
                     statBuilder.Append("    ");
@@ -506,8 +502,8 @@ namespace Zutatensuppe.D2Reader
 
         List<int> ReadInventoryItemIds()
         {
-            IReadOnlyCollection<D2Unit> baseItems = inventoryReader.EnumerateInventoryBackward(unitReader.GetPlayer()).ToList();
-            IEnumerable<D2Unit> socketedItems = baseItems.SelectMany(item => inventoryReader.ItemReader.GetSocketedItems(item));
+            IReadOnlyCollection<D2Unit> baseItems = unitReader.inventoryReader.EnumerateInventoryBackward(unitReader.GetPlayer()).ToList();
+            IEnumerable<D2Unit> socketedItems = baseItems.SelectMany(item => unitReader.inventoryReader.ItemReader.GetSocketedItems(item));
             IEnumerable<D2Unit> allItems = baseItems.Concat(socketedItems);
             return (from item in allItems select item.eClass).ToList();
         }
