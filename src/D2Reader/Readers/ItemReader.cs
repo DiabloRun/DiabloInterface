@@ -26,12 +26,15 @@ namespace Zutatensuppe.D2Reader.Readers
         ModifierTable rareModifiers;
         SkillReader skillReader;
 
+        InventoryReader inventoryReader;
+
         ushort[] opNestings;
 
         public ItemReader(ProcessMemoryReader reader, GameMemoryTable memory) : base(reader, memory)
         {
             cachedItemData = new Dictionary<IntPtr, D2ItemData>();
             cachedDescriptions = new Dictionary<int, D2ItemDescription>();
+            inventoryReader = new InventoryReader(reader, this);
 
             globals = reader.Read<D2GlobalData>(reader.ReadAddress32(memory.Address.GlobalData, AddressingMode.Relative));
             lowQualityTable = reader.Read<D2SafeArray>(memory.Address.LowQualityItems, AddressingMode.Relative);
@@ -893,26 +896,9 @@ namespace Zutatensuppe.D2Reader.Readers
         public IEnumerable<D2Unit> GetSocketedItems(D2Unit item)
         {
             var items = new List<D2Unit>();
-            if (!IsValidItem(item) || item.pInventory.IsNull) return items;
+            if (!IsValidItem(item)) return new List<D2Unit>();
 
-            var inventory = reader.Read<D2Inventory>(item.pInventory);
-            if (inventory.pFirstItem.IsNull) return items;
-
-            var subItem = reader.Read<D2Unit>(inventory.pFirstItem);
-            for (; subItem != null; subItem = GetNextInventoryItem(subItem))
-            {
-                items.Add(subItem);
-            }
-            return items;
-        }
-
-        // Helper for iterating item inventory.
-        private D2Unit GetNextInventoryItem(D2Unit subItem)
-        {
-            var subItemData = GetItemData(subItem);
-            if (subItemData == null) return null;
-            if (subItemData.NextItem.IsNull) return null;
-            return reader.Read<D2Unit>(subItemData.NextItem);
+            return inventoryReader.EnumerateInventoryForward(item);
         }
     }
 }

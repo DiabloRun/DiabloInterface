@@ -18,20 +18,23 @@ namespace Zutatensuppe.D2Reader.Readers
             ItemReader = itemReader;
         }
 
-        public IEnumerable<D2Unit> EnumerateInventory(D2Unit unit, Func<D2ItemData, bool> filter)
+        public IEnumerable<D2Unit> EnumerateInventoryBackward(D2Unit unit, Func<D2ItemData, bool> filter)
         {
-            return from item in EnumerateInventory(unit)
+            return from item in EnumerateInventoryBackward(unit)
                    let itemData = ItemReader.GetItemData(item)
                    where itemData != null && filter(itemData)
                    select item;
         }
 
-        public IEnumerable<D2Unit> EnumerateInventory(D2Unit unit)
+        public IEnumerable<D2Unit> EnumerateInventoryBackward(D2Unit unit)
         {
-            var inventory = processReader.Read<D2Inventory>(unit.pInventory.Address);
-            if (inventory == null) yield break;
+            if (unit.pInventory.IsNull)
+                yield break;
 
-            // Traverse the linked list of inventory items.
+            var inventory = processReader.Read<D2Inventory>(unit.pInventory);
+            if (inventory.pLastItem.IsNull)
+                yield break;
+
             var item = GetUnit(inventory.pLastItem);
             for (; item != null; item = GetPreviousItem(item))
             {
@@ -39,18 +42,42 @@ namespace Zutatensuppe.D2Reader.Readers
             }
         }
 
-        private D2Unit GetUnit(DataPointer pointer)
+        public IEnumerable<D2Unit> EnumerateInventoryForward(D2Unit unit)
         {
-            if (pointer.IsNull) return null;
-            return processReader.Read<D2Unit>(pointer.Address, AddressingMode.Absolute);
+            if (unit.pInventory.IsNull)
+                yield break;
+
+            var inventory = processReader.Read<D2Inventory>(unit.pInventory);
+            if (inventory.pFirstItem.IsNull)
+                yield break;
+
+            var item = GetUnit(inventory.pFirstItem);
+            for (; item != null; item = GetNextItem(item))
+            {
+                yield return item;
+            }
         }
 
-        private D2Unit GetPreviousItem(D2Unit item)
+        public D2Unit GetPreviousItem(D2Unit item)
         {
             var itemData = ItemReader.GetItemData(item);
             if (itemData == null) return null;
 
             return GetUnit(itemData.PreviousItem);
+        }
+
+        public D2Unit GetNextItem(D2Unit item)
+        {
+            var itemData = ItemReader.GetItemData(item);
+            if (itemData == null) return null;
+
+            return GetUnit(itemData.NextItem);
+        }
+
+        private D2Unit GetUnit(DataPointer pointer)
+        {
+            if (pointer.IsNull) return null;
+            return processReader.Read<D2Unit>(pointer);
         }
 
         // TODO: not used, maybe remove?
@@ -63,7 +90,7 @@ namespace Zutatensuppe.D2Reader.Readers
         private string GetEquippedItemSlot(BodyLocation slot)
         {
             // Get all items at the target location.
-            var itemsInSlot = from item in EnumerateInventory(ItemReader.GetPlayer())
+            var itemsInSlot = from item in EnumerateInventoryBackward(ItemReader.GetPlayer())
                               let itemData = ItemReader.GetItemData(item)
                               where itemData != null && itemData.BodyLoc == slot
                               select item;

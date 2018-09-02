@@ -54,7 +54,7 @@ namespace Zutatensuppe.D2Reader.Readers
                    (data.InvPage == InventoryPage.Inventory)
                )
             ;
-            foreach (D2Unit item in inventoryReader.EnumerateInventory(GetPlayer(), filter))
+            foreach (D2Unit item in inventoryReader.EnumerateInventoryBackward(GetPlayer(), filter))
             {
                 List<D2Stat> itemStats = GetStats(item);
                 if (itemStats == null)
