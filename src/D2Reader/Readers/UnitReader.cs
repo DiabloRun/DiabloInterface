@@ -43,7 +43,7 @@ namespace Zutatensuppe.D2Reader.Readers
 
         public D2Unit GetPlayer()
         {
-            if (player == null)
+            if (player == null && (long)memory.Address.PlayerUnit > 0)
             {
                 IntPtr playerAddress = reader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
                 player = reader.Read<D2Unit>(playerAddress);
@@ -54,7 +54,9 @@ namespace Zutatensuppe.D2Reader.Readers
 
         public List<D2Stat> GetItemStats(D2Unit unit)
         {
-            List<D2Stat> statList = new List<D2Stat>();
+            var player = GetPlayer();
+            if (player == null)
+                return new List<D2Stat>();
 
             // Build filter to get only equipped items and items in inventory
             bool filter(D2ItemData data) =>
@@ -66,7 +68,9 @@ namespace Zutatensuppe.D2Reader.Readers
                    (data.InvPage == InventoryPage.Inventory)
                )
             ;
-            foreach (D2Unit item in inventoryReader.EnumerateInventoryBackward(GetPlayer(), filter))
+
+            List<D2Stat> statList = new List<D2Stat>();
+            foreach (D2Unit item in inventoryReader.EnumerateInventoryBackward(player, filter))
             {
                 List<D2Stat> itemStats = GetStats(item);
                 if (itemStats == null)

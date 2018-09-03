@@ -14,7 +14,9 @@ namespace Zutatensuppe.DiabloInterface.Server
 
         public LegacyResponse(Response response)
         {
-            Items = ((ItemResponsePayload)response.Payload).Items;
+            Items = response.Payload == null
+                ? new List<ItemInfo>()
+                : ((ItemResponsePayload)response.Payload).Items;
             Success = Items.Count > 0;
         }
     }

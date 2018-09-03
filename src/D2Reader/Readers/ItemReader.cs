@@ -528,8 +528,12 @@ namespace Zutatensuppe.D2Reader.Readers
             if (statCost.OpBase < 0 || statCost.OpBase >= ItemStatCost.Length)
                 return 0;
 
+            var player = GetPlayer();
+            if (player == null)
+                return 0;
+
             // Get the player stat.
-            int playerStat = GetStatValue(GetPlayer(), statCost.OpBase) ?? 0;
+            int playerStat = GetStatValue(player, statCost.OpBase) ?? 0;
             playerStat >>= ItemStatCost[statCost.OpBase].ValShift;
 
             // Evaluate based on the player stat (e.g. player level)

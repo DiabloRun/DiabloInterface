@@ -270,12 +270,26 @@ namespace Zutatensuppe.D2Reader
         {
             if (reader == null) return;
 
-            // Add all items found in the slots.
-            bool FilterSlots(D2ItemData data) => slots.FindIndex(x => x == data.BodyLoc && data.InvPage == InventoryPage.Equipped) >= 0;
+            if (unitReader == null) return;
 
-            foreach (var item in unitReader.inventoryReader.EnumerateInventoryBackward(unitReader.GetPlayer(), FilterSlots))
+            var player = unitReader.GetPlayer();
+            if (player == null) return;
+
+            // Add all items found in the slots.
+            bool FilterSlots(D2ItemData data) => slots.FindIndex(
+                x => x == data.BodyLoc
+                && data.InvPage == InventoryPage.Equipped
+            ) >= 0;
+
+            try
             {
-                action?.Invoke(unitReader.inventoryReader.ItemReader, item);
+                foreach (var item in unitReader.inventoryReader.EnumerateInventoryBackward(player, FilterSlots))
+                {
+                    action?.Invoke(unitReader.inventoryReader.ItemReader, item);
+                }
+            } catch (Exception e)
+            {
+                Logger.Error($"Unable to execute ItemSlotAction. {e.Message}");
             }
         }
 
@@ -451,12 +465,15 @@ namespace Zutatensuppe.D2Reader
 
         Dictionary<BodyLocation, string> ReadEquippedItemStrings()
         {
-            var itemStrings = new Dictionary<BodyLocation, string>();
+            var player = unitReader.GetPlayer();
+            if (player == null)
+                return new Dictionary<BodyLocation, string>();
 
             // Build filter to get only equipped items.
             bool Filter(D2ItemData data) => data.BodyLoc != BodyLocation.None;
 
-            foreach (D2Unit item in unitReader.inventoryReader.EnumerateInventoryBackward(unitReader.GetPlayer(), Filter))
+            var itemStrings = new Dictionary<BodyLocation, string>();
+            foreach (D2Unit item in unitReader.inventoryReader.EnumerateInventoryBackward(player, Filter))
             {
                 List<D2Stat> itemStats = unitReader.GetStats(item);
                 if (itemStats == null) continue;
@@ -479,7 +496,6 @@ namespace Zutatensuppe.D2Reader
                     itemStrings.Add(itemData.BodyLoc, statBuilder.ToString());
                 }
             }
-
             return itemStrings;
         }
 
@@ -492,7 +508,11 @@ namespace Zutatensuppe.D2Reader
 
         List<int> ReadInventoryItemIds()
         {
-            IReadOnlyCollection<D2Unit> baseItems = unitReader.inventoryReader.EnumerateInventoryBackward(unitReader.GetPlayer()).ToList();
+            var player = unitReader.GetPlayer();
+            if (player == null)
+                return new List<int>();
+
+            IReadOnlyCollection<D2Unit> baseItems = unitReader.inventoryReader.EnumerateInventoryBackward(player).ToList();
             IEnumerable<D2Unit> socketedItems = baseItems.SelectMany(item => unitReader.inventoryReader.ItemReader.GetSocketedItems(item));
             IEnumerable<D2Unit> allItems = baseItems.Concat(socketedItems);
             return (from item in allItems select item.eClass).ToList();
@@ -506,6 +526,9 @@ namespace Zutatensuppe.D2Reader
         bool IsNewChar()
         {
             D2Unit p = unitReader.GetPlayer();
+            if (p == null)
+                return false;
+
             return MatchesStartingProps(p)
                 && MatchesStartingItems(p)
                 && MatchesStartingSkills(p);
@@ -570,7 +593,9 @@ namespace Zutatensuppe.D2Reader
                 characters[playerName] = character;
 
                 // A brand new character has been started.
-                if (IsNewChar())
+                // The extra wasInTitleScreen check prevents DI from splitting
+                // when it was started AFTER Diablo 2, but the char is still a new char
+                if (wasInTitleScreen && IsNewChar())
                 {
                     ActiveCharacterTimestamp = DateTime.Now;
                     ActiveCharacter = character;

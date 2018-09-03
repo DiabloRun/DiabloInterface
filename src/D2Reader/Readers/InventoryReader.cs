@@ -89,8 +89,12 @@ namespace Zutatensuppe.D2Reader.Readers
         // TODO: not used, maybe remove?
         private string GetEquippedItemSlot(BodyLocation slot)
         {
+            var player = ItemReader.GetPlayer();
+            if (player == null)
+                return null;
+
             // Get all items at the target location.
-            var itemsInSlot = from item in EnumerateInventoryBackward(ItemReader.GetPlayer())
+            var itemsInSlot = from item in EnumerateInventoryBackward(player)
                               let itemData = ItemReader.GetItemData(item)
                               where itemData != null && itemData.BodyLoc == slot
                               select item;
