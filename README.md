@@ -53,7 +53,7 @@ The tool can't determine if the runner intends to do a normal, nightmare or hell
 
 The tool is also able to do automatic splits in connection with a split tool like [Livesplit][livesplit-link]. 
 
-**Livesplit setup**
+**Livesplit setup**  
 _In this example we use `F12` as split hotkey._
 
 1. Livesplit must be run as Administrator
