@@ -53,8 +53,21 @@ The tool can't determine if the runner intends to do a normal, nightmare or hell
 
 The tool is also able to do automatic splits in connection with a split tool like [Livesplit][livesplit-link]. 
 
-1. Setup the same hotkey in DiabloInterface as your Start/Split hotkey in split tool
-2. Setup splits that should be sent to your split tool (naming and order of splits in DiabloInterface are irrelevant, as only a key press is sent to the split tool when a split point is reached)
+**Livesplit setup**  
+_In this example we use `F12` as split hotkey._
+
+1. Livesplit must be run as Administrator
+2. Open Livesplit settings
+  - Setup your split hotkey to `F12`
+  - Check the `Global Hokteys` checkbox
+3. Open DiabloInterface `Auto-Split` settings
+  - Click into `Split-Hotkey` and type `F12` to set the hotkey (same as in Livesplit)
+  - Make sure the hotkey works by clicking the `Test Hotkey` button
+  - Check the `Enabled` checkbox
+  - Click the `Add Split` button multiple times to add some default splits
+  
+The order and naming of the splits setup in DI does not matter. 
+When any of the splits are reached, DiabloInterface will trigger the hotkey and Livesplit will catch it and split.
 
 Please note that automatic splits will only work if you start a new character while the tool is running.
 
