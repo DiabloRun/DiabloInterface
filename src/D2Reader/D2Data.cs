@@ -1,9 +1,8 @@
-﻿
+
 namespace Zutatensuppe.D2Reader
 {
     public class D2Data
     {
-
         public enum Mode
         {
             DEATH = 0,

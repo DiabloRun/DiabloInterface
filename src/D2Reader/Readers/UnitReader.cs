@@ -14,13 +14,26 @@ namespace Zutatensuppe.D2Reader.Readers
         protected GameMemoryTable memory;
         protected StringLookupTable stringReader;
 
+        internal SkillReader skillReader;
+        public InventoryReader inventoryReader;
+
         D2Unit player = null;
 
-        public UnitReader(ProcessMemoryReader reader, GameMemoryTable memory)
-        {
+        public UnitReader(
+            ProcessMemoryReader reader,
+            GameMemoryTable memory,
+            StringLookupTable stringReader
+        ) {
             this.reader = reader;
             this.memory = memory;
-            stringReader = new StringLookupTable(reader, memory.Address);
+            this.stringReader = stringReader;
+            skillReader = new SkillReader(reader, memory);
+            inventoryReader = createInventoryReader();
+        }
+
+        protected virtual InventoryReader createInventoryReader()
+        {
+            return new InventoryReader(reader, new ItemReader(reader, memory, stringReader));
         }
 
         public virtual void ResetCache()
@@ -28,9 +41,9 @@ namespace Zutatensuppe.D2Reader.Readers
             player = null;
         }
 
-        protected D2Unit GetPlayer()
+        public D2Unit GetPlayer()
         {
-            if (player == null)
+            if (player == null && (long)memory.Address.PlayerUnit > 0)
             {
                 IntPtr playerAddress = reader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
                 player = reader.Read<D2Unit>(playerAddress);
@@ -41,8 +54,9 @@ namespace Zutatensuppe.D2Reader.Readers
 
         public List<D2Stat> GetItemStats(D2Unit unit)
         {
-            List<D2Stat> statList = new List<D2Stat>();
-            InventoryReader inventoryReader = new InventoryReader(reader, memory);
+            var player = GetPlayer();
+            if (player == null)
+                return new List<D2Stat>();
 
             // Build filter to get only equipped items and items in inventory
             bool filter(D2ItemData data) =>
@@ -54,7 +68,9 @@ namespace Zutatensuppe.D2Reader.Readers
                    (data.InvPage == InventoryPage.Inventory)
                )
             ;
-            foreach (D2Unit item in inventoryReader.EnumerateInventory(filter))
+
+            List<D2Stat> statList = new List<D2Stat>();
+            foreach (D2Unit item in inventoryReader.EnumerateInventoryBackward(player, filter))
             {
                 List<D2Stat> itemStats = GetStats(item);
                 if (itemStats == null)
@@ -111,16 +127,15 @@ namespace Zutatensuppe.D2Reader.Readers
         public Dictionary<int, D2Skill> GetSkillMap(D2Unit unit)
         {
             Dictionary<int, D2Skill> skills = new Dictionary<int, D2Skill>();
-            SkillReader skillsReader = new SkillReader(reader, memory);
-            foreach (D2Skill skill in skillsReader.EnumerateSkills(unit))
+            foreach (D2Skill skill in skillReader.EnumerateSkills(unit))
             {
-                int numberOfSkillPoints = skillsReader.GetTotalNumberOfSkillPoints(skill);
+                int numberOfSkillPoints = skillReader.GetTotalNumberOfSkillPoints(skill);
                 if (numberOfSkillPoints > 0)
                 {
-                    D2SkillData skillData = skillsReader.ReadSkillData(skill);
+                    D2SkillData skillData = skillReader.ReadSkillData(skill);
                     if (skillData.ClassId >= 0 && skillData.ClassId <= 6)
                     {
-                        string skillName = skillsReader.GetSkillName((ushort)skillData.SkillId);
+                        string skillName = skillReader.GetSkillName((ushort)skillData.SkillId);
                         int skillPoints = skill.numberOfSkillPoints;
                     }
                 }
@@ -191,59 +206,6 @@ namespace Zutatensuppe.D2Reader.Readers
         public int? GetStatValue(D2Unit unit, StatIdentifier statId)
         {
             return GetStatValue(unit, (ushort)statId);
-        }
-
-        public D2StatList FindStatListNode(D2Unit item, uint state)
-        {
-            if (item.StatListNode.IsNull)
-                return null;
-
-            var statNodeEx = reader.Read<D2StatListEx>(item.StatListNode);
-
-            // Get the appropriate stat node.
-            DataPointer statsPointer = statNodeEx.pMyStats;
-            if (statNodeEx.ListFlags.HasFlag(StatListFlag.HasCompleteStats))
-                statsPointer = statNodeEx.pMyLastList;
-
-            if (statsPointer.IsNull) return null;
-
-            // Get previous node in the linked list (belonging to this list).
-            D2StatList getPreviousNode(D2StatList x)
-            {
-                if (x.PreviousList.IsNull) return null;
-                return reader.Read<D2StatList>(x.PreviousList);
-            }
-
-            // Iterate stat nodes until we find the node we're looking for.
-            D2StatList statNode = reader.Read<D2StatList>(statsPointer);
-            for (; statNode != null; statNode = getPreviousNode(statNode))
-            {
-                if (statNode.State != state)
-                    continue;
-                if (statNode.Flags.HasFlag(StatListFlag.HasProperties))
-                    break;
-            }
-
-            return statNode;
-        }
-
-        public void CombineNodeStats(List<D2Stat> stats, D2StatList node)
-        {
-            if (node == null || node.Stats.Address.IsNull) return;
-            D2Stat[] nodeStats = reader.ReadArray<D2Stat>(node.Stats.Address, node.Stats.Length);
-            foreach (D2Stat nodeStat in nodeStats)
-            {
-                int index = stats.FindIndex(x =>
-                    x.HiStatID == nodeStat.HiStatID &&
-                    x.LoStatID == nodeStat.LoStatID);
-                // Already have the stat, increase value.
-                if (index >= 0)
-                {
-                    stats[index].Value += nodeStat.Value;
-                }
-                // Stat not found, add to list.
-                else stats.Add(nodeStat);
-            }
         }
     }
 }

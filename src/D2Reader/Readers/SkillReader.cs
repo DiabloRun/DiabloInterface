@@ -1,13 +1,12 @@
-﻿using Zutatensuppe.D2Reader.Struct;
+using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Skill;
 using System;
 using System.Collections.Generic;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
-    class SkillReader
+    internal class SkillReader
     {
-
         ProcessMemoryReader reader;
         protected StringLookupTable stringReader;
         D2GlobalData globals;

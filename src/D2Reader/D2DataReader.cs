@@ -11,6 +11,7 @@ namespace Zutatensuppe.D2Reader
     using Zutatensuppe.D2Reader.Readers;
     using Zutatensuppe.D2Reader.Struct;
     using Zutatensuppe.D2Reader.Struct.Item;
+    using Zutatensuppe.D2Reader.Struct.Skill;
     using Zutatensuppe.D2Reader.Struct.Stat;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
@@ -95,14 +96,10 @@ namespace Zutatensuppe.D2Reader
 
         ProcessMemoryReader reader;
         UnitReader unitReader;
-        InventoryReader inventoryReader;
         GameMemoryTable memory;
 
         GameDifficulty currentDifficulty;
         bool wasInTitleScreen;
-        DateTime activeCharacterTimestamp;
-        Character activeCharacter;
-        Character character;
         IList<QuestCollection> gameQuests = new List<QuestCollection>();
 
         public D2DataReader(IGameMemoryTableFactory memoryTableFactory)
@@ -126,11 +123,11 @@ namespace Zutatensuppe.D2Reader
             | DataReaderEnableFlags.QuestBuffers
             | DataReaderEnableFlags.InventoryItemIds;
 
-        public DateTime ActiveCharacterTimestamp => activeCharacterTimestamp;
+        public DateTime ActiveCharacterTimestamp { get; private set; }
 
-        public Character ActiveCharacter => activeCharacter;
+        public Character ActiveCharacter { get; private set; }
 
-        public Character CurrentCharacter => character;
+        public Character CurrentCharacter { get; private set; }
 
         /// <summary>
         /// Gets or sets reader polling rate.
@@ -232,8 +229,7 @@ namespace Zutatensuppe.D2Reader
             {
                 memory = CreateGameMemoryTableForReader(reader);
 
-                unitReader = new UnitReader(reader, memory);
-                inventoryReader = new InventoryReader(reader, memory);
+                CreateUnitReader();
 
                 Logger.Info($"Found the Diablo II process (version {reader.FileVersion}).");
 
@@ -267,7 +263,6 @@ namespace Zutatensuppe.D2Reader
                 reader = null;
                 memory = null;
                 unitReader = null;
-                inventoryReader = null;
             }
         }
 
@@ -275,12 +270,26 @@ namespace Zutatensuppe.D2Reader
         {
             if (reader == null) return;
 
-            // Add all items found in the slots.
-            bool FilterSlots(D2ItemData data) => slots.FindIndex(x => x == data.BodyLoc && data.InvPage == InventoryPage.Equipped) >= 0;
+            if (unitReader == null) return;
 
-            foreach (var item in inventoryReader.EnumerateInventory(FilterSlots))
+            var player = unitReader.GetPlayer();
+            if (player == null) return;
+
+            // Add all items found in the slots.
+            bool FilterSlots(D2ItemData data) => slots.FindIndex(
+                x => x == data.BodyLoc
+                && data.InvPage == InventoryPage.Equipped
+            ) >= 0;
+
+            try
             {
-                action?.Invoke(inventoryReader.ItemReader, item);
+                foreach (var item in unitReader.inventoryReader.EnumerateInventoryBackward(player, FilterSlots))
+                {
+                    action?.Invoke(unitReader.inventoryReader.ItemReader, item);
+                }
+            } catch (Exception e)
+            {
+                Logger.Error($"Unable to execute ItemSlotAction. {e.Message}");
             }
         }
 
@@ -330,8 +339,9 @@ namespace Zutatensuppe.D2Reader
 
                 // Read player with player data.
                 var player = reader.Read<D2Unit>(unitAddress);
-                var playerData = player.UnitData.IsNull ?
-                    null : reader.Read<D2PlayerData>(player.UnitData);
+                var playerData = player.UnitData.IsNull
+                    ? null
+                    : reader.Read<D2PlayerData>(player.UnitData);
 
                 return new D2GameInfo(game, player, playerData);
             }
@@ -373,50 +383,34 @@ namespace Zutatensuppe.D2Reader
                 return;
             }
 
-            ClearReaderCache();
+            CreateUnitReader();
 
-            ProcessCharacterData(gameInfo);
-            ProcessQuests(gameInfo);
-            var currentArea = ProcessCurrentArea();
-            var currentPlayersX = ProcessCurrentPlayersX();
-            ProcessCurrentDifficulty(gameInfo);
-            Dictionary<BodyLocation, string> itemStrings = ProcessEquippedItemStrings();
-            List<int> inventoryItemIds = ProcessInventoryItemIds();
+            CurrentCharacter = ProcessCharacterData(gameInfo);
+            gameQuests = ProcessQuests(gameInfo);
+            currentDifficulty = ProcessCurrentDifficulty(gameInfo);
 
             OnDataRead(new DataReadEventArgs(
-                character,
-                itemStrings,
-                currentArea,
+                CurrentCharacter,
+                ProcessEquippedItemStrings(),
+                ProcessCurrentArea(),
                 currentDifficulty,
-                currentPlayersX,
-                inventoryItemIds,
-                IsAutosplitCharacter(character),
-                gameQuests));
+                ProcessCurrentPlayersX(),
+                ProcessInventoryItemIds(),
+                IsAutosplitCharacter(CurrentCharacter),
+                gameQuests
+            ));
         }
 
-        void ClearReaderCache()
+        void CreateUnitReader()
         {
-            unitReader = new UnitReader(reader, memory);
-            inventoryReader = new InventoryReader(reader, memory);
+            unitReader = new UnitReader(reader, memory, new StringLookupTable(reader, memory.Address));
         }
 
-        void ProcessCharacterData(D2GameInfo gameInfo)
+        List<QuestCollection> ProcessQuests(D2GameInfo gameInfo)
         {
-            character = GetCurrentCharacter(gameInfo);
-            character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
-
-            Dictionary<StatIdentifier, D2Stat> playerStats = unitReader.GetStatsMap(gameInfo.Player);
-            Dictionary<StatIdentifier, D2Stat> itemStats = unitReader.GetItemStatsMap(gameInfo.Player);
-            character.ParseStats(playerStats, itemStats, gameInfo);
-        }
-
-        void ProcessQuests(D2GameInfo gameInfo)
-        {
-            gameQuests = new List<QuestCollection>();
-            if (ReadFlags.HasFlag(DataReaderEnableFlags.QuestBuffers))
-            {
-                gameQuests = ReadQuests(gameInfo);
-            }
+            return ReadFlags.HasFlag(DataReaderEnableFlags.QuestBuffers)
+                ? ReadQuests(gameInfo)
+                : new List<QuestCollection>();
         }
 
         List<QuestCollection> ReadQuests(D2GameInfo gameInfo) => (
@@ -455,35 +449,40 @@ namespace Zutatensuppe.D2Reader
                 : -1;
         }
 
-        void ProcessCurrentDifficulty(D2GameInfo gameInfo)
+        GameDifficulty ProcessCurrentDifficulty(D2GameInfo gameInfo)
         {
-            currentDifficulty = ReadFlags.HasFlag(DataReaderEnableFlags.CurrentDifficulty)
-                ? (GameDifficulty)gameInfo.Game.Difficulty : GameDifficulty.Normal;
+            return ReadFlags.HasFlag(DataReaderEnableFlags.CurrentDifficulty)
+                ? (GameDifficulty)gameInfo.Game.Difficulty
+                : GameDifficulty.Normal;
         }
 
         Dictionary<BodyLocation, string> ProcessEquippedItemStrings()
         {
-            var enabled = ReadFlags.HasFlag(DataReaderEnableFlags.EquippedItemStrings);
-            return enabled ? ReadEquippedItemStrings() : new Dictionary<BodyLocation, string>();
+            return ReadFlags.HasFlag(DataReaderEnableFlags.EquippedItemStrings)
+                ? ReadEquippedItemStrings()
+                : new Dictionary<BodyLocation, string>();
         }
 
         Dictionary<BodyLocation, string> ReadEquippedItemStrings()
         {
-            var itemStrings = new Dictionary<BodyLocation, string>();
+            var player = unitReader.GetPlayer();
+            if (player == null)
+                return new Dictionary<BodyLocation, string>();
 
             // Build filter to get only equipped items.
             bool Filter(D2ItemData data) => data.BodyLoc != BodyLocation.None;
 
-            foreach (D2Unit item in inventoryReader.EnumerateInventory(Filter))
+            var itemStrings = new Dictionary<BodyLocation, string>();
+            foreach (D2Unit item in unitReader.inventoryReader.EnumerateInventoryBackward(player, Filter))
             {
                 List<D2Stat> itemStats = unitReader.GetStats(item);
                 if (itemStats == null) continue;
 
                 StringBuilder statBuilder = new StringBuilder();
-                statBuilder.Append(inventoryReader.ItemReader.GetFullItemName(item));
+                statBuilder.Append(unitReader.inventoryReader.ItemReader.GetFullItemName(item));
 
                 statBuilder.Append(Environment.NewLine);
-                List<string> magicalStrings = inventoryReader.ItemReader.GetMagicalStrings(item);
+                List<string> magicalStrings = unitReader.inventoryReader.ItemReader.GetMagicalStrings(item);
                 foreach (string str in magicalStrings)
                 {
                     statBuilder.Append("    ");
@@ -497,75 +496,123 @@ namespace Zutatensuppe.D2Reader
                     itemStrings.Add(itemData.BodyLoc, statBuilder.ToString());
                 }
             }
-
             return itemStrings;
         }
 
         List<int> ProcessInventoryItemIds()
         {
-            var enabled = ReadFlags.HasFlag(DataReaderEnableFlags.InventoryItemIds);
-            return enabled ? ReadInventoryItemIds() : new List<int>();
+            return ReadFlags.HasFlag(DataReaderEnableFlags.InventoryItemIds)
+                ? ReadInventoryItemIds()
+                : new List<int>();
         }
 
         List<int> ReadInventoryItemIds()
         {
-            IReadOnlyCollection<D2Unit> baseItems = inventoryReader.EnumerateInventory().ToList();
-            IEnumerable<D2Unit> socketedItems = baseItems.SelectMany(item => inventoryReader.ItemReader.GetSocketedItems(item));
+            var player = unitReader.GetPlayer();
+            if (player == null)
+                return new List<int>();
+
+            IReadOnlyCollection<D2Unit> baseItems = unitReader.inventoryReader.EnumerateInventoryBackward(player).ToList();
+            IEnumerable<D2Unit> socketedItems = baseItems.SelectMany(item => unitReader.inventoryReader.ItemReader.GetSocketedItems(item));
             IEnumerable<D2Unit> allItems = baseItems.Concat(socketedItems);
             return (from item in allItems select item.eClass).ToList();
         }
 
         bool IsAutosplitCharacter(Character character)
         {
-            return activeCharacter == character;
+            return ActiveCharacter == character;
         }
 
-        Character GetCurrentCharacter(D2GameInfo gameInfo)
+        bool IsNewChar()
         {
-            string playerName = gameInfo.PlayerData.PlayerName;
+            D2Unit p = unitReader.GetPlayer();
+            if (p == null)
+                return false;
 
-            // Read character stats.
-            int level = unitReader.GetStatValue(gameInfo.Player, StatIdentifier.Level) ?? 0;
-            int experience = unitReader.GetStatValue(gameInfo.Player, StatIdentifier.Experience) ?? 0;
+            return MatchesStartingProps(p)
+                && MatchesStartingItems(p)
+                && MatchesStartingSkills(p);
+        }
+        private bool MatchesStartingProps(D2Unit p)
+        {
+            // check -act2/3/4/5 level|xp
+            int level = unitReader.GetStatValue(p, StatIdentifier.Level) ?? 0;
+            int experience = unitReader.GetStatValue(p, StatIdentifier.Experience) ?? 0;
 
-            // We encountered this character name before.
-            if (characters.TryGetValue(playerName, out Character character))
+            // first we will check the level and XP
+            // act should be set to the act we are currently in
+            return 
+                (level == 1 && experience == 0 && p.actNo == 0)
+                || (level == 16 && experience == 220165 && p.actNo == 1)
+                || (level == 21 && experience == 839864 && p.actNo == 2)
+                || (level == 27 && experience == 2563061 && p.actNo == 3)
+                || (level == 33 && experience == 7383752 && p.actNo == 4);
+        }
+
+        private bool MatchesStartingItems(D2Unit p)
+        {
+            int[] list = (
+                from item
+                in unitReader.inventoryReader.EnumerateInventoryForward(p)
+                select item.eClass
+            ).ToArray();
+
+            return list.SequenceEqual(Character.StartingItems[(CharacterClass)p.eClass]);
+        }
+
+        private bool MatchesStartingSkills(D2Unit p)
+        {
+            int skillCount = 0;
+            foreach (D2Skill skill in unitReader.skillReader.EnumerateSkills(p))
             {
-                // We were just in the title screen and came back to a new character.
-                bool resetOnBeginning = wasInTitleScreen && experience == 0;
-
-                // If we lost experience on level 1 we have a reset. Level 1 check is important or
-                // this might think we reset when losing experience in nightmare or hell after dying.
-                bool resetOnLevelOne = character.Level == 1 && experience < character.Experience;
-
-                // Check for reset with same character name.
-                if (resetOnBeginning || resetOnLevelOne || level < character.Level)
+                var skillData = unitReader.skillReader.ReadSkillData(skill);
+                Skill skillId = (Skill)skillData.SkillId;
+                if (!Character.StartingSkills[(CharacterClass)p.eClass].ContainsKey(skillId))
                 {
-                    // Recreate character.
-                    characters.Remove(playerName);
-                    character = null;
+                    return false;
                 }
+
+                if (Character.StartingSkills[(CharacterClass)p.eClass][skillId] != unitReader.skillReader.GetTotalNumberOfSkillPoints(skill))
+                {
+                    return false;
+                }
+                skillCount++;
             }
 
-            // If this character has not been read before, or if the character was reset
-            // with the same name as a previous character.
-            if (character == null)
+            return skillCount == Character.StartingSkills[(CharacterClass)p.eClass].Count;
+        }
+
+        Character ProcessCharacterData(D2GameInfo gameInfo)
+        {
+            string playerName = gameInfo.PlayerData.PlayerName;
+            Character character;
+
+            if (wasInTitleScreen || !characters.TryGetValue(playerName, out character))
             {
-                character = new Character {Name = playerName};
+                character = new Character { Name = playerName };
                 characters[playerName] = character;
 
                 // A brand new character has been started.
-                if (experience == 0 && level == 1)
+                // The extra wasInTitleScreen check prevents DI from splitting
+                // when it was started AFTER Diablo 2, but the char is still a new char
+                if (wasInTitleScreen && IsNewChar())
                 {
-                    activeCharacterTimestamp = DateTime.Now;
-                    activeCharacter = character;
+                    ActiveCharacterTimestamp = DateTime.Now;
+                    ActiveCharacter = character;
                     OnCharacterCreated(new CharacterCreatedEventArgs(character));
                 }
+
+                // Not in title screen anymore.
+                wasInTitleScreen = false;
             }
 
-            // Not in title screen anymore.
-            wasInTitleScreen = false;
+            character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
 
+            // Don't update stats while dead.
+            if (!character.IsDead)
+            {
+                character.ParseStats(unitReader, gameInfo);
+            }
             return character;
         }
 

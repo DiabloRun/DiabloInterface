@@ -27,6 +27,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         }
 
         ClassRuneSettings currentSettings;
+
         IReadOnlyList<ClassRuneSettings> settingsList;
 
         public IReadOnlyList<ClassRuneSettings> SettingsList

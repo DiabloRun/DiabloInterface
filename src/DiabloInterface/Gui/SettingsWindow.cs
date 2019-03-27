@@ -69,6 +69,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     || settings.FontSizeTitle != (int)titleFontSizeNumeric.Value
                     || settings.CreateFiles != CreateFilesCheckBox.Checked
                     || settings.CheckUpdates != CheckUpdatesCheckBox.Checked
+                    || settings.PipeName != textBoxPipeName.Text
                     || settings.DisplayName != chkDisplayName.Checked
                     || settings.DisplayGold != chkDisplayGold.Checked
                     || settings.DisplayDeathCounter != chkDisplayDeathCounter.Checked
@@ -180,6 +181,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             autoSplitHotkeyControl.ForeColor = settings.AutosplitHotkey == Keys.None ? Color.Red : Color.Black;
             autoSplitHotkeyControl.Hotkey = settings.AutosplitHotkey;
             CheckUpdatesCheckBox.Checked = settings.CheckUpdates;
+            textBoxPipeName.Text = settings.PipeName;
             chkDisplayName.Checked = settings.DisplayName;
             chkDisplayGold.Checked = settings.DisplayGold;
             chkDisplayDeathCounter.Checked = settings.DisplayDeathCounter;
@@ -238,6 +240,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             settings.ClassRunes = runeSettingsPage.SettingsList ?? new List<ClassRuneSettings>();
             settings.CreateFiles = CreateFilesCheckBox.Checked;
             settings.CheckUpdates = CheckUpdatesCheckBox.Checked;
+            settings.PipeName = textBoxPipeName.Text;
             settings.DoAutosplit = EnableAutosplitCheckBox.Checked;
             settings.AutosplitHotkey = autoSplitHotkeyControl.Hotkey;
             settings.FontSize = (int)fontSizeNumeric.Value;
@@ -354,7 +357,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
    
         private void CheckUpdatesButton_Click(object sender, EventArgs e)
         {
-            VersionChecker.CheckForUpdate(true);
+            VersionChecker.ManuallyCheckForUpdate();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

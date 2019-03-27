@@ -49,6 +49,8 @@
     <Compile Include="Handlers\ItemRequestHandler.cs" />
     <Compile Include="Handlers\QuestRequestHandler.cs" />
     <Compile Include="Handlers\VersionRequestHandler.cs" />
+    <Compile Include="LegacyRequest.cs" />
+    <Compile Include="LegacyResponse.cs" />
     <Compile Include="RequestHandlerInvalidException.cs" />
     <Compile Include="RequestHandlerNullResponseException.cs" />
     <Compile Include="IRequestHandler.cs" />

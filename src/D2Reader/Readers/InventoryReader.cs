@@ -1,4 +1,4 @@
-﻿using Zutatensuppe.D2Reader.Struct;
+using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Inventory;
 using Zutatensuppe.D2Reader.Struct.Item;
 using System;
@@ -7,35 +7,34 @@ using System.Linq;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
-    class InventoryReader
+    public class InventoryReader
     {
-        GameMemoryTable memory;
         ProcessMemoryReader processReader;
-        ItemReader itemReader;
+        public ItemReader ItemReader { get; }
 
-        public ItemReader ItemReader { get { return itemReader; } }
-
-        public InventoryReader(ProcessMemoryReader reader, GameMemoryTable memory)
+        public InventoryReader(ProcessMemoryReader reader, ItemReader itemReader)
         {
             processReader = reader;
-            this.memory = memory;
-            itemReader = new ItemReader(processReader, memory);
+            ItemReader = itemReader;
         }
 
-        public IEnumerable<D2Unit> EnumerateInventory(Func<D2ItemData, bool> filter)
+        public IEnumerable<D2Unit> EnumerateInventoryBackward(D2Unit unit, Func<D2ItemData, bool> filter)
         {
-            return from item in EnumerateInventory()
-                   let itemData = itemReader.GetItemData(item)
+            return from item in EnumerateInventoryBackward(unit)
+                   let itemData = ItemReader.GetItemData(item)
                    where itemData != null && filter(itemData)
                    select item;
         }
 
-        public IEnumerable<D2Unit> EnumerateInventory()
+        public IEnumerable<D2Unit> EnumerateInventoryBackward(D2Unit unit)
         {
-            var inventory = GetPlayerInventory();
-            if (inventory == null) yield break;
+            if (unit.pInventory.IsNull)
+                yield break;
 
-            // Traverse the linked list of inventory items.
+            var inventory = processReader.Read<D2Inventory>(unit.pInventory);
+            if (inventory.pLastItem.IsNull)
+                yield break;
+
             var item = GetUnit(inventory.pLastItem);
             for (; item != null; item = GetPreviousItem(item))
             {
@@ -43,29 +42,42 @@ namespace Zutatensuppe.D2Reader.Readers
             }
         }
 
-        private D2Inventory GetPlayerInventory()
+        public IEnumerable<D2Unit> EnumerateInventoryForward(D2Unit unit)
         {
-            var playerAddress = processReader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
-            if (playerAddress == IntPtr.Zero) return null;
+            if (unit.pInventory.IsNull)
+                yield break;
 
-            var playerUnit = processReader.Read<D2Unit>(playerAddress);
-            if (playerUnit == null) return null;
+            var inventory = processReader.Read<D2Inventory>(unit.pInventory);
+            if (inventory.pFirstItem.IsNull)
+                yield break;
 
-            return processReader.Read<D2Inventory>(playerUnit.pInventory.Address);
+            var item = GetUnit(inventory.pFirstItem);
+            for (; item != null; item = GetNextItem(item))
+            {
+                yield return item;
+            }
+        }
+
+        public D2Unit GetPreviousItem(D2Unit item)
+        {
+            var itemData = ItemReader.GetItemData(item);
+            if (itemData == null) return null;
+
+            return GetUnit(itemData.PreviousItem);
+        }
+
+        public D2Unit GetNextItem(D2Unit item)
+        {
+            var itemData = ItemReader.GetItemData(item);
+            if (itemData == null) return null;
+
+            return GetUnit(itemData.NextItem);
         }
 
         private D2Unit GetUnit(DataPointer pointer)
         {
             if (pointer.IsNull) return null;
-            return processReader.Read<D2Unit>(pointer.Address, AddressingMode.Absolute);
-        }
-
-        private D2Unit GetPreviousItem(D2Unit item)
-        {
-            var itemData = itemReader.GetItemData(item);
-            if (itemData == null) return null;
-
-            return GetUnit(itemData.PreviousItem);
+            return processReader.Read<D2Unit>(pointer);
         }
 
         // TODO: not used, maybe remove?
@@ -77,9 +89,13 @@ namespace Zutatensuppe.D2Reader.Readers
         // TODO: not used, maybe remove?
         private string GetEquippedItemSlot(BodyLocation slot)
         {
+            var player = ItemReader.GetPlayer();
+            if (player == null)
+                return null;
+
             // Get all items at the target location.
-            var itemsInSlot = from item in EnumerateInventory()
-                              let itemData = itemReader.GetItemData(item)
+            var itemsInSlot = from item in EnumerateInventoryBackward(player)
+                              let itemData = ItemReader.GetItemData(item)
                               where itemData != null && itemData.BodyLoc == slot
                               select item;
 
@@ -88,7 +104,7 @@ namespace Zutatensuppe.D2Reader.Readers
             if (itemInSlot == null) return null;
 
             // Just return the full name of the item.
-            return itemReader.GetFullItemName(itemInSlot);
+            return ItemReader.GetFullItemName(itemInSlot);
         }
     }
 }

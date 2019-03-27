@@ -1,5 +1,6 @@
 namespace Zutatensuppe.DiabloInterface.Business.Settings
 {
+    using System;
     using System.Collections.Generic;
     using System.Drawing;
     using System.Windows.Forms;
@@ -22,11 +23,11 @@ namespace Zutatensuppe.DiabloInterface.Business.Settings
         public bool CreateFiles { get; set; }
         public bool DoAutosplit { get; set; }
         public bool CheckUpdates { get; set; } = true;
+        public string PipeName { get; set; } = "DiabloInterfacePipe";
         public Keys AutosplitHotkey { get; set; } = Keys.None;
         public List<AutoSplit> Autosplits { get; set; } = new List<AutoSplit>();
         public IReadOnlyList<ClassRuneSettings> ClassRunes { get; set; } = new List<ClassRuneSettings>();
-
-
+        
         public bool DisplayName { get; set; } = true;
         public bool DisplayLevel { get; set; } = true;
         public bool DisplayDeathCounter { get; set; } = true;
@@ -60,6 +61,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Settings
         public Color ColorBackground { get; set; } = Color.Black;
     }
 
+    [Serializable]
     public class ClassRuneSettings
     {
         [JsonConverter(typeof(StringEnumConverter))]

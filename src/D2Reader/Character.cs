@@ -4,11 +4,123 @@ namespace Zutatensuppe.D2Reader
     using System.Collections.Generic;
 
     using Zutatensuppe.D2Reader.Models;
+    using Zutatensuppe.D2Reader.Readers;
     using Zutatensuppe.D2Reader.Struct.Stat;
     using Zutatensuppe.DiabloInterface.Core;
 
     public class Character
     {
+        // every class starts with:
+        // 4 potions (0x24b)
+        // 1 scroll ident (0x212)
+        // 1 scroll tp (0x211)
+        // and most also start with a 1 buckler (0x148) except necro and sorc
+        // actually the order of the items in the inventory changes after restarting the game with the same char!
+        // so we can be pretty sure if we found a new char or not.
+
+        // but... sometimes, the char is not ready for being read and 0 items are returned...
+        // not sure what to do about that.. todo: maybe read the list again after some ms if it is empty
+        public static readonly Dictionary<CharacterClass, int[]> StartingItems = new Dictionary<CharacterClass, int[]>
+        {
+            // jav, buckler
+            { CharacterClass.Amazon, new int[] { 0x2f, 0x148, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
+            // katar, buckler
+            { CharacterClass.Assassin, new int[] { 0xaf, 0x148, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
+            // wand (no buckler)
+            { CharacterClass.Necromancer, new int[] { 0xa, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
+            // hand axe, buckler
+            { CharacterClass.Barbarian, new int[] { 0x0, 0x148, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
+            // short sword, buckler
+            { CharacterClass.Paladin, new int[] { 0x19, 0x148, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
+            // short staff (no buckler)
+            { CharacterClass.Sorceress, new int[] { 0x3f, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }},
+            // club, buckler
+            { CharacterClass.Druid, new int[] { 0xe, 0x148, 0x24b, 0x24b, 0x24b, 0x24b, 0x211, 0x212 }}
+        };
+
+        // this is the map of skills and the skill points that each character class starts with
+        // the maps are ordered in the order the game yields them when fetching skills
+        // some classes (assassin/barb) have extra skills
+        // some classes (sorc/necro) have skills on their starting weapons, so the skills exist, but have 0 skill points
+        public static readonly Dictionary<CharacterClass, Dictionary<Skill, int>> StartingSkills = new Dictionary<CharacterClass, Dictionary<Skill, int>>
+        {
+            { CharacterClass.Amazon, new Dictionary<Skill, int> {
+                { Skill.UNKNOWN, 1 }, // unknown
+                { Skill.THROW, 1 }, // throw
+                { Skill.KICK, 1 }, // kick
+                { Skill.SCROLL_IDENT, 1 }, // scroll ident
+                { Skill.TOME_IDENT, 1 }, // tome ident
+                { Skill.SCROLL_TP, 1 }, // scroll tp
+                { Skill.TOME_TP, 1 }, // tome tp
+                { Skill.UNSUMMON, 1 }, // unsummon
+            } },
+            { CharacterClass.Assassin, new Dictionary<Skill, int> {
+                { Skill.UNKNOWN, 1 }, // unknown
+                { Skill.THROW, 1 }, // throw
+                { Skill.KICK, 1 }, // kick
+                { Skill.SCROLL_IDENT, 1 }, // scroll ident
+                { Skill.TOME_IDENT, 1 }, // tome ident
+                { Skill.SCROLL_TP, 1 }, // scroll tp
+                { Skill.TOME_TP, 1 }, // tome tp
+                { Skill.LEFT_HAND_SWING, 1 }, // left hand swing
+                { Skill.UNSUMMON, 1 }, // unsummon
+            } },
+            { CharacterClass.Necromancer, new Dictionary<Skill, int> {
+                { Skill.UNKNOWN, 1 }, // unknown
+                { Skill.THROW, 1 }, // throw
+                { Skill.KICK, 1 }, // kick
+                { Skill.SCROLL_IDENT, 1 }, // scroll ident
+                { Skill.TOME_IDENT, 1 }, // tome ident
+                { Skill.SCROLL_TP, 1 }, // scroll tp
+                { Skill.TOME_TP, 1 }, // tome tp
+                { Skill.UNSUMMON, 1 }, // unsummon
+                { Skill.RAISE_SKELETON, 0 }, // raise skeleton
+            } },
+            { CharacterClass.Barbarian, new Dictionary<Skill, int> {
+                { Skill.UNKNOWN, 1 }, // unknown
+                { Skill.THROW, 1 }, // throw
+                { Skill.KICK, 1 }, // kick
+                { Skill.SCROLL_IDENT, 1 }, // scroll ident
+                { Skill.TOME_IDENT, 1 }, // tome ident
+                { Skill.SCROLL_TP, 1 }, // scroll tp
+                { Skill.TOME_TP, 1 }, // tome tp
+                { Skill.LEFT_HAND_THROW, 1 }, // left hand throw
+                { Skill.LEFT_HAND_SWING, 1 }, // left hand swing
+                { Skill.UNSUMMON, 1 }, // unsummon
+            } },
+            { CharacterClass.Paladin, new Dictionary<Skill, int> {
+                { Skill.UNKNOWN, 1 }, // unknown
+                { Skill.THROW, 1 }, // throw
+                { Skill.KICK, 1 }, // kick
+                { Skill.SCROLL_IDENT, 1 }, // scroll ident
+                { Skill.TOME_IDENT, 1 }, // tome ident
+                { Skill.SCROLL_TP, 1 }, // scroll tp
+                { Skill.TOME_TP, 1 }, // tome tp
+                { Skill.UNSUMMON, 1 }, // unsummon
+            } },
+            { CharacterClass.Sorceress, new Dictionary<Skill, int> {
+                { Skill.UNKNOWN, 1 }, // unknown
+                { Skill.THROW, 1 }, // throw
+                { Skill.KICK, 1 }, // kick
+                { Skill.SCROLL_IDENT, 1 }, // scroll ident
+                { Skill.TOME_IDENT, 1 }, // tome ident
+                { Skill.SCROLL_TP, 1 }, // scroll tp
+                { Skill.TOME_TP, 1 }, // tome tp
+                { Skill.UNSUMMON, 1 }, // unsummon
+                { Skill.FIREBOLT, 0 }, // firebolt
+            } },
+            { CharacterClass.Druid, new Dictionary<Skill, int> {
+                { Skill.UNKNOWN, 1 }, // unknown
+                { Skill.THROW, 1 }, // throw
+                { Skill.KICK, 1 }, // kick
+                { Skill.SCROLL_IDENT, 1 }, // scroll ident
+                { Skill.TOME_IDENT, 1 }, // tome ident
+                { Skill.SCROLL_TP, 1 }, // scroll tp
+                { Skill.TOME_TP, 1 }, // tome tp
+                { Skill.UNSUMMON, 1 }, // unsummon
+            } },
+        };
+
         const int MIN_RESIST = -100;
         const int BASE_MAX_RESIST = 75;
 
@@ -58,17 +170,22 @@ namespace Zutatensuppe.D2Reader
             return IncreasedAttackSpeed + (AttackRate - 100);
         }
 
+        internal void ParseStats(UnitReader unitReader, D2GameInfo gameInfo)
+        {
+            ParseStats(
+                unitReader.GetStatsMap(gameInfo.Player),
+                unitReader.GetItemStatsMap(gameInfo.Player),
+                gameInfo
+            );
+        }
+
         /// <summary>
         /// fill the player data by dictionary
         /// </summary>
         /// <param name="dict"></param>
         /// <param name="resistancPenalty"></param>
-        internal void ParseStats(Dictionary<StatIdentifier, D2Stat> data, Dictionary<StatIdentifier, D2Stat> itemData, D2GameInfo gameInfo)
+        private void ParseStats(Dictionary<StatIdentifier, D2Stat> data, Dictionary<StatIdentifier, D2Stat> itemData, D2GameInfo gameInfo)
         {
-            // Don't update stats while dead.
-            if (IsDead)
-                return;
-
             CharClass = (CharacterClass)gameInfo.Player.eClass;
 
             int penalty = (int)ResistancePenalty.GetPenaltyByGameDifficulty((GameDifficulty)gameInfo.Game.Difficulty);

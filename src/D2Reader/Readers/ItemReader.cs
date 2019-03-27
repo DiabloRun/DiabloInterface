@@ -8,7 +8,6 @@ using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.D2Reader.Struct.Item.Modifier;
 using Zutatensuppe.D2Reader.Struct.Stat;
 using Zutatensuppe.D2Reader.Struct.Skill;
-using Zutatensuppe.D2Reader.Struct.Inventory;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
@@ -24,11 +23,14 @@ namespace Zutatensuppe.D2Reader.Readers
         D2SafeArray lowQualityTable;
         ModifierTable magicModifiers;
         ModifierTable rareModifiers;
-        SkillReader skillReader;
 
         ushort[] opNestings;
 
-        public ItemReader(ProcessMemoryReader reader, GameMemoryTable memory) : base(reader, memory)
+        public ItemReader(
+            ProcessMemoryReader reader,
+            GameMemoryTable memory,
+            StringLookupTable stringReader
+        ) : base(reader, memory, stringReader)
         {
             cachedItemData = new Dictionary<IntPtr, D2ItemData>();
             cachedDescriptions = new Dictionary<int, D2ItemDescription>();
@@ -38,7 +40,6 @@ namespace Zutatensuppe.D2Reader.Readers
             descriptionTable = reader.Read<D2SafeArray>(memory.Address.ItemDescriptions, AddressingMode.Relative);
             magicModifiers = reader.Read<ModifierTable>(memory.Address.MagicModifierTable, AddressingMode.Relative);
             rareModifiers = reader.Read<ModifierTable>(memory.Address.RareModifierTable, AddressingMode.Relative);
-            skillReader = new SkillReader(reader, memory);
             if (globals != null)
             {
 
@@ -49,6 +50,11 @@ namespace Zutatensuppe.D2Reader.Readers
                     ItemStatCost = reader.ReadArray<D2ItemStatCost>(globals.ItemStatCost, (int)globals.ItemStatCostCount);
                 }
             }
+        }
+
+        protected override InventoryReader createInventoryReader()
+        {
+            return new InventoryReader(reader, this);
         }
 
         public override void ResetCache()
@@ -62,7 +68,7 @@ namespace Zutatensuppe.D2Reader.Readers
             return item != null && item.eType == D2UnitType.Item;
         }
 
-        private string GetItemName(D2Unit item)
+        public string GetItemName(D2Unit item)
         {
             if (!IsValidItem(item)) return null;
 
@@ -283,7 +289,7 @@ namespace Zutatensuppe.D2Reader.Readers
             return stringReader.GetString(description.StringIdentifier);
         }
 
-        string GetGrammaticalName(string name, out string grammarCase)
+        public string GetGrammaticalName(string name, out string grammarCase)
         {
             if (name == null)
             {
@@ -522,8 +528,12 @@ namespace Zutatensuppe.D2Reader.Readers
             if (statCost.OpBase < 0 || statCost.OpBase >= ItemStatCost.Length)
                 return 0;
 
+            var player = GetPlayer();
+            if (player == null)
+                return 0;
+
             // Get the player stat.
-            int playerStat = GetStatValue(GetPlayer(), statCost.OpBase) ?? 0;
+            int playerStat = GetStatValue(player, statCost.OpBase) ?? 0;
             playerStat >>= ItemStatCost[statCost.OpBase].ValShift;
 
             // Evaluate based on the player stat (e.g. player level)
@@ -892,27 +902,63 @@ namespace Zutatensuppe.D2Reader.Readers
 
         public IEnumerable<D2Unit> GetSocketedItems(D2Unit item)
         {
-            var items = new List<D2Unit>();
-            if (!IsValidItem(item) || item.pInventory.IsNull) return items;
+            if (!IsValidItem(item))
+                return new List<D2Unit>();
 
-            var inventory = reader.Read<D2Inventory>(item.pInventory);
-            if (inventory.pFirstItem.IsNull) return items;
-
-            var subItem = reader.Read<D2Unit>(inventory.pFirstItem);
-            for (; subItem != null; subItem = GetNextInventoryItem(subItem))
-            {
-                items.Add(subItem);
-            }
-            return items;
+            return inventoryReader.EnumerateInventoryForward(item);
         }
 
-        // Helper for iterating item inventory.
-        private D2Unit GetNextInventoryItem(D2Unit subItem)
+        public D2StatList FindStatListNode(D2Unit item, uint state)
         {
-            var subItemData = GetItemData(subItem);
-            if (subItemData == null) return null;
-            if (subItemData.NextItem.IsNull) return null;
-            return reader.Read<D2Unit>(subItemData.NextItem);
+            if (item.StatListNode.IsNull)
+                return null;
+
+            var statNodeEx = reader.Read<D2StatListEx>(item.StatListNode);
+
+            // Get the appropriate stat node.
+            DataPointer statsPointer = statNodeEx.pMyStats;
+            if (statNodeEx.ListFlags.HasFlag(StatListFlag.HasCompleteStats))
+                statsPointer = statNodeEx.pMyLastList;
+
+            if (statsPointer.IsNull) return null;
+
+            // Get previous node in the linked list (belonging to this list).
+            D2StatList getPreviousNode(D2StatList x)
+            {
+                if (x.PreviousList.IsNull) return null;
+                return reader.Read<D2StatList>(x.PreviousList);
+            }
+
+            // Iterate stat nodes until we find the node we're looking for.
+            D2StatList statNode = reader.Read<D2StatList>(statsPointer);
+            for (; statNode != null; statNode = getPreviousNode(statNode))
+            {
+                if (statNode.State != state)
+                    continue;
+                if (statNode.Flags.HasFlag(StatListFlag.HasProperties))
+                    break;
+            }
+
+            return statNode;
+        }
+
+        public void CombineNodeStats(List<D2Stat> stats, D2StatList node)
+        {
+            if (node == null || node.Stats.Address.IsNull) return;
+            D2Stat[] nodeStats = reader.ReadArray<D2Stat>(node.Stats.Address, node.Stats.Length);
+            foreach (D2Stat nodeStat in nodeStats)
+            {
+                int index = stats.FindIndex(x =>
+                    x.HiStatID == nodeStat.HiStatID &&
+                    x.LoStatID == nodeStat.LoStatID);
+                // Already have the stat, increase value.
+                if (index >= 0)
+                {
+                    stats[index].Value += nodeStat.Value;
+                }
+                // Stat not found, add to list.
+                else stats.Add(nodeStat);
+            }
         }
     }
 }

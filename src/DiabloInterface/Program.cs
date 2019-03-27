@@ -87,7 +87,7 @@ namespace Zutatensuppe.DiabloInterface
 
                 new CharacterStatFileWriterService(settingsService, gameService);
                 var autoSplitService = new AutoSplitService(settingsService, gameService);
-                var pipeServer = CreatePipeServer(gameService);
+                var pipeServer = CreatePipeServer(gameService, settingsService);
                 var mainWindow = new MainWindow(settingsService, gameService, autoSplitService);
                 Application.Run(mainWindow);
 
@@ -99,7 +99,7 @@ namespace Zutatensuppe.DiabloInterface
         {
             if (settingsService.CurrentSettings.CheckUpdates)
             {
-                VersionChecker.CheckForUpdate(false);
+                VersionChecker.AutomaticallyCheckForUpdate();
             }
         }
 
@@ -113,14 +113,12 @@ namespace Zutatensuppe.DiabloInterface
             return service;
         }
 
-        static DiabloInterfaceServer CreatePipeServer(GameService gameService)
+        static DiabloInterfaceServer CreatePipeServer(GameService gameService, SettingsService settingsService)
         {
-            const string PipeName = "DiabloInterfacePipe";
-
             var logger = LogServiceLocator.Get(typeof(Program));
             logger.Info("Initializing pipe server.");
-
-            var pipeServer = new DiabloInterfaceServer(PipeName);
+            
+            var pipeServer = new DiabloInterfaceServer(settingsService.CurrentSettings.PipeName);
 
             var dataReader = gameService.DataReader;
             pipeServer.AddRequestHandler(@"version", () => new VersionRequestHandler(Assembly.GetEntryAssembly()));
