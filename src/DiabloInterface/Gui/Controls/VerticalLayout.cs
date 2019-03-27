@@ -1,5 +1,6 @@
 namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
+    using System;
     using System.Collections.Generic;
     using System.Drawing;
     using System.Reflection;
@@ -81,69 +82,46 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             }
         }
 
+        private void UpdatePanel(TableLayoutPanel panel, Size size, int padding)
+        {
+            panel.Size = new Size(size.Width, size.Height * panel.RowCount);
+            panel.Margin = new Padding(panel.Margin.Left, padding, panel.Margin.Right, panel.Margin.Bottom);
+        }
+
+        private bool MaybeUpdatePanel(TableLayoutPanel panel, Func<Size> measurer, int padding)
+        {
+            if (!panel.Visible)
+                return false;
+
+            UpdatePanel(panel, measurer(), padding);
+            return true;
+        }
+
+        private bool MaybeUpdateLabel(Label label, Func<Size> measurer)
+        {
+            if (!label.Visible)
+                return false;
+
+            label.Size = measurer();
+            return true;
+        }
+
         protected override void UpdateLayout(ApplicationSettings settings)
         {
-            bool first = true;
-            // Calculate maximum sizes that the labels can possible get.
-            if (nameLabel.Visible)
-            {
-                nameLabel.Size = TextRenderer.MeasureText(new string('W', 15), nameLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-            }
-            if (goldLabel.Visible)
-            {
-                goldLabel.Size = TextRenderer.MeasureText("GOLD: 2500000", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-                first = false;
-            }
-            if (deathsLabel.Visible)
-            {
-                deathsLabel.Size = TextRenderer.MeasureText("DEATHS: 99", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-                first = false;
-            }
-            if (lvlLabel.Visible)
-            {
-                lvlLabel.Size = TextRenderer.MeasureText("LVL: 99", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-                first = false;
-            }
+            int padding = settings.VerticalLayoutPadding;
 
-            // base stats have 3 char label (STR, VIT, ect.) and realistically a max value < 500 (lvl 99*5 + alkor quest... items can increase this tho)
-            // we will assume the "longest" string is DEX: 499 (most likely dex or ene will be longest str.)
-            if (panelBaseStats.Visible)
-            {
-                Size statSize = TextRenderer.MeasureText("DEX: 499", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-                panelBaseStats.Size = new Size(statSize.Width, statSize.Height * panelBaseStats.RowCount);
-                panelBaseStats.Margin = new Padding(panelBaseStats.Margin.Left, first ? 0 : settings.VerticalLayoutPadding, panelBaseStats.Margin.Right, panelBaseStats.Margin.Bottom);
-                first = false;
-            }
+            bool hasPre = false;
 
-            // advanced stats have 3 char label (FCR, FRW, etc.) and realistically a max value of slightly over 100
-            // we will assume the "longest" string is FRW: 999
-            if (panelAdvancedStats.Visible)
-            {
-                Size advancedStatSize = TextRenderer.MeasureText("FRW: 999", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-                panelAdvancedStats.Size = new Size(advancedStatSize.Width, advancedStatSize.Height * panelAdvancedStats.RowCount);
-                panelAdvancedStats.Margin = new Padding(panelAdvancedStats.Margin.Left, first ? 0 : settings.VerticalLayoutPadding, panelAdvancedStats.Margin.Right, panelAdvancedStats.Margin.Bottom);
-                first = false;
-            }
+            MaybeUpdateLabel(nameLabel, MeasureNameSize);
 
-            // Panel size for resistances can be negative, so max number of chars are 10 (LABL: -VAL)
-            // resistances never go below -100 (longest possible string for the label) and never go above 95
-            // we will assume the "longest" string is COLD: -100
-            if (panelResistances.Visible)
-            {
-                Size resStatSize = TextRenderer.MeasureText("COLD: -100", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-                panelResistances.Size = new Size(resStatSize.Width, resStatSize.Height * panelResistances.RowCount);
-                panelResistances.Margin = new Padding(panelResistances.Margin.Left, first ? 0 : settings.VerticalLayoutPadding, panelResistances.Margin.Right, panelResistances.Margin.Bottom);
-                first = false;
-            }
+            hasPre |= MaybeUpdateLabel(goldLabel, MeasureGoldSize);
+            hasPre |= MaybeUpdateLabel(deathsLabel, MeasureDeathsSize);
+            hasPre |= MaybeUpdateLabel(lvlLabel, MeasureLvlSize);
 
-            // we will assume the "longest" string is NORM: 100%
-            if (panelDiffPercentages.Visible)
-            {
-                Size diffPercStatSize = TextRenderer.MeasureText("NORM: 100%", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-                panelDiffPercentages.Size = new Size(diffPercStatSize.Width, diffPercStatSize.Height * panelDiffPercentages.RowCount);
-                panelDiffPercentages.Margin = new Padding(panelDiffPercentages.Margin.Left, first ? 0 : settings.VerticalLayoutPadding, panelDiffPercentages.Margin.Right, panelDiffPercentages.Margin.Bottom);
-                first = false;
-            }
+            hasPre |= MaybeUpdatePanel(panelBaseStats, MeasureBaseStatsSize, hasPre ? padding : 0);
+            hasPre |= MaybeUpdatePanel(panelAdvancedStats, MeasureAdvancedStatsSize, hasPre ? padding : 0);
+            hasPre |= MaybeUpdatePanel(panelResistances, MeasureResistancesSize, hasPre ? padding : 0);
+            hasPre |= MaybeUpdatePanel(panelDiffPercentages, MeasureDifficultyPercentageSize, hasPre ? padding : 0);
         }
 
         protected override void ApplyRuneSettings(ApplicationSettings settings)
@@ -154,21 +132,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         protected override void ApplyLabelSettings(ApplicationSettings settings)
         {
-            realFrwIas = settings.DisplayRealFrwIas;
-
-            BackColor = settings.ColorBackground;
-
-            nameLabel.Font = new Font(settings.FontName, settings.FontSizeTitle);
-            var infoFont = new Font(settings.FontName, settings.FontSize);
-            foreach (Label label in InfoLabels)
-                label.Font = infoFont;
-
-            // Hide/show labels wanted labels.
-            nameLabel.Visible = settings.DisplayName;
-            goldLabel.Visible = settings.DisplayGold;
-            deathsLabel.Visible = settings.DisplayDeathCounter;
-            lvlLabel.Visible = settings.DisplayLevel;
-            playersXLabel.Visible = settings.DisplayPlayersX;
+            base.ApplyLabelSettings(settings);
 
             panelResistances.Visible = settings.DisplayResistances;
             panelBaseStats.Visible = settings.DisplayBaseStats;

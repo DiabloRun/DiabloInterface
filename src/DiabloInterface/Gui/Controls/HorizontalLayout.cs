@@ -93,28 +93,20 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         protected override void UpdateLayout(ApplicationSettings settings)
         {
             // Calculate maximum sizes that the labels can possible get.
-            Size nameSize = TextRenderer.MeasureText(new string('W', 15), nameLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
-
-            // base stats have 3 char label (STR, VIT, ect.) and realistically a max value < 500 (lvl 99*5 + alkor quest... items can increase this tho)
-            // we will assume the "longest" string is DEX: 499 (most likely dex or ene will be longest str.)
+            Size nameSize = MeasureNameSize();
+            
             var padding = (panelAdvancedStats.Visible || panelResistances.Visible) ? 8 : 0;
-            Size statSize = TextRenderer.MeasureText("DEX: 499", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+            Size statSize = MeasureBaseStatsSize();
             Size basePanelSize = new Size(statSize.Width + padding, statSize.Height * panelBaseStats.RowCount);
 
-            // advanced stats have 3 char label (FCR, FRW, etc.) and realistically a max value of slightly over 100
-            // we will assume the "longest" string is FRW: 999
             padding = panelResistances.Visible ? 8 : 0;
-            Size advancedStatSize = TextRenderer.MeasureText("FRW: 999", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+            Size advancedStatSize = MeasureAdvancedStatsSize();
             Size advancedStatPanelSize = new Size(advancedStatSize.Width + padding, advancedStatSize.Height * panelAdvancedStats.RowCount);
 
-            // Panel size for resistances can be negative, so max number of chars are 10 (LABL: -VAL)
-            // resistances never go below -100 (longest possible string for the label) and never go above 95
-            // we will assume the "longest" string is COLD: -100
-            Size resStatSize = TextRenderer.MeasureText("COLD: -100", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+            Size resStatSize = MeasureResistancesSize();
             Size resPanelSize = new Size(resStatSize.Width, resStatSize.Height * panelResistances.RowCount);
 
-            // we will assume the "longest" string is NORM: 100%
-            Size diffPercStatSize = TextRenderer.MeasureText("NORM: 100%", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+            Size diffPercStatSize = MeasureDifficultyPercentageSize();
             Size diffPercPanelSize = new Size(diffPercStatSize.Width, diffPercStatSize.Height * panelDiffPercentages.RowCount);
 
             int count = 0;
@@ -168,21 +160,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         protected override void ApplyLabelSettings(ApplicationSettings settings)
         {
-            realFrwIas = settings.DisplayRealFrwIas;
-
-            BackColor = settings.ColorBackground;
-
-            nameLabel.Font = new Font(settings.FontName, settings.FontSizeTitle);
-            Font infoFont = new Font(settings.FontName, settings.FontSize);
-            foreach (Label label in InfoLabels)
-                label.Font = infoFont;
-
-            // Hide/show labels wanted labels.
-            nameLabel.Visible = settings.DisplayName;
-            goldLabel.Visible =  settings.DisplayGold;
-            deathsLabel.Visible = settings.DisplayDeathCounter;
-            lvlLabel.Visible = settings.DisplayLevel;
-            playersXLabel.Visible = settings.DisplayPlayersX;
+            base.ApplyLabelSettings(settings);
 
             panelSimpleStats.Visible = settings.DisplayGold;
             panelDeathsLvl.Visible = settings.DisplayDeathCounter || settings.DisplayLevel;
