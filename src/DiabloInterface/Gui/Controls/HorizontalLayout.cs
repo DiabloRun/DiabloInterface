@@ -101,10 +101,10 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             Size statSize = TextRenderer.MeasureText("DEX: 499", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
             Size basePanelSize = new Size(statSize.Width + padding, statSize.Height * panelBaseStats.RowCount);
 
-            // advanced stats have 3 char label (FCR, FRW, etc.) and realistically a max value < 100
-            // we will assume the "longest" string is FRW: 99
+            // advanced stats have 3 char label (FCR, FRW, etc.) and realistically a max value of slightly over 100
+            // we will assume the "longest" string is FRW: 999
             padding = panelResistances.Visible ? 8 : 0;
-            Size advancedStatSize = TextRenderer.MeasureText("FRW: 99", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+            Size advancedStatSize = TextRenderer.MeasureText("FRW: 999", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
             Size advancedStatPanelSize = new Size(advancedStatSize.Width + padding, advancedStatSize.Height * panelAdvancedStats.RowCount);
 
             // Panel size for resistances can be negative, so max number of chars are 10 (LABL: -VAL)

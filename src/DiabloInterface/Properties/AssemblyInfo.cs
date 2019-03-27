@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("DiabloInterface")]
-[assembly: AssemblyCopyright("Copyright © 2016-2018")]
+[assembly: AssemblyCopyright("Copyright © 2016-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -21,5 +21,5 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("25bb3310-9bd7-4234-af7d-9f7fb6870a20")]
 
-[assembly: AssemblyVersion("0.4.5")]
-[assembly: AssemblyInformationalVersion("0.4.5.RC.2")]
+[assembly: AssemblyVersion("0.4.6")]
+[assembly: AssemblyInformationalVersion("0.4.6")]

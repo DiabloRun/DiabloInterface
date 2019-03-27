@@ -115,11 +115,11 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 first = false;
             }
 
-            // advanced stats have 3 char label (FCR, FRW, etc.) and realistically a max value < 100
-            // we will assume the "longest" string is FRW: 99
+            // advanced stats have 3 char label (FCR, FRW, etc.) and realistically a max value of slightly over 100
+            // we will assume the "longest" string is FRW: 999
             if (panelAdvancedStats.Visible)
             {
-                Size advancedStatSize = TextRenderer.MeasureText("FRW: 99", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
+                Size advancedStatSize = TextRenderer.MeasureText("FRW: 999", strLabel.Font, Size.Empty, TextFormatFlags.SingleLine);
                 panelAdvancedStats.Size = new Size(advancedStatSize.Width, advancedStatSize.Height * panelAdvancedStats.RowCount);
                 panelAdvancedStats.Margin = new Padding(panelAdvancedStats.Margin.Left, first ? 0 : settings.VerticalLayoutPadding, panelAdvancedStats.Margin.Right, panelAdvancedStats.Margin.Bottom);
                 first = false;
