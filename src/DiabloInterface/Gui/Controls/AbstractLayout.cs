@@ -148,7 +148,25 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             UpdateLayout(settings);
         }
 
-        abstract protected void ApplyLabelSettings(ApplicationSettings settings);
+        virtual protected void ApplyLabelSettings(ApplicationSettings settings)
+        {
+            realFrwIas = settings.DisplayRealFrwIas;
+            BackColor = settings.ColorBackground;
+
+            nameLabel.Font = new Font(settings.FontName, settings.FontSizeTitle);
+            var infoFont = new Font(settings.FontName, settings.FontSize);
+            foreach (Label label in InfoLabels)
+            {
+                label.Font = infoFont;
+            }
+
+            // Hide/show labels wanted labels.
+            nameLabel.Visible = settings.DisplayName;
+            goldLabel.Visible = settings.DisplayGold;
+            deathsLabel.Visible = settings.DisplayDeathCounter;
+            lvlLabel.Visible = settings.DisplayLevel;
+            playersXLabel.Visible = settings.DisplayPlayersX;
+        }
 
         abstract protected void ApplyRuneSettings(ApplicationSettings settings);
 
@@ -302,5 +320,40 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             foreach (Label l in DifficultyLabels)
                 l.ForeColor = settings.ColorDifficultyPercentages;
         }
+
+        private Size MeasureText(string str, Control control)
+        {
+            return TextRenderer.MeasureText(str, control.Font, Size.Empty, TextFormatFlags.SingleLine);
+        }
+
+        private Size MeasureText(string str) => MeasureText(str, strLabel);
+
+        protected Size MeasureNameSize() => MeasureText(new string('W', 15), nameLabel);
+
+        protected Size MeasureGoldSize() => MeasureText("GOLD: 2500000");
+
+        protected Size MeasureDeathsSize() => MeasureText("DEATHS: 99");
+
+        protected Size MeasureLvlSize() => MeasureText("LVL: 99");
+
+        // base stats have 3 char label (STR, VIT, ect.) and realistically
+        // a max value < 500 (lvl 99*5 + alkor quest... items can increase this tho)
+        // we will assume the "longest" string is DEX: 499
+        // (most likely dex or ene will be longest str.)
+        protected Size MeasureBaseStatsSize() => MeasureText("DEX: 499");
+
+        // advanced stats have 3 char label (FCR, FRW, etc.) and realistically
+        // a max value of slightly over 100
+        // we will assume the "longest" string is FRW: 999
+        protected Size MeasureAdvancedStatsSize() => MeasureText("FRW: 999");
+
+        // Panel size for resistances can be negative, so max number of chars
+        // are 10 (LABL: -VAL) resistances never go below -100 (longest possible
+        // string for the label) and never go above 95 we will assume the
+        // "longest" string is COLD: -100
+        protected Size MeasureResistancesSize() => MeasureText("COLD: -100");
+
+        // we will assume the "longest" string is NORM: 100%
+        protected Size MeasureDifficultyPercentageSize() => MeasureText("NORM: 100%");
     }
 }
