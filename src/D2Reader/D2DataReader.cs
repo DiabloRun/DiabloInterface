@@ -582,20 +582,27 @@ namespace Zutatensuppe.D2Reader
             return skillCount == Character.StartingSkills[(CharacterClass)p.eClass].Count;
         }
 
-        Character ProcessCharacterData(D2GameInfo gameInfo)
+        Character CharacterByNameCached(string playerName)
         {
-            string playerName = gameInfo.PlayerData.PlayerName;
-            Character character;
-
-            if (wasInTitleScreen || !characters.TryGetValue(playerName, out character))
+            if (!characters.TryGetValue(playerName, out Character character))
             {
                 character = new Character { Name = playerName };
                 characters[playerName] = character;
+            }
+            return character;
+        }
 
+        Character ProcessCharacterData(D2GameInfo gameInfo)
+        {
+            string playerName = gameInfo.PlayerData.PlayerName;
+            Character character = CharacterByNameCached(playerName);
+
+            if (wasInTitleScreen)
+            {
                 // A brand new character has been started.
                 // The extra wasInTitleScreen check prevents DI from splitting
                 // when it was started AFTER Diablo 2, but the char is still a new char
-                if (wasInTitleScreen && IsNewChar())
+                if (IsNewChar())
                 {
                     ActiveCharacterTimestamp = DateTime.Now;
                     ActiveCharacter = character;
