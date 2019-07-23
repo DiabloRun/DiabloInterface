@@ -7,7 +7,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Settings
 
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
-
+    using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.AutoSplits;
 
@@ -59,6 +59,22 @@ namespace Zutatensuppe.DiabloInterface.Business.Settings
         public Color ColorPoisonRes { get; set; } = Color.YellowGreen;
 
         public Color ColorBackground { get; set; } = Color.Black;
+
+        public ProcessDescription[] ProcessDescriptions { get; set; } = new ProcessDescription[]
+        {
+            // Diablo 2
+            new ProcessDescription{
+                ModuleName = "Game.exe",
+                ProcessName = "game",
+                SubModules = new string[] { "D2Common.dll", "D2Launch.dll", "D2Lang.dll", "D2Net.dll", "D2Game.dll", "D2Client.dll" }
+            },
+            // D2SE
+            new ProcessDescription{
+                ModuleName = "D2SE.exe",
+                ProcessName = "d2se",
+                SubModules = new string[] { "D2Common.dll", "D2Launch.dll", "D2Lang.dll", "D2Net.dll", "D2Game.dll", "D2Client.dll" }
+            },
+        };
     }
 
     [Serializable]
