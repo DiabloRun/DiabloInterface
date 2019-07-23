@@ -71,7 +71,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
         {
             var memoryTableFactory = new GameMemoryTableFactory();
 
-            dataReader = new D2DataReader(memoryTableFactory);
+            dataReader = new D2DataReader(memoryTableFactory, this.settingsService.CurrentSettings.ProcessDescriptions);
             dataReader.CharacterCreated += OnCharacterCreated;
             dataReader.DataRead += OnDataRead;
         }

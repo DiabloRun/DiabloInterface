@@ -71,20 +71,16 @@ namespace Zutatensuppe.D2Reader
         public IList<QuestCollection> Quests { get; }
     }
 
+    public class ProcessDescription
+    {
+        public string ProcessName;
+        public string ModuleName;
+        public string[] SubModules;
+    }
+
     public class D2DataReader : IDisposable
     {
-        const string DiabloProcessName = "game";
-        const string DiabloModuleName = "Game.exe";
-        readonly string[] DiabloSubModules = {
-            "D2Common.dll",
-            "D2Launch.dll",
-            "D2Lang.dll",
-            "D2Net.dll",
-            "D2Game.dll",
-            "D2Client.dll"
-        };
-        const string D2SEProcessName = "d2se";
-        const string D2SEModuleName = "D2SE.exe";
+        readonly ProcessDescription[] processDescriptions;
 
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -102,9 +98,13 @@ namespace Zutatensuppe.D2Reader
         bool wasInTitleScreen;
         IList<QuestCollection> gameQuests = new List<QuestCollection>();
 
-        public D2DataReader(IGameMemoryTableFactory memoryTableFactory)
+        public D2DataReader(
+            IGameMemoryTableFactory memoryTableFactory,
+            ProcessDescription[] processDescriptions
+        )
         {
             this.memoryTableFactory = memoryTableFactory ?? throw new ArgumentNullException(nameof(memoryTableFactory));
+            this.processDescriptions = processDescriptions;
         }
 
         ~D2DataReader()
@@ -170,16 +170,19 @@ namespace Zutatensuppe.D2Reader
 
         GameMemoryTable CreateGameMemoryTableForReader(ProcessMemoryReader reader)
         {
-            string fileVersion = reader.FileVersion;
-            if (reader.ModuleName == D2SEModuleName)
+            try
             {
+                return memoryTableFactory.CreateForVersion(reader.FileVersion, reader.ModuleBaseAddresses);
+            } catch (GameVersionUnsupportedException)
+            {
+                // account for d2se and possibly other 'unsupported' versions
                 string version = reader.ReadNullTerminatedString(new IntPtr(0x1A049), 5, Encoding.ASCII, AddressingMode.Relative);
                 if (version == "1.13c")
                 {
-                    fileVersion = GameVersion.Version_1_13_C;
+                    return memoryTableFactory.CreateForVersion(GameVersion.Version_1_13_C, reader.ModuleBaseAddresses);
                 }
             }
-            return memoryTableFactory.CreateForVersion(fileVersion, reader.ModuleBaseAddresses);
+            return null;
         }
 
         bool ValidateGameDataReaders()
@@ -197,26 +200,22 @@ namespace Zutatensuppe.D2Reader
             reader.Dispose();
             reader = null;
         }
-
+        // foreach (var item in unitReader.inventoryReader.EnumerateInventoryBackward(player, FilterSlots))
         bool InitializeGameDataReaders()
         {
-            try
-            {
-                reader = new ProcessMemoryReader(DiabloProcessName, DiabloModuleName, DiabloSubModules);
-            }
-            catch (ProcessNotFoundException)
-            {
-                CleanUpDataReaders();
-            }
-            if (reader == null)
+            foreach (var desc in this.processDescriptions)
             {
                 try
                 {
-                    reader = new ProcessMemoryReader(D2SEProcessName, D2SEModuleName, DiabloSubModules);
+                    reader = new ProcessMemoryReader(desc.ProcessName, desc.ModuleName, desc.SubModules);
                 }
                 catch (ProcessNotFoundException)
                 {
                     CleanUpDataReaders();
+                }
+                if (reader != null)
+                {
+                    break;
                 }
             }
 
