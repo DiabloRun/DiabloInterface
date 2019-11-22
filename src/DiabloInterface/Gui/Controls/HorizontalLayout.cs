@@ -203,6 +203,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             deathsLabel.ForeColor = settings.ColorDeaths;
             lvlLabel.ForeColor = settings.ColorLevel;
             playersXLabel.ForeColor = settings.ColorPlayersX;
+            gameCounterLabel.ForeColor = settings.ColorGameCounter;
 
             UpdateLabelColors(settings);
         }
