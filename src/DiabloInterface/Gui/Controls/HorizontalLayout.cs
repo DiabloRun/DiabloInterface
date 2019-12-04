@@ -36,6 +36,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             {
                 deathsLabel,
                 playersXLabel,
+                gameCounterLabel,
                 goldLabel, lvlLabel,
                 strLabel, dexLabel, vitLabel, eneLabel,
                 frwLabel, fhrLabel, fcrLabel, iasLabel,
