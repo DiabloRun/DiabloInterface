@@ -117,7 +117,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 return;
             }
 
-            UpdateLabels(e.Character, e.Quests, e.CurrentPlayersX);
+            UpdateLabels(e.Character, e.Quests, e.CurrentPlayersX, e.GameCounter);
             UpdateClassRuneList(e.Character.CharClass);
             UpdateRuneDisplay(e.ItemIds);
         }
@@ -166,13 +166,14 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             deathsLabel.Visible = settings.DisplayDeathCounter;
             lvlLabel.Visible = settings.DisplayLevel;
             playersXLabel.Visible = settings.DisplayPlayersX;
+            gameCounterLabel.Visible = settings.DisplayGameCounter;
         }
 
         abstract protected void ApplyRuneSettings(ApplicationSettings settings);
 
         abstract protected void UpdateLayout(ApplicationSettings settings);
 
-        protected void UpdateLabels(Character player, IList<QuestCollection> quests, int currentPlayersX)
+        protected void UpdateLabels(Character player, IList<QuestCollection> quests, int currentPlayersX, uint gameIndex)
         {
             nameLabel.Text = player.Name;
             lvlLabel.Text = "LVL: " + player.Level;
@@ -209,6 +210,8 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             labelNormPerc.Text = $@"NO: {completions[0]:0%}";
             labelNmPerc.Text = $@"NM: {completions[1]:0%}";
             labelHellPerc.Text = $@"HE: {completions[2]:0%}";
+
+            gameCounterLabel.Text = "Run count: " + gameIndex;
         }
 
         protected void UpdateLabelWidthAlignment(params Label[] labels)

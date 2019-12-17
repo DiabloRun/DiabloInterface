@@ -43,7 +43,6 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             this.playersXLabel = new System.Windows.Forms.Label();
             this.panelDeathsLvl = new System.Windows.Forms.TableLayoutPanel();
             this.deathsLabel = new System.Windows.Forms.Label();
-            this.playersXLabel = new System.Windows.Forms.Label();
             this.lvlLabel = new System.Windows.Forms.Label();
             this.panelSimpleStats = new System.Windows.Forms.TableLayoutPanel();
             this.goldLabel = new System.Windows.Forms.Label();
@@ -87,6 +86,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             this.labelNmPerc = new System.Windows.Forms.Label();
             this.labelHellPerc = new System.Windows.Forms.Label();
             this.panelRuneDisplayHorizontal = new System.Windows.Forms.FlowLayoutPanel();
+            this.gameCounterLabel = new System.Windows.Forms.Label();
             this.outerLeftRightPanel.SuspendLayout();
             this.panelDeathsLvl.SuspendLayout();
             this.panelSimpleStats.SuspendLayout();
@@ -149,5 +149,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         protected System.Windows.Forms.Label labelHellPerc;
         protected System.Windows.Forms.FlowLayoutPanel panelRuneDisplayHorizontal;
         protected System.Windows.Forms.FlowLayoutPanel panelRuneDisplayVertical;
+        protected System.Windows.Forms.Label gameCounterLabel;
+
     }
 }

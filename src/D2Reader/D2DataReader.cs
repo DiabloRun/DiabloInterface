@@ -49,7 +49,8 @@ namespace Zutatensuppe.D2Reader
             int currentPlayersX,
             List<int> itemIds,
             bool isAutosplitCharacter,
-            IList<QuestCollection> quests)
+            IList<QuestCollection> quests,
+            uint gameCounter)
         {
             Character = character;
             ItemStrings = itemStrings;
@@ -59,6 +60,7 @@ namespace Zutatensuppe.D2Reader
             ItemIds = itemIds;
             IsAutosplitCharacter = isAutosplitCharacter;
             Quests = quests;
+            GameCounter = gameCounter;
         }
 
         public Character Character { get; }
@@ -69,6 +71,7 @@ namespace Zutatensuppe.D2Reader
         public List<int> ItemIds { get; }
         public bool IsAutosplitCharacter { get; }
         public IList<QuestCollection> Quests { get; }
+        public uint GameCounter { get;  }
     }
 
     public class ProcessDescription
@@ -97,6 +100,8 @@ namespace Zutatensuppe.D2Reader
         GameDifficulty currentDifficulty;
         bool wasInTitleScreen;
         IList<QuestCollection> gameQuests = new List<QuestCollection>();
+
+        private uint firstGameId = 0;
 
         public D2DataReader(
             IGameMemoryTableFactory memoryTableFactory,
@@ -128,6 +133,8 @@ namespace Zutatensuppe.D2Reader
         public Character ActiveCharacter { get; private set; }
 
         public Character CurrentCharacter { get; private set; }
+
+        public uint GameCounter { get; private set; }
 
         /// <summary>
         /// Gets or sets reader polling rate.
@@ -364,6 +371,11 @@ namespace Zutatensuppe.D2Reader
             uint gameOffset = (gameIndex * 0x0C) + 0x08;
             IntPtr gamePointer = reader.ReadAddress32(world.GameBuffer + gameOffset);
 
+            if (firstGameId == 0 && gameId != 0)
+            {
+                firstGameId = gameId;
+            }
+            GameCounter = gameId - firstGameId + 1;
             // Check for invalid pointers, this value can actually be negative during transition
             // screens, so we need to reinterpret the pointer as a signed integer.
             if (unchecked((int)gamePointer.ToInt64()) < 0)
@@ -396,7 +408,8 @@ namespace Zutatensuppe.D2Reader
                 ProcessCurrentPlayersX(),
                 ProcessInventoryItemIds(),
                 IsAutosplitCharacter(CurrentCharacter),
-                gameQuests
+                gameQuests,
+                GameCounter
             ));
         }
 

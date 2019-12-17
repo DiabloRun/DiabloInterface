@@ -68,7 +68,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.comboBoxLayout = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnSetPlayersXColor = new System.Windows.Forms.Button();
+            this.btnSetGameCounterColor = new System.Windows.Forms.Button();
             this.chkShowPlayersX = new System.Windows.Forms.CheckBox();
+            this.chkShowGameCounter = new System.Windows.Forms.CheckBox();
             this.chkShowRealValues = new System.Windows.Forms.CheckBox();
             this.chkHighContrastRunes = new System.Windows.Forms.CheckBox();
             this.chkDisplayRunes = new System.Windows.Forms.CheckBox();
@@ -536,7 +538,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.btnSetPlayersXColor);
+            this.groupBox1.Controls.Add(this.btnSetGameCounterColor);
             this.groupBox1.Controls.Add(this.chkShowPlayersX);
+            this.groupBox1.Controls.Add(this.chkShowGameCounter);
+
             this.groupBox1.Controls.Add(this.chkShowRealValues);
             this.groupBox1.Controls.Add(this.chkHighContrastRunes);
             this.groupBox1.Controls.Add(this.chkDisplayRunes);
@@ -589,9 +594,29 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.chkShowPlayersX.Margin = new System.Windows.Forms.Padding(4);
             this.chkShowPlayersX.Name = "chkShowPlayersX";
             this.chkShowPlayersX.Size = new System.Drawing.Size(93, 21);
-            this.chkShowPlayersX.TabIndex = 28;
+            //this.chkShowPlayersX.TabIndex = 28;
             this.chkShowPlayersX.Text = "/players X";
             this.chkShowPlayersX.UseVisualStyleBackColor = true;
+
+
+            this.btnSetGameCounterColor.Location = new System.Drawing.Point(169, 376);
+            this.btnSetGameCounterColor.Margin = new System.Windows.Forms.Padding(0);
+            this.btnSetGameCounterColor.Name = "btnSetGameCounterColor";
+            this.btnSetGameCounterColor.Size = new System.Drawing.Size(99, 31);
+           // this.btnSetGameCounterColor.TabIndex = 29;
+            this.btnSetGameCounterColor.Text = "Color";
+            this.btnSetGameCounterColor.UseVisualStyleBackColor = true;
+            this.btnSetGameCounterColor.Click += new System.EventHandler(this.btnSetColorGameCounter_Click);
+
+            this.chkShowGameCounter.AutoSize = true;
+            this.chkShowGameCounter.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.chkShowGameCounter.Location = new System.Drawing.Point(19, 382);
+            this.chkShowGameCounter.Margin = new System.Windows.Forms.Padding(4);
+            this.chkShowGameCounter.Name = "chkShowGameCounter";
+            this.chkShowGameCounter.Size = new System.Drawing.Size(93, 21);
+            this.chkShowGameCounter.TabIndex = 28;
+            this.chkShowGameCounter.Text = "Run count";
+            this.chkShowGameCounter.UseVisualStyleBackColor = true;
             // 
             // chkShowRealValues
             // 
@@ -628,10 +653,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetBackgroundColor
             // 
-            this.btnSetBackgroundColor.Location = new System.Drawing.Point(169, 376);
+            this.btnSetBackgroundColor.Location = new System.Drawing.Point(276, 376);
             this.btnSetBackgroundColor.Margin = new System.Windows.Forms.Padding(4);
             this.btnSetBackgroundColor.Name = "btnSetBackgroundColor";
-            this.btnSetBackgroundColor.Size = new System.Drawing.Size(205, 28);
+            this.btnSetBackgroundColor.Size = new System.Drawing.Size(150, 28);
             this.btnSetBackgroundColor.TabIndex = 23;
             this.btnSetBackgroundColor.Text = "Background color";
             this.btnSetBackgroundColor.UseVisualStyleBackColor = true;
@@ -639,10 +664,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(383, 376);
+            this.button1.Location = new System.Drawing.Point(432, 376);
             this.button1.Margin = new System.Windows.Forms.Padding(4);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(205, 28);
+            this.button1.Size = new System.Drawing.Size(150, 28);
             this.button1.TabIndex = 8;
             this.button1.Text = "Reset to default colors";
             this.button1.UseVisualStyleBackColor = true;
@@ -1176,7 +1201,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private System.Windows.Forms.CheckBox chkShowRealValues;
         private Controls.RuneSettingsPage runeSettingsPage;
         private System.Windows.Forms.Button btnSetPlayersXColor;
+        private System.Windows.Forms.Button btnSetGameCounterColor;
         private System.Windows.Forms.CheckBox chkShowPlayersX;
+        private System.Windows.Forms.CheckBox chkShowGameCounter;
         private System.Windows.Forms.GroupBox groupBoxPipeServer;
         private System.Windows.Forms.TextBox textBoxPipeName;
         private System.Windows.Forms.Label labelPipeName;

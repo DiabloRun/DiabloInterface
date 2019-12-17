@@ -42,12 +42,14 @@ namespace Zutatensuppe.DiabloInterface.Business.Settings
         public bool DisplayLayoutHorizontal { get; set; } = true;
         public bool DisplayRealFrwIas { get; set; } = false;
         public bool DisplayPlayersX { get; set; } = false;
+        public bool DisplayGameCounter { get; set; } = false;
 
         public int VerticalLayoutPadding { get; set; } = 5;
 
         public Color ColorName { get; set; } = Color.RoyalBlue;
         public Color ColorDeaths { get; set; } = Color.Snow;
         public Color ColorPlayersX { get; set; } = Color.Snow;
+        public Color ColorGameCounter { get; set; } = Color.Snow;
         public Color ColorLevel { get; set; } = Color.Snow;
         public Color ColorDifficultyPercentages { get; set; } = Color.Snow;
         public Color ColorGold { get; set; } = Color.Gold;

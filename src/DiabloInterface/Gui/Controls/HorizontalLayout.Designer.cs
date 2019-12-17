@@ -68,6 +68,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.Controls.Add(this.nameLabel);
             this.flowLayoutPanel1.Controls.Add(this.playersXLabel);
+            this.flowLayoutPanel1.Controls.Add(this.gameCounterLabel);
             this.flowLayoutPanel1.Controls.Add(this.panelDeathsLvl);
             this.flowLayoutPanel1.Controls.Add(this.panelSimpleStats);
             this.flowLayoutPanel1.Controls.Add(this.panelStats);
@@ -91,6 +92,17 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             this.nameLabel.Size = new System.Drawing.Size(68, 27);
             this.nameLabel.TabIndex = 6;
             this.nameLabel.Text = "Name";
+
+            this.gameCounterLabel.AutoSize = true;
+            this.gameCounterLabel.Font = new System.Drawing.Font("Courier New", 9.75F);
+            this.gameCounterLabel.ForeColor = System.Drawing.Color.White;
+            this.gameCounterLabel.Location = new System.Drawing.Point(3, 0);
+            this.gameCounterLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
+            this.gameCounterLabel.Name = "gameCounterLabel";
+            this.gameCounterLabel.Size = new System.Drawing.Size(68, 27);
+            this.gameCounterLabel.TabIndex = 6;
+            this.gameCounterLabel.Text = "Run count: 1";
+
             // 
             // playersXLabel
             // 

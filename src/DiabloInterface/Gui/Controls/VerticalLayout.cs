@@ -31,6 +31,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             {
                 deathsLabel,
                 playersXLabel,
+                gameCounterLabel,
                 goldLabel, lvlLabel,
                 strLabel, dexLabel, vitLabel, eneLabel,
                 frwLabel, fhrLabel, fcrLabel, iasLabel,
@@ -144,6 +145,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             deathsLabel.ForeColor = settings.ColorDeaths;
             lvlLabel.ForeColor = settings.ColorLevel;
             playersXLabel.ForeColor = settings.ColorPlayersX;
+            gameCounterLabel.ForeColor = settings.ColorGameCounter;
 
             UpdateLabelColors(settings);
         }

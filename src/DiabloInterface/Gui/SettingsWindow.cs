@@ -86,6 +86,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     || settings.VerticalLayoutPadding != (int)numericUpDownPaddingInVerticalLayout.Value
                     || settings.DisplayRealFrwIas != chkShowRealValues.Checked
                     || settings.DisplayPlayersX != chkShowPlayersX.Checked
+                    || settings.DisplayGameCounter != chkShowGameCounter.Checked
 
                     || btnSetNameColor.ForeColor != settings.ColorName
                     || btnSetDeathsColor.ForeColor != settings.ColorDeaths
@@ -99,6 +100,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     || btnSetLightningResColor.ForeColor != settings.ColorLightningRes
                     || btnSetPoisonResColor.ForeColor != settings.ColorPoisonRes
                     || btnSetPlayersXColor.ForeColor != settings.ColorPlayersX
+                    || btnSetGameCounterColor.ForeColor != settings.ColorGameCounter
 
                     || btnSetBackgroundColor.BackColor != settings.ColorBackground;
             }
@@ -196,6 +198,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             comboBoxLayout.SelectedIndex = settings.DisplayLayoutHorizontal ? 0 : 1;
             chkShowRealValues.Checked = settings.DisplayRealFrwIas;
             chkShowPlayersX.Checked = settings.DisplayPlayersX;
+            chkShowGameCounter.Checked = settings.DisplayGameCounter;
 
             SetBackgroundColor(settings.ColorBackground);
 
@@ -211,6 +214,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             btnSetLightningResColor.ForeColor = settings.ColorLightningRes;
             btnSetPoisonResColor.ForeColor = settings.ColorPoisonRes;
             btnSetPlayersXColor.ForeColor = settings.ColorPlayersX;
+            btnSetGameCounterColor.ForeColor = settings.ColorGameCounter;
         }
 
         void MarkClean()
@@ -258,6 +262,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             settings.DisplayDifficultyPercentages = chkDisplayDifficultyPercents.Checked;
             settings.DisplayRealFrwIas = chkShowRealValues.Checked;
             settings.DisplayPlayersX = chkShowPlayersX.Checked;
+            settings.DisplayGameCounter = chkShowGameCounter.Checked;
 
             settings.DisplayRunes = chkDisplayRunes.Checked;
             settings.DisplayRunesHorizontal = comboBoxRunesOrientation.SelectedIndex == 0;
@@ -276,6 +281,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             settings.ColorLightningRes = btnSetLightningResColor.ForeColor;
             settings.ColorPoisonRes = btnSetPoisonResColor.ForeColor;
             settings.ColorPlayersX = btnSetPlayersXColor.ForeColor;
+            settings.ColorGameCounter = btnSetGameCounterColor.ForeColor;
 
             settings.ColorBackground = btnSetBackgroundColor.BackColor;
 
@@ -529,6 +535,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             btnSetLightningResColor.BackColor = c;
             btnSetPoisonResColor.BackColor = c;
             btnSetPlayersXColor.BackColor = c;
+            btnSetGameCounterColor.BackColor = c;
         }
 
         private void btnSetNameColor_Click(object sender, EventArgs e)
@@ -591,6 +598,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
             SelectColor(sender);
         }
 
+        private void btnSetColorGameCounter_Click(object sender, EventArgs e)
+        {
+            SelectColor(sender);
+        }
+
         private void resetColorsButton(object sender, EventArgs e)
         {
             btnSetNameColor.ForeColor = Color.RoyalBlue;
@@ -605,6 +617,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             btnSetLightningResColor.ForeColor = Color.Yellow;
             btnSetPoisonResColor.ForeColor = Color.YellowGreen;
             btnSetPlayersXColor.ForeColor = Color.Snow;
+            btnSetGameCounterColor.ForeColor = Color.Snow;
             SetBackgroundColor(Color.Black);
         }
 
