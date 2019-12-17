@@ -99,6 +99,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.runeSettingsPage = new Zutatensuppe.DiabloInterface.Gui.Controls.RuneSettingsPage();
             this.tabPageSettingsAutosplit = new System.Windows.Forms.TabPage();
             this.tabPageSettingsMisc = new System.Windows.Forms.TabPage();
+            this.groupBoxPipeServer = new System.Windows.Forms.GroupBox();
+            this.textBoxPipeName = new System.Windows.Forms.TextBox();
+            this.labelPipeName = new System.Windows.Forms.Label();
             this.DataGroup = new System.Windows.Forms.GroupBox();
             this.CreateFilesCheckBox = new System.Windows.Forms.CheckBox();
             this.UpdateGroup = new System.Windows.Forms.GroupBox();
@@ -109,9 +112,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSaveAs = new System.Windows.Forms.Button();
             this.btnUndo = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
-            this.groupBoxPipeServer = new System.Windows.Forms.GroupBox();
-            this.labelPipeName = new System.Windows.Forms.Label();
-            this.textBoxPipeName = new System.Windows.Forms.TextBox();
             this.FontGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
@@ -129,11 +129,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPageSettingsRunes.SuspendLayout();
             this.tabPageSettingsAutosplit.SuspendLayout();
             this.tabPageSettingsMisc.SuspendLayout();
+            this.groupBoxPipeServer.SuspendLayout();
             this.DataGroup.SuspendLayout();
             this.UpdateGroup.SuspendLayout();
             this.mainPanel.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.groupBoxPipeServer.SuspendLayout();
             this.SuspendLayout();
             // 
             // FontLabel
@@ -332,7 +332,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.VerticalSplitContainer.Name = "VerticalSplitContainer";
             this.VerticalSplitContainer.RowCount = 1;
             this.VerticalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.VerticalSplitContainer.Size = new System.Drawing.Size(915, 626);
+            this.VerticalSplitContainer.Size = new System.Drawing.Size(922, 626);
             this.VerticalSplitContainer.TabIndex = 20;
             // 
             // grpConfigFiles
@@ -372,40 +372,40 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.menuClone,
             this.menuDelete});
             this.ctxConfigFileList.Name = "ctxConfigFileList";
-            this.ctxConfigFileList.Size = new System.Drawing.Size(133, 124);
+            this.ctxConfigFileList.Size = new System.Drawing.Size(131, 114);
             // 
             // menuNew
             // 
             this.menuNew.Name = "menuNew";
-            this.menuNew.Size = new System.Drawing.Size(132, 24);
+            this.menuNew.Size = new System.Drawing.Size(130, 22);
             this.menuNew.Text = "New";
             this.menuNew.Click += new System.EventHandler(this.menuNew_Click);
             // 
             // menuLoad
             // 
             this.menuLoad.Name = "menuLoad";
-            this.menuLoad.Size = new System.Drawing.Size(132, 24);
+            this.menuLoad.Size = new System.Drawing.Size(130, 22);
             this.menuLoad.Text = "Load";
             this.menuLoad.Click += new System.EventHandler(this.menuLoad_Click);
             // 
             // renameToolStripMenuItem
             // 
             this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(132, 24);
+            this.renameToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.renameToolStripMenuItem.Text = "Rename";
             this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // menuClone
             // 
             this.menuClone.Name = "menuClone";
-            this.menuClone.Size = new System.Drawing.Size(132, 24);
+            this.menuClone.Size = new System.Drawing.Size(130, 22);
             this.menuClone.Text = "Clone";
             this.menuClone.Click += new System.EventHandler(this.menuClone_Click);
             // 
             // menuDelete
             // 
             this.menuDelete.Name = "menuDelete";
-            this.menuDelete.Size = new System.Drawing.Size(132, 24);
+            this.menuDelete.Size = new System.Drawing.Size(130, 22);
             this.menuDelete.Text = "Delete";
             this.menuDelete.Click += new System.EventHandler(this.menuDelete_Click);
             // 
@@ -422,7 +422,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.HorizontalSplitContainer.Size = new System.Drawing.Size(682, 626);
+            this.HorizontalSplitContainer.Size = new System.Drawing.Size(689, 626);
             this.HorizontalSplitContainer.TabIndex = 0;
             // 
             // tabControl1
@@ -436,7 +436,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(674, 618);
+            this.tabControl1.Size = new System.Drawing.Size(681, 618);
             this.tabControl1.TabIndex = 13;
             // 
             // tabPageSettingsLayout
@@ -448,7 +448,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPageSettingsLayout.Margin = new System.Windows.Forms.Padding(4);
             this.tabPageSettingsLayout.Name = "tabPageSettingsLayout";
             this.tabPageSettingsLayout.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPageSettingsLayout.Size = new System.Drawing.Size(666, 589);
+            this.tabPageSettingsLayout.Size = new System.Drawing.Size(673, 589);
             this.tabPageSettingsLayout.TabIndex = 1;
             this.tabPageSettingsLayout.Text = "Layout";
             this.tabPageSettingsLayout.UseVisualStyleBackColor = true;
@@ -541,7 +541,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.groupBox1.Controls.Add(this.btnSetGameCounterColor);
             this.groupBox1.Controls.Add(this.chkShowPlayersX);
             this.groupBox1.Controls.Add(this.chkShowGameCounter);
-
             this.groupBox1.Controls.Add(this.chkShowRealValues);
             this.groupBox1.Controls.Add(this.chkHighContrastRunes);
             this.groupBox1.Controls.Add(this.chkDisplayRunes);
@@ -584,7 +583,18 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSetPlayersXColor.TabIndex = 29;
             this.btnSetPlayersXColor.Text = "Color";
             this.btnSetPlayersXColor.UseVisualStyleBackColor = true;
-            this.btnSetPlayersXColor.Click += new System.EventHandler(this.btnSetColorPlayersX_Click);
+            this.btnSetPlayersXColor.Click += new System.EventHandler(this.btnSelectColor);
+            // 
+            // btnSetGameCounterColor
+            // 
+            this.btnSetGameCounterColor.Location = new System.Drawing.Point(169, 376);
+            this.btnSetGameCounterColor.Margin = new System.Windows.Forms.Padding(0);
+            this.btnSetGameCounterColor.Name = "btnSetGameCounterColor";
+            this.btnSetGameCounterColor.Size = new System.Drawing.Size(99, 31);
+            this.btnSetGameCounterColor.TabIndex = 30;
+            this.btnSetGameCounterColor.Text = "Color";
+            this.btnSetGameCounterColor.UseVisualStyleBackColor = true;
+            this.btnSetGameCounterColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // chkShowPlayersX
             // 
@@ -594,26 +604,18 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.chkShowPlayersX.Margin = new System.Windows.Forms.Padding(4);
             this.chkShowPlayersX.Name = "chkShowPlayersX";
             this.chkShowPlayersX.Size = new System.Drawing.Size(93, 21);
-            //this.chkShowPlayersX.TabIndex = 28;
+            this.chkShowPlayersX.TabIndex = 31;
             this.chkShowPlayersX.Text = "/players X";
             this.chkShowPlayersX.UseVisualStyleBackColor = true;
-
-
-            this.btnSetGameCounterColor.Location = new System.Drawing.Point(169, 376);
-            this.btnSetGameCounterColor.Margin = new System.Windows.Forms.Padding(0);
-            this.btnSetGameCounterColor.Name = "btnSetGameCounterColor";
-            this.btnSetGameCounterColor.Size = new System.Drawing.Size(99, 31);
-           // this.btnSetGameCounterColor.TabIndex = 29;
-            this.btnSetGameCounterColor.Text = "Color";
-            this.btnSetGameCounterColor.UseVisualStyleBackColor = true;
-            this.btnSetGameCounterColor.Click += new System.EventHandler(this.btnSetColorGameCounter_Click);
-
+            // 
+            // chkShowGameCounter
+            // 
             this.chkShowGameCounter.AutoSize = true;
             this.chkShowGameCounter.ForeColor = System.Drawing.SystemColors.ControlText;
             this.chkShowGameCounter.Location = new System.Drawing.Point(19, 382);
             this.chkShowGameCounter.Margin = new System.Windows.Forms.Padding(4);
             this.chkShowGameCounter.Name = "chkShowGameCounter";
-            this.chkShowGameCounter.Size = new System.Drawing.Size(93, 21);
+            this.chkShowGameCounter.Size = new System.Drawing.Size(95, 21);
             this.chkShowGameCounter.TabIndex = 28;
             this.chkShowGameCounter.Text = "Run count";
             this.chkShowGameCounter.UseVisualStyleBackColor = true;
@@ -653,7 +655,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetBackgroundColor
             // 
-            this.btnSetBackgroundColor.Location = new System.Drawing.Point(276, 376);
+            this.btnSetBackgroundColor.Location = new System.Drawing.Point(468, 334);
             this.btnSetBackgroundColor.Margin = new System.Windows.Forms.Padding(4);
             this.btnSetBackgroundColor.Name = "btnSetBackgroundColor";
             this.btnSetBackgroundColor.Size = new System.Drawing.Size(150, 28);
@@ -664,7 +666,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(432, 376);
+            this.button1.Location = new System.Drawing.Point(468, 379);
             this.button1.Margin = new System.Windows.Forms.Padding(4);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(150, 28);
@@ -682,7 +684,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSetLevelColor.TabIndex = 7;
             this.btnSetLevelColor.Text = "Color";
             this.btnSetLevelColor.UseVisualStyleBackColor = true;
-            this.btnSetLevelColor.Click += new System.EventHandler(this.btnSetLevelColor_Click);
+            this.btnSetLevelColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // btnSetDifficultyColor
             // 
@@ -693,7 +695,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSetDifficultyColor.TabIndex = 7;
             this.btnSetDifficultyColor.Text = "Color";
             this.btnSetDifficultyColor.UseVisualStyleBackColor = true;
-            this.btnSetDifficultyColor.Click += new System.EventHandler(this.btnSetDifficultyColor_Click);
+            this.btnSetDifficultyColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // btnSetPoisonResColor
             // 
@@ -704,7 +706,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSetPoisonResColor.TabIndex = 7;
             this.btnSetPoisonResColor.Text = "Poison color";
             this.btnSetPoisonResColor.UseVisualStyleBackColor = true;
-            this.btnSetPoisonResColor.Click += new System.EventHandler(this.btnSetPoisonResColor_Click);
+            this.btnSetPoisonResColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // btnSetLightningResColor
             // 
@@ -715,7 +717,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSetLightningResColor.TabIndex = 7;
             this.btnSetLightningResColor.Text = "Light. color";
             this.btnSetLightningResColor.UseVisualStyleBackColor = true;
-            this.btnSetLightningResColor.Click += new System.EventHandler(this.btnSetLightningResColor_Click);
+            this.btnSetLightningResColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // btnSetColdResColor
             // 
@@ -726,7 +728,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSetColdResColor.TabIndex = 7;
             this.btnSetColdResColor.Text = "Cold color";
             this.btnSetColdResColor.UseVisualStyleBackColor = true;
-            this.btnSetColdResColor.Click += new System.EventHandler(this.btnSetColdResColor_Click);
+            this.btnSetColdResColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // btnSetFireResColor
             // 
@@ -737,7 +739,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSetFireResColor.TabIndex = 7;
             this.btnSetFireResColor.Text = "Fire color";
             this.btnSetFireResColor.UseVisualStyleBackColor = true;
-            this.btnSetFireResColor.Click += new System.EventHandler(this.btnSetFireResColor_Click);
+            this.btnSetFireResColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // btnSetDeathsColor
             // 
@@ -748,7 +750,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSetDeathsColor.TabIndex = 7;
             this.btnSetDeathsColor.Text = "Color";
             this.btnSetDeathsColor.UseVisualStyleBackColor = true;
-            this.btnSetDeathsColor.Click += new System.EventHandler(this.button5_Click);
+            this.btnSetDeathsColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // btnSetAdvancedStatsColor
             // 
@@ -759,7 +761,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSetAdvancedStatsColor.TabIndex = 7;
             this.btnSetAdvancedStatsColor.Text = "Color";
             this.btnSetAdvancedStatsColor.UseVisualStyleBackColor = true;
-            this.btnSetAdvancedStatsColor.Click += new System.EventHandler(this.btnSetAdvancedStatsColor_Click);
+            this.btnSetAdvancedStatsColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // btnSetBaseStatsColor
             // 
@@ -770,7 +772,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSetBaseStatsColor.TabIndex = 7;
             this.btnSetBaseStatsColor.Text = "Color";
             this.btnSetBaseStatsColor.UseVisualStyleBackColor = true;
-            this.btnSetBaseStatsColor.Click += new System.EventHandler(this.btnSetBaseSettingsColor_Click);
+            this.btnSetBaseStatsColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // btnSetGoldColor
             // 
@@ -781,7 +783,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSetGoldColor.TabIndex = 7;
             this.btnSetGoldColor.Text = "Color";
             this.btnSetGoldColor.UseVisualStyleBackColor = true;
-            this.btnSetGoldColor.Click += new System.EventHandler(this.btnSetGoldColor_Click);
+            this.btnSetGoldColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // btnSetNameColor
             // 
@@ -792,7 +794,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSetNameColor.TabIndex = 7;
             this.btnSetNameColor.Text = "Color";
             this.btnSetNameColor.UseVisualStyleBackColor = true;
-            this.btnSetNameColor.Click += new System.EventHandler(this.btnSetNameColor_Click);
+            this.btnSetNameColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // chkDisplayDifficultyPercents
             // 
@@ -901,7 +903,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.runeSettingsPage.Location = new System.Drawing.Point(0, 0);
             this.runeSettingsPage.Margin = new System.Windows.Forms.Padding(5);
             this.runeSettingsPage.Name = "runeSettingsPage";
-            this.runeSettingsPage.SettingsList = null;
+            this.runeSettingsPage.SettingsList = ((System.Collections.Generic.IReadOnlyList<Zutatensuppe.DiabloInterface.Business.Settings.ClassRuneSettings>)(resources.GetObject("runeSettingsPage.SettingsList")));
             this.runeSettingsPage.Size = new System.Drawing.Size(666, 589);
             this.runeSettingsPage.TabIndex = 0;
             // 
@@ -929,6 +931,33 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPageSettingsMisc.TabIndex = 3;
             this.tabPageSettingsMisc.Text = "Misc";
             this.tabPageSettingsMisc.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxPipeServer
+            // 
+            this.groupBoxPipeServer.Controls.Add(this.textBoxPipeName);
+            this.groupBoxPipeServer.Controls.Add(this.labelPipeName);
+            this.groupBoxPipeServer.Location = new System.Drawing.Point(7, 72);
+            this.groupBoxPipeServer.Name = "groupBoxPipeServer";
+            this.groupBoxPipeServer.Size = new System.Drawing.Size(366, 65);
+            this.groupBoxPipeServer.TabIndex = 19;
+            this.groupBoxPipeServer.TabStop = false;
+            this.groupBoxPipeServer.Text = "Pipe Server";
+            // 
+            // textBoxPipeName
+            // 
+            this.textBoxPipeName.Location = new System.Drawing.Point(91, 30);
+            this.textBoxPipeName.Name = "textBoxPipeName";
+            this.textBoxPipeName.Size = new System.Drawing.Size(257, 22);
+            this.textBoxPipeName.TabIndex = 1;
+            // 
+            // labelPipeName
+            // 
+            this.labelPipeName.AutoSize = true;
+            this.labelPipeName.Location = new System.Drawing.Point(4, 30);
+            this.labelPipeName.Name = "labelPipeName";
+            this.labelPipeName.Size = new System.Drawing.Size(81, 17);
+            this.labelPipeName.TabIndex = 0;
+            this.labelPipeName.Text = "Pipe Name:";
             // 
             // DataGroup
             // 
@@ -1003,7 +1032,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.mainPanel.RowCount = 2;
             this.mainPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 39F));
-            this.mainPanel.Size = new System.Drawing.Size(915, 665);
+            this.mainPanel.Size = new System.Drawing.Size(922, 665);
             this.mainPanel.TabIndex = 23;
             // 
             // panel1
@@ -1015,13 +1044,13 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.panel1.Location = new System.Drawing.Point(0, 626);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(915, 39);
+            this.panel1.Size = new System.Drawing.Size(922, 39);
             this.panel1.TabIndex = 21;
             // 
             // btnSaveAs
             // 
             this.btnSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveAs.Location = new System.Drawing.Point(683, 7);
+            this.btnSaveAs.Location = new System.Drawing.Point(690, 7);
             this.btnSaveAs.Margin = new System.Windows.Forms.Padding(4);
             this.btnSaveAs.Name = "btnSaveAs";
             this.btnSaveAs.Size = new System.Drawing.Size(100, 28);
@@ -1033,7 +1062,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // btnUndo
             // 
             this.btnUndo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUndo.Location = new System.Drawing.Point(791, 7);
+            this.btnUndo.Location = new System.Drawing.Point(798, 7);
             this.btnUndo.Margin = new System.Windows.Forms.Padding(4);
             this.btnUndo.Name = "btnUndo";
             this.btnUndo.Size = new System.Drawing.Size(120, 28);
@@ -1045,7 +1074,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(575, 7);
+            this.btnSave.Location = new System.Drawing.Point(582, 7);
             this.btnSave.Margin = new System.Windows.Forms.Padding(4);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(100, 28);
@@ -1054,38 +1083,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // groupBoxPipeServer
-            // 
-            this.groupBoxPipeServer.Controls.Add(this.textBoxPipeName);
-            this.groupBoxPipeServer.Controls.Add(this.labelPipeName);
-            this.groupBoxPipeServer.Location = new System.Drawing.Point(7, 72);
-            this.groupBoxPipeServer.Name = "groupBoxPipeServer";
-            this.groupBoxPipeServer.Size = new System.Drawing.Size(366, 65);
-            this.groupBoxPipeServer.TabIndex = 19;
-            this.groupBoxPipeServer.TabStop = false;
-            this.groupBoxPipeServer.Text = "Pipe Server";
-            // 
-            // labelPipeName
-            // 
-            this.labelPipeName.AutoSize = true;
-            this.labelPipeName.Location = new System.Drawing.Point(4, 30);
-            this.labelPipeName.Name = "labelPipeName";
-            this.labelPipeName.Size = new System.Drawing.Size(81, 17);
-            this.labelPipeName.TabIndex = 0;
-            this.labelPipeName.Text = "Pipe Name:";
-            // 
-            // textBoxPipeName
-            // 
-            this.textBoxPipeName.Location = new System.Drawing.Point(91, 30);
-            this.textBoxPipeName.Name = "textBoxPipeName";
-            this.textBoxPipeName.Size = new System.Drawing.Size(257, 22);
-            this.textBoxPipeName.TabIndex = 1;
-            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(915, 665);
+            this.ClientSize = new System.Drawing.Size(922, 665);
             this.Controls.Add(this.mainPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
@@ -1115,14 +1117,14 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPageSettingsRunes.ResumeLayout(false);
             this.tabPageSettingsAutosplit.ResumeLayout(false);
             this.tabPageSettingsMisc.ResumeLayout(false);
+            this.groupBoxPipeServer.ResumeLayout(false);
+            this.groupBoxPipeServer.PerformLayout();
             this.DataGroup.ResumeLayout(false);
             this.DataGroup.PerformLayout();
             this.UpdateGroup.ResumeLayout(false);
             this.UpdateGroup.PerformLayout();
             this.mainPanel.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
-            this.groupBoxPipeServer.ResumeLayout(false);
-            this.groupBoxPipeServer.PerformLayout();
             this.ResumeLayout(false);
 
         }

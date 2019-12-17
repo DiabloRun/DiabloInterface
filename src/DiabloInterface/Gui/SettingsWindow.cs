@@ -512,13 +512,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             File.Delete(path);
         }
 
-        void SelectColor(object sender)
-        {
-            ColorDialog d = new ColorDialog();
-            if (d.ShowDialog() == DialogResult.OK)
-                ((Control)sender).ForeColor = d.Color;
-        }
-
         void SetBackgroundColor(Color c)
         {
             btnSetBackgroundColor.BackColor = c;
@@ -538,71 +531,13 @@ namespace Zutatensuppe.DiabloInterface.Gui
             btnSetGameCounterColor.BackColor = c;
         }
 
-        private void btnSetNameColor_Click(object sender, EventArgs e)
+        private void btnSelectColor(object sender, EventArgs e)
         {
-            SelectColor(sender);
+            ColorDialog d = new ColorDialog();
+            if (d.ShowDialog() == DialogResult.OK)
+                ((Control)sender).ForeColor = d.Color;
         }
-
-        private void btnSetGoldColor_Click(object sender, EventArgs e)
-        {
-            SelectColor(sender);
-        }
-
-        private void btnSetBaseSettingsColor_Click(object sender, EventArgs e)
-        {
-            SelectColor(sender);
-        }
-
-        private void btnSetAdvancedStatsColor_Click(object sender, EventArgs e)
-        {
-            SelectColor(sender);
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            SelectColor(sender);
-        }
-
-        private void btnSetLevelColor_Click(object sender, EventArgs e)
-        {
-            SelectColor(sender);
-        }
-
-        private void btnSetFireResColor_Click(object sender, EventArgs e)
-        {
-            SelectColor(sender);
-        }
-
-        private void btnSetColdResColor_Click(object sender, EventArgs e)
-        {
-            SelectColor(sender);
-        }
-
-        private void btnSetLightningResColor_Click(object sender, EventArgs e)
-        {
-            SelectColor(sender);
-        }
-
-        private void btnSetPoisonResColor_Click(object sender, EventArgs e)
-        {
-            SelectColor(sender);
-        }
-
-        private void btnSetDifficultyColor_Click(object sender, EventArgs e)
-        {
-            SelectColor(sender);
-        }
-
-        private void btnSetColorPlayersX_Click(object sender, EventArgs e)
-        {
-            SelectColor(sender);
-        }
-
-        private void btnSetColorGameCounter_Click(object sender, EventArgs e)
-        {
-            SelectColor(sender);
-        }
-
+        
         private void resetColorsButton(object sender, EventArgs e)
         {
             btnSetNameColor.ForeColor = Color.RoyalBlue;
