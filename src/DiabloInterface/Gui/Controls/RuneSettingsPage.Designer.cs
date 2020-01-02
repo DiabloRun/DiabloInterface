@@ -59,7 +59,6 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -72,9 +71,8 @@
             this.splitContainer1.Panel2.Controls.Add(this.runesGroupBox);
             this.splitContainer1.Panel2.Controls.Add(this.runeListEditBox);
             this.splitContainer1.Panel2MinSize = 200;
-            this.splitContainer1.Size = new System.Drawing.Size(663, 542);
-            this.splitContainer1.SplitterDistance = 200;
-            this.splitContainer1.SplitterWidth = 5;
+            this.splitContainer1.Size = new System.Drawing.Size(497, 440);
+            this.splitContainer1.SplitterDistance = 149;
             this.splitContainer1.TabIndex = 0;
             // 
             // classSettingsGroupBox
@@ -84,11 +82,9 @@
             this.classSettingsGroupBox.Controls.Add(this.characterListBox);
             this.classSettingsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.classSettingsGroupBox.Location = new System.Drawing.Point(0, 0);
-            this.classSettingsGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.classSettingsGroupBox.MinimumSize = new System.Drawing.Size(187, 0);
+            this.classSettingsGroupBox.MinimumSize = new System.Drawing.Size(140, 0);
             this.classSettingsGroupBox.Name = "classSettingsGroupBox";
-            this.classSettingsGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.classSettingsGroupBox.Size = new System.Drawing.Size(200, 542);
+            this.classSettingsGroupBox.Size = new System.Drawing.Size(149, 440);
             this.classSettingsGroupBox.TabIndex = 0;
             this.classSettingsGroupBox.TabStop = false;
             this.classSettingsGroupBox.Text = "Class Settings";
@@ -96,10 +92,9 @@
             // deleteSettingsButton
             // 
             this.deleteSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.deleteSettingsButton.Location = new System.Drawing.Point(43, 510);
-            this.deleteSettingsButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.deleteSettingsButton.Location = new System.Drawing.Point(31, 414);
             this.deleteSettingsButton.Name = "deleteSettingsButton";
-            this.deleteSettingsButton.Size = new System.Drawing.Size(79, 28);
+            this.deleteSettingsButton.Size = new System.Drawing.Size(59, 23);
             this.deleteSettingsButton.TabIndex = 2;
             this.deleteSettingsButton.Text = "Remove";
             this.deleteSettingsButton.UseVisualStyleBackColor = true;
@@ -108,10 +103,9 @@
             // addSettingsButton
             // 
             this.addSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.addSettingsButton.Location = new System.Drawing.Point(129, 510);
-            this.addSettingsButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.addSettingsButton.Location = new System.Drawing.Point(96, 414);
             this.addSettingsButton.Name = "addSettingsButton";
-            this.addSettingsButton.Size = new System.Drawing.Size(67, 28);
+            this.addSettingsButton.Size = new System.Drawing.Size(50, 23);
             this.addSettingsButton.TabIndex = 1;
             this.addSettingsButton.Text = "Add";
             this.addSettingsButton.UseVisualStyleBackColor = true;
@@ -123,11 +117,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.characterListBox.FormattingEnabled = true;
-            this.characterListBox.ItemHeight = 16;
-            this.characterListBox.Location = new System.Drawing.Point(4, 20);
-            this.characterListBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.characterListBox.Location = new System.Drawing.Point(3, 16);
             this.characterListBox.Name = "characterListBox";
-            this.characterListBox.Size = new System.Drawing.Size(191, 484);
+            this.characterListBox.Size = new System.Drawing.Size(143, 394);
             this.characterListBox.TabIndex = 0;
             this.characterListBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.CharacterListBoxOnMouseDoubleClick);
             // 
@@ -137,11 +129,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.runesGroupBox.Controls.Add(this.runeFlowLayout);
-            this.runesGroupBox.Location = new System.Drawing.Point(4, 4);
-            this.runesGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.runesGroupBox.Location = new System.Drawing.Point(3, 3);
             this.runesGroupBox.Name = "runesGroupBox";
-            this.runesGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.runesGroupBox.Size = new System.Drawing.Size(450, 385);
+            this.runesGroupBox.Size = new System.Drawing.Size(337, 313);
             this.runesGroupBox.TabIndex = 0;
             this.runesGroupBox.TabStop = false;
             this.runesGroupBox.Text = "Runes";
@@ -149,10 +139,9 @@
             // runeFlowLayout
             // 
             this.runeFlowLayout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.runeFlowLayout.Location = new System.Drawing.Point(4, 19);
-            this.runeFlowLayout.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.runeFlowLayout.Location = new System.Drawing.Point(3, 16);
             this.runeFlowLayout.Name = "runeFlowLayout";
-            this.runeFlowLayout.Size = new System.Drawing.Size(442, 362);
+            this.runeFlowLayout.Size = new System.Drawing.Size(331, 294);
             this.runeFlowLayout.TabIndex = 0;
             // 
             // runeListEditBox
@@ -164,11 +153,9 @@
             this.runeListEditBox.Controls.Add(this.runeButton);
             this.runeListEditBox.Controls.Add(this.runewordComboBox);
             this.runeListEditBox.Controls.Add(this.runewordButton);
-            this.runeListEditBox.Location = new System.Drawing.Point(4, 396);
-            this.runeListEditBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.runeListEditBox.Location = new System.Drawing.Point(3, 322);
             this.runeListEditBox.Name = "runeListEditBox";
-            this.runeListEditBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.runeListEditBox.Size = new System.Drawing.Size(450, 142);
+            this.runeListEditBox.Size = new System.Drawing.Size(337, 115);
             this.runeListEditBox.TabIndex = 0;
             this.runeListEditBox.TabStop = false;
             this.runeListEditBox.Text = "Edit";
@@ -184,13 +171,13 @@
             this.tableLayoutPanel1.Controls.Add(this.characterClassComboBox, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.classLabel, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.difficultyLabel, 1, 0);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(4, 17);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 14);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 17F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(442, 47);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 14F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(331, 38);
             this.tableLayoutPanel1.TabIndex = 8;
             // 
             // difficultyComboBox
@@ -199,10 +186,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.difficultyComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.difficultyComboBox.FormattingEnabled = true;
-            this.difficultyComboBox.Location = new System.Drawing.Point(225, 21);
-            this.difficultyComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.difficultyComboBox.Location = new System.Drawing.Point(168, 17);
             this.difficultyComboBox.Name = "difficultyComboBox";
-            this.difficultyComboBox.Size = new System.Drawing.Size(213, 24);
+            this.difficultyComboBox.Size = new System.Drawing.Size(160, 21);
             this.difficultyComboBox.TabIndex = 5;
             this.difficultyComboBox.SelectedValueChanged += new System.EventHandler(this.DifficultyComboBoxOnSelectedValueChanged);
             // 
@@ -212,30 +198,27 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.characterClassComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.characterClassComboBox.FormattingEnabled = true;
-            this.characterClassComboBox.Location = new System.Drawing.Point(4, 21);
-            this.characterClassComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.characterClassComboBox.Location = new System.Drawing.Point(3, 17);
             this.characterClassComboBox.Name = "characterClassComboBox";
-            this.characterClassComboBox.Size = new System.Drawing.Size(213, 24);
+            this.characterClassComboBox.Size = new System.Drawing.Size(159, 21);
             this.characterClassComboBox.TabIndex = 4;
             this.characterClassComboBox.SelectedValueChanged += new System.EventHandler(this.CharacterClassComboBoxOnSelectedValueChanged);
             // 
             // classLabel
             // 
             this.classLabel.AutoSize = true;
-            this.classLabel.Location = new System.Drawing.Point(4, 0);
-            this.classLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.classLabel.Location = new System.Drawing.Point(3, 0);
             this.classLabel.Name = "classLabel";
-            this.classLabel.Size = new System.Drawing.Size(42, 17);
+            this.classLabel.Size = new System.Drawing.Size(32, 13);
             this.classLabel.TabIndex = 6;
             this.classLabel.Text = "Class";
             // 
             // difficultyLabel
             // 
             this.difficultyLabel.AutoSize = true;
-            this.difficultyLabel.Location = new System.Drawing.Point(225, 0);
-            this.difficultyLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.difficultyLabel.Location = new System.Drawing.Point(168, 0);
             this.difficultyLabel.Name = "difficultyLabel";
-            this.difficultyLabel.Size = new System.Drawing.Size(61, 17);
+            this.difficultyLabel.Size = new System.Drawing.Size(47, 13);
             this.difficultyLabel.TabIndex = 7;
             this.difficultyLabel.Text = "Difficulty";
             // 
@@ -245,19 +228,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.runeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.runeComboBox.FormattingEnabled = true;
-            this.runeComboBox.Location = new System.Drawing.Point(8, 70);
-            this.runeComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.runeComboBox.Location = new System.Drawing.Point(6, 57);
             this.runeComboBox.Name = "runeComboBox";
-            this.runeComboBox.Size = new System.Drawing.Size(305, 24);
+            this.runeComboBox.Size = new System.Drawing.Size(229, 21);
             this.runeComboBox.TabIndex = 3;
             // 
             // runeButton
             // 
             this.runeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.runeButton.Location = new System.Drawing.Point(322, 68);
-            this.runeButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.runeButton.Location = new System.Drawing.Point(241, 55);
             this.runeButton.Name = "runeButton";
-            this.runeButton.Size = new System.Drawing.Size(120, 28);
+            this.runeButton.Size = new System.Drawing.Size(90, 23);
             this.runeButton.TabIndex = 0;
             this.runeButton.Text = "Add";
             this.runeButton.UseVisualStyleBackColor = true;
@@ -269,19 +250,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.runewordComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.runewordComboBox.FormattingEnabled = true;
-            this.runewordComboBox.Location = new System.Drawing.Point(8, 106);
-            this.runewordComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.runewordComboBox.Location = new System.Drawing.Point(6, 86);
             this.runewordComboBox.Name = "runewordComboBox";
-            this.runewordComboBox.Size = new System.Drawing.Size(305, 24);
+            this.runewordComboBox.Size = new System.Drawing.Size(229, 21);
             this.runewordComboBox.TabIndex = 10;
             // 
             // runewordButton
             // 
             this.runewordButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.runewordButton.Location = new System.Drawing.Point(322, 103);
-            this.runewordButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.runewordButton.Location = new System.Drawing.Point(241, 84);
             this.runewordButton.Name = "runewordButton";
-            this.runewordButton.Size = new System.Drawing.Size(120, 28);
+            this.runewordButton.Size = new System.Drawing.Size(90, 23);
             this.runewordButton.TabIndex = 9;
             this.runewordButton.Text = "Add";
             this.runewordButton.UseVisualStyleBackColor = true;
@@ -289,12 +268,11 @@
             // 
             // RuneSettingsPage
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "RuneSettingsPage";
-            this.Size = new System.Drawing.Size(663, 542);
+            this.Size = new System.Drawing.Size(497, 440);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
