@@ -1,6 +1,6 @@
 # DiabloInterface
 
-[![Actions Status](https://github.com/{owner}/{repo}/workflows/{workflow_name}/badge.svg)](https://github.com/{owner}/{repo}/actions)
+[![Actions Status](https://github.com/Zutatensuppe/DiabloInterface/workflows/CI/badge.svg)](https://github.com/Zutatensuppe/DiabloInterface/actions)
 
 Diablo 2 Interface for streamers/speedrunners
 
