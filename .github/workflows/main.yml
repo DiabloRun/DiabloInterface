@@ -1,0 +1,14 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Get the sources
+      uses: actions/checkout@v1
+    - name: Run the build
+      uses: ecampidoglio/cake-action@v1.1.1
