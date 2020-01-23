@@ -27,7 +27,9 @@ Task("Build")
     .Does(() =>
 {
     var modernMSBuildPath = VSWhereLatest() + File(@"\MSBuild\15.0\Bin\MSBuild.exe");
-
+    if (!FileExists(modernMSBuildPath)) {
+        modernMSBuildPath = VSWhereLatest() + File(@"\MSBuild\Current\bin\MSBuild.exe");
+    }
     MSBuild(solution, settings =>
     {
         if (FileExists(modernMSBuildPath))
