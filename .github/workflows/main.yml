@@ -11,4 +11,4 @@ jobs:
     - name: Get the sources
       uses: actions/checkout@v1
     - name: Run the build
-      run: build.ps1
+      run: powershell.exe -File build.ps1
