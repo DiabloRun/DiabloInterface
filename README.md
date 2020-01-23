@@ -1,5 +1,7 @@
 # DiabloInterface
 
+[![Actions Status](https://github.com/{owner}/{repo}/workflows/{workflow_name}/badge.svg)](https://github.com/{owner}/{repo}/actions)
+
 Diablo 2 Interface for streamers/speedrunners
 
 The tool reads memory that is used by Diablo 2 executable and finds information
