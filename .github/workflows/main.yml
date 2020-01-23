@@ -11,4 +11,4 @@ jobs:
     - name: Get the sources
       uses: actions/checkout@v1
     - name: Run the build
-      uses: ecampidoglio/cake-action@v1.1.1
+      run: cake.sh1
