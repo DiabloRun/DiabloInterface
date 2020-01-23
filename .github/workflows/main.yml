@@ -11,4 +11,4 @@ jobs:
     - name: Get the sources
       uses: actions/checkout@v1
     - name: Run the build
-      run: cake.sh1
+      run: build.ps1
