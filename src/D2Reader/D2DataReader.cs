@@ -177,19 +177,7 @@ namespace Zutatensuppe.D2Reader
 
         GameMemoryTable CreateGameMemoryTableForReader(ProcessMemoryReader reader)
         {
-            try
-            {
-                return memoryTableFactory.CreateForVersion(reader.FileVersion, reader.ModuleBaseAddresses);
-            } catch (GameVersionUnsupportedException)
-            {
-                // account for d2se and possibly other 'unsupported' versions
-                string version = reader.ReadNullTerminatedString(new IntPtr(0x1A049), 5, Encoding.ASCII, AddressingMode.Relative);
-                if (version == "1.13c")
-                {
-                    return memoryTableFactory.CreateForVersion(GameVersion.Version_1_13_C, reader.ModuleBaseAddresses);
-                }
-            }
-            return null;
+            return memoryTableFactory.CreateForReader(reader);
         }
 
         bool ValidateGameDataReaders()
@@ -231,33 +219,35 @@ namespace Zutatensuppe.D2Reader
                 return false;
             }
 
+            Logger.Info($"Diablo II process found, version: {reader.FileVersion}");
+
             try
             {
                 memory = CreateGameMemoryTableForReader(reader);
+                Logger.Debug($"Memory table created.");
 
                 CreateUnitReader();
-
-                Logger.Info($"Found the Diablo II process (version {reader.FileVersion}).");
+                Logger.Debug($"Unit reader created.");
 
                 return true;
             }
             catch (ModuleNotLoadedException e)
             {
-                Logger.Error($"Diablo II Process was found, but the module {e.ModuleName} was not yet loaded. Try launching a game.");
+                Logger.Error($"Try launching a game. Module not loaded: {e.ModuleName}");
                 CleanUpDataReaders();
 
                 return false;
             }
             catch (GameVersionUnsupportedException e)
             {
-                Logger.Error($"Diablo II Process was found, but the version {e.GameVersion} is not supported.");
+                Logger.Error($"Version not supported: {e.GameVersion}");
                 CleanUpDataReaders();
 
                 return false;
             }
             catch (ProcessMemoryReadException)
             {
-                Logger.Error("Diablo II Process was found but failed to read memory.");
+                Logger.Error("Failed to read memory");
                 CleanUpDataReaders();
 
                 return false;

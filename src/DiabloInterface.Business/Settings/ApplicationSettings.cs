@@ -74,7 +74,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Settings
             new ProcessDescription{
                 ModuleName = "D2SE.exe",
                 ProcessName = "d2se",
-                SubModules = new string[] { "D2Common.dll", "D2Launch.dll", "D2Lang.dll", "D2Net.dll", "D2Game.dll", "D2Client.dll" }
+                SubModules = new string[] { "D2Common.dll", "D2Launch.dll", "D2Lang.dll", "D2Net.dll", "D2Game.dll", "D2Client.dll", "Fog.dll" }
             },
         };
     }

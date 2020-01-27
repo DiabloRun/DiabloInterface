@@ -2,26 +2,20 @@ namespace Zutatensuppe.D2Reader
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
+    using System.Text;
+    using Zutatensuppe.DiabloInterface.Core.Logging;
 
     public interface IGameMemoryTableFactory
     {
-        GameMemoryTable CreateForVersion(string gameVersion, Dictionary<string, IntPtr> moduleBaseAddresses);
-    }
-
-    class GameVersion
-    {
-        public const string Version_1_13_C = "1, 0, 13, 60";
-        public const string Version_1_13_D = "1, 0, 13, 64";
-
-        public const string Version_1_14_B = "1.14.1.68";
-        public const string Version_1_14_C = "1.14.2.70";
-        public const string Version_1_14_D = "1.14.3.71";
+        GameMemoryTable CreateForVersion(string versionString, Dictionary<string, IntPtr> moduleBaseAddresses);
+        GameMemoryTable CreateForReader(ProcessMemoryReader reader);
     }
 
     public class GameVersionUnsupportedException : Exception
     {
-        public String GameVersion;
-        public GameVersionUnsupportedException(String gameVersion) :
+        public string GameVersion;
+        public GameVersionUnsupportedException(string gameVersion) :
             base(string.Format("Failed to create memory table for game version {0}", gameVersion))
         {
             GameVersion = gameVersion;
@@ -40,21 +34,24 @@ namespace Zutatensuppe.D2Reader
 
     public class GameMemoryTableFactory : IGameMemoryTableFactory
     {
+        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+
         public GameMemoryTable CreateForVersion(string gameVersion, Dictionary<string, IntPtr> moduleBaseAddresses)
         {
             // Refer to the wiki at https://github.com/Zutatensuppe/DiabloInterface/wiki/Finding-memory-table-addresses
             // for information about how to find addresses for a different version of the game.
             switch (gameVersion)
             {
-                case GameVersion.Version_1_14_D:
+                case "1.14.3.71":
                     return CreateMemoryTableForVersion114D();
-                case GameVersion.Version_1_14_C:
+                case "1.14.2.70":
                     return CreateMemoryTableForVersion114C();
-                case GameVersion.Version_1_14_B:
+                case "1.14.1.68":
                     return CreateMemoryTableForVersion114B();
-                case GameVersion.Version_1_13_D:
+                case "1, 0, 13, 64":
                     return CreateMemoryTableForVersion113D(moduleBaseAddresses);
-                case GameVersion.Version_1_13_C:
+                case "v 1.13c":
+                case "1, 0, 13, 60":
                     return CreateMemoryTableForVersion113C(moduleBaseAddresses);
                 default:
                     throw new GameVersionUnsupportedException(gameVersion);
@@ -236,6 +233,25 @@ namespace Zutatensuppe.D2Reader
         {
             // Offsets are the same for all versions so far.
             return new[] { 0x264, 0x450, 0x20, 0x00 };
+        }
+        
+        public GameMemoryTable CreateForReader(ProcessMemoryReader reader)
+        {
+            try
+            {
+                Logger.Info($"Check version: {reader.FileVersion}");
+                return CreateForVersion(reader.FileVersion, reader.ModuleBaseAddresses);
+            }
+            catch (GameVersionUnsupportedException e)
+            {
+                // we try to detect version for D2SE
+                var baseAddress = GetModuleAddress("Fog.dll", reader.ModuleBaseAddresses);
+                var pointer = new Pointer() { Base = new IntPtr(baseAddress + 0x0004AFE0), Offsets = new int[] { 0x0, 0xe00 } };
+                IntPtr versionAddress = reader.ResolvePointer(pointer, AddressingMode.Relative);
+                string version = reader.ReadNullTerminatedString(versionAddress, 20, Encoding.ASCII, AddressingMode.Absolute);
+                Logger.Info($"Check D2SE version: {version}");
+                return CreateForVersion(version, reader.ModuleBaseAddresses);
+            }
         }
     }
 }

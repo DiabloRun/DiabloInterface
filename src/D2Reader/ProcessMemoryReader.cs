@@ -8,6 +8,12 @@ namespace Zutatensuppe.D2Reader
 
     using Zutatensuppe.D2Reader.Struct;
 
+    public struct Pointer
+    {
+        public IntPtr Base;
+        public int[] Offsets;
+    }
+
     public enum AddressingMode
     {
         Absolute,
@@ -216,6 +222,11 @@ namespace Zutatensuppe.D2Reader
 
             // Already in absolute form.
             return address;
+        }
+
+        public IntPtr ResolvePointer(Pointer pointer, AddressingMode addressing = AddressingMode.Absolute)
+        {
+            return ResolveAddressPath(pointer.Base, pointer.Offsets, addressing);
         }
 
         public IntPtr ResolveAddressPath(IntPtr baseAddress, int[] pathOffsets, AddressingMode addressing = AddressingMode.Absolute)
