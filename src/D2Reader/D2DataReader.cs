@@ -285,7 +285,8 @@ namespace Zutatensuppe.D2Reader
                 }
             } catch (Exception e)
             {
-                Logger.Error($"Unable to execute ItemSlotAction. {e.Message}");
+                string s = String.Join(",", from slot in slots select slot.ToString());
+                Logger.Error($"Unable to execute ItemSlotAction. {s}", e);
             }
         }
 
