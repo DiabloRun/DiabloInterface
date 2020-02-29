@@ -17,7 +17,16 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
         public string BaseItem { get; set; }
         public string Quality { get; set; }
 
-        public ItemInfo(ItemReader itemReader, D2Unit item)
+        public static List<ItemInfo> GetItemsByLocations(D2DataReader dataReader, List<BodyLocation> locations)
+        {
+            List<ItemInfo> Items = new List<ItemInfo>();
+            dataReader.ItemSlotAction(locations, (itemReader, item) => {
+                Items.Add(new ItemInfo(itemReader, item));
+            });
+            return Items;
+        }
+
+        private ItemInfo(ItemReader itemReader, D2Unit item)
         {
             ItemName = itemReader.GetFullItemName(item);
             Properties = itemReader.GetMagicalStrings(item);
@@ -50,15 +59,6 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
                 default:
                     return "";
             }
-        }
-
-        public static List<ItemInfo> GetItemsByLocations(D2DataReader dataReader, List<BodyLocation> locations)
-        {
-            List<ItemInfo> Items = new List<ItemInfo>();
-            dataReader.ItemSlotAction(locations, (itemReader, item) => {
-                Items.Add(new ItemInfo(itemReader, item));
-            });
-            return Items;
         }
     }
 

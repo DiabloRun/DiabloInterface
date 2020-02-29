@@ -46,7 +46,12 @@ namespace Zutatensuppe.D2Reader.Readers
             if (player == null && (long)memory.Address.PlayerUnit > 0)
             {
                 IntPtr playerAddress = reader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
-                player = reader.Read<D2Unit>(playerAddress);
+                // when no game is started yet, the player address will be 0 and
+                // there will be no benefit in trying to read it
+                if ((long)playerAddress > 0)
+                {
+                    player = reader.Read<D2Unit>(playerAddress);
+                }
             }
 
             return player;
