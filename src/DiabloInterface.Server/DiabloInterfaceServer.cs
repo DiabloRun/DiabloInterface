@@ -15,7 +15,8 @@ namespace Zutatensuppe.DiabloInterface.Server
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
         readonly string pipeName;
-        Thread listenThread;
+        private readonly PipeSecurity ps;
+        NamedPipeServerStream stream;
 
         readonly Dictionary<string, Func<IRequestHandler>> requestHandlers = new Dictionary<string, Func<IRequestHandler>>();
         public IReadOnlyDictionary<string, Func<IRequestHandler>> RequestHandlers => requestHandlers;
@@ -26,8 +27,9 @@ namespace Zutatensuppe.DiabloInterface.Server
 
             this.pipeName = pipeName;
 
-            listenThread = new Thread(ServerListen) {IsBackground = true};
-            listenThread.Start();
+            ps = new PipeSecurity();
+            System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier(System.Security.Principal.WellKnownSidType.BuiltinUsersSid, null);
+            ps.AddAccessRule(new PipeAccessRule(sid, PipeAccessRights.ReadWrite, System.Security.AccessControl.AccessControlType.Allow));
         }
 
         public void AddRequestHandler(string resource, Func<IRequestHandler> handler)
@@ -42,68 +44,79 @@ namespace Zutatensuppe.DiabloInterface.Server
             requestHandlers[resource] = handler;
         }
 
+        public void Start()
+        {
+            ServerListen();
+        }
+
         public void Stop()
         {
-            if (listenThread != null)
-            {
-                listenThread.Abort();
-                listenThread = null;
-            }
+            stream.Close();
         }
 
-        void ServerListen()
+        private void ServerListen()
         {
-            var ps = new PipeSecurity();
-            System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier(System.Security.Principal.WellKnownSidType.BuiltinUsersSid, null);
-            ps.AddAccessRule(new PipeAccessRule(sid, PipeAccessRights.ReadWrite, System.Security.AccessControl.AccessControlType.Allow));
+            stream = new NamedPipeServerStream(pipeName,
+                PipeDirection.InOut, 1,
+                PipeTransmissionMode.Message,
+                PipeOptions.Asynchronous,
+                1024, 1024, ps);
+            stream.BeginWaitForConnection(WaitForConnectionCallBack, stream);
+        }
 
-            while (true)
+        private void WaitForConnectionCallBack(IAsyncResult iar)
+        {
+            try
             {
-                NamedPipeServerStream pipe = null;
-                try
-                {
-                    pipe = new NamedPipeServerStream(pipeName,
-                        PipeDirection.InOut, 1,
-                        PipeTransmissionMode.Message,
-                        PipeOptions.Asynchronous,
-                        1024, 1024, ps);
-                    pipe.WaitForConnection();
-                    HandleClientConnection(pipe);
-                    pipe.Close();
-                }
-                catch (UnauthorizedAccessException e )
-                {
-                    // note: should only come here if another pipe with same name is already open (= another instance of d2interface is running)
-                    Console.WriteLine("Error: {0}", e.Message);
-                    Thread.Sleep(1000); // try again in 1 sec to prevent tool from lagging
-                }
-                catch (IOException e)
-                {
-                    Logger.Error("Item Server Failure", e);
-                    pipe?.Close();
-                }
+                // Get the pipe
+                NamedPipeServerStream stream = (NamedPipeServerStream)iar.AsyncState;
+                // End waiting for the connection
+                stream.EndWaitForConnection(iar);
+
+                HandleClientConnection(stream);
+
+                stream.WaitForPipeDrain();
+                stream.Disconnect();
+                stream.Close();
+                stream = null;
+
+                // Listen for next message
+                ServerListen();
+            }
+            catch (ObjectDisposedException e)
+            {
+                // this is expected to happen when the server is stopped
+                // while we wait for connection
+                Logger.Info("ObjectDisposedException", e);
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Pipe server error", e);
             }
         }
 
-        void HandleClientConnection(NamedPipeServerStream pipe)
+        private void HandleClientConnection(NamedPipeServerStream pipe)
         {
             // Read query request.
             var reader = new JsonStreamReader(pipe, Encoding.UTF8);
             var legacyRequest = reader.ReadJson<LegacyRequest>();
+            object response = null;
             if (!string.IsNullOrEmpty(legacyRequest.EquipmentSlot))
             {
-                writeResponse(pipe, new LegacyResponse(HandleRequest(legacyRequest.AsRequest())));
+                response = new LegacyResponse(HandleRequest(legacyRequest.AsRequest()));
             } else
             {
-                writeResponse(pipe, HandleRequest(reader.ReadJson<Request>()));
+                response = HandleRequest(reader.ReadJson<Request>());
             }
+            WriteResponse(pipe, response);
         }
 
-        void writeResponse(NamedPipeServerStream pipe, object response)
+        private void WriteResponse(NamedPipeServerStream pipe, object response)
         {
-            // Get response and write.
-            var writer = new JsonStreamWriter(pipe, Encoding.UTF8,
-                new IsoDateTimeConverter());
+            var writer = new JsonStreamWriter(
+                pipe, Encoding.UTF8,
+                new IsoDateTimeConverter()
+            );
             writer.WriteJson(response);
             writer.Flush();
         }

@@ -87,11 +87,11 @@ namespace Zutatensuppe.DiabloInterface
 
                 new CharacterStatFileWriterService(settingsService, gameService);
                 var autoSplitService = new AutoSplitService(settingsService, gameService);
-                var pipeServer = CreatePipeServer(gameService, settingsService);
+                var serverService = new ServerService(gameService, settingsService);
                 var mainWindow = new MainWindow(settingsService, gameService, autoSplitService);
                 Application.Run(mainWindow);
 
-                pipeServer.Stop();
+                serverService.Stop();
             }
         }
 
@@ -111,20 +111,6 @@ namespace Zutatensuppe.DiabloInterface
             service.LoadSettingsFromPreviousSession();
 
             return service;
-        }
-
-        static DiabloInterfaceServer CreatePipeServer(GameService gameService, SettingsService settingsService)
-        {
-            var pipeServer = new DiabloInterfaceServer(settingsService.CurrentSettings.PipeName);
-
-            var dataReader = gameService.DataReader;
-            pipeServer.AddRequestHandler(@"version", () => new VersionRequestHandler(Assembly.GetEntryAssembly()));
-            pipeServer.AddRequestHandler(@"items", () => new AllItemsRequestHandler(dataReader));
-            pipeServer.AddRequestHandler(@"items/(\w+)", () => new ItemRequestHandler(dataReader));
-            pipeServer.AddRequestHandler(@"characters/(current|active)", () => new CharacterRequestHandler(dataReader));
-            pipeServer.AddRequestHandler(@"quests/(\d+)", () => new QuestRequestHandler(dataReader));
-
-            return pipeServer;
         }
     }
 }
