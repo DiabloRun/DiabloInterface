@@ -115,9 +115,6 @@ namespace Zutatensuppe.DiabloInterface
 
         static DiabloInterfaceServer CreatePipeServer(GameService gameService, SettingsService settingsService)
         {
-            var logger = LogServiceLocator.Get(typeof(Program));
-            logger.Info("Initializing pipe server.");
-            
             var pipeServer = new DiabloInterfaceServer(settingsService.CurrentSettings.PipeName);
 
             var dataReader = gameService.DataReader;

@@ -22,6 +22,8 @@ namespace Zutatensuppe.DiabloInterface.Server
 
         public DiabloInterfaceServer(string pipeName)
         {
+            Logger.Info("Initializing pipe server.");
+
             this.pipeName = pipeName;
 
             listenThread = new Thread(ServerListen) {IsBackground = true};
