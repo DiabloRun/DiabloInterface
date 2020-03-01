@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Gui
+namespace Zutatensuppe.DiabloInterface.Gui
 {
     using System;
     using System.Collections.Generic;
@@ -16,14 +16,15 @@
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Gui.Controls;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
+    using Zutatensuppe.DiabloInterface.Server;
 
     public partial class DebugWindow : WsExCompositedForm
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        readonly ISettingsService settingsService;
-        readonly IGameService gameService;
-
+        private readonly ISettingsService settingsService;
+        private readonly IGameService gameService;
+        private readonly ServerService serverService;
         readonly Dictionary<GameDifficulty, QuestDebugRow[,]> questRows =
             new Dictionary<GameDifficulty, QuestDebugRow[,]>();
 
@@ -34,12 +35,16 @@
         Label clickedLabel;
         Label hoveredLabel;
 
-        public DebugWindow(ISettingsService settingsService, IGameService gameService)
-        {
+        public DebugWindow(
+            ISettingsService settingsService,
+            IGameService gameService,
+            ServerService serverService
+        ) {
             Logger.Info("Creating debug window.");
 
             this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
             this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
+            this.serverService = serverService ?? throw new ArgumentNullException(nameof(serverService));
 
             EnableReaderDebugData();
             RegisterServiceEventHandlers();
@@ -74,12 +79,28 @@
         {
             settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
             gameService.DataRead += GameServiceOnDataRead;
+            serverService.StatusChanged += ServerServiceStatusChanged;
         }
 
         void UnregisterServiceEventHandlers()
         {
             settingsService.SettingsChanged -= SettingsServiceOnSettingsChanged;
             gameService.DataRead -= GameServiceOnDataRead;
+        }
+
+        void ServerServiceStatusChanged(object sender, ServerStatusEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke((Action)(() => ServerServiceStatusChanged(sender, e)));
+                return;
+            }
+
+            txtPipeServer.Text = "";
+            foreach (KeyValuePair<string, DiabloInterfaceServer> s in e.Servers)
+            {
+                txtPipeServer.Text += s.Key + ": " + (s.Value.Running ? "RUNNING" :"NOT RUNNING") + "\n";
+            }
         }
 
         void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)

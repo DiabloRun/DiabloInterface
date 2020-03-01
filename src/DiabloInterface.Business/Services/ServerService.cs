@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Zutatensuppe.D2Reader;
+using Zutatensuppe.DiabloInterface.Business.Settings;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Server;
 using Zutatensuppe.DiabloInterface.Server.Handlers;
@@ -15,25 +16,37 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        Dictionary<string, DiabloInterfaceServer> Servers = new Dictionary<string, DiabloInterfaceServer>();
+        public Dictionary<string, DiabloInterfaceServer> Servers = new Dictionary<string, DiabloInterfaceServer>();
+
+        private GameService gameService;
+
+        public event EventHandler<ServerStatusEventArgs> StatusChanged;
 
         public ServerService(GameService gameService, SettingsService settingsService)
         {
+            this.gameService = gameService;
             settingsService.SettingsChanged += (object sender, ApplicationSettingsEventArgs args) =>
             {
-                if (!Servers.ContainsKey(args.Settings.PipeName))
-                {
-                    Stop();
-                    CreateServer(args.Settings.PipeName, gameService.DataReader);
-                }
+                Init(args.Settings);
             };
-            CreateServer(settingsService.CurrentSettings.PipeName, gameService.DataReader);
+
+            Init(settingsService.CurrentSettings);
         }
 
-        private void CreateServer(string pipeName, D2DataReader dataReader)
+        private void Init(ApplicationSettings s)
+        {
+            Stop();
+            if (s.PipeServerEnabled)
+            {
+                CreateServer(s.PipeName);
+            }
+        }
+
+        private void CreateServer(string pipeName)
         {
             Logger.Info($"Creating Server: {pipeName}");
             var pipeServer = new DiabloInterfaceServer(pipeName);
+            var dataReader = gameService.DataReader;
             pipeServer.AddRequestHandler(@"version", () => new VersionRequestHandler(Assembly.GetEntryAssembly()));
             pipeServer.AddRequestHandler(@"items", () => new AllItemsRequestHandler(dataReader));
             pipeServer.AddRequestHandler(@"items/(\w+)", () => new ItemRequestHandler(dataReader));
@@ -41,6 +54,8 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             pipeServer.AddRequestHandler(@"quests/(\d+)", () => new QuestRequestHandler(dataReader));
             pipeServer.Start();
             Servers.Add(pipeName, pipeServer);
+
+            StatusChanged?.Invoke(this, new ServerStatusEventArgs(Servers));
         }
 
         public void Stop()
@@ -51,6 +66,18 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
                 s.Value.Stop();
             }
             Servers.Clear();
+
+            StatusChanged?.Invoke(this, new ServerStatusEventArgs(Servers));
         }
+    }
+
+    public class ServerStatusEventArgs : EventArgs
+    {
+        public ServerStatusEventArgs(Dictionary<string, DiabloInterfaceServer> servers)
+        {
+            Servers = servers;
+        }
+
+        public Dictionary<string, DiabloInterfaceServer> Servers { get; }
     }
 }

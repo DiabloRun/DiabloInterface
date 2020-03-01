@@ -47,9 +47,12 @@
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.textItemDesc = new System.Windows.Forms.RichTextBox();
+            this.grpPipeServer = new System.Windows.Forms.GroupBox();
+            this.txtPipeServer = new System.Windows.Forms.RichTextBox();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.grpPipeServer.SuspendLayout();
             this.SuspendLayout();
             // 
             // autosplitPanel
@@ -58,7 +61,7 @@
             this.autosplitPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.autosplitPanel.Location = new System.Drawing.Point(3, 16);
             this.autosplitPanel.Name = "autosplitPanel";
-            this.autosplitPanel.Size = new System.Drawing.Size(281, 144);
+            this.autosplitPanel.Size = new System.Drawing.Size(281, 105);
             this.autosplitPanel.TabIndex = 0;
             // 
             // groupBox1
@@ -121,7 +124,7 @@
             this.groupBox2.Controls.Add(this.autosplitPanel);
             this.groupBox2.Location = new System.Drawing.Point(576, 4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(287, 163);
+            this.groupBox2.Size = new System.Drawing.Size(287, 124);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Splits";
@@ -130,7 +133,7 @@
             // 
             this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.label1.ForeColor = System.Drawing.Color.Aquamarine;
-            this.label1.Location = new System.Drawing.Point(700, 172);
+            this.label1.Location = new System.Drawing.Point(700, 129);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(40, 40);
             this.label1.TabIndex = 5;
@@ -144,7 +147,7 @@
             // 
             this.label2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.label2.ForeColor = System.Drawing.Color.Aquamarine;
-            this.label2.Location = new System.Drawing.Point(628, 202);
+            this.label2.Location = new System.Drawing.Point(628, 159);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(40, 80);
             this.label2.TabIndex = 6;
@@ -158,7 +161,7 @@
             // 
             this.label3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.label3.ForeColor = System.Drawing.Color.Aquamarine;
-            this.label3.Location = new System.Drawing.Point(772, 202);
+            this.label3.Location = new System.Drawing.Point(772, 159);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(40, 80);
             this.label3.TabIndex = 7;
@@ -172,7 +175,7 @@
             // 
             this.label4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.label4.ForeColor = System.Drawing.Color.Aquamarine;
-            this.label4.Location = new System.Drawing.Point(700, 222);
+            this.label4.Location = new System.Drawing.Point(700, 179);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(40, 60);
             this.label4.TabIndex = 8;
@@ -186,7 +189,7 @@
             // 
             this.label5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.label5.ForeColor = System.Drawing.Color.Aquamarine;
-            this.label5.Location = new System.Drawing.Point(628, 294);
+            this.label5.Location = new System.Drawing.Point(628, 251);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(40, 40);
             this.label5.TabIndex = 9;
@@ -200,7 +203,7 @@
             // 
             this.label6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.label6.ForeColor = System.Drawing.Color.Aquamarine;
-            this.label6.Location = new System.Drawing.Point(700, 294);
+            this.label6.Location = new System.Drawing.Point(700, 251);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(40, 20);
             this.label6.TabIndex = 10;
@@ -214,7 +217,7 @@
             // 
             this.label7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.label7.ForeColor = System.Drawing.Color.Aquamarine;
-            this.label7.Location = new System.Drawing.Point(674, 294);
+            this.label7.Location = new System.Drawing.Point(674, 251);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(20, 20);
             this.label7.TabIndex = 11;
@@ -228,7 +231,7 @@
             // 
             this.label8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.label8.ForeColor = System.Drawing.Color.Aquamarine;
-            this.label8.Location = new System.Drawing.Point(746, 294);
+            this.label8.Location = new System.Drawing.Point(746, 251);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(20, 20);
             this.label8.TabIndex = 12;
@@ -242,7 +245,7 @@
             // 
             this.label9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.label9.ForeColor = System.Drawing.Color.Aquamarine;
-            this.label9.Location = new System.Drawing.Point(772, 294);
+            this.label9.Location = new System.Drawing.Point(772, 251);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(40, 40);
             this.label9.TabIndex = 13;
@@ -256,7 +259,7 @@
             // 
             this.label10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.label10.ForeColor = System.Drawing.Color.Aquamarine;
-            this.label10.Location = new System.Drawing.Point(746, 192);
+            this.label10.Location = new System.Drawing.Point(746, 149);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(20, 20);
             this.label10.TabIndex = 12;
@@ -268,17 +271,36 @@
             // 
             // textItemDesc
             // 
-            this.textItemDesc.Location = new System.Drawing.Point(579, 337);
+            this.textItemDesc.Location = new System.Drawing.Point(579, 294);
             this.textItemDesc.Name = "textItemDesc";
-            this.textItemDesc.Size = new System.Drawing.Size(284, 222);
+            this.textItemDesc.Size = new System.Drawing.Size(284, 171);
             this.textItemDesc.TabIndex = 14;
             this.textItemDesc.Text = "";
+            // 
+            // grpPipeServer
+            // 
+            this.grpPipeServer.Controls.Add(this.txtPipeServer);
+            this.grpPipeServer.Location = new System.Drawing.Point(579, 471);
+            this.grpPipeServer.Name = "grpPipeServer";
+            this.grpPipeServer.Size = new System.Drawing.Size(284, 88);
+            this.grpPipeServer.TabIndex = 15;
+            this.grpPipeServer.TabStop = false;
+            this.grpPipeServer.Text = "Pipe Server";
+            // 
+            // txtPipeServer
+            // 
+            this.txtPipeServer.Location = new System.Drawing.Point(6, 19);
+            this.txtPipeServer.Name = "txtPipeServer";
+            this.txtPipeServer.Size = new System.Drawing.Size(272, 62);
+            this.txtPipeServer.TabIndex = 0;
+            this.txtPipeServer.Text = "";
             // 
             // DebugWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(875, 571);
+            this.Controls.Add(this.grpPipeServer);
             this.Controls.Add(this.textItemDesc);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label10);
@@ -300,6 +322,7 @@
             this.groupBox1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
+            this.grpPipeServer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -324,5 +347,7 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.RichTextBox textItemDesc;
+        private System.Windows.Forms.GroupBox grpPipeServer;
+        private System.Windows.Forms.RichTextBox txtPipeServer;
     }
 }

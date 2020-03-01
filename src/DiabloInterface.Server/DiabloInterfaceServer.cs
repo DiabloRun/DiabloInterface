@@ -17,6 +17,7 @@ namespace Zutatensuppe.DiabloInterface.Server
         readonly string pipeName;
         private readonly PipeSecurity ps;
         NamedPipeServerStream stream;
+        public bool Running { get; private set; }
 
         readonly Dictionary<string, Func<IRequestHandler>> requestHandlers = new Dictionary<string, Func<IRequestHandler>>();
         public IReadOnlyDictionary<string, Func<IRequestHandler>> RequestHandlers => requestHandlers;
@@ -46,12 +47,22 @@ namespace Zutatensuppe.DiabloInterface.Server
 
         public void Start()
         {
-            ServerListen();
+            try
+            {
+                ServerListen();
+                Running = true;
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Pipe server error", e);
+                Running = false;
+            }
         }
 
         public void Stop()
         {
-            stream.Close();
+            stream?.Close();
+            Running = false;
         }
 
         private void ServerListen()
@@ -82,16 +93,19 @@ namespace Zutatensuppe.DiabloInterface.Server
 
                 // Listen for next message
                 ServerListen();
+                Running = true;
             }
             catch (ObjectDisposedException e)
             {
                 // this is expected to happen when the server is stopped
                 // while we wait for connection
                 Logger.Info("ObjectDisposedException", e);
+                Running = false;
             }
             catch (Exception e)
             {
                 Logger.Error("Pipe server error", e);
+                Running = false;
             }
         }
 

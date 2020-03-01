@@ -88,7 +88,12 @@ namespace Zutatensuppe.DiabloInterface
                 new CharacterStatFileWriterService(settingsService, gameService);
                 var autoSplitService = new AutoSplitService(settingsService, gameService);
                 var serverService = new ServerService(gameService, settingsService);
-                var mainWindow = new MainWindow(settingsService, gameService, autoSplitService);
+                var mainWindow = new MainWindow(
+                    settingsService,
+                    gameService,
+                    autoSplitService,
+                    serverService
+                );
                 Application.Run(mainWindow);
 
                 serverService.Stop();

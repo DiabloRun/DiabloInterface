@@ -24,6 +24,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Settings
         public bool DoAutosplit { get; set; }
         public bool CheckUpdates { get; set; } = true;
         public string PipeName { get; set; } = "DiabloInterfacePipe";
+        public bool PipeServerEnabled { get; set; } = true;
         public Keys AutosplitHotkey { get; set; } = Keys.None;
         public List<AutoSplit> Autosplits { get; set; } = new List<AutoSplit>();
         public IReadOnlyList<ClassRuneSettings> ClassRunes { get; set; } = new List<ClassRuneSettings>();

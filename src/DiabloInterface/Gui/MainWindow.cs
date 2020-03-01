@@ -21,17 +21,23 @@ namespace Zutatensuppe.DiabloInterface.Gui
         readonly ISettingsService settingsService;
         readonly IGameService gameService;
         readonly IAutoSplitService autoSplitService;
+        readonly ServerService serverService;
 
         Form debugWindow;
         AbstractLayout currentLayout;
 
-        public MainWindow(ISettingsService settingsService, IGameService gameService, IAutoSplitService autoSplitService)
-        {
+        public MainWindow(
+            ISettingsService settingsService,
+            IGameService gameService,
+            IAutoSplitService autoSplitService,
+            ServerService serverService
+        ) {
             Logger.Info("Creating main window.");
             this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
             this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
             this.autoSplitService = autoSplitService ?? throw new ArgumentNullException(nameof(autoSplitService));
-
+            this.serverService = serverService ?? throw new ArgumentNullException(nameof(serverService));
+            
             RegisterServiceEventHandlers();
             InitializeComponent();
             PopulateSetingsFileListContextMenu(settingsService.SettingsFileCollection);
@@ -157,7 +163,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         void SettingsMenuItemOnClick(object sender, EventArgs e)
         {
-            using (var settingsWindow = new SettingsWindow(settingsService))
+            using (var settingsWindow = new SettingsWindow(settingsService, serverService))
             {
                 settingsWindow.ShowDialog();
             }
@@ -167,7 +173,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
         {
             if (debugWindow == null || debugWindow.IsDisposed)
             {
-                debugWindow = new DebugWindow(settingsService, gameService);
+                debugWindow = new DebugWindow(settingsService, gameService, serverService);
             }
 
             debugWindow.Show();

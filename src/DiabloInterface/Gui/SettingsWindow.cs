@@ -16,6 +16,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Gui.Controls;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
+    using Zutatensuppe.DiabloInterface.Server;
 
     public partial class SettingsWindow : WsExCompositedForm
     {
@@ -23,17 +24,18 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         static readonly string SettingsFilePath = Application.StartupPath + @"\Settings";
 
-        readonly ISettingsService settingsService;
-
+        private readonly ISettingsService settingsService;
+        private readonly ServerService serverService;
         AutoSplitTable autoSplitTable;
 
         bool dirty;
 
-        public SettingsWindow(ISettingsService settingsService)
+        public SettingsWindow(ISettingsService settingsService, ServerService serverService)
         {
             Logger.Info("Creating settings window.");
 
             this.settingsService = settingsService;
+            this.serverService = serverService;
 
             RegisterServiceEventHandlers();
             InitializeComponent();
@@ -70,6 +72,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     || settings.CreateFiles != CreateFilesCheckBox.Checked
                     || settings.CheckUpdates != CheckUpdatesCheckBox.Checked
                     || settings.PipeName != textBoxPipeName.Text
+                    || settings.PipeServerEnabled != chkPipeServerEnabled.Checked
                     || settings.DisplayName != chkDisplayName.Checked
                     || settings.DisplayGold != chkDisplayGold.Checked
                     || settings.DisplayDeathCounter != chkDisplayDeathCounter.Checked
@@ -131,6 +134,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
         {
             settingsService.SettingsChanged += SettingsServiceSettingsChanged;
             settingsService.SettingsCollectionChanged += SettingsServiceOnSettingsCollectionChanged;
+            serverService.StatusChanged += ServerServiceStatusChanged;
         }
 
         void UnregisterServiceEventHandlers()
@@ -151,6 +155,28 @@ namespace Zutatensuppe.DiabloInterface.Gui
             ////     behavior will be to refresh the settings window in that case.
             ReloadComponentsWithCurrentSettings(e.Settings);
             MarkClean();
+        }
+
+
+        void ServerServiceStatusChanged(object sender, ServerStatusEventArgs e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke((Action)(() => ServerServiceStatusChanged(sender, e)));
+                return;
+            }
+
+            txtPipeServer.Text = ServerStatusText(e.Servers);
+        }
+
+        string ServerStatusText(Dictionary<string, DiabloInterfaceServer> servers)
+        {
+            var txt = "";
+            foreach (KeyValuePair<string, DiabloInterfaceServer> srv in servers)
+            {
+                txt += srv.Key + ": " + (srv.Value.Running ? "RUNNING" : "NOT RUNNING") + "\n";
+            }
+            return txt;
         }
 
         void InitializeAutoSplitTable()
@@ -184,6 +210,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             autoSplitHotkeyControl.Hotkey = settings.AutosplitHotkey;
             CheckUpdatesCheckBox.Checked = settings.CheckUpdates;
             textBoxPipeName.Text = settings.PipeName;
+            chkPipeServerEnabled.Checked = settings.PipeServerEnabled;
             chkDisplayName.Checked = settings.DisplayName;
             chkDisplayGold.Checked = settings.DisplayGold;
             chkDisplayDeathCounter.Checked = settings.DisplayDeathCounter;
@@ -215,6 +242,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             btnSetPoisonResColor.ForeColor = settings.ColorPoisonRes;
             btnSetPlayersXColor.ForeColor = settings.ColorPlayersX;
             btnSetGameCounterColor.ForeColor = settings.ColorGameCounter;
+
+            txtPipeServer.Text = ServerStatusText(serverService.Servers);
         }
 
         void MarkClean()
@@ -245,6 +274,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             settings.CreateFiles = CreateFilesCheckBox.Checked;
             settings.CheckUpdates = CheckUpdatesCheckBox.Checked;
             settings.PipeName = textBoxPipeName.Text;
+            settings.PipeServerEnabled = chkPipeServerEnabled.Checked;
             settings.DoAutosplit = EnableAutosplitCheckBox.Checked;
             settings.AutosplitHotkey = autoSplitHotkeyControl.Hotkey;
             settings.FontSize = (int)fontSizeNumeric.Value;
