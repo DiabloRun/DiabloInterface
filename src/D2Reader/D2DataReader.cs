@@ -195,7 +195,7 @@ namespace Zutatensuppe.D2Reader
             reader.Dispose();
             reader = null;
         }
-        // foreach (var item in unitReader.inventoryReader.EnumerateInventoryBackward(player, FilterSlots))
+
         bool InitializeGameDataReaders()
         {
             foreach (var desc in this.processDescriptions)
@@ -536,6 +536,7 @@ namespace Zutatensuppe.D2Reader
                 && MatchesStartingItems(p)
                 && MatchesStartingSkills(p);
         }
+
         private bool MatchesStartingProps(D2Unit p)
         {
             // check -act2/3/4/5 level|xp

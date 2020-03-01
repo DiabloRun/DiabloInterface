@@ -1,0 +1,1 @@
+powershell -f build.ps1
