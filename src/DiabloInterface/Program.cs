@@ -8,8 +8,6 @@ namespace Zutatensuppe.DiabloInterface
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Framework;
     using Zutatensuppe.DiabloInterface.Gui;
-    using Zutatensuppe.DiabloInterface.Server;
-    using Zutatensuppe.DiabloInterface.Server.Handlers;
 
     using static Framework.NetFrameworkVersionComparator;
 
