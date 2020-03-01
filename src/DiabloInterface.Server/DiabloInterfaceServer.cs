@@ -15,6 +15,7 @@ namespace Zutatensuppe.DiabloInterface.Server
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
         readonly string pipeName;
+        private readonly Cache cache;
         private readonly PipeSecurity ps;
         NamedPipeServerStream stream;
         public bool Running { get; private set; }
@@ -27,6 +28,8 @@ namespace Zutatensuppe.DiabloInterface.Server
             Logger.Info("Initializing pipe server.");
 
             this.pipeName = pipeName;
+
+            this.cache = new Cache();
 
             ps = new PipeSecurity();
             System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier(System.Security.Principal.WellKnownSidType.BuiltinUsersSid, null);
@@ -137,7 +140,17 @@ namespace Zutatensuppe.DiabloInterface.Server
 
         Response HandleRequest(Request request)
         {
-            return new RequestProcessor().HandleRequest(requestHandlers, request);
+            string cacheKey = request?.Resource + "|" + request?.Payload?.ToString();
+            var resp = cache.Get(cacheKey);
+            if (resp == null)
+            {
+                resp = new RequestProcessor().HandleRequest(
+                    requestHandlers,
+                    request
+                );
+                cache.Set(cacheKey, resp, 10000);
+            }
+            return (Response)resp;
         }
     }
 }

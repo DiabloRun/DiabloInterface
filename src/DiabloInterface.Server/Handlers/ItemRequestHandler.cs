@@ -79,7 +79,11 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
 
         public Response HandleRequest(Request request, IList<string> arguments)
         {
-            return BuildResponse(BuildPayload(GetItemLocations(arguments[0])));
+            return new Response()
+            {
+                Status = ResponseStatus.Success,
+                Payload = BuildPayload(GetItemLocations(arguments[0])),
+            };
         }
 
         private ItemResponsePayload BuildPayload(List<BodyLocation> locations)
@@ -96,16 +100,7 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             };
         }
 
-        static Response BuildResponse(ItemResponsePayload payload)
-        {
-            return new Response()
-            {
-                Status = ResponseStatus.Success,
-                Payload = payload,
-            };
-        }
-
-        static List<BodyLocation> GetItemLocations(string itemSlot)
+        private static List<BodyLocation> GetItemLocations(string itemSlot)
         {
             var locations = new List<BodyLocation>();
             if (string.IsNullOrEmpty(itemSlot))
