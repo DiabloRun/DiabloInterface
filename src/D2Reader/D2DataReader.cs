@@ -532,58 +532,7 @@ namespace Zutatensuppe.D2Reader
             if (p == null)
                 return false;
 
-            return MatchesStartingProps(p)
-                && MatchesStartingItems(p)
-                && MatchesStartingSkills(p);
-        }
-
-        private bool MatchesStartingProps(D2Unit p)
-        {
-            // check -act2/3/4/5 level|xp
-            int level = unitReader.GetStatValue(p, StatIdentifier.Level) ?? 0;
-            int experience = unitReader.GetStatValue(p, StatIdentifier.Experience) ?? 0;
-
-            // first we will check the level and XP
-            // act should be set to the act we are currently in
-            return 
-                (level == 1 && experience == 0 && p.actNo == 0)
-                || (level == 16 && experience == 220165 && p.actNo == 1)
-                || (level == 21 && experience == 839864 && p.actNo == 2)
-                || (level == 27 && experience == 2563061 && p.actNo == 3)
-                || (level == 33 && experience == 7383752 && p.actNo == 4);
-        }
-
-        private bool MatchesStartingItems(D2Unit p)
-        {
-            int[] list = (
-                from item
-                in unitReader.inventoryReader.EnumerateInventoryForward(p)
-                select item.eClass
-            ).ToArray();
-
-            return list.SequenceEqual(Character.StartingItems[(CharacterClass)p.eClass]);
-        }
-
-        private bool MatchesStartingSkills(D2Unit p)
-        {
-            int skillCount = 0;
-            foreach (D2Skill skill in unitReader.skillReader.EnumerateSkills(p))
-            {
-                var skillData = unitReader.skillReader.ReadSkillData(skill);
-                Skill skillId = (Skill)skillData.SkillId;
-                if (!Character.StartingSkills[(CharacterClass)p.eClass].ContainsKey(skillId))
-                {
-                    return false;
-                }
-
-                if (Character.StartingSkills[(CharacterClass)p.eClass][skillId] != unitReader.skillReader.GetTotalNumberOfSkillPoints(skill))
-                {
-                    return false;
-                }
-                skillCount++;
-            }
-
-            return skillCount == Character.StartingSkills[(CharacterClass)p.eClass].Count;
+            return unitReader.IsNewChar(p);
         }
 
         Character CharacterByNameCached(string playerName)

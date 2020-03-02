@@ -132,7 +132,7 @@ namespace Zutatensuppe.D2Reader
 
         public bool IsDead { get; private set; }
 
-        public int Level { get; private set; }
+        virtual public int Level { get; private set; }
         public int Experience { get; private set; }
 
         public int Strength { get; private set; }

@@ -1,4 +1,4 @@
-﻿namespace DiabloInterface.Test
+namespace DiabloInterface.Test.Core.Extensions
 {
     using System;
 

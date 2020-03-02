@@ -18,10 +18,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        readonly ISettingsService settingsService;
-        readonly IGameService gameService;
-        readonly IAutoSplitService autoSplitService;
-        readonly ServerService serverService;
+        private readonly ISettingsService settingsService;
+        private readonly IGameService gameService;
+        private readonly IAutoSplitService autoSplitService;
+        private readonly KeyService keyService;
+        private readonly ServerService serverService;
 
         Form debugWindow;
         AbstractLayout currentLayout;
@@ -30,12 +31,14 @@ namespace Zutatensuppe.DiabloInterface.Gui
             ISettingsService settingsService,
             IGameService gameService,
             IAutoSplitService autoSplitService,
+            KeyService keyService,
             ServerService serverService
         ) {
             Logger.Info("Creating main window.");
             this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
             this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
             this.autoSplitService = autoSplitService ?? throw new ArgumentNullException(nameof(autoSplitService));
+            this.keyService = keyService ?? throw new ArgumentNullException(nameof(keyService));
             this.serverService = serverService ?? throw new ArgumentNullException(nameof(serverService));
             
             RegisterServiceEventHandlers();
@@ -163,7 +166,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         void SettingsMenuItemOnClick(object sender, EventArgs e)
         {
-            using (var settingsWindow = new SettingsWindow(settingsService, serverService))
+            using (var settingsWindow = new SettingsWindow(settingsService, serverService, keyService))
             {
                 settingsWindow.ShowDialog();
             }

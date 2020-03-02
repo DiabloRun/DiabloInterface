@@ -17,20 +17,25 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        readonly ISettingsService settingsService;
-        readonly IGameService gameService;
+        private readonly ISettingsService settingsService;
+        private readonly IGameService gameService;
+        private readonly KeyService keyService;
 
-        public AutoSplitService(ISettingsService settingsService, IGameService gameService)
-        {
+        public AutoSplitService(
+            ISettingsService settingsService,
+            IGameService gameService,
+            KeyService keyService
+        ) {
             Logger.Info("Creating auto split service.");
 
             this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
             this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
+            this.keyService = keyService ?? throw new ArgumentNullException(nameof(keyService));
 
             RegisterServiceEventHandlers();
         }
 
-        void RegisterServiceEventHandlers()
+        private void RegisterServiceEventHandlers()
         {
             settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
 
@@ -38,12 +43,12 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             gameService.CharacterCreated += GameServiceOnCharacterCreated;
         }
 
-        void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
+        private void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
         {
             LogAutoSplits(e.Settings);
         }
 
-        void LogAutoSplits(ApplicationSettings settings)
+        private void LogAutoSplits(ApplicationSettings settings)
         {
             if (settings.Autosplits.Count == 0)
             {
@@ -66,7 +71,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             Logger.Info(logMessage.ToString());
         }
 
-        void GameServiceOnDataRead(object sender, DataReadEventArgs e)
+        private void GameServiceOnDataRead(object sender, DataReadEventArgs e)
         {
             var settings = settingsService.CurrentSettings;
             if (settings.DoAutosplit)
@@ -75,11 +80,10 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             }
         }
 
-        void UpdateAutoSplits(ApplicationSettings settings, DataReadEventArgs eventArgs)
+        private void UpdateAutoSplits(ApplicationSettings settings, DataReadEventArgs eventArgs)
         {
             // Update autosplits only if the character was a freshly started character.
             if (!eventArgs.IsAutosplitCharacter) return;
-
 
             var difficulty = eventArgs.CurrentDifficulty;
             IList<QuestCollection> gameQuests = eventArgs.Quests;
@@ -131,8 +135,12 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             }
         }
 
-        private static bool IsCompleteableAutosplit(AutoSplit autoSplit, QuestCollection currentQuests, DataReadEventArgs eventArgs, GameDifficulty difficulty)
-        {
+        private static bool IsCompleteableAutosplit(
+            AutoSplit autoSplit,
+            QuestCollection currentQuests,
+            DataReadEventArgs eventArgs,
+            GameDifficulty difficulty
+        ) {
             if (autoSplit.IsReached || !autoSplit.MatchesDifficulty(difficulty))
             {
                 return false;
@@ -181,28 +189,28 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             return false;
         }
 
-        void CompleteAutoSplit(AutoSplit autosplit)
+        private void CompleteAutoSplit(AutoSplit split)
         {
             // Autosplit already reached.
-            if (autosplit.IsReached) return;
+            if (split.IsReached) return;
 
-            autosplit.IsReached = true;
+            split.IsReached = true;
             TriggerAutosplit();
 
-            var autoSplitIndex = settingsService.CurrentSettings.Autosplits.IndexOf(autosplit);
-            Logger.Info($"AutoSplit: #{autoSplitIndex} ({autosplit.Name}, {autosplit.Difficulty}) Reached.");
+            var i = settingsService.CurrentSettings.Autosplits.IndexOf(split);
+            Logger.Info($"AutoSplit: #{i} ({split.Name}, {split.Difficulty}) Reached.");
         }
 
-        void TriggerAutosplit()
+        private void TriggerAutosplit()
         {
             var settings = settingsService.CurrentSettings;
             if (settings.DoAutosplit && settings.AutosplitHotkey != Keys.None)
             {
-                KeyManager.TriggerHotkey(settings.AutosplitHotkey);
+                keyService.TriggerHotkey(settings.AutosplitHotkey);
             }
         }
 
-        void GameServiceOnCharacterCreated(object sender, CharacterCreatedEventArgs e)
+        private void GameServiceOnCharacterCreated(object sender, CharacterCreatedEventArgs e)
         {
             Logger.Info($"A new character was created. Auto splits enabled for {e.Character.Name}");
 

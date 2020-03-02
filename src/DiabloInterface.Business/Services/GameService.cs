@@ -12,19 +12,22 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        readonly ISettingsService settingsService;
-
         bool isDisposed;
-        D2DataReader dataReader;
+        public D2DataReader DataReader { get; private set; }
 
         public GameService(ISettingsService settingsService)
         {
             Logger.Info("Initializing game service.");
 
-            this.settingsService = settingsService;
+            DataReader = new D2DataReader(
+                new GameMemoryTableFactory(),
+                settingsService.CurrentSettings.ProcessDescriptions
+            );
+            DataReader.CharacterCreated += OnCharacterCreated;
+            DataReader.DataRead += OnDataRead;
 
-            InitializeDataReader();
-            InitializeDataReaderThread();
+            Logger.Info("Initializing data reader thread.");
+            new Thread(DataReader.RunReadOperation) { IsBackground = true }.Start();
         }
 
         ~GameService()
@@ -37,8 +40,6 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
         public event EventHandler<CharacterCreatedEventArgs> CharacterCreated;
 
         public event EventHandler<DataReadEventArgs> DataRead;
-
-        public D2DataReader DataReader => dataReader;
 
         public void Dispose()
         {
@@ -54,32 +55,17 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
 
             if (disposing)
             {
-                if (dataReader != null)
+                if (DataReader != null)
                 {
-                    dataReader.DataRead -= OnDataRead;
-                    dataReader.CharacterCreated -= OnCharacterCreated;
+                    DataReader.DataRead -= OnDataRead;
+                    DataReader.CharacterCreated -= OnCharacterCreated;
 
-                    dataReader.Dispose();
-                    dataReader = null;
+                    DataReader.Dispose();
+                    DataReader = null;
                 }
             }
 
             isDisposed = true;
-        }
-
-        void InitializeDataReader()
-        {
-            var memoryTableFactory = new GameMemoryTableFactory();
-
-            dataReader = new D2DataReader(memoryTableFactory, this.settingsService.CurrentSettings.ProcessDescriptions);
-            dataReader.CharacterCreated += OnCharacterCreated;
-            dataReader.DataRead += OnDataRead;
-        }
-
-        void InitializeDataReaderThread()
-        {
-            Logger.Info("Initializing data reader thread.");
-            new Thread(dataReader.RunReadOperation) { IsBackground = true }.Start();
         }
 
         void OnCharacterCreated(object sender, CharacterCreatedEventArgs e) =>

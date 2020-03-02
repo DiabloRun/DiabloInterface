@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using Zutatensuppe.DiabloInterface.Server;
 
-namespace DiabloInterface.Test
+namespace DiabloInterface.Test.Server
 {
     [TestClass]
     public class RequestProcessorTest

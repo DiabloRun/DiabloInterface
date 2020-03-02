@@ -1,39 +1,28 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using WindowsInput;
+using WindowsInput.Native;
+using Zutatensuppe.DiabloInterface.Core.Logging;
+
+namespace Zutatensuppe.DiabloInterface.Business.Services
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using System.Windows.Forms;
-
-    using WindowsInput;
-    using WindowsInput.Native;
-
-    using Zutatensuppe.DiabloInterface.Core.Logging;
-
-    /// <summary>
-    /// ugly with way too much hardcoding. but functional so far
-    /// </summary>
-    public static class KeyManager
+    public class KeyService
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        static IInputSimulator simulatorInstance;
+        private readonly IInputSimulator Simulator;
 
-        static IInputSimulator Simulator
+        public KeyService()
         {
-            get
-            {
-                if (simulatorInstance == null)
-                {
-                    // Create a default input simulator.
-                    simulatorInstance = new InputSimulator();
-                }
-
-                return simulatorInstance;
-            }
+            Simulator = new InputSimulator();
         }
 
-        public static void TriggerHotkey(Keys key)
+        public void TriggerHotkey(Keys key)
         {
             if (key == Keys.None)
             {
@@ -70,7 +59,7 @@
             TriggerHotkey(modifiers, virtualKey);
         }
 
-        static void TriggerHotkey(IEnumerable<VirtualKeyCode> modifiers, VirtualKeyCode key)
+        private void TriggerHotkey(IEnumerable<VirtualKeyCode> modifiers, VirtualKeyCode key)
         {
             if (modifiers == null)
             {
@@ -108,7 +97,7 @@
             }
         }
 
-        static IEnumerable<VirtualKeyCode> BuildInvalidModifiers(IEnumerable<VirtualKeyCode> keys)
+        private IEnumerable<VirtualKeyCode> BuildInvalidModifiers(IEnumerable<VirtualKeyCode> keys)
         {
             var modifiers = new List<VirtualKeyCode>
             {

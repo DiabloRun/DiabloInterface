@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Zutatensuppe.D2Reader.Struct.Stat;
 
-namespace DiabloInterface.Test
+namespace DiabloInterface.Test.D2Reader.Struct
 {
     [TestClass]
     public class D2StatTest

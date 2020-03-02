@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Zutatensuppe.D2Reader.Struct;
 
-namespace DiabloInterface.Test
+namespace DiabloInterface.Test.D2Reader.Struct
 {
     [TestClass]
     public class StructTests

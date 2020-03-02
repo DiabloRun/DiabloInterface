@@ -1,4 +1,4 @@
-﻿namespace DiabloInterface.Test.IO
+namespace DiabloInterface.Test.Business.IO
 {
     using System.Collections.Generic;
     using System.IO;

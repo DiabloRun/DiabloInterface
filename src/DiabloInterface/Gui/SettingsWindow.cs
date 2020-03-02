@@ -26,16 +26,21 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         private readonly ISettingsService settingsService;
         private readonly ServerService serverService;
+        private readonly KeyService keyService;
         AutoSplitTable autoSplitTable;
 
         bool dirty;
 
-        public SettingsWindow(ISettingsService settingsService, ServerService serverService)
-        {
+        public SettingsWindow(
+            ISettingsService settingsService,
+            ServerService serverService,
+            KeyService keyService
+        ) {
             Logger.Info("Creating settings window.");
 
             this.settingsService = settingsService;
             this.serverService = serverService;
+            this.keyService = keyService;
 
             RegisterServiceEventHandlers();
             InitializeComponent();
@@ -358,7 +363,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         void AutoSplitTestHotkey_Click(object sender, EventArgs e)
         {
-            KeyManager.TriggerHotkey(autoSplitHotkeyControl.Hotkey);
+            keyService.TriggerHotkey(autoSplitHotkeyControl.Hotkey);
         }
 
         void SaveSettings(string filename = null)
