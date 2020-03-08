@@ -34,7 +34,7 @@ namespace Zutatensuppe.D2Reader
         { }
     }
 
-    public class ProcessMemoryReader : IDisposable
+    public class ProcessMemoryReader : IProcessMemoryReader, IDisposable
     {
         [DllImport("kernel32.dll")]
         static extern int VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION64 lpBuffer, uint dwLength);

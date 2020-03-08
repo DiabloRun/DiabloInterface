@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 
 using UInt8 = System.Byte;
@@ -30,7 +30,7 @@ namespace Zutatensuppe.D2Reader.Struct.Skill
 
 
     [Flags]
-    enum SkillFlags : ulong
+    public enum SkillFlags : ulong
     {
         None                = 0,
         Decquant            = (1UL << 0),
@@ -75,7 +75,7 @@ namespace Zutatensuppe.D2Reader.Struct.Skill
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 0x23C)]
-    class D2SkillData
+    public class D2SkillData
     {
         [ExpectOffset(0x000)] public UInt32 SkillId;              // 0x000
         [ExpectOffset(0x004)] public SkillFlags Flags;            // 0x004

@@ -27,10 +27,11 @@ namespace Zutatensuppe.D2Reader.Readers
         ushort[] opNestings;
 
         public ItemReader(
-            ProcessMemoryReader reader,
+            IProcessMemoryReader reader,
             GameMemoryTable memory,
-            StringLookupTable stringReader
-        ) : base(reader, memory, stringReader)
+            IStringLookupTable stringReader,
+            ISkillReader skillReader
+        ) : base(reader, memory, stringReader, skillReader)
         {
             cachedItemData = new Dictionary<IntPtr, D2ItemData>();
             cachedDescriptions = new Dictionary<int, D2ItemDescription>();
@@ -50,11 +51,6 @@ namespace Zutatensuppe.D2Reader.Readers
                     ItemStatCost = reader.ReadArray<D2ItemStatCost>(globals.ItemStatCost, (int)globals.ItemStatCostCount);
                 }
             }
-        }
-
-        protected override InventoryReader createInventoryReader()
-        {
-            return new InventoryReader(reader, this);
         }
 
         public override void ResetCache()

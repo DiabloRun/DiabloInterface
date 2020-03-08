@@ -47,6 +47,7 @@
     <Compile Include="GameMemoryAddressTable.cs" />
     <Compile Include="GameMemoryOffsetTable.cs" />
     <Compile Include="GameMemoryTable.cs" />
+    <Compile Include="IProcessMemoryReader.cs" />
     <Compile Include="Models\CharacterClass.cs" />
     <Compile Include="Models\Rune.cs" />
     <Compile Include="Models\ResistancePenalty.cs" />
@@ -59,7 +60,10 @@
     <Compile Include="Models\QuestDetails.cs" />
     <Compile Include="Models\QuestId.cs" />
     <Compile Include="ProcessMemoryReader.cs" />
+    <Compile Include="Readers\IInventoryReader.cs" />
     <Compile Include="Readers\InventoryReader.cs" />
+    <Compile Include="Readers\ISkillReader.cs" />
+    <Compile Include="Readers\IStringLookupTable.cs" />
     <Compile Include="Readers\ItemReader.cs" />
     <Compile Include="Readers\RangeStatData.cs" />
     <Compile Include="Readers\SkillReader.cs" />

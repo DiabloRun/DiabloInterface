@@ -9,6 +9,18 @@ var buildDir = Directory("./artifacts");
 var binDir = buildDir + Directory("bin");
 var solution = "./src/DiabloInterface.sln";
 
+var testSolution = "./src/DiabloInterface.test";
+var testDir = Directory(testSolution + "/bin/" + configuration + "/");
+var testFile = testDir + File(@"DiabloInterface.test.dll");
+var testResultFile = testDir + File(@"TestResults.trx");
+
+var vsLatest = VSWhereLatest();
+var modernMSBuildPath = vsLatest + File(@"\MSBuild\15.0\Bin\MSBuild.exe");
+if (!FileExists(modernMSBuildPath)) {
+    modernMSBuildPath = vsLatest + File(@"\MSBuild\Current\bin\MSBuild.exe");
+}
+var modernMSTestPath = vsLatest + File(@"\Common7\IDE\MSTest.exe");
+
 Task("Clean")
     .Does(() =>
 {
@@ -26,10 +38,6 @@ Task("Build")
     .IsDependentOn("RestorePackages")
     .Does(() =>
 {
-    var modernMSBuildPath = VSWhereLatest() + File(@"\MSBuild\15.0\Bin\MSBuild.exe");
-    if (!FileExists(modernMSBuildPath)) {
-        modernMSBuildPath = VSWhereLatest() + File(@"\MSBuild\Current\bin\MSBuild.exe");
-    }
     MSBuild(solution, settings =>
     {
         if (FileExists(modernMSBuildPath))
@@ -63,5 +71,44 @@ Task("Package")
 
 Task("Default")
     .IsDependentOn("Package");
+
+
+Task("CleanTest")
+    .Does(() =>
+{
+    CleanDirectory(testDir);
+});
+
+Task("BuildTest")
+    .IsDependentOn("CleanTest")
+    .Does(() =>
+{
+    MSBuild(testSolution, settings =>
+    {
+        if (FileExists(modernMSBuildPath))
+        {
+            settings.ToolPath = modernMSBuildPath;
+        }
+
+        settings.SetConfiguration(configuration);
+        settings.SetVerbosity(Verbosity.Minimal);
+    });
+});
+
+Task("Test")
+    .IsDependentOn("BuildTest")
+    .Does(() =>
+{
+    if (FileExists(modernMSTestPath)) {
+        MSTest(testFile, new MSTestSettings() {
+            ToolPath = modernMSTestPath,
+            ResultsFile = testResultFile
+        });
+    } else {
+        MSTest(testFile, new MSTestSettings() {
+            ResultsFile = testResultFile
+        });
+    }
+});
 
 RunTarget(target);

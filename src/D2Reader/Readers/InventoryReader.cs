@@ -7,12 +7,12 @@ using System.Linq;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
-    public class InventoryReader
+    public class InventoryReader: IInventoryReader
     {
-        ProcessMemoryReader processReader;
+        IProcessMemoryReader processReader;
         public ItemReader ItemReader { get; }
 
-        public InventoryReader(ProcessMemoryReader reader, ItemReader itemReader)
+        public InventoryReader(IProcessMemoryReader reader, ItemReader itemReader)
         {
             processReader = reader;
             ItemReader = itemReader;
@@ -58,7 +58,7 @@ namespace Zutatensuppe.D2Reader.Readers
             }
         }
 
-        public D2Unit GetPreviousItem(D2Unit item)
+        private D2Unit GetPreviousItem(D2Unit item)
         {
             var itemData = ItemReader.GetItemData(item);
             if (itemData == null) return null;
@@ -66,7 +66,7 @@ namespace Zutatensuppe.D2Reader.Readers
             return GetUnit(itemData.PreviousItem);
         }
 
-        public D2Unit GetNextItem(D2Unit item)
+        private D2Unit GetNextItem(D2Unit item)
         {
             var itemData = ItemReader.GetItemData(item);
             if (itemData == null) return null;

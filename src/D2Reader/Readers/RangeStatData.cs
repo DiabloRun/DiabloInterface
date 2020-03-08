@@ -1,4 +1,4 @@
-﻿using Zutatensuppe.D2Reader.Struct;
+using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Stat;
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ namespace Zutatensuppe.D2Reader.Readers
             return min != 0 && max != 0;
         }
 
-        public string ToString(StringLookupTable stringLookupTable)
+        public string ToString(IStringLookupTable stringLookupTable)
         {
             if (min == max)
             {
@@ -37,7 +37,7 @@ namespace Zutatensuppe.D2Reader.Readers
             return _toString(stringLookupTable, new object[] { min, max }, differStringId);
         }
 
-        protected string _toString(StringLookupTable stringLookupTable, object[] args, ushort stringId)
+        protected string _toString(IStringLookupTable stringLookupTable, object[] args, ushort stringId)
         {
             string format = stringLookupTable.ConvertCFormatString(
                 stringLookupTable.GetString(stringId),
@@ -105,9 +105,9 @@ namespace Zutatensuppe.D2Reader.Readers
         private bool IsDamageMaxSecondary;
         private bool HasHandledDamageRange;
 
-        private StringLookupTable stringReader;
+        private IStringLookupTable stringReader;
 
-        public RangeStatData(StringLookupTable reader, List<D2Stat> stats)
+        public RangeStatData(IStringLookupTable reader, List<D2Stat> stats)
         {
             stringReader = reader;
 
@@ -236,7 +236,11 @@ namespace Zutatensuppe.D2Reader.Readers
                 case StatIdentifier.ItemDamageMinPercent:
                     if (!damagePercent.HasRange())
                         return false;
-                    description = string.Format("+{0}% {1}", stat.Value, stringReader.GetString(StringConstants.EnhancedDamage).TrimEnd());
+                    description = string.Format(
+                        "+{0}% {1}",
+                        stat.Value,
+                        stringReader.GetString(StringConstants.EnhancedDamage).TrimEnd()
+                    );
                     return true;
                 case StatIdentifier.ItemDamageMaxPercent:
                     return damagePercent.HasRange();

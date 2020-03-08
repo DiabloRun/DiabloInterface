@@ -11,7 +11,6 @@ namespace Zutatensuppe.D2Reader
     using Zutatensuppe.D2Reader.Readers;
     using Zutatensuppe.D2Reader.Struct;
     using Zutatensuppe.D2Reader.Struct.Item;
-    using Zutatensuppe.D2Reader.Struct.Skill;
     using Zutatensuppe.D2Reader.Struct.Stat;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
@@ -93,7 +92,7 @@ namespace Zutatensuppe.D2Reader
 
         bool isDisposed;
 
-        ProcessMemoryReader reader;
+        IProcessMemoryReader reader;
         UnitReader unitReader;
         GameMemoryTable memory;
 
@@ -175,7 +174,7 @@ namespace Zutatensuppe.D2Reader
 
         #endregion
 
-        GameMemoryTable CreateGameMemoryTableForReader(ProcessMemoryReader reader)
+        GameMemoryTable CreateGameMemoryTableForReader(IProcessMemoryReader reader)
         {
             return memoryTableFactory.CreateForReader(reader);
         }
@@ -385,6 +384,7 @@ namespace Zutatensuppe.D2Reader
                 return;
             }
 
+            // why is this always creating a new unit reader? :O
             CreateUnitReader();
 
             CurrentCharacter = ProcessCharacterData(gameInfo);
@@ -393,11 +393,11 @@ namespace Zutatensuppe.D2Reader
 
             OnDataRead(new DataReadEventArgs(
                 CurrentCharacter,
-                ProcessEquippedItemStrings(),
+                ProcessEquippedItemStrings(gameInfo.Player),
                 ProcessCurrentArea(),
                 currentDifficulty,
                 ProcessCurrentPlayersX(),
-                ProcessInventoryItemIds(),
+                ProcessInventoryItemIds(gameInfo.Player),
                 IsAutosplitCharacter(CurrentCharacter),
                 gameQuests,
                 GameCounter
@@ -406,7 +406,16 @@ namespace Zutatensuppe.D2Reader
 
         void CreateUnitReader()
         {
-            unitReader = new UnitReader(reader, memory, new StringLookupTable(reader, memory.Address));
+            // could this cause problems that stuff cannot be cleaned up?
+            var stringReader = new StringLookupTable(reader, memory.Address);
+            var skillReader = new SkillReader(reader, memory);
+
+            var itemReader = new ItemReader(reader, memory, stringReader, skillReader);
+            var inventoryReader = new InventoryReader(reader, itemReader);
+            itemReader.inventoryReader = inventoryReader;
+
+            unitReader = new UnitReader(reader, memory, stringReader, skillReader);
+            unitReader.inventoryReader = inventoryReader;
         }
 
         List<QuestCollection> ProcessQuests(D2GameInfo gameInfo)
@@ -459,16 +468,15 @@ namespace Zutatensuppe.D2Reader
                 : GameDifficulty.Normal;
         }
 
-        Dictionary<BodyLocation, string> ProcessEquippedItemStrings()
+        Dictionary<BodyLocation, string> ProcessEquippedItemStrings(D2Unit player)
         {
             return ReadFlags.HasFlag(DataReaderEnableFlags.EquippedItemStrings)
-                ? ReadEquippedItemStrings()
+                ? ReadEquippedItemStrings(player)
                 : new Dictionary<BodyLocation, string>();
         }
 
-        Dictionary<BodyLocation, string> ReadEquippedItemStrings()
+        Dictionary<BodyLocation, string> ReadEquippedItemStrings(D2Unit player)
         {
-            var player = unitReader.GetPlayer();
             if (player == null)
                 return new Dictionary<BodyLocation, string>();
 
@@ -502,16 +510,15 @@ namespace Zutatensuppe.D2Reader
             return itemStrings;
         }
 
-        List<int> ProcessInventoryItemIds()
+        List<int> ProcessInventoryItemIds(D2Unit player)
         {
             return ReadFlags.HasFlag(DataReaderEnableFlags.InventoryItemIds)
-                ? ReadInventoryItemIds()
+                ? ReadInventoryItemIds(player)
                 : new List<int>();
         }
 
-        List<int> ReadInventoryItemIds()
+        List<int> ReadInventoryItemIds(D2Unit player)
         {
-            var player = unitReader.GetPlayer();
             if (player == null)
                 return new List<int>();
 
@@ -526,15 +533,6 @@ namespace Zutatensuppe.D2Reader
             return ActiveCharacter == character;
         }
 
-        bool IsNewChar()
-        {
-            D2Unit p = unitReader.GetPlayer();
-            if (p == null)
-                return false;
-
-            return unitReader.IsNewChar(p);
-        }
-
         Character CharacterByNameCached(string playerName)
         {
             if (!characters.TryGetValue(playerName, out Character character))
@@ -547,16 +545,16 @@ namespace Zutatensuppe.D2Reader
 
         Character ProcessCharacterData(D2GameInfo gameInfo)
         {
-            string playerName = gameInfo.PlayerData.PlayerName;
-            Character character = CharacterByNameCached(playerName);
+            Character character = CharacterByNameCached(gameInfo.PlayerData.PlayerName);
 
             if (wasInTitleScreen)
             {
                 // A brand new character has been started.
                 // The extra wasInTitleScreen check prevents DI from splitting
                 // when it was started AFTER Diablo 2, but the char is still a new char
-                if (IsNewChar())
+                if (unitReader.IsNewChar(gameInfo.Player))
                 {
+                    Logger.Info($"A new chararacter was created: {character.Name}");
                     ActiveCharacterTimestamp = DateTime.Now;
                     ActiveCharacter = character;
                     OnCharacterCreated(new CharacterCreatedEventArgs(character));

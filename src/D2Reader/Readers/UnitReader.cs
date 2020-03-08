@@ -11,30 +11,25 @@ namespace Zutatensuppe.D2Reader.Readers
 {
     public class UnitReader
     {
-        protected ProcessMemoryReader reader;
+        protected IProcessMemoryReader reader;
         protected GameMemoryTable memory;
-        protected StringLookupTable stringReader;
+        protected IStringLookupTable stringReader;
 
-        internal SkillReader skillReader;
-        public InventoryReader inventoryReader;
+        public ISkillReader skillReader;
+        public IInventoryReader inventoryReader;
 
         D2Unit player = null;
 
         public UnitReader(
-            ProcessMemoryReader reader,
+            IProcessMemoryReader reader,
             GameMemoryTable memory,
-            StringLookupTable stringReader
+            IStringLookupTable stringReader,
+            ISkillReader skillReader
         ) {
             this.reader = reader;
             this.memory = memory;
             this.stringReader = stringReader;
-            skillReader = new SkillReader(reader, memory);
-            inventoryReader = createInventoryReader();
-        }
-
-        protected virtual InventoryReader createInventoryReader()
-        {
-            return new InventoryReader(reader, new ItemReader(reader, memory, stringReader));
+            this.skillReader = skillReader;
         }
 
         public virtual void ResetCache()
@@ -58,12 +53,8 @@ namespace Zutatensuppe.D2Reader.Readers
             return player;
         }
 
-        public List<D2Stat> GetItemStats(D2Unit unit)
+        private List<D2Stat> GetItemStats(D2Unit unit)
         {
-            var player = GetPlayer();
-            if (player == null)
-                return new List<D2Stat>();
-
             // Build filter to get only equipped items and items in inventory
             bool filter(D2ItemData data) =>
                !data.ItemFlags.HasFlag(ItemFlag.RequirementsNotMet)
@@ -76,7 +67,7 @@ namespace Zutatensuppe.D2Reader.Readers
             ;
 
             List<D2Stat> statList = new List<D2Stat>();
-            foreach (D2Unit item in inventoryReader.EnumerateInventoryBackward(player, filter))
+            foreach (D2Unit item in inventoryReader.EnumerateInventoryBackward(unit, filter))
             {
                 List<D2Stat> itemStats = GetStats(item);
                 if (itemStats == null)
@@ -187,7 +178,6 @@ namespace Zutatensuppe.D2Reader.Readers
             }
 
             return dict;
-            
         }
 
         public int? GetStatValue(D2Unit unit, ushort statId)

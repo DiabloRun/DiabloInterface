@@ -9,7 +9,7 @@ namespace Zutatensuppe.D2Reader
     public interface IGameMemoryTableFactory
     {
         GameMemoryTable CreateForVersion(string versionString, Dictionary<string, IntPtr> moduleBaseAddresses);
-        GameMemoryTable CreateForReader(ProcessMemoryReader reader);
+        GameMemoryTable CreateForReader(IProcessMemoryReader reader);
     }
 
     public class GameVersionUnsupportedException : Exception
@@ -235,7 +235,7 @@ namespace Zutatensuppe.D2Reader
             return new[] { 0x264, 0x450, 0x20, 0x00 };
         }
         
-        public GameMemoryTable CreateForReader(ProcessMemoryReader reader)
+        public GameMemoryTable CreateForReader(IProcessMemoryReader reader)
         {
             try
             {

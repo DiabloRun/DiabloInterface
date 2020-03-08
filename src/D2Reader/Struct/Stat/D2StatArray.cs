@@ -15,7 +15,7 @@ namespace Zutatensuppe.D2Reader.Struct.Stat
         // 00AC0000
         // 00AC => statcost idx
         // 0000 => class id
-        public static int GetArrayIndexByStatCostClassId(ProcessMemoryReader r, IntPtr addr, int StatCostClassId)
+        public static int GetArrayIndexByStatCostClassId(IProcessMemoryReader r, IntPtr addr, int StatCostClassId)
         {
             D2StatArray statArray = r.Read<D2StatArray>(addr);
             ushort statArrayLen = statArray.Length;

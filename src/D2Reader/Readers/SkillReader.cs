@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
-    internal class SkillReader
+    internal class SkillReader: ISkillReader
     {
-        ProcessMemoryReader reader;
+        IProcessMemoryReader reader;
         protected StringLookupTable stringReader;
         D2GlobalData globals;
 
-        public SkillReader(ProcessMemoryReader reader, GameMemoryTable memory)
+        public SkillReader(IProcessMemoryReader reader, GameMemoryTable memory)
         {
             this.reader = reader;
 
@@ -81,6 +81,7 @@ namespace Zutatensuppe.D2Reader.Readers
             return reader.IndexIntoArray<D2SkillData>(globals.Skills, skillIdentifier, globals.SkillCount);
         }
 
+        // TODO: can likely be cached for as long as one D2 instance is running
         public string GetSkillName(ushort skillIdentifier)
         {
             D2SkillData skillData = GetSkillData(skillIdentifier);

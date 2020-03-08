@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 
 namespace Zutatensuppe.D2Reader.Struct.Stat
@@ -13,7 +13,7 @@ namespace Zutatensuppe.D2Reader.Struct.Stat
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    class D2StatListEx
+    public class D2StatListEx
     {
         #region structure (sizeof = 0x64)
         [ExpectOffset(0x0000)] public int pMemPool;            // 0x00
