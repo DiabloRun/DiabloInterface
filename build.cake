@@ -74,6 +74,7 @@ Task("Default")
 
 
 Task("CleanTest")
+    .IsDependentOn("Build")
     .Does(() =>
 {
     CleanDirectory(testDir);
