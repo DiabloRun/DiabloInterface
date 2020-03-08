@@ -10,7 +10,7 @@ jobs:
     - name: Get the sources
       uses: actions/checkout@v1
     - name: Run tests
-      run: build.bat Test
+      run: powershell.exe -File build.ps1 -Target Test
   
   build:
     needs: tests
@@ -20,4 +20,4 @@ jobs:
     - name: Get the sources
       uses: actions/checkout@v1
     - name: Run the build
-      run: build.bat
+      run: powershell.exe -File build.ps1
