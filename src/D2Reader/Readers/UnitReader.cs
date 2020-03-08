@@ -14,9 +14,9 @@ namespace Zutatensuppe.D2Reader.Readers
         protected IProcessMemoryReader reader;
         protected GameMemoryTable memory;
         protected IStringLookupTable stringReader;
+        protected ISkillReader skillReader;
 
-        public ISkillReader skillReader;
-        public IInventoryReader inventoryReader;
+        public IInventoryReader InventoryReader;
 
         D2Unit player = null;
 
@@ -67,7 +67,7 @@ namespace Zutatensuppe.D2Reader.Readers
             ;
 
             List<D2Stat> statList = new List<D2Stat>();
-            foreach (D2Unit item in inventoryReader.EnumerateInventoryBackward(unit, filter))
+            foreach (D2Unit item in InventoryReader.EnumerateInventoryBackward(unit, filter))
             {
                 List<D2Stat> itemStats = GetStats(item);
                 if (itemStats == null)
@@ -86,7 +86,7 @@ namespace Zutatensuppe.D2Reader.Readers
                     // The item is either equipped (see filter above) or is a charm in inventory
                 }
                 
-                List<D2Stat> magicalItems = inventoryReader.ItemReader.GetMagicalStats(item);
+                List<D2Stat> magicalItems = InventoryReader.ItemReader.GetMagicalStats(item);
                 foreach (D2Stat stat in magicalItems)
                 {
                     statList.Add(stat);
@@ -231,7 +231,7 @@ namespace Zutatensuppe.D2Reader.Readers
         {
             int[] list = (
                 from item
-                in inventoryReader.EnumerateInventoryForward(p)
+                in InventoryReader.EnumerateInventoryForward(p)
                 select item.eClass
             ).ToArray();
 

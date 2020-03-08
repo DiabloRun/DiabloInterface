@@ -176,7 +176,9 @@ namespace Zutatensuppe.D2Reader
 
         GameMemoryTable CreateGameMemoryTableForReader(IProcessMemoryReader reader)
         {
-            return memoryTableFactory.CreateForReader(reader);
+            var memoryTable = memoryTableFactory.CreateForReader(reader);
+            Logger.Debug($"Memory table created.");
+            return memoryTable;
         }
 
         bool ValidateGameDataReaders()
@@ -223,11 +225,7 @@ namespace Zutatensuppe.D2Reader
             try
             {
                 memory = CreateGameMemoryTableForReader(reader);
-                Logger.Debug($"Memory table created.");
-
-                CreateUnitReader();
-                Logger.Debug($"Unit reader created.");
-
+                unitReader = CreateUnitReader(reader, memory);
                 return true;
             }
             catch (ModuleNotLoadedException e)
@@ -278,9 +276,9 @@ namespace Zutatensuppe.D2Reader
 
             try
             {
-                foreach (var item in unitReader.inventoryReader.EnumerateInventoryBackward(player, FilterSlots))
+                foreach (var item in unitReader.InventoryReader.EnumerateInventoryBackward(player, FilterSlots))
                 {
-                    action?.Invoke(unitReader.inventoryReader.ItemReader, item);
+                    action?.Invoke(unitReader.InventoryReader.ItemReader, item);
                 }
             } catch (Exception e)
             {
@@ -384,9 +382,6 @@ namespace Zutatensuppe.D2Reader
                 return;
             }
 
-            // why is this always creating a new unit reader? :O
-            CreateUnitReader();
-
             CurrentCharacter = ProcessCharacterData(gameInfo);
             gameQuests = ProcessQuests(gameInfo);
             currentDifficulty = ProcessCurrentDifficulty(gameInfo);
@@ -404,18 +399,22 @@ namespace Zutatensuppe.D2Reader
             ));
         }
 
-        void CreateUnitReader()
-        {
+        UnitReader CreateUnitReader(
+            IProcessMemoryReader reader,
+            GameMemoryTable memory
+        ) {
             // could this cause problems that stuff cannot be cleaned up?
             var stringReader = new StringLookupTable(reader, memory.Address);
             var skillReader = new SkillReader(reader, memory);
 
             var itemReader = new ItemReader(reader, memory, stringReader, skillReader);
             var inventoryReader = new InventoryReader(reader, itemReader);
-            itemReader.inventoryReader = inventoryReader;
+            itemReader.InventoryReader = inventoryReader;
 
-            unitReader = new UnitReader(reader, memory, stringReader, skillReader);
-            unitReader.inventoryReader = inventoryReader;
+            var unitReader = new UnitReader(reader, memory, stringReader, skillReader);
+            unitReader.InventoryReader = inventoryReader;
+            Logger.Debug($"Unit reader created.");
+            return unitReader;
         }
 
         List<QuestCollection> ProcessQuests(D2GameInfo gameInfo)
@@ -484,16 +483,16 @@ namespace Zutatensuppe.D2Reader
             bool Filter(D2ItemData data) => data.BodyLoc != BodyLocation.None;
 
             var itemStrings = new Dictionary<BodyLocation, string>();
-            foreach (D2Unit item in unitReader.inventoryReader.EnumerateInventoryBackward(player, Filter))
+            foreach (D2Unit item in unitReader.InventoryReader.EnumerateInventoryBackward(player, Filter))
             {
                 List<D2Stat> itemStats = unitReader.GetStats(item);
                 if (itemStats == null) continue;
 
                 StringBuilder statBuilder = new StringBuilder();
-                statBuilder.Append(unitReader.inventoryReader.ItemReader.GetFullItemName(item));
+                statBuilder.Append(unitReader.InventoryReader.ItemReader.GetFullItemName(item));
 
                 statBuilder.Append(Environment.NewLine);
-                List<string> magicalStrings = unitReader.inventoryReader.ItemReader.GetMagicalStrings(item);
+                List<string> magicalStrings = unitReader.InventoryReader.ItemReader.GetMagicalStrings(item);
                 foreach (string str in magicalStrings)
                 {
                     statBuilder.Append("    ");
@@ -522,8 +521,8 @@ namespace Zutatensuppe.D2Reader
             if (player == null)
                 return new List<int>();
 
-            IReadOnlyCollection<D2Unit> baseItems = unitReader.inventoryReader.EnumerateInventoryBackward(player).ToList();
-            IEnumerable<D2Unit> socketedItems = baseItems.SelectMany(item => unitReader.inventoryReader.ItemReader.GetSocketedItems(item));
+            IReadOnlyCollection<D2Unit> baseItems = unitReader.InventoryReader.EnumerateInventoryBackward(player).ToList();
+            IEnumerable<D2Unit> socketedItems = baseItems.SelectMany(item => unitReader.InventoryReader.ItemReader.GetSocketedItems(item));
             IEnumerable<D2Unit> allItems = baseItems.Concat(socketedItems);
             return (from item in allItems select item.eClass).ToList();
         }

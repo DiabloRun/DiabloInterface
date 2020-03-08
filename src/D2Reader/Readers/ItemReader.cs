@@ -901,7 +901,7 @@ namespace Zutatensuppe.D2Reader.Readers
             if (!IsValidItem(item))
                 return new List<D2Unit>();
 
-            return inventoryReader.EnumerateInventoryForward(item);
+            return InventoryReader.EnumerateInventoryForward(item);
         }
 
         public D2StatList FindStatListNode(D2Unit item, uint state)

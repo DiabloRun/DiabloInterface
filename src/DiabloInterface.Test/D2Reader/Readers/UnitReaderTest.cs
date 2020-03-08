@@ -110,7 +110,7 @@ namespace DiabloInterface.Test.D2Reader.Readers
                 stringReader,
                 skillReader.Object
             );
-            unitReader.inventoryReader = inventoryReader.Object;
+            unitReader.InventoryReader = inventoryReader.Object;
 
             Assert.AreEqual(true, unitReader.IsNewChar(unit));
 
