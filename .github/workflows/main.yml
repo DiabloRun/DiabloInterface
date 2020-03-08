@@ -3,12 +3,21 @@ name: Build
 on: [push]
 
 jobs:
-  build:
+  tests:
+    runs-on: windows-latest
 
+    steps:
+    - name: Get the sources
+      uses: actions/checkout@v1
+    - name: Run tests
+      run: build.bat Test
+  
+  build:
+    needs: tests
     runs-on: windows-latest
 
     steps:
     - name: Get the sources
       uses: actions/checkout@v1
     - name: Run the build
-      run: powershell.exe -File build.ps1
+      run: build.bat
