@@ -79,32 +79,5 @@ namespace Zutatensuppe.D2Reader.Readers
             if (pointer.IsNull) return null;
             return processReader.Read<D2Unit>(pointer);
         }
-
-        // TODO: not used, maybe remove?
-        public void ResetCache()
-        {
-            ItemReader.ResetCache();
-        }
-
-        // TODO: not used, maybe remove?
-        private string GetEquippedItemSlot(BodyLocation slot)
-        {
-            var player = ItemReader.GetPlayer();
-            if (player == null)
-                return null;
-
-            // Get all items at the target location.
-            var itemsInSlot = from item in EnumerateInventoryBackward(player)
-                              let itemData = ItemReader.GetItemData(item)
-                              where itemData != null && itemData.BodyLoc == slot
-                              select item;
-
-            // Make sure that there is an item in the inventory slot.
-            var itemInSlot = itemsInSlot.SingleOrDefault();
-            if (itemInSlot == null) return null;
-
-            // Just return the full name of the item.
-            return ItemReader.GetFullItemName(itemInSlot);
-        }
     }
 }

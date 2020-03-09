@@ -477,14 +477,6 @@ namespace Zutatensuppe.D2Reader.Readers
             return reader.IndexIntoArray<D2SetItemDescription>(array, index, count);
         }
 
-        public bool IsItemInPage(D2Unit item, InventoryPage page)
-        {
-            var itemData = GetItemData(item);
-            if (itemData == null) return false;
-
-            return itemData.InvPage == page;
-        }
-
         public D2ItemData GetItemData(D2Unit item)
         {
             if (!IsValidItem(item)) return null;
@@ -643,7 +635,8 @@ namespace Zutatensuppe.D2Reader.Readers
                     }
                 case 0x0D:
                     {
-                        var characterData = GetCharacterData(stat.HiStatID);
+                        var characterId = stat.HiStatID;
+                        var characterData = GetCharacterData(characterId);
                         if (characterData == null) return null;
                         if (value == 0) value = 1;
 
@@ -654,7 +647,7 @@ namespace Zutatensuppe.D2Reader.Readers
                     }
                 case 0x0E:
                     {
-                        ushort characterId = (ushort)(stat.HiStatID >> 3);
+                        var characterId = (ushort)(stat.HiStatID >> 3);
                         var characterData = GetCharacterData(characterId);
                         if (characterData == null) return null;
 
@@ -790,9 +783,11 @@ namespace Zutatensuppe.D2Reader.Readers
                         D2SkillData skillData = skillReader.GetSkillData(stat.HiStatID);
                         if (skillData == null) return null;
 
+                        // TODO: remove the magic 7. (without further checking: 0-7 refers to the character classes)
                         if (skillData.ClassId < 7)
                         {
-                            var characterData = GetCharacterData((ushort)skillData.ClassId);
+                            var characterId = (ushort)skillData.ClassId;
+                            var characterData = GetCharacterData(characterId);
                             if (characterData != null)
                             {
                                 sb.Append(' ');
@@ -850,6 +845,7 @@ namespace Zutatensuppe.D2Reader.Readers
             if (itemStats.Count == 0) return itemStats;
 
             // Combine stats in different states.
+            // TODO: why find out why 16 is hardcoded here
             List<D2Stat> stats = new List<D2Stat>(16);
             CombineNodeStats(stats, FindStatListNode(item, 0x00));
             CombineNodeStats(stats, FindStatListNode(item, 0xAB));
@@ -893,6 +889,7 @@ namespace Zutatensuppe.D2Reader.Readers
             int? socketCount = GetStatValue(item, StatIdentifier.SocketCount);
             if (socketCount.HasValue)
             {
+                // TODO: use correct language (from the game) instead of hardcoded "Socketed"
                 string sockets = string.Format("Socketed ({0})", socketCount.Value);
                 properties.Add(sockets);
             }

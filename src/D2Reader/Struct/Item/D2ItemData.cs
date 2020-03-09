@@ -114,5 +114,11 @@ namespace Zutatensuppe.D2Reader.Struct.Item
         {
             return !ItemFlags.HasFlag(ItemFlag.RequirementsNotMet);
         }
+
+        internal bool IsEquippedInSlot(BodyLocation loc)
+        {
+            return InvPage == InventoryPage.Equipped
+                && BodyLoc == loc;
+        }
     }
 }
