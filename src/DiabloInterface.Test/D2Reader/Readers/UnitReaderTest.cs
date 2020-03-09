@@ -52,17 +52,10 @@ namespace DiabloInterface.Test.D2Reader.Readers
             processMemoryReader
                 .Setup(x => x.ReadArray<D2Stat>(
                     It.Is<IntPtr>(p => p.Equals(statsList.FullStats.Address.Address)),
-                    It.Is<int>(i => i == statsList.FullStats.Length),
+                    It.IsAny<int>(),
                     It.Is<AddressingMode>(m => m == AddressingMode.Absolute)
                 ))
-                .Returns(d2StatArray);
-            processMemoryReader
-                .Setup(x => x.ReadArray<D2Stat>(
-                    It.Is<IntPtr>(p => p.Equals(statsList.FullStats.Address.Address)),
-                    It.Is<int>(i => i == 0),
-                    It.Is<AddressingMode>(m => m == AddressingMode.Absolute)
-                ))
-                .Returns(new D2Stat[] { });
+                .Returns<IntPtr, int, AddressingMode>((p, i, m) => i == 0 ? new D2Stat[] { } : d2StatArray);
 
             // starting items for amazon
             var startingItems = new D2Unit[] {
