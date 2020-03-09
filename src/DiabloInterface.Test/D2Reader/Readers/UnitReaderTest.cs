@@ -56,6 +56,13 @@ namespace DiabloInterface.Test.D2Reader.Readers
                     It.Is<AddressingMode>(m => m == AddressingMode.Absolute)
                 ))
                 .Returns(d2StatArray);
+            processMemoryReader
+                .Setup(x => x.ReadArray<D2Stat>(
+                    It.Is<IntPtr>(p => p.Equals(statsList.FullStats.Address.Address)),
+                    It.Is<int>(i => i == 0),
+                    It.Is<AddressingMode>(m => m == AddressingMode.Absolute)
+                ))
+                .Returns(new D2Stat[] { });
 
             // starting items for amazon
             var startingItems = new D2Unit[] {
