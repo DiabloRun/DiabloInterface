@@ -153,6 +153,11 @@ namespace Zutatensuppe.D2Reader
         public int VelocityPercent { get; private set; }
         public int AttackRate { get; private set; }
 
+        public int AttackerSelfDamage { get; private set; }
+
+        public int MagicFind { get; private set; }
+        public int MonsterGold { get; private set; }
+
         public int Gold { get; private set; }
         public int GoldStash { get; private set; }
 
@@ -227,6 +232,11 @@ namespace Zutatensuppe.D2Reader
             FasterRunWalk = getItemStat(StatIdentifier.FasterRunWalk);
             FasterCastRate = getItemStat(StatIdentifier.FasterCastRate);
             IncreasedAttackSpeed = getItemStat(StatIdentifier.IncreasedAttackSpeed);
+
+            AttackerSelfDamage = getItemStat(StatIdentifier.AttackerSelfDamage);
+
+            MagicFind = getItemStat(StatIdentifier.MagicFind);
+            MonsterGold = getItemStat(StatIdentifier.MonsterGold);
 
             Gold = getStat(StatIdentifier.Gold);
             GoldStash = getStat(StatIdentifier.GoldStash);

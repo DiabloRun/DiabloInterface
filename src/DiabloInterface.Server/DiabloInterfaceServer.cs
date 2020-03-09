@@ -38,11 +38,6 @@ namespace Zutatensuppe.DiabloInterface.Server
 
         public void AddRequestHandler(string resource, Func<IRequestHandler> handler)
         {
-            if (string.IsNullOrEmpty(resource))
-                throw new ArgumentNullException(nameof(resource));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
-
             // Always use lower case resources.
             resource = resource.Trim().ToLowerInvariant();
             requestHandlers[resource] = handler;
