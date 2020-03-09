@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
 namespace Zutatensuppe.D2Reader.Struct
 {
@@ -90,5 +90,10 @@ namespace Zutatensuppe.D2Reader.Struct
         [ExpectOffset(0x00EC)] public int pMsgFirst;       // 0xEC
         [ExpectOffset(0x00F0)] public int pMsgLast;        // 0xF0
         #endregion
+
+        public bool IsCharm()
+        {
+            return eClass == 603 || eClass == 604 || eClass == 605;
+        }
     }
 }

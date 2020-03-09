@@ -46,5 +46,12 @@ namespace Zutatensuppe.D2Reader.Struct.Stat
         [ExpectOffset(0x005C)] public int fCallback;           // 0x5C
         [ExpectOffset(0x0060)] public int pGame;               // 0x60
         #endregion
+
+        internal D2StatArray BestStatsArray()
+        {
+            if (ListFlags.HasFlag(StatListFlag.HasCompleteStats))
+                return FullStats;
+            return BaseStats;
+        }
     }
 }

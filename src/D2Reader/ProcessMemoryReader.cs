@@ -299,11 +299,16 @@ namespace Zutatensuppe.D2Reader
 
         public T[] ReadArray<T>(IntPtr address, int length, AddressingMode addressingMode = AddressingMode.Absolute)
         {
+            T[] array = new T[length];
+            if (length == 0)
+            {
+                return array;
+            }
+
             // Read array memory.
             int elementSize = Marshal.SizeOf<T>();
             byte[] buffer = Read(address, elementSize * length, addressingMode);
 
-            T[] array = new T[length];
             GCHandle handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
             try
             {
@@ -377,8 +382,12 @@ namespace Zutatensuppe.D2Reader
         /// <param name="encoding">String encoding type.</param>
         /// <param name="addressing">Module addressing mode.</param>
         /// <returns></returns>
-        public string ReadNullTerminatedString(IntPtr address, int size, Encoding encoding, AddressingMode addressing = AddressingMode.Absolute)
-        {
+        public string ReadNullTerminatedString(
+            IntPtr address,
+            int size,
+            Encoding encoding,
+            AddressingMode addressing = AddressingMode.Absolute
+        ) {
             // Get entire string buffer as string.
             string value = ReadStringRaw(address, size, encoding, addressing);
 
@@ -401,8 +410,13 @@ namespace Zutatensuppe.D2Reader
         /// <param name="encoding">String encoding type.</param>
         /// <param name="addressing">Module addressing mode.</param>
         /// <returns></returns>
-        public string GetNullTerminatedString(IntPtr address, int size, int maximumSize, Encoding encoding, AddressingMode addressing = AddressingMode.Absolute)
-        {
+        public string GetNullTerminatedString(
+            IntPtr address,
+            int size,
+            int maximumSize,
+            Encoding encoding,
+            AddressingMode addressing = AddressingMode.Absolute
+        ) {
             string value = null;
             int nullTerminatorIndex;
             for (int bufferSize = size; bufferSize <= maximumSize; bufferSize *= 2)

@@ -56,42 +56,18 @@ namespace Zutatensuppe.D2Reader.Readers
         private List<D2Stat> GetItemStats(D2Unit unit)
         {
             // Build filter to get only equipped items and items in inventory
-            bool filter(D2ItemData data) =>
-               !data.ItemFlags.HasFlag(ItemFlag.RequirementsNotMet)
-               &&
-               (
-                   (data.InvPage == InventoryPage.Equipped && data.BodyLoc != BodyLocation.SecondaryLeft && data.BodyLoc != BodyLocation.SecondaryRight)
-                   ||
-                   (data.InvPage == InventoryPage.Inventory)
-               )
-            ;
+            bool filter(D2ItemData d) => d.AreRequirementsMet() && (d.IsEquipped() || d.IsInInventory());
 
             List<D2Stat> statList = new List<D2Stat>();
             foreach (D2Unit item in InventoryReader.EnumerateInventoryBackward(unit, filter))
             {
-                List<D2Stat> itemStats = GetStats(item);
-                if (itemStats == null)
+                if (!item.IsCharm())
                 {
                     continue;
                 }
-                
-                D2ItemData itemData = reader.Read<D2ItemData>(item.UnitData);
-                if (itemData.InvPage == InventoryPage.Inventory && !(item.eClass == 605 || item.eClass == 604 || item.eClass == 603)) { 
 
-                    // The item is in inventory, but it is not a charm
-                    continue;
-
-                } else
-                {
-                    // The item is either equipped (see filter above) or is a charm in inventory
-                }
-                
-                List<D2Stat> magicalItems = InventoryReader.ItemReader.GetMagicalStats(item);
-                foreach (D2Stat stat in magicalItems)
-                {
-                    statList.Add(stat);
-                }
-
+                // The item is either equipped (see filter above) or is a charm in inventory
+                statList.AddRange(InventoryReader.ItemReader.GetMagicalStats(item));
             }
 
             return statList;
@@ -100,53 +76,23 @@ namespace Zutatensuppe.D2Reader.Readers
         public List<D2Stat> GetStats(D2Unit unit)
         {
             if (unit == null)
-                return null;
+                return new List<D2Stat>(0);
             if (unit.StatListNode.IsNull)
-                return null;
+                return new List<D2Stat>(0);
 
-            var node = reader.Read<D2StatListEx>(unit.StatListNode);
+            var statsListNode = reader.Read<D2StatListEx>(unit.StatListNode);
 
             // Get the best available stat array.
-            D2StatArray statArray = node.BaseStats;
-            if (node.ListFlags.HasFlag(StatListFlag.HasCompleteStats))
-                statArray = node.FullStats;
-
-            // Empty list.
-            if (node.FullStats.Length == 0)
-                return new List<D2Stat>();
+            D2StatArray statArray = statsListNode.BestStatsArray();
 
             // Return the array data and return as list.
             var stats = reader.ReadArray<D2Stat>(statArray.Address, statArray.Length);
             return new List<D2Stat>(stats);
         }
-        
-
-        public Dictionary<int, D2Skill> GetSkillMap(D2Unit unit)
-        {
-            Dictionary<int, D2Skill> skills = new Dictionary<int, D2Skill>();
-            foreach (D2Skill skill in skillReader.EnumerateSkills(unit))
-            {
-                int numberOfSkillPoints = skillReader.GetTotalNumberOfSkillPoints(skill);
-                if (numberOfSkillPoints > 0)
-                {
-                    D2SkillData skillData = skillReader.ReadSkillData(skill);
-                    if (skillData.ClassId >= 0 && skillData.ClassId <= 6)
-                    {
-                        string skillName = skillReader.GetSkillName((ushort)skillData.SkillId);
-                        int skillPoints = skill.numberOfSkillPoints;
-                    }
-                }
-            }
-
-            return skills;
-        }
 
         public Dictionary<StatIdentifier, D2Stat> GetStatsMap(D2Unit unit)
         {
-            List<D2Stat> stats = GetStats(unit);
-            if (stats == null) return null;
-
-            return (from stat in stats
+            return (from stat in GetStats(unit)
                     where stat.HasValidLoStatIdentifier()
                     group stat by (StatIdentifier)stat.LoStatID into g
                     select g).ToDictionary(x => x.Key, x => x.Single());
@@ -154,14 +100,9 @@ namespace Zutatensuppe.D2Reader.Readers
 
         public Dictionary<StatIdentifier, D2Stat> GetItemStatsMap(D2Unit unit)
         {
-            List<D2Stat> stats = GetItemStats(unit);
-            if (stats == null)
-            {
-                return null;
-            }
             Dictionary<StatIdentifier, D2Stat> dict = new Dictionary<StatIdentifier, D2Stat>();
 
-            foreach ( D2Stat stat in stats )
+            foreach (D2Stat stat in GetItemStats(unit))
             {
                 if (!stat.HasValidLoStatIdentifier())
                     continue;
@@ -182,13 +123,7 @@ namespace Zutatensuppe.D2Reader.Readers
 
         public int? GetStatValue(D2Unit unit, ushort statId)
         {
-            List<D2Stat> stats = GetStats(unit);
-            if (stats == null)
-            {
-                return null;
-            }
-
-            foreach (D2Stat stat in stats)
+            foreach (D2Stat stat in GetStats(unit))
             {
                 if (stat.LoStatID == statId)
                 {

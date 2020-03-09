@@ -276,7 +276,7 @@ namespace Zutatensuppe.D2Reader
 
             try
             {
-                foreach (var item in unitReader.InventoryReader.EnumerateInventoryBackward(player, FilterSlots))
+                foreach (D2Unit item in unitReader.InventoryReader.EnumerateInventoryBackward(player, FilterSlots))
                 {
                     action?.Invoke(unitReader.InventoryReader.ItemReader, item);
                 }
@@ -480,17 +480,17 @@ namespace Zutatensuppe.D2Reader
                 return new Dictionary<BodyLocation, string>();
 
             // Build filter to get only equipped items.
-            bool Filter(D2ItemData data) => data.BodyLoc != BodyLocation.None;
+            bool Filter(D2ItemData d) => d.IsEquipped();
 
             var itemStrings = new Dictionary<BodyLocation, string>();
             foreach (D2Unit item in unitReader.InventoryReader.EnumerateInventoryBackward(player, Filter))
             {
+                // TODO: check why this get stats call is needed here
                 List<D2Stat> itemStats = unitReader.GetStats(item);
-                if (itemStats == null) continue;
+                if (itemStats.Count == 0) continue;
 
                 StringBuilder statBuilder = new StringBuilder();
                 statBuilder.Append(unitReader.InventoryReader.ItemReader.GetFullItemName(item));
-
                 statBuilder.Append(Environment.NewLine);
                 List<string> magicalStrings = unitReader.InventoryReader.ItemReader.GetMagicalStrings(item);
                 foreach (string str in magicalStrings)
@@ -500,6 +500,7 @@ namespace Zutatensuppe.D2Reader
                     statBuilder.Append(Environment.NewLine);
                 }
 
+                // TODO: not read this again, it is already read in EnumerateInventory
                 D2ItemData itemData = reader.Read<D2ItemData>(item.UnitData);
                 if (!itemStrings.ContainsKey(itemData.BodyLoc))
                 {

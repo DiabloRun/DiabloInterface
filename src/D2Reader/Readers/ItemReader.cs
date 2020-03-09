@@ -843,7 +843,11 @@ namespace Zutatensuppe.D2Reader.Readers
 
         public List<D2Stat> GetMagicalStats(D2Unit item)
         {
-            if (item == null) return null;
+            if (item == null) return new List<D2Stat>(0);
+
+            // check if item has any stats, otherwise the other stuff doesnt work
+            List<D2Stat> itemStats = GetStats(item);
+            if (itemStats.Count == 0) return itemStats;
 
             // Combine stats in different states.
             List<D2Stat> stats = new List<D2Stat>(16);
@@ -860,25 +864,25 @@ namespace Zutatensuppe.D2Reader.Readers
 
         public List<string> GetMagicalStrings(D2Unit item)
         {
-            List<D2Stat> stats = GetMagicalStats(item);
-            if (stats == null) return null;
+            List<D2Stat> magicalStats = GetMagicalStats(item);
+            if (magicalStats.Count == 0) return new List<string>(0);
 
             // Perform special handling for some stats such as damage ranges.
             // Example: "1-80 lightning damage" comes from 2 stats.
-            var rangeData = new RangeStatData(stringReader, stats);
+            var rangeData = new RangeStatData(stringReader, magicalStats);
             string getDescription(D2Stat stat)
             {
                 if (rangeData.TryHandleStat(stat, out string description))
                     return description;
 
                 // If not handled specially, do default handling.
-                return GetStatPropertyDescription(stats, stat);
+                return GetStatPropertyDescription(magicalStats, stat);
             }
 
             // Only get stat descriptions for stat identifiers contained in the opNestings array.
             // This also orders stats into the same order that the game displays the stats.
             var properties = (from op in opNestings
-                              from stat in stats
+                              from stat in magicalStats
                               where stat.LoStatID == op
                               let description = getDescription(stat)
                               where description != null
@@ -899,7 +903,7 @@ namespace Zutatensuppe.D2Reader.Readers
         public IEnumerable<D2Unit> GetSocketedItems(D2Unit item)
         {
             if (!IsValidItem(item))
-                return new List<D2Unit>();
+                return new List<D2Unit>(0);
 
             return InventoryReader.EnumerateInventoryForward(item);
         }
