@@ -783,7 +783,7 @@ namespace Zutatensuppe.D2Reader.Readers
                         D2SkillData skillData = skillReader.GetSkillData(stat.HiStatID);
                         if (skillData == null) return null;
 
-                        // TODO: remove the magic 7. (without further checking: 0-7 refers to the character classes)
+                        // TODO: remove the magic 7. (without further checking: 0-6 refers to the character classes)
                         if (skillData.ClassId < 7)
                         {
                             var characterId = (ushort)skillData.ClassId;
