@@ -25,6 +25,157 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         GameDifficulty? activeDifficulty;
         CharacterClass? activeCharacterClass;
 
+        protected IEnumerable<Label> InfoLabels { get; set; }
+        protected IEnumerable<Label> FireLabels { get; set; }
+        protected IEnumerable<Label> ColdLabels { get; set; }
+        protected IEnumerable<Label> LighLabels { get; set; }
+        protected IEnumerable<Label> PoisLabels { get; set; }
+        protected IEnumerable<Label> BaseStatLabels { get; set; }
+        protected IEnumerable<Label> AdvancedStatLabels { get; set; }
+        protected IEnumerable<Label> ResistanceLabels { get; set; }
+        protected IEnumerable<Label> DifficultyLabels { get; set; }
+
+        protected IEnumerable<FlowLayoutPanel> RunePanels { get; set; }
+
+        protected Dictionary<Control, string> DefaultTexts { get; set; }
+
+        protected abstract Panel RuneLayoutPanel { get; }
+
+        protected FlowLayoutPanel outerLeftRightPanel;
+        protected Label nameLabel;
+        protected Label playersXLabel;
+        protected Label deathsLabel;
+        protected Label deathsLabelVal;
+        protected Label lvlLabel;
+        protected Label lvlLabelVal;
+        protected Label goldLabel;
+        protected Label goldLabelVal;
+        protected Label magicFindLabel;
+        protected Label magicFindLabelVal;
+        protected Label monsterGoldLabel;
+        protected Label monsterGoldLabelVal;
+        protected Label attackerSelfDamageLabel;
+        protected Label attackerSelfDamageLabelVal;
+        protected TableLayoutPanel panelBaseStats;
+        protected Label vitLabel;
+        protected Label labelVitVal;
+        protected Label dexLabel;
+        protected Label labelDexVal;
+        protected Label strLabel;
+        protected Label labelStrVal;
+        protected Label eneLabel;
+        protected Label labelEneVal;
+        protected TableLayoutPanel panelAdvancedStats;
+        protected Label iasLabel;
+        protected Label frwLabel;
+        protected Label fcrLabel;
+        protected Label fhrLabel;
+        protected Label labelFrwVal;
+        protected Label labelFhrVal;
+        protected Label labelFcrVal;
+        protected Label labelIasVal;
+        protected TableLayoutPanel panelResistances;
+        protected Label coldLabel;
+        protected Label lighLabel;
+        protected Label poisLabel;
+        protected Label fireLabel;
+        protected Label labelFireResVal;
+        protected Label labelLightResVal;
+        protected Label labelPoisonResVal;
+        protected Label labelColdResVal;
+        protected TableLayoutPanel panelDiffPercentages;
+        protected Label normLabel;
+        protected Label nmLabel;
+        protected Label hellLabel;
+        protected Label normLabelVal;
+        protected Label nmLabelVal;
+        protected Label hellLabelVal;
+        protected Label labelNormPerc;
+        protected Label labelNmPerc;
+        protected Label labelHellPerc;
+        protected TableLayoutPanel panelDeathsLvl;
+        protected TableLayoutPanel panelSimpleStats;
+        protected FlowLayoutPanel panelStats;
+        protected FlowLayoutPanel panelDiffPercentages2;
+        protected FlowLayoutPanel panelRuneDisplayHorizontal;
+        protected FlowLayoutPanel panelRuneDisplayVertical;
+        protected Label gameCounterLabel;
+        protected Label gameCounterLabelVal;
+
+        protected void InitializeComponent()
+        {
+            this.outerLeftRightPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.panelRuneDisplayVertical = new System.Windows.Forms.FlowLayoutPanel();
+            this.nameLabel = new System.Windows.Forms.Label();
+            this.playersXLabel = new System.Windows.Forms.Label();
+            this.panelDeathsLvl = new System.Windows.Forms.TableLayoutPanel();
+            this.deathsLabel = new System.Windows.Forms.Label();
+            this.deathsLabelVal = new System.Windows.Forms.Label();
+            this.lvlLabel = new System.Windows.Forms.Label();
+            this.lvlLabelVal = new System.Windows.Forms.Label();
+            this.panelSimpleStats = new System.Windows.Forms.TableLayoutPanel();
+            this.goldLabel = new System.Windows.Forms.Label();
+            this.goldLabelVal = new System.Windows.Forms.Label();
+            this.magicFindLabel = new System.Windows.Forms.Label();
+            this.magicFindLabelVal = new System.Windows.Forms.Label();
+            this.monsterGoldLabel = new System.Windows.Forms.Label();
+            this.monsterGoldLabelVal = new System.Windows.Forms.Label();
+            this.attackerSelfDamageLabel = new System.Windows.Forms.Label();
+            this.attackerSelfDamageLabelVal = new System.Windows.Forms.Label();
+            this.panelStats = new System.Windows.Forms.FlowLayoutPanel();
+            this.panelBaseStats = new System.Windows.Forms.TableLayoutPanel();
+            this.vitLabel = new System.Windows.Forms.Label();
+            this.dexLabel = new System.Windows.Forms.Label();
+            this.strLabel = new System.Windows.Forms.Label();
+            this.eneLabel = new System.Windows.Forms.Label();
+            this.labelStrVal = new System.Windows.Forms.Label();
+            this.labelDexVal = new System.Windows.Forms.Label();
+            this.labelVitVal = new System.Windows.Forms.Label();
+            this.labelEneVal = new System.Windows.Forms.Label();
+            this.panelAdvancedStats = new System.Windows.Forms.TableLayoutPanel();
+            this.iasLabel = new System.Windows.Forms.Label();
+            this.frwLabel = new System.Windows.Forms.Label();
+            this.fcrLabel = new System.Windows.Forms.Label();
+            this.fhrLabel = new System.Windows.Forms.Label();
+            this.labelFrwVal = new System.Windows.Forms.Label();
+            this.labelFhrVal = new System.Windows.Forms.Label();
+            this.labelFcrVal = new System.Windows.Forms.Label();
+            this.labelIasVal = new System.Windows.Forms.Label();
+            this.panelResistances = new System.Windows.Forms.TableLayoutPanel();
+            this.coldLabel = new System.Windows.Forms.Label();
+            this.lighLabel = new System.Windows.Forms.Label();
+            this.poisLabel = new System.Windows.Forms.Label();
+            this.fireLabel = new System.Windows.Forms.Label();
+            this.labelFireResVal = new System.Windows.Forms.Label();
+            this.labelLightResVal = new System.Windows.Forms.Label();
+            this.labelPoisonResVal = new System.Windows.Forms.Label();
+            this.labelColdResVal = new System.Windows.Forms.Label();
+            this.panelDiffPercentages = new System.Windows.Forms.TableLayoutPanel();
+            this.normLabel = new System.Windows.Forms.Label();
+            this.nmLabel = new System.Windows.Forms.Label();
+            this.hellLabel = new System.Windows.Forms.Label();
+            this.normLabelVal = new System.Windows.Forms.Label();
+            this.nmLabelVal = new System.Windows.Forms.Label();
+            this.hellLabelVal = new System.Windows.Forms.Label();
+            this.panelDiffPercentages2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.labelNormPerc = new System.Windows.Forms.Label();
+            this.labelNmPerc = new System.Windows.Forms.Label();
+            this.labelHellPerc = new System.Windows.Forms.Label();
+            this.panelRuneDisplayHorizontal = new System.Windows.Forms.FlowLayoutPanel();
+            this.gameCounterLabel = new System.Windows.Forms.Label();
+            this.gameCounterLabelVal = new System.Windows.Forms.Label();
+
+            this.outerLeftRightPanel.SuspendLayout();
+            this.panelDeathsLvl.SuspendLayout();
+            this.panelSimpleStats.SuspendLayout();
+            this.panelStats.SuspendLayout();
+            this.panelBaseStats.SuspendLayout();
+            this.panelAdvancedStats.SuspendLayout();
+            this.panelResistances.SuspendLayout();
+            this.panelDiffPercentages.SuspendLayout();
+            this.panelDiffPercentages2.SuspendLayout();
+        }
+
         protected AbstractLayout(ISettingsService settingsService, IGameService gameService)
         {
             this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
@@ -39,21 +190,6 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             // Clean up events when disposed because services outlive us.
             Disposed += (sender, e) => UnregisterServiceEventHandlers();
         }
-
-        protected IEnumerable<Label> InfoLabels { get; set; }
-        protected IEnumerable<Label> FireLabels { get; set; }
-        protected IEnumerable<Label> ColdLabels { get; set; }
-        protected IEnumerable<Label> LighLabels { get; set; }
-        protected IEnumerable<Label> PoisLabels { get; set; }
-        protected IEnumerable<Label> BaseStatLabels { get; set; }
-        protected IEnumerable<Label> AdvancedStatLabels { get; set; }
-        protected IEnumerable<Label> DifficultyLabels { get; set; }
-
-        protected IEnumerable<FlowLayoutPanel> RunePanels { get; set; }
-
-        protected Dictionary<Control, string> DefaultTexts { get; set; }
-
-        protected abstract Panel RuneLayoutPanel { get; }
 
         void InitializeElements()
         {
@@ -162,11 +298,22 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
             // Hide/show labels wanted labels.
             nameLabel.Visible = settings.DisplayName;
-            goldLabel.Visible = settings.DisplayGold;
-            deathsLabel.Visible = settings.DisplayDeathCounter;
-            lvlLabel.Visible = settings.DisplayLevel;
             playersXLabel.Visible = settings.DisplayPlayersX;
+
+            goldLabel.Visible = settings.DisplayGold;
+            goldLabelVal.Visible = settings.DisplayGold;
+            monsterGoldLabel.Visible = settings.DisplayMonsterGold;
+            monsterGoldLabelVal.Visible = settings.DisplayMonsterGold;
+            magicFindLabel.Visible = settings.DisplayMagicFind;
+            magicFindLabelVal.Visible = settings.DisplayMagicFind;
+            attackerSelfDamageLabel.Visible = settings.DisplayAttackerSelfDamage;
+            attackerSelfDamageLabelVal.Visible = settings.DisplayAttackerSelfDamage;
+            deathsLabel.Visible = settings.DisplayDeathCounter;
+            deathsLabelVal.Visible = settings.DisplayDeathCounter;
+            lvlLabel.Visible = settings.DisplayLevel;
+            lvlLabelVal.Visible = settings.DisplayLevel;
             gameCounterLabel.Visible = settings.DisplayGameCounter;
+            gameCounterLabelVal.Visible = settings.DisplayGameCounter;
         }
 
         abstract protected void ApplyRuneSettings(ApplicationSettings settings);
@@ -176,12 +323,11 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         protected void UpdateLabels(Character player, IList<QuestCollection> quests, int currentPlayersX, uint gameIndex)
         {
             nameLabel.Text = player.Name;
-            lvlLabel.Text = "LVL: " + player.Level;
-            goldLabel.Text = "GOLD: " + (player.Gold + player.GoldStash);
-            deathsLabel.Text = "DEATHS: " + player.Deaths;
-
             playersXLabel.Text = "/players " + currentPlayersX;
 
+            lvlLabelVal.Text = "" + player.Level;
+            goldLabelVal.Text = "" + (player.Gold + player.GoldStash);
+            deathsLabelVal.Text = "" + player.Deaths;
             labelStrVal.Text = "" + player.Strength;
             labelDexVal.Text = "" + player.Dexterity;
             labelVitVal.Text = "" + player.Vitality;
@@ -211,7 +357,10 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             labelNmPerc.Text = $@"NM: {completions[1]:0%}";
             labelHellPerc.Text = $@"HE: {completions[2]:0%}";
 
-            gameCounterLabel.Text = "Run count: " + gameIndex;
+            gameCounterLabelVal.Text = "" + gameIndex;
+            monsterGoldLabelVal.Text = "" + player.MonsterGold;
+            magicFindLabelVal.Text = "" + player.MagicFind;
+            attackerSelfDamageLabelVal.Text = "" + player.AttackerSelfDamage;
         }
 
         protected void UpdateLabelWidthAlignment(params Label[] labels)
@@ -302,6 +451,24 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         protected void UpdateLabelColors(ApplicationSettings settings)
         {
+            nameLabel.ForeColor = settings.ColorName;
+            playersXLabel.ForeColor = settings.ColorPlayersX;
+
+            goldLabel.ForeColor = settings.ColorGold;
+            goldLabelVal.ForeColor = settings.ColorGold;
+            deathsLabel.ForeColor = settings.ColorDeaths;
+            deathsLabelVal.ForeColor = settings.ColorDeaths;
+            lvlLabel.ForeColor = settings.ColorLevel;
+            lvlLabelVal.ForeColor = settings.ColorLevel;
+            gameCounterLabel.ForeColor = settings.ColorGameCounter;
+            gameCounterLabelVal.ForeColor = settings.ColorGameCounter;
+            monsterGoldLabel.ForeColor = settings.ColorMonsterGold;
+            monsterGoldLabelVal.ForeColor = settings.ColorMonsterGold;
+            magicFindLabel.ForeColor = settings.ColorMagicFind;
+            magicFindLabelVal.ForeColor = settings.ColorMagicFind;
+            attackerSelfDamageLabel.ForeColor = settings.ColorAttackerSelfDamage;
+            attackerSelfDamageLabelVal.ForeColor = settings.ColorAttackerSelfDamage;
+
             foreach (Label l in FireLabels)
                 l.ForeColor = settings.ColorFireRes;
 

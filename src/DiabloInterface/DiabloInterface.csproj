@@ -88,9 +88,6 @@
     <Compile Include="Gui\Controls\AbstractLayout.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\Controls\AbstractLayout.Designer.cs">
-      <DependentUpon>AbstractLayout.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Controls\AutoSplitSettingsRow.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -125,14 +122,8 @@
     <Compile Include="Gui\Controls\HorizontalLayout.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\Controls\HorizontalLayout.Designer.cs">
-      <DependentUpon>HorizontalLayout.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Controls\VerticalLayout.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Controls\VerticalLayout.Designer.cs">
-      <DependentUpon>VerticalLayout.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Forms\WsExCompositedForm.cs">
       <SubType>Form</SubType>
@@ -165,9 +156,6 @@
       <DependentUpon>SettingsWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="VersionChecker.cs" />
-    <EmbeddedResource Include="Gui\Controls\AbstractLayout.resx">
-      <DependentUpon>AbstractLayout.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Controls\AutoSplitSettingsRow.resx">
       <DependentUpon>AutoSplitSettingsRow.cs</DependentUpon>
     </EmbeddedResource>
@@ -179,12 +167,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Forms\SimpleSaveDialog.resx">
       <DependentUpon>SimpleSaveDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Controls\HorizontalLayout.resx">
-      <DependentUpon>HorizontalLayout.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Controls\VerticalLayout.resx">
-      <DependentUpon>VerticalLayout.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\DebugWindow.resx">
       <DependentUpon>DebugWindow.cs</DependentUpon>

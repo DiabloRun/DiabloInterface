@@ -95,6 +95,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     || settings.DisplayRealFrwIas != chkShowRealValues.Checked
                     || settings.DisplayPlayersX != chkShowPlayersX.Checked
                     || settings.DisplayGameCounter != chkShowGameCounter.Checked
+                    || settings.DisplayMagicFind != checkBoxMagicFind.Checked
+                    || settings.DisplayMonsterGold != checkBoxMonsterGold.Checked
+                    || settings.DisplayAttackerSelfDamage != checkBoxAttackerSelfDamage.Checked
 
                     || btnSetNameColor.ForeColor != settings.ColorName
                     || btnSetDeathsColor.ForeColor != settings.ColorDeaths
@@ -109,6 +112,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     || btnSetPoisonResColor.ForeColor != settings.ColorPoisonRes
                     || btnSetPlayersXColor.ForeColor != settings.ColorPlayersX
                     || btnSetGameCounterColor.ForeColor != settings.ColorGameCounter
+                    || btnSetMFColor.ForeColor != settings.ColorMagicFind
+                    || btnSetExtraGoldColor.ForeColor != settings.ColorMonsterGold
+                    || btnSetAttackerSelfDamageColor.ForeColor != settings.ColorAttackerSelfDamage
 
                     || btnSetBackgroundColor.BackColor != settings.ColorBackground;
             }
@@ -231,6 +237,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             chkShowRealValues.Checked = settings.DisplayRealFrwIas;
             chkShowPlayersX.Checked = settings.DisplayPlayersX;
             chkShowGameCounter.Checked = settings.DisplayGameCounter;
+            checkBoxMagicFind.Checked = settings.DisplayMagicFind;
+            checkBoxMonsterGold.Checked = settings.DisplayMonsterGold;
+            checkBoxAttackerSelfDamage.Checked = settings.DisplayAttackerSelfDamage;
 
             SetBackgroundColor(settings.ColorBackground);
 
@@ -247,6 +256,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             btnSetPoisonResColor.ForeColor = settings.ColorPoisonRes;
             btnSetPlayersXColor.ForeColor = settings.ColorPlayersX;
             btnSetGameCounterColor.ForeColor = settings.ColorGameCounter;
+            btnSetMFColor.ForeColor = settings.ColorMagicFind;
+            btnSetExtraGoldColor.ForeColor = settings.ColorMonsterGold;
+            btnSetAttackerSelfDamageColor.ForeColor = settings.ColorAttackerSelfDamage;
 
             txtPipeServer.Text = ServerStatusText(serverService.Servers);
         }
@@ -298,6 +310,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             settings.DisplayRealFrwIas = chkShowRealValues.Checked;
             settings.DisplayPlayersX = chkShowPlayersX.Checked;
             settings.DisplayGameCounter = chkShowGameCounter.Checked;
+            settings.DisplayMagicFind = checkBoxMagicFind.Checked;
+            settings.DisplayMonsterGold = checkBoxMonsterGold.Checked;
+            settings.DisplayAttackerSelfDamage = checkBoxAttackerSelfDamage.Checked;
 
             settings.DisplayRunes = chkDisplayRunes.Checked;
             settings.DisplayRunesHorizontal = comboBoxRunesOrientation.SelectedIndex == 0;
@@ -317,7 +332,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             settings.ColorPoisonRes = btnSetPoisonResColor.ForeColor;
             settings.ColorPlayersX = btnSetPlayersXColor.ForeColor;
             settings.ColorGameCounter = btnSetGameCounterColor.ForeColor;
-
+            settings.ColorMagicFind = btnSetMFColor.ForeColor;
+            settings.ColorMonsterGold = btnSetExtraGoldColor.ForeColor;
+            settings.ColorAttackerSelfDamage = btnSetAttackerSelfDamageColor.ForeColor;
             settings.ColorBackground = btnSetBackgroundColor.BackColor;
 
             return settings;
@@ -564,6 +581,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             btnSetPoisonResColor.BackColor = c;
             btnSetPlayersXColor.BackColor = c;
             btnSetGameCounterColor.BackColor = c;
+            btnSetAttackerSelfDamageColor.BackColor = c;
+            btnSetMFColor.BackColor = c;
+            btnSetExtraGoldColor.BackColor = c;
         }
 
         private void btnSelectColor(object sender, EventArgs e)
@@ -588,6 +608,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             btnSetPoisonResColor.ForeColor = Color.YellowGreen;
             btnSetPlayersXColor.ForeColor = Color.Snow;
             btnSetGameCounterColor.ForeColor = Color.Snow;
+            btnSetAttackerSelfDamageColor.BackColor = Color.Snow;
+            btnSetMFColor.BackColor = Color.Gold;
+            btnSetExtraGoldColor.BackColor = Color.Gold;
             SetBackgroundColor(Color.Black);
         }
 

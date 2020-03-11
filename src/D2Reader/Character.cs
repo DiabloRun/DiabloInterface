@@ -233,10 +233,10 @@ namespace Zutatensuppe.D2Reader
             FasterCastRate = getItemStat(StatIdentifier.FasterCastRate);
             IncreasedAttackSpeed = getItemStat(StatIdentifier.IncreasedAttackSpeed);
 
-            AttackerSelfDamage = getItemStat(StatIdentifier.AttackerSelfDamage);
+            AttackerSelfDamage = getStat(StatIdentifier.AttackerSelfDamage);
 
-            MagicFind = getItemStat(StatIdentifier.MagicFind);
-            MonsterGold = getItemStat(StatIdentifier.MonsterGold);
+            MagicFind = getStat(StatIdentifier.MagicFind);
+            MonsterGold = getStat(StatIdentifier.MonsterGold);
 
             Gold = getStat(StatIdentifier.Gold);
             GoldStash = getStat(StatIdentifier.GoldStash);

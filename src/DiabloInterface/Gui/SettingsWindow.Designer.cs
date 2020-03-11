@@ -115,6 +115,12 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSaveAs = new System.Windows.Forms.Button();
             this.btnUndo = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
+            this.btnSetMFColor = new System.Windows.Forms.Button();
+            this.btnSetExtraGoldColor = new System.Windows.Forms.Button();
+            this.btnSetAttackerSelfDamageColor = new System.Windows.Forms.Button();
+            this.checkBoxMagicFind = new System.Windows.Forms.CheckBox();
+            this.checkBoxMonsterGold = new System.Windows.Forms.CheckBox();
+            this.checkBoxAttackerSelfDamage = new System.Windows.Forms.CheckBox();
             this.FontGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
@@ -514,6 +520,12 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.checkBoxAttackerSelfDamage);
+            this.groupBox1.Controls.Add(this.checkBoxMonsterGold);
+            this.groupBox1.Controls.Add(this.checkBoxMagicFind);
+            this.groupBox1.Controls.Add(this.btnSetAttackerSelfDamageColor);
+            this.groupBox1.Controls.Add(this.btnSetExtraGoldColor);
+            this.groupBox1.Controls.Add(this.btnSetMFColor);
             this.groupBox1.Controls.Add(this.btnSetPlayersXColor);
             this.groupBox1.Controls.Add(this.btnSetGameCounterColor);
             this.groupBox1.Controls.Add(this.chkShowPlayersX);
@@ -924,11 +936,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.lblPipeServerStatus.TabIndex = 5;
             this.lblPipeServerStatus.Text = "Status:";
             // 
-            // chkPipeServerAutostart
+            // chkPipeServerEnabled
             // 
             this.chkPipeServerEnabled.AutoSize = true;
             this.chkPipeServerEnabled.Location = new System.Drawing.Point(68, 53);
-            this.chkPipeServerEnabled.Name = "chkPipeServerAutostart";
+            this.chkPipeServerEnabled.Name = "chkPipeServerEnabled";
             this.chkPipeServerEnabled.Size = new System.Drawing.Size(59, 17);
             this.chkPipeServerEnabled.TabIndex = 3;
             this.chkPipeServerEnabled.Text = "Enable";
@@ -1068,6 +1080,72 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // btnSetMFColor
+            // 
+            this.btnSetMFColor.Location = new System.Drawing.Point(392, 19);
+            this.btnSetMFColor.Margin = new System.Windows.Forms.Padding(0);
+            this.btnSetMFColor.Name = "btnSetMFColor";
+            this.btnSetMFColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetMFColor.TabIndex = 32;
+            this.btnSetMFColor.Text = "Color";
+            this.btnSetMFColor.UseVisualStyleBackColor = true;
+            this.btnSetMFColor.Click += new System.EventHandler(this.btnSelectColor);
+            // 
+            // btnSetExtraGoldColor
+            // 
+            this.btnSetExtraGoldColor.Location = new System.Drawing.Point(392, 52);
+            this.btnSetExtraGoldColor.Margin = new System.Windows.Forms.Padding(0);
+            this.btnSetExtraGoldColor.Name = "btnSetExtraGoldColor";
+            this.btnSetExtraGoldColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetExtraGoldColor.TabIndex = 33;
+            this.btnSetExtraGoldColor.Text = "Color";
+            this.btnSetExtraGoldColor.UseVisualStyleBackColor = true;
+            this.btnSetExtraGoldColor.Click += new System.EventHandler(this.btnSelectColor);
+            // 
+            // btnSetAttackerSelfDamageColor
+            // 
+            this.btnSetAttackerSelfDamageColor.Location = new System.Drawing.Point(392, 84);
+            this.btnSetAttackerSelfDamageColor.Margin = new System.Windows.Forms.Padding(0);
+            this.btnSetAttackerSelfDamageColor.Name = "btnSetAttackerSelfDamageColor";
+            this.btnSetAttackerSelfDamageColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetAttackerSelfDamageColor.TabIndex = 34;
+            this.btnSetAttackerSelfDamageColor.Text = "Color";
+            this.btnSetAttackerSelfDamageColor.UseVisualStyleBackColor = true;
+            this.btnSetAttackerSelfDamageColor.Click += new System.EventHandler(this.btnSelectColor);
+            // 
+            // checkBoxMagicFind
+            // 
+            this.checkBoxMagicFind.AutoSize = true;
+            this.checkBoxMagicFind.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.checkBoxMagicFind.Location = new System.Drawing.Point(259, 24);
+            this.checkBoxMagicFind.Name = "checkBoxMagicFind";
+            this.checkBoxMagicFind.Size = new System.Drawing.Size(78, 17);
+            this.checkBoxMagicFind.TabIndex = 35;
+            this.checkBoxMagicFind.Text = "Magic Find";
+            this.checkBoxMagicFind.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxMonsterGold
+            // 
+            this.checkBoxMonsterGold.AutoSize = true;
+            this.checkBoxMonsterGold.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.checkBoxMonsterGold.Location = new System.Drawing.Point(259, 57);
+            this.checkBoxMonsterGold.Name = "checkBoxMonsterGold";
+            this.checkBoxMonsterGold.Size = new System.Drawing.Size(75, 17);
+            this.checkBoxMonsterGold.TabIndex = 36;
+            this.checkBoxMonsterGold.Text = "Extra Gold";
+            this.checkBoxMonsterGold.UseVisualStyleBackColor = true;
+            // 
+            // checkBox3
+            // 
+            this.checkBoxAttackerSelfDamage.AutoSize = true;
+            this.checkBoxAttackerSelfDamage.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.checkBoxAttackerSelfDamage.Location = new System.Drawing.Point(259, 89);
+            this.checkBoxAttackerSelfDamage.Name = "checkBox3";
+            this.checkBoxAttackerSelfDamage.Size = new System.Drawing.Size(130, 17);
+            this.checkBoxAttackerSelfDamage.TabIndex = 37;
+            this.checkBoxAttackerSelfDamage.Text = "Attacker Self Damage";
+            this.checkBoxAttackerSelfDamage.UseVisualStyleBackColor = true;
+            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1196,5 +1274,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private System.Windows.Forms.CheckBox chkPipeServerEnabled;
         private System.Windows.Forms.RichTextBox txtPipeServer;
         private System.Windows.Forms.Label lblPipeServerStatus;
+        private System.Windows.Forms.CheckBox checkBoxAttackerSelfDamage;
+        private System.Windows.Forms.CheckBox checkBoxMonsterGold;
+        private System.Windows.Forms.CheckBox checkBoxMagicFind;
+        private System.Windows.Forms.Button btnSetAttackerSelfDamageColor;
+        private System.Windows.Forms.Button btnSetExtraGoldColor;
+        private System.Windows.Forms.Button btnSetMFColor;
     }
 }
