@@ -99,7 +99,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 currentLayout.Dispose();
                 currentLayout = null;
             }
-
             Controls.Add(nextLayout);
             currentLayout = nextLayout;
         }

@@ -3,626 +3,253 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     using System;
     using System.Collections.Generic;
     using System.Drawing;
+    using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
-
+    using Zutatensuppe.D2Reader;
+    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
-    public class HorizontalLayout : AbstractLayout
+    class HorizontalLayout : AbstractLayout
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        FlowLayoutPanel activeRuneLayoutPanel;
-
-        protected FlowLayoutPanel flowLayoutPanel1;
+        private FlowLayoutPanel activeRuneLayoutPanel;
+        private FlowLayoutPanel outerLeftRightPanel;
+        private FlowLayoutPanel flowLayoutPanel1;
         protected override Panel RuneLayoutPanel => activeRuneLayoutPanel;
+        private TableLayoutPanel panelAdvancedStats;
+        private TableLayoutPanel panelResistances;
+        private TableLayoutPanel panelDiffPercentages;
+        private TableLayoutPanel panelDeathsLvl;
+        private TableLayoutPanel panelSimpleStats;
+        private FlowLayoutPanel panelStats;
+        private TableLayoutPanel panelDiffPercentages2;
+        private FlowLayoutPanel panelRuneDisplayHorizontal;
+        private FlowLayoutPanel panelRuneDisplayVertical;
+        private TableLayoutPanel panelBaseStats;
 
-        new protected void InitializeComponent()
+        protected void InitializeComponent()
         {
-            base.InitializeComponent();
+            add("name", "WWW_WWWWWWWWW", (ApplicationSettings s) => Tuple.Create(s.DisplayName, s.ColorName, s.FontSizeTitle), "{}");
+            add("playersx", "8", (ApplicationSettings s) => Tuple.Create(s.DisplayPlayersX, s.ColorPlayersX, s.FontSize), "/players {}");
+            add("deaths", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayDeathCounter, s.ColorDeaths, s.FontSize), "DEATHS: {}");
+            add("runs", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayGameCounter, s.ColorGameCounter, s.FontSize), "RUNS: {}");
+            add("gold", "2500000", (ApplicationSettings s) => Tuple.Create(s.DisplayGold, s.ColorGold, s.FontSize), "GOLD: {}");
+            add("mf", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayMagicFind, s.ColorMagicFind, s.FontSize), "MF: {}");
+            add("monstergold", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayMonsterGold, s.ColorMonsterGold, s.FontSize), "EMG: {}");
+            add("atd", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAttackerSelfDamage, s.ColorAttackerSelfDamage, s.FontSize), "ATD: {}");
+            add("lvl", "99", (ApplicationSettings s) => Tuple.Create(s.DisplayLevel, s.ColorLevel, s.FontSize), "LVL: {}");
+            add("str", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "STR:", "{}");
+            add("vit", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "VIT:", "{}");
+            add("dex", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "DEX:", "{}");
+            add("ene", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "ENE:", "{}");
+            add("ias", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "IAS:", "{}");
+            add("frw", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "FRW:", "{}");
+            add("fcr", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "FCR:", "{}");
+            add("fhr", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "FHR:", "{}");
+            add("cold", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorColdRes, s.FontSize), "COLD:", "{}");
+            add("ligh", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorLightningRes, s.FontSize), "LIGH:", "{}");
+            add("pois", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorPoisonRes, s.FontSize), "POIS:", "{}");
+            add("fire", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorFireRes, s.FontSize), "FIRE:", "{}");
+            add("norm", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NORM:", "{}%");
+            add("nm", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NM:", "{}%");
+            add("hell", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "HELL:", "{}%");
+            add("norm_inline", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NO: {}%");
+            add("nm_inline", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NM: {}%");
+            add("hell_inline", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "HE: {}%");
+
+            // display multiple "things" in 1 row (a table with 1 row and x columns)
+            TableLayoutPanel rowthing(params string[] names)
+            {
+                var t = new TableLayoutPanel();
+                t.SuspendLayout();
+                t.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+                t.AutoSize = true;
+                t.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                t.ColumnCount = names.Length;
+                int i = 0;
+                foreach (string n in names)
+                {
+                    t.ColumnStyles.Add(new ColumnStyle());
+                    t.Controls.Add(def[n].labels[0], i++, 0);
+                }
+                t.Margin = new Padding(0);
+                t.RowCount = 1;
+                t.RowStyles.Add(new RowStyle());
+                t.ResumeLayout(false);
+                return t;
+            }
+
+            // display multiple "things" in a table. where each thing is displayed in 1 row
+            // and each feature of the thing is displayed in a column
+            // each thing must have the same number of columns for this to work
+            TableLayoutPanel tablething(params string[] names)
+            {
+                var t = new TableLayoutPanel();
+                t.SuspendLayout();
+                t.RowCount = 0;
+                t.ColumnCount = def[names[0]].labels.Length;
+                for (int i = 0; i < def[names[0]].labels.Length; i++)
+                {
+                    t.ColumnStyles.Add(new ColumnStyle());
+                }
+                foreach (string n in names)
+                {
+                    t.RowCount++;
+                    t.RowStyles.Add(new RowStyle());
+                    int c = 0;
+                    foreach (Label l in def[n].labels)
+                    {
+                        t.Controls.Add(l, c, t.RowCount - 1);
+                        c++;
+                    }
+                }
+                t.Margin = new Padding(0);
+                t.AutoSize = true;
+                t.ResumeLayout(false);
+                return t;
+            }
+
+            this.panelSimpleStats = rowthing("gold", "mf");
+            this.panelDeathsLvl = rowthing("deaths", "lvl");
+            this.panelBaseStats = tablething("str", "dex", "vit", "ene");
+            this.panelAdvancedStats = tablething("frw", "fhr", "fcr", "ias");
+            this.panelResistances = tablething("fire", "cold", "ligh", "pois");
+            this.panelDiffPercentages = tablething("norm", "nm", "hell");
+            this.panelDiffPercentages2 = rowthing("norm_inline", "nm_inline", "hell_inline");
+
+            this.panelRuneDisplayVertical = new FlowLayoutPanel();
+            this.panelRuneDisplayVertical.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            this.panelRuneDisplayVertical.AutoSize = true;
+            this.panelRuneDisplayVertical.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            this.panelRuneDisplayVertical.Margin = new Padding(0);
+            this.panelRuneDisplayVertical.MaximumSize = new Size(28, 0);
+            this.panelRuneDisplayVertical.MinimumSize = new Size(28, 28);
+
+            this.panelRuneDisplayHorizontal = new FlowLayoutPanel();
+            this.panelRuneDisplayHorizontal.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            this.panelRuneDisplayHorizontal.AutoSize = true;
+            this.panelRuneDisplayHorizontal.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
+            this.panelStats = new FlowLayoutPanel();
+            this.panelStats.SuspendLayout();
+            this.panelStats.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            this.panelStats.AutoSize = true;
+            this.panelStats.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            this.panelStats.Controls.Add(this.panelBaseStats);
+            this.panelStats.Controls.Add(this.panelAdvancedStats);
+            this.panelStats.Controls.Add(this.panelResistances);
+            this.panelStats.Controls.Add(this.panelDiffPercentages);
+            this.panelStats.Margin = new Padding(0);
 
             this.flowLayoutPanel1 = new FlowLayoutPanel();
             this.flowLayoutPanel1.SuspendLayout();
+            this.flowLayoutPanel1.AutoSize = true;
+            this.flowLayoutPanel1.Controls.Add(def["name"].labels[0]);
+            this.flowLayoutPanel1.Controls.Add(def["playersx"].labels[0]);
+            this.flowLayoutPanel1.Controls.Add(def["runs"].labels[0]);
+            this.flowLayoutPanel1.Controls.Add(this.panelDeathsLvl);
+            this.flowLayoutPanel1.Controls.Add(def["atd"].labels[0]);
+            this.flowLayoutPanel1.Controls.Add(def["monstergold"].labels[0]);
+            this.flowLayoutPanel1.Controls.Add(this.panelSimpleStats);
+            this.flowLayoutPanel1.Controls.Add(this.panelStats);
+            this.flowLayoutPanel1.Controls.Add(this.panelDiffPercentages2);
+            this.flowLayoutPanel1.Controls.Add(this.panelRuneDisplayHorizontal);
+            this.flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
+            this.flowLayoutPanel1.Margin = new Padding(0);
 
-            this.SuspendLayout();
-
+            this.outerLeftRightPanel = new FlowLayoutPanel();
+            this.outerLeftRightPanel.SuspendLayout();
             this.outerLeftRightPanel.AutoSize = true;
             this.outerLeftRightPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             this.outerLeftRightPanel.Controls.Add(this.panelRuneDisplayVertical);
             this.outerLeftRightPanel.Controls.Add(this.flowLayoutPanel1);
             this.outerLeftRightPanel.Dock = DockStyle.Fill;
-            this.outerLeftRightPanel.Location = new Point(0, 0);
             this.outerLeftRightPanel.Margin = new Padding(0);
-            this.outerLeftRightPanel.Padding = new Padding(3, 5, 3, 5);
+            this.outerLeftRightPanel.Padding = new Padding(0);
 
-            this.panelRuneDisplayVertical.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            this.panelRuneDisplayVertical.AutoSize = true;
-            this.panelRuneDisplayVertical.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            this.panelRuneDisplayVertical.Location = new Point(6, 5);
-            this.panelRuneDisplayVertical.Margin = new Padding(3, 0, 0, 0);
-            this.panelRuneDisplayVertical.MaximumSize = new Size(28, 0);
-            this.panelRuneDisplayVertical.MinimumSize = new Size(28, 28);
-
-            this.flowLayoutPanel1.AutoSize = true;
-            this.flowLayoutPanel1.Controls.Add(this.nameLabel);
-            this.flowLayoutPanel1.Controls.Add(this.playersXLabel);
-            this.flowLayoutPanel1.Controls.Add(this.gameCounterLabel);
-            this.flowLayoutPanel1.Controls.Add(this.panelDeathsLvl);
-            this.flowLayoutPanel1.Controls.Add(this.attackerSelfDamageLabel);
-            this.flowLayoutPanel1.Controls.Add(this.magicFindLabel);
-            this.flowLayoutPanel1.Controls.Add(this.monsterGoldLabel);
-            this.flowLayoutPanel1.Controls.Add(this.panelSimpleStats);
-            this.flowLayoutPanel1.Controls.Add(this.panelStats);
-            this.flowLayoutPanel1.Controls.Add(this.panelDiffPercentages2);
-            this.flowLayoutPanel1.Controls.Add(this.panelRuneDisplayHorizontal);
-            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(34, 5);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
-
-            this.nameLabel.AutoSize = true;
-            this.nameLabel.Location = new System.Drawing.Point(3, 0);
-            this.nameLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
-            this.nameLabel.Text = "Name";
-
-            this.gameCounterLabel.AutoSize = true;
-            this.gameCounterLabel.Location = new System.Drawing.Point(3, 0);
-            this.gameCounterLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
-            this.gameCounterLabel.Text = "Run count: 1";
-
-            this.magicFindLabel.AutoSize = true;
-            this.magicFindLabel.Location = new System.Drawing.Point(3, 0);
-            this.magicFindLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
-            this.magicFindLabel.Text = "MF: -";
-
-            this.monsterGoldLabel.AutoSize = true;
-            this.monsterGoldLabel.Location = new System.Drawing.Point(3, 0);
-            this.monsterGoldLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
-            this.monsterGoldLabel.Text = "EMG: -";
-
-            this.attackerSelfDamageLabel.AutoSize = true;
-            this.attackerSelfDamageLabel.Location = new System.Drawing.Point(3, 0);
-            this.attackerSelfDamageLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
-            this.attackerSelfDamageLabel.Text = "ATD: -";
-
-            this.playersXLabel.AutoSize = true;
-            this.playersXLabel.Location = new System.Drawing.Point(3, 0);
-            this.playersXLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 3);
-            this.playersXLabel.Text = "/players X";
-
-            this.panelDeathsLvl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            this.panelDeathsLvl.AutoSize = true;
-            this.panelDeathsLvl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panelDeathsLvl.ColumnCount = 2;
-            this.panelDeathsLvl.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            this.panelDeathsLvl.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            this.panelDeathsLvl.Controls.Add(this.deathsLabel, 0, 0);
-            this.panelDeathsLvl.Controls.Add(this.lvlLabel, 1, 0);
-            this.panelDeathsLvl.Location = new System.Drawing.Point(0, 30);
-            this.panelDeathsLvl.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
-            this.panelDeathsLvl.RowCount = 1;
-            this.panelDeathsLvl.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            this.panelDeathsLvl.RowStyles.Add(new RowStyle(SizeType.Absolute, 16F));
-
-            this.deathsLabel.AutoSize = true;
-            this.deathsLabel.Location = new System.Drawing.Point(3, 0);
-            this.deathsLabel.Text = "DEATHS: -";
-
-            this.lvlLabel.AutoSize = true;
-            this.lvlLabel.Location = new System.Drawing.Point(189, 0);
-            this.lvlLabel.Text = "LVL: -";
-
-            this.panelSimpleStats.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            this.panelSimpleStats.AutoSize = true;
-            this.panelSimpleStats.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panelSimpleStats.ColumnCount = 1;
-            this.panelSimpleStats.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
-            this.panelSimpleStats.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
-            this.panelSimpleStats.Controls.Add(this.goldLabel, 0, 0);
-            this.panelSimpleStats.Location = new System.Drawing.Point(0, 49);
-            this.panelSimpleStats.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
-            this.panelSimpleStats.RowCount = 1;
-            this.panelSimpleStats.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-
-            this.goldLabel.AutoSize = true;
-            this.goldLabel.Location = new System.Drawing.Point(3, 0);
-            this.goldLabel.Text = "GOLD: -";
-
-            this.panelStats.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            this.panelStats.AutoSize = true;
-            this.panelStats.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panelStats.Controls.Add(this.panelBaseStats);
-            this.panelStats.Controls.Add(this.panelAdvancedStats);
-            this.panelStats.Controls.Add(this.panelResistances);
-            this.panelStats.Controls.Add(this.panelDiffPercentages);
-            this.panelStats.Location = new System.Drawing.Point(3, 68);
-            this.panelStats.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
-
-            this.panelBaseStats.ColumnCount = 2;
-            this.panelBaseStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelBaseStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelBaseStats.Controls.Add(this.vitLabel, 0, 2);
-            this.panelBaseStats.Controls.Add(this.dexLabel, 0, 1);
-            this.panelBaseStats.Controls.Add(this.strLabel, 0, 0);
-            this.panelBaseStats.Controls.Add(this.eneLabel, 0, 3);
-            this.panelBaseStats.Controls.Add(this.labelStrVal, 1, 0);
-            this.panelBaseStats.Controls.Add(this.labelDexVal, 1, 1);
-            this.panelBaseStats.Controls.Add(this.labelVitVal, 1, 2);
-            this.panelBaseStats.Controls.Add(this.labelEneVal, 1, 3);
-            this.panelBaseStats.Location = new System.Drawing.Point(0, 0);
-            this.panelBaseStats.Margin = new System.Windows.Forms.Padding(0);
-            this.panelBaseStats.RowCount = 4;
-            this.panelBaseStats.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelBaseStats.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelBaseStats.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelBaseStats.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelBaseStats.Size = new System.Drawing.Size(85, 72);
-
-            this.vitLabel.AutoSize = true;
-            this.vitLabel.Location = new System.Drawing.Point(0, 36);
-            this.vitLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.vitLabel.Text = "VIT:";
-            this.vitLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-
-            this.dexLabel.AutoSize = true;
-            this.dexLabel.Location = new System.Drawing.Point(0, 18);
-            this.dexLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.dexLabel.Text = "DEX:";
-            this.dexLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-
-            this.strLabel.AutoSize = true;
-            this.strLabel.Location = new System.Drawing.Point(0, 0);
-            this.strLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.strLabel.Text = "STR:";
-            this.strLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-
-            this.eneLabel.AutoSize = true;
-            this.eneLabel.Location = new System.Drawing.Point(0, 54);
-            this.eneLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.eneLabel.Text = "ENE:";
-            this.eneLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-
-            this.labelStrVal.AutoSize = true;
-            this.labelStrVal.Location = new System.Drawing.Point(40, 0);
-            this.labelStrVal.Margin = new System.Windows.Forms.Padding(0);
-            this.labelStrVal.Text = "-";
-            this.labelStrVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.labelDexVal.AutoSize = true;
-            this.labelDexVal.Location = new System.Drawing.Point(40, 18);
-            this.labelDexVal.Margin = new System.Windows.Forms.Padding(0);
-            this.labelDexVal.Text = "-";
-            this.labelDexVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.labelVitVal.AutoSize = true;
-            this.labelVitVal.Location = new System.Drawing.Point(40, 36);
-            this.labelVitVal.Margin = new System.Windows.Forms.Padding(0);
-            this.labelVitVal.Text = "-";
-            this.labelVitVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.labelEneVal.AutoSize = true;
-            this.labelEneVal.Location = new System.Drawing.Point(40, 54);
-            this.labelEneVal.Margin = new System.Windows.Forms.Padding(0);
-            this.labelEneVal.Text = "-";
-            this.labelEneVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.panelAdvancedStats.ColumnCount = 2;
-            this.panelAdvancedStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelAdvancedStats.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelAdvancedStats.Controls.Add(this.iasLabel, 0, 3);
-            this.panelAdvancedStats.Controls.Add(this.frwLabel, 0, 0);
-            this.panelAdvancedStats.Controls.Add(this.fcrLabel, 0, 2);
-            this.panelAdvancedStats.Controls.Add(this.fhrLabel, 0, 1);
-            this.panelAdvancedStats.Controls.Add(this.labelFrwVal, 1, 0);
-            this.panelAdvancedStats.Controls.Add(this.labelFhrVal, 1, 1);
-            this.panelAdvancedStats.Controls.Add(this.labelFcrVal, 1, 2);
-            this.panelAdvancedStats.Controls.Add(this.labelIasVal, 1, 3);
-            this.panelAdvancedStats.Location = new Point(85, 0);
-            this.panelAdvancedStats.Margin = new Padding(0);
-            this.panelAdvancedStats.RowCount = 4;
-            this.panelAdvancedStats.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelAdvancedStats.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelAdvancedStats.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelAdvancedStats.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelAdvancedStats.Size = new Size(85, 72);
-
-            this.iasLabel.AutoSize = true;
-            this.iasLabel.Location = new Point(0, 54);
-            this.iasLabel.Margin = new Padding(0);
-            this.iasLabel.Text = "IAS:";
-
-            this.frwLabel.AutoSize = true;
-            this.frwLabel.Location = new System.Drawing.Point(0, 0);
-            this.frwLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.frwLabel.Text = "FRW:";
-
-            this.fcrLabel.AutoSize = true;
-            this.fcrLabel.Location = new System.Drawing.Point(0, 36);
-            this.fcrLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.fcrLabel.Text = "FCR:";
-
-            this.fhrLabel.AutoSize = true;
-            this.fhrLabel.Location = new System.Drawing.Point(0, 18);
-            this.fhrLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.fhrLabel.Text = "FHR:";
-
-            this.labelFrwVal.AutoSize = true;
-            this.labelFrwVal.Location = new System.Drawing.Point(40, 0);
-            this.labelFrwVal.Margin = new System.Windows.Forms.Padding(0);
-            this.labelFrwVal.Text = "-";
-            this.labelFrwVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.labelFhrVal.AutoSize = true;
-            this.labelFhrVal.Location = new System.Drawing.Point(40, 18);
-            this.labelFhrVal.Margin = new System.Windows.Forms.Padding(0);
-            this.labelFhrVal.Text = "-";
-            this.labelFhrVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.labelFcrVal.AutoSize = true;
-            this.labelFcrVal.Location = new System.Drawing.Point(40, 36);
-            this.labelFcrVal.Margin = new System.Windows.Forms.Padding(0);
-            this.labelFcrVal.Text = "-";
-            this.labelFcrVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.labelIasVal.AutoSize = true;
-            this.labelIasVal.Location = new System.Drawing.Point(40, 54);
-            this.labelIasVal.Margin = new System.Windows.Forms.Padding(0);
-            this.labelIasVal.Text = "-";
-            this.labelIasVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.panelResistances.ColumnCount = 2;
-            this.panelResistances.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelResistances.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelResistances.Controls.Add(this.coldLabel, 0, 1);
-            this.panelResistances.Controls.Add(this.lighLabel, 0, 2);
-            this.panelResistances.Controls.Add(this.poisLabel, 0, 3);
-            this.panelResistances.Controls.Add(this.fireLabel, 0, 0);
-            this.panelResistances.Controls.Add(this.labelFireResVal, 1, 0);
-            this.panelResistances.Controls.Add(this.labelLightResVal, 1, 2);
-            this.panelResistances.Controls.Add(this.labelPoisonResVal, 1, 3);
-            this.panelResistances.Controls.Add(this.labelColdResVal, 1, 1);
-            this.panelResistances.Location = new System.Drawing.Point(170, 0);
-            this.panelResistances.Margin = new System.Windows.Forms.Padding(0);
-            this.panelResistances.RowCount = 4;
-            this.panelResistances.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelResistances.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelResistances.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelResistances.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelResistances.Size = new System.Drawing.Size(100, 72);
-
-            this.coldLabel.AutoSize = true;
-            this.coldLabel.Location = new System.Drawing.Point(0, 18);
-            this.coldLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.coldLabel.Text = "COLD:";
-
-            this.lighLabel.AutoSize = true;
-            this.lighLabel.Location = new System.Drawing.Point(0, 36);
-            this.lighLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.lighLabel.Text = "LIGH:";
-
-            this.poisLabel.AutoSize = true;
-            this.poisLabel.Location = new System.Drawing.Point(0, 54);
-            this.poisLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.poisLabel.Text = "POIS:";
-
-            this.fireLabel.AutoSize = true;
-            this.fireLabel.Location = new System.Drawing.Point(0, 0);
-            this.fireLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.fireLabel.Text = "FIRE:";
-
-            this.labelFireResVal.AutoSize = true;
-            this.labelFireResVal.Location = new System.Drawing.Point(48, 0);
-            this.labelFireResVal.Margin = new System.Windows.Forms.Padding(0);
-            this.labelFireResVal.Text = "-";
-            this.labelFireResVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.labelLightResVal.AutoSize = true;
-            this.labelLightResVal.Location = new System.Drawing.Point(48, 36);
-            this.labelLightResVal.Margin = new System.Windows.Forms.Padding(0);
-            this.labelLightResVal.Text = "-";
-            this.labelLightResVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.labelPoisonResVal.AutoSize = true;
-            this.labelPoisonResVal.Location = new System.Drawing.Point(48, 54);
-            this.labelPoisonResVal.Margin = new System.Windows.Forms.Padding(0);
-            this.labelPoisonResVal.Text = "-";
-            this.labelPoisonResVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.labelColdResVal.AutoSize = true;
-            this.labelColdResVal.Location = new System.Drawing.Point(48, 18);
-            this.labelColdResVal.Margin = new System.Windows.Forms.Padding(0);
-            this.labelColdResVal.Text = "-";
-            this.labelColdResVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.panelDiffPercentages.ColumnCount = 2;
-            this.panelDiffPercentages.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelDiffPercentages.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.panelDiffPercentages.Controls.Add(this.normLabel, 0, 0);
-            this.panelDiffPercentages.Controls.Add(this.nmLabel, 0, 1);
-            this.panelDiffPercentages.Controls.Add(this.hellLabel, 0, 2);
-            this.panelDiffPercentages.Controls.Add(this.normLabelVal, 1, 0);
-            this.panelDiffPercentages.Controls.Add(this.nmLabelVal, 1, 1);
-            this.panelDiffPercentages.Controls.Add(this.hellLabelVal, 1, 2);
-            this.panelDiffPercentages.Location = new System.Drawing.Point(270, 0);
-            this.panelDiffPercentages.Margin = new System.Windows.Forms.Padding(0);
-            this.panelDiffPercentages.RowCount = 4;
-            this.panelDiffPercentages.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelDiffPercentages.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelDiffPercentages.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelDiffPercentages.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
-            this.panelDiffPercentages.Size = new System.Drawing.Size(97, 72);
-
-            this.normLabel.AutoSize = true;
-            this.normLabel.Location = new System.Drawing.Point(0, 0);
-            this.normLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.normLabel.Text = "NORM:";
-
-            this.nmLabel.AutoSize = true;
-            this.nmLabel.Location = new System.Drawing.Point(0, 18);
-            this.nmLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.nmLabel.Text = "NM:";
-
-            this.hellLabel.AutoSize = true;
-            this.hellLabel.Location = new System.Drawing.Point(0, 36);
-            this.hellLabel.Margin = new System.Windows.Forms.Padding(0);
-            this.hellLabel.Text = "HELL:";
-
-            this.normLabelVal.AutoSize = true;
-            this.normLabelVal.Location = new System.Drawing.Point(48, 0);
-            this.normLabelVal.Margin = new System.Windows.Forms.Padding(0);
-            this.normLabelVal.Text = "-";
-            this.normLabelVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.nmLabelVal.AutoSize = true;
-            this.nmLabelVal.Location = new System.Drawing.Point(48, 18);
-            this.nmLabelVal.Margin = new System.Windows.Forms.Padding(0);
-            this.nmLabelVal.Text = "-";
-            this.nmLabelVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.hellLabelVal.AutoSize = true;
-            this.hellLabelVal.Location = new System.Drawing.Point(48, 36);
-            this.hellLabelVal.Margin = new System.Windows.Forms.Padding(0);
-            this.hellLabelVal.Text = "-";
-            this.hellLabelVal.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
-            this.panelDiffPercentages2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            this.panelDiffPercentages2.AutoSize = true;
-            this.panelDiffPercentages2.Controls.Add(this.labelNormPerc);
-            this.panelDiffPercentages2.Controls.Add(this.labelNmPerc);
-            this.panelDiffPercentages2.Controls.Add(this.labelHellPerc);
-            this.panelDiffPercentages2.Location = new System.Drawing.Point(3, 146);
-
-            this.labelNormPerc.AutoSize = true;
-            this.labelNormPerc.Location = new System.Drawing.Point(0, 0);
-            this.labelNormPerc.Margin = new System.Windows.Forms.Padding(0);
-            this.labelNormPerc.Text = "NO: -";
-
-            this.labelNmPerc.AutoSize = true;
-            this.labelNmPerc.Location = new System.Drawing.Point(53, 0);
-            this.labelNmPerc.Margin = new System.Windows.Forms.Padding(5, 0, 0, 0);
-            this.labelNmPerc.Text = "NM: -";
-
-            this.labelHellPerc.AutoSize = true;
-            this.labelHellPerc.Location = new System.Drawing.Point(106, 0);
-            this.labelHellPerc.Margin = new System.Windows.Forms.Padding(5, 0, 0, 0);
-            this.labelHellPerc.Text = "HE: -";
-
-            this.panelRuneDisplayHorizontal.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            this.panelRuneDisplayHorizontal.AutoSize = true;
-            this.panelRuneDisplayHorizontal.Location = new System.Drawing.Point(3, 168);
-            this.panelRuneDisplayHorizontal.MinimumSize = new System.Drawing.Size(200, 28);
-
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
-            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.BackColor = System.Drawing.Color.Black;
-            this.Controls.Add(this.outerLeftRightPanel);
-            this.Name = "HorizontalLayout";
-            this.outerLeftRightPanel.ResumeLayout(false);
-            this.outerLeftRightPanel.PerformLayout();
-            this.flowLayoutPanel1.ResumeLayout(false);
-            this.flowLayoutPanel1.PerformLayout();
-            this.panelDeathsLvl.ResumeLayout(false);
-            this.panelDeathsLvl.PerformLayout();
-            this.panelSimpleStats.ResumeLayout(false);
-            this.panelSimpleStats.PerformLayout();
-            this.panelStats.ResumeLayout(false);
-            this.panelBaseStats.ResumeLayout(false);
-            this.panelBaseStats.PerformLayout();
-            this.panelAdvancedStats.ResumeLayout(false);
-            this.panelAdvancedStats.PerformLayout();
-            this.panelResistances.ResumeLayout(false);
-            this.panelResistances.PerformLayout();
-            this.panelDiffPercentages.ResumeLayout(false);
-            this.panelDiffPercentages.PerformLayout();
-            this.panelDiffPercentages2.ResumeLayout(false);
-            this.panelDiffPercentages2.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-        }
-
-        public HorizontalLayout(ISettingsService settingsService, IGameService gameService)
-            : base(settingsService, gameService)
-        {
-            Logger.Info("Creating horizontal layout.");
-
-            InitializeComponent();
-            InitializeElements();
-
-            panelRuneDisplayHorizontal.Hide();
-            panelRuneDisplayVertical.Hide();
-        }
-
-        void InitializeElements()
-        {
-            InfoLabels = new[]
-            {
-                playersXLabel,
-                deathsLabel, deathsLabelVal,
-                gameCounterLabel, gameCounterLabelVal,
-                monsterGoldLabel, monsterGoldLabelVal,
-                magicFindLabel, magicFindLabelVal,
-                attackerSelfDamageLabel, attackerSelfDamageLabelVal,
-                goldLabel, goldLabelVal,
-                lvlLabel, lvlLabelVal,
-                strLabel, labelStrVal,
-                dexLabel, labelDexVal,
-                vitLabel, labelVitVal,
-                eneLabel, labelEneVal,
-                frwLabel, labelFhrVal,
-                fhrLabel, labelFrwVal,
-                fcrLabel, labelFcrVal,
-                iasLabel, labelIasVal,
-                fireLabel, labelFireResVal,
-                coldLabel, labelColdResVal,
-                lighLabel, labelLightResVal,
-                poisLabel, labelPoisonResVal,
-                normLabel, normLabelVal,
-                nmLabel, nmLabelVal,
-                hellLabel, hellLabelVal,
-                labelNormPerc, labelNmPerc, labelHellPerc,
-            };
-
-            FireLabels = new[] { fireLabel, labelFireResVal };
-            ColdLabels = new[] { coldLabel, labelColdResVal };
-            LighLabels = new[] { lighLabel, labelLightResVal };
-            PoisLabels = new[] { poisLabel, labelPoisonResVal };
-
-            BaseStatLabels = new[] {
-                strLabel, labelStrVal,
-                vitLabel, labelVitVal,
-                dexLabel, labelDexVal,
-                eneLabel, labelEneVal
-            };
-
-            AdvancedStatLabels = new [] {
-                fcrLabel, labelFcrVal,
-                fhrLabel, labelFhrVal,
-                iasLabel, labelIasVal,
-                frwLabel, labelFrwVal
-            };
-
-            DifficultyLabels = new [] {
-                normLabel, normLabelVal,
-                nmLabel, nmLabelVal,
-                hellLabel, hellLabelVal,
-                labelNormPerc,
-                labelNmPerc,
-                labelHellPerc
-            };
-
+            SuspendLayout();
+            AutoScaleDimensions = new SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            Margin = new Padding(0);
+            BackColor = Color.Black;
+            Controls.Add(this.outerLeftRightPanel);
+            Name = "HorizontalLayout";
+            outerLeftRightPanel.ResumeLayout(false);
+            outerLeftRightPanel.PerformLayout();
+            flowLayoutPanel1.ResumeLayout(false);
+            flowLayoutPanel1.PerformLayout();
+            panelStats.ResumeLayout(false);
+            panelBaseStats.ResumeLayout(false);
+            panelBaseStats.PerformLayout();
+            panelAdvancedStats.ResumeLayout(false);
+            panelAdvancedStats.PerformLayout();
+            panelResistances.ResumeLayout(false);
+            panelResistances.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
+            
             RunePanels = new[]
             {
                 panelRuneDisplayHorizontal,
                 panelRuneDisplayVertical
             };
-
-            IEnumerable<Control> l = new[]
-            {
-                nameLabel, lvlLabel, goldLabel, deathsLabel,
-                labelStrVal, labelDexVal, labelVitVal, labelEneVal,
-                labelFrwVal, labelFcrVal, labelFhrVal, labelIasVal,
-                labelFireResVal, labelColdResVal, labelLightResVal, labelPoisonResVal,
-                normLabelVal, nmLabelVal, hellLabelVal,
-                labelNormPerc, labelNmPerc, labelHellPerc,
-            };
-            DefaultTexts = new Dictionary<Control, string>();
-            foreach (Control c in l )
-            {
-                DefaultTexts.Add(c, c.Text);
-            }
         }
 
-        protected override void UpdateLayout(ApplicationSettings settings)
+        public HorizontalLayout(ISettingsService settingsService, IGameService gameService)
         {
-            // Calculate maximum sizes that the labels can possible get.
-            Size nameSize = MeasureNameSize();
-            
-            var padding = (panelAdvancedStats.Visible || panelResistances.Visible) ? 8 : 0;
-            Size statSize = MeasureBaseStatsSize();
-            Size basePanelSize = new Size(statSize.Width + padding, statSize.Height * panelBaseStats.RowCount);
+            this.settingsService = settingsService;
+            this.gameService = gameService;
 
-            padding = panelResistances.Visible ? 8 : 0;
-            Size advancedStatSize = MeasureAdvancedStatsSize();
-            Size advancedStatPanelSize = new Size(advancedStatSize.Width + padding, advancedStatSize.Height * panelAdvancedStats.RowCount);
+            RegisterServiceEventHandlers();
+            InitializeComponent();
 
-            Size resStatSize = MeasureResistancesSize();
-            Size resPanelSize = new Size(resStatSize.Width, resStatSize.Height * panelResistances.RowCount);
+            Load += (sender, e) => UpdateSettings(settingsService.CurrentSettings);
 
-            Size diffPercStatSize = MeasureDifficultyPercentageSize();
-            Size diffPercPanelSize = new Size(diffPercStatSize.Width, diffPercStatSize.Height * panelDiffPercentages.RowCount);
+            // Clean up events when disposed because services outlive us.
+            Disposed += (sender, e) => UnregisterServiceEventHandlers();
 
-            int count = 0;
-            if (panelResistances.Visible) count++;
-            if (panelBaseStats.Visible) count++;
-            if (panelAdvancedStats.Visible) count++;
+            Logger.Info("Creating horizontal layout.");
 
-            // Recalculate panel size if the title is wider than all panels combined.
-            int statsWidth = (panelResistances.Visible ? resPanelSize.Width : 0)
-                + (panelBaseStats.Visible ? basePanelSize.Width : 0)
-                + (panelAdvancedStats.Visible ? advancedStatPanelSize.Width : 0)
-                + ((count < 3 && panelDiffPercentages.Visible) ? panelDiffPercentages.Width : 0)
-            ;
+            panelRuneDisplayHorizontal.Hide();
+            panelRuneDisplayVertical.Hide();
+        }
 
-            float ratio = nameSize.Width / (float)statsWidth;
+        protected override void UpdateSettings(ApplicationSettings settings)
+        {
+            realFrwIas = settings.DisplayRealFrwIas;
+            BackColor = settings.ColorBackground;
 
-            if (ratio > 1.0f)
+            var margin = new Padding(2);
+            foreach (KeyValuePair<string, Def> pair in def)
             {
-                resPanelSize.Width = (int)(resPanelSize.Width * ratio + .5f);
-                basePanelSize.Width = (int)(basePanelSize.Width * ratio + .5f);
-                advancedStatPanelSize.Width = (int)(advancedStatPanelSize.Width * ratio + .5f);
-                if (count < 3 && panelDiffPercentages.Visible)
+                var x = pair.Value.settings(settings);
+                var visible = x.Item1;
+                if (visible)
                 {
-                    panelDiffPercentages.Width = (int)(diffPercPanelSize.Width * ratio + .5f);
+                    var color = x.Item2;
+                    var font = new Font(settings.FontName, x.Item3);
+                    foreach (Label l in pair.Value.labels)
+                    {
+                        l.Visible = visible;
+                        l.Margin = margin;
+                        l.ForeColor = color;
+                        l.Font = font;
+                        var teststr = pair.Value.defaults[l].Replace("{}", pair.Value.maxString);
+                        l.Size = MeasureText(teststr, l);
+                    }
+                } else
+                {
+                    foreach (Label l in pair.Value.labels)
+                    {
+                        l.Visible = visible;
+                    }
                 }
-            }
-
-            nameLabel.Size = nameSize;
-            panelBaseStats.Size = basePanelSize;
-            panelAdvancedStats.Size = advancedStatPanelSize;
-            panelResistances.Size = resPanelSize;
-            panelDiffPercentages.Size = diffPercPanelSize;
-            panelRuneDisplayHorizontal.MaximumSize = new Size(Math.Max(nameSize.Width, statsWidth), 0);
-        }
-        
-        protected override void ApplyRuneSettings(ApplicationSettings settings)
-        {
-            FlowLayoutPanel nextRuneLayoutPanel = null;
-
-            if (settings.DisplayRunes && settings.DisplayRunesHorizontal)
-                nextRuneLayoutPanel = panelRuneDisplayHorizontal;
-            else if (settings.DisplayRunes && !settings.DisplayRunesHorizontal)
-                nextRuneLayoutPanel = panelRuneDisplayVertical;
-
-            // Only hide panels when the panels were changed.
-            if (activeRuneLayoutPanel == nextRuneLayoutPanel) return;
-
-            activeRuneLayoutPanel?.Hide();
-            activeRuneLayoutPanel = nextRuneLayoutPanel;
-        }
-
-        protected override void ApplyLabelSettings(ApplicationSettings settings)
-        {
-            base.ApplyLabelSettings(settings);
-
-            panelSimpleStats.Visible = settings.DisplayGold;
-            panelDeathsLvl.Visible = settings.DisplayDeathCounter || settings.DisplayLevel;
-
-            // If only death XOR lvl is to be displayed, set the col width of the non displayed col to 0
-            if (settings.DisplayDeathCounter ^ settings.DisplayLevel)
-            {
-                panelDeathsLvl.ColumnStyles[settings.DisplayDeathCounter ? 1 : 0].SizeType = SizeType.Absolute;
-                panelDeathsLvl.ColumnStyles[settings.DisplayDeathCounter ? 1 : 0].Width = 0;
-            }
-            else
-            {
-                // otherwise restore columns to equal width:
-                panelDeathsLvl.ColumnStyles[0].SizeType = SizeType.Percent;
-                panelDeathsLvl.ColumnStyles[0].Width = 50;
-                panelDeathsLvl.ColumnStyles[1].SizeType = SizeType.Percent;
-                panelDeathsLvl.ColumnStyles[1].Width = 50;
             }
 
             panelResistances.Visible = settings.DisplayResistances;
@@ -643,7 +270,62 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 || settings.DisplayAdvancedStats
                 || settings.DisplayDifficultyPercentages;
 
-            UpdateLabelColors(settings);
+            FlowLayoutPanel nextRuneLayoutPanel = null;
+
+            if (settings.DisplayRunes)
+            {
+                nextRuneLayoutPanel = settings.DisplayRunesHorizontal
+                    ? panelRuneDisplayHorizontal
+                    : panelRuneDisplayVertical;
+            }
+
+            // Only hide panels when the panels were changed.
+            if (activeRuneLayoutPanel != nextRuneLayoutPanel)
+            {
+                activeRuneLayoutPanel?.Hide();
+                activeRuneLayoutPanel = nextRuneLayoutPanel;
+            }
+
+            // TODO: automatically size the rune panel...
+            int statsWidth = (panelResistances.Visible ? panelResistances.Width : 0)
+                + (panelBaseStats.Visible ? panelBaseStats.Width : 0)
+                + (panelAdvancedStats.Visible ? panelAdvancedStats.Width : 0)
+                + ((count < 3 && panelDiffPercentages.Visible) ? panelDiffPercentages.Width : 0)
+            ;
+            panelRuneDisplayHorizontal.MaximumSize = new Size(Math.Max(def["name"].labels[0].Width, statsWidth), 0);
+        }
+
+        protected override void UpdateLabels(Character player, IList<QuestCollection> quests, int currentPlayersX, uint gameIndex)
+        {
+            updateLabel("name", player.Name);
+            updateLabel("playersx", currentPlayersX);
+            updateLabel("deaths", player.Deaths);
+            updateLabel("runs", (int)gameIndex);
+            updateLabel("gold", player.Gold + player.GoldStash);
+            updateLabel("mf", player.MagicFind);
+            updateLabel("monstergold", player.MonsterGold);
+            updateLabel("atd", player.AttackerSelfDamage);
+            updateLabel("lvl", player.Level);
+            updateLabel("str", player.Strength);
+            updateLabel("vit", player.Vitality);
+            updateLabel("dex", player.Dexterity);
+            updateLabel("ene", player.Energy);
+            updateLabel("ias", realFrwIas ? player.RealIAS() : player.IncreasedAttackSpeed);
+            updateLabel("frw", realFrwIas ? player.RealFRW() : player.FasterRunWalk);
+            updateLabel("fcr", player.FasterCastRate);
+            updateLabel("fhr", player.FasterHitRecovery);
+            updateLabel("cold", player.ColdResist);
+            updateLabel("ligh", player.LightningResist);
+            updateLabel("pois", player.PoisonResist);
+            updateLabel("fire", player.FireResist);
+
+            IList<float> completions = quests.Select(q => q.CompletionProgress).ToList();
+            updateLabel("norm", $@"{completions[0] * 100:0}");
+            updateLabel("nm", $@"{completions[1] * 100:0}");
+            updateLabel("hell", $@"{completions[2] * 100:0}");
+            updateLabel("norm_inline", $@"{completions[0] * 100:0}");
+            updateLabel("nm_inline", $@"{completions[1] * 100:0}");
+            updateLabel("hell_inline", $@"{completions[2] * 100:0}");
         }
     }
 }

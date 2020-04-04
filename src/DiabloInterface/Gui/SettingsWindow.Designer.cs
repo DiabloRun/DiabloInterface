@@ -67,6 +67,12 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.label1 = new System.Windows.Forms.Label();
             this.comboBoxLayout = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBoxAttackerSelfDamage = new System.Windows.Forms.CheckBox();
+            this.checkBoxMonsterGold = new System.Windows.Forms.CheckBox();
+            this.checkBoxMagicFind = new System.Windows.Forms.CheckBox();
+            this.btnSetAttackerSelfDamageColor = new System.Windows.Forms.Button();
+            this.btnSetExtraGoldColor = new System.Windows.Forms.Button();
+            this.btnSetMFColor = new System.Windows.Forms.Button();
             this.btnSetPlayersXColor = new System.Windows.Forms.Button();
             this.btnSetGameCounterColor = new System.Windows.Forms.Button();
             this.chkShowPlayersX = new System.Windows.Forms.CheckBox();
@@ -115,12 +121,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSaveAs = new System.Windows.Forms.Button();
             this.btnUndo = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
-            this.btnSetMFColor = new System.Windows.Forms.Button();
-            this.btnSetExtraGoldColor = new System.Windows.Forms.Button();
-            this.btnSetAttackerSelfDamageColor = new System.Windows.Forms.Button();
-            this.checkBoxMagicFind = new System.Windows.Forms.CheckBox();
-            this.checkBoxMonsterGold = new System.Windows.Forms.CheckBox();
-            this.checkBoxAttackerSelfDamage = new System.Windows.Forms.CheckBox();
             this.FontGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
@@ -329,7 +329,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.VerticalSplitContainer.Name = "VerticalSplitContainer";
             this.VerticalSplitContainer.RowCount = 1;
             this.VerticalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.VerticalSplitContainer.Size = new System.Drawing.Size(692, 508);
+            this.VerticalSplitContainer.Size = new System.Drawing.Size(694, 508);
             this.VerticalSplitContainer.TabIndex = 20;
             // 
             // grpConfigFiles
@@ -415,7 +415,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.HorizontalSplitContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.HorizontalSplitContainer.Size = new System.Drawing.Size(517, 508);
+            this.HorizontalSplitContainer.Size = new System.Drawing.Size(519, 508);
             this.HorizontalSplitContainer.TabIndex = 0;
             // 
             // tabControl1
@@ -428,7 +428,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(511, 502);
+            this.tabControl1.Size = new System.Drawing.Size(513, 502);
             this.tabControl1.TabIndex = 13;
             // 
             // tabPageSettingsLayout
@@ -439,7 +439,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPageSettingsLayout.Location = new System.Drawing.Point(4, 22);
             this.tabPageSettingsLayout.Name = "tabPageSettingsLayout";
             this.tabPageSettingsLayout.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSettingsLayout.Size = new System.Drawing.Size(503, 476);
+            this.tabPageSettingsLayout.Size = new System.Drawing.Size(505, 476);
             this.tabPageSettingsLayout.TabIndex = 1;
             this.tabPageSettingsLayout.Text = "Layout";
             this.tabPageSettingsLayout.UseVisualStyleBackColor = true;
@@ -561,6 +561,72 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.groupBox1.TabIndex = 18;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Display";
+            // 
+            // checkBoxAttackerSelfDamage
+            // 
+            this.checkBoxAttackerSelfDamage.AutoSize = true;
+            this.checkBoxAttackerSelfDamage.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.checkBoxAttackerSelfDamage.Location = new System.Drawing.Point(259, 89);
+            this.checkBoxAttackerSelfDamage.Name = "checkBoxAttackerSelfDamage";
+            this.checkBoxAttackerSelfDamage.Size = new System.Drawing.Size(130, 17);
+            this.checkBoxAttackerSelfDamage.TabIndex = 37;
+            this.checkBoxAttackerSelfDamage.Text = "Attacker Self Damage";
+            this.checkBoxAttackerSelfDamage.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxMonsterGold
+            // 
+            this.checkBoxMonsterGold.AutoSize = true;
+            this.checkBoxMonsterGold.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.checkBoxMonsterGold.Location = new System.Drawing.Point(259, 57);
+            this.checkBoxMonsterGold.Name = "checkBoxMonsterGold";
+            this.checkBoxMonsterGold.Size = new System.Drawing.Size(75, 17);
+            this.checkBoxMonsterGold.TabIndex = 36;
+            this.checkBoxMonsterGold.Text = "Extra Gold";
+            this.checkBoxMonsterGold.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxMagicFind
+            // 
+            this.checkBoxMagicFind.AutoSize = true;
+            this.checkBoxMagicFind.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.checkBoxMagicFind.Location = new System.Drawing.Point(259, 24);
+            this.checkBoxMagicFind.Name = "checkBoxMagicFind";
+            this.checkBoxMagicFind.Size = new System.Drawing.Size(78, 17);
+            this.checkBoxMagicFind.TabIndex = 35;
+            this.checkBoxMagicFind.Text = "Magic Find";
+            this.checkBoxMagicFind.UseVisualStyleBackColor = true;
+            // 
+            // btnSetAttackerSelfDamageColor
+            // 
+            this.btnSetAttackerSelfDamageColor.Location = new System.Drawing.Point(392, 84);
+            this.btnSetAttackerSelfDamageColor.Margin = new System.Windows.Forms.Padding(0);
+            this.btnSetAttackerSelfDamageColor.Name = "btnSetAttackerSelfDamageColor";
+            this.btnSetAttackerSelfDamageColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetAttackerSelfDamageColor.TabIndex = 34;
+            this.btnSetAttackerSelfDamageColor.Text = "Color";
+            this.btnSetAttackerSelfDamageColor.UseVisualStyleBackColor = true;
+            this.btnSetAttackerSelfDamageColor.Click += new System.EventHandler(this.btnSelectColor);
+            // 
+            // btnSetExtraGoldColor
+            // 
+            this.btnSetExtraGoldColor.Location = new System.Drawing.Point(392, 52);
+            this.btnSetExtraGoldColor.Margin = new System.Windows.Forms.Padding(0);
+            this.btnSetExtraGoldColor.Name = "btnSetExtraGoldColor";
+            this.btnSetExtraGoldColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetExtraGoldColor.TabIndex = 33;
+            this.btnSetExtraGoldColor.Text = "Color";
+            this.btnSetExtraGoldColor.UseVisualStyleBackColor = true;
+            this.btnSetExtraGoldColor.Click += new System.EventHandler(this.btnSelectColor);
+            // 
+            // btnSetMFColor
+            // 
+            this.btnSetMFColor.Location = new System.Drawing.Point(392, 19);
+            this.btnSetMFColor.Margin = new System.Windows.Forms.Padding(0);
+            this.btnSetMFColor.Name = "btnSetMFColor";
+            this.btnSetMFColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetMFColor.TabIndex = 32;
+            this.btnSetMFColor.Text = "Color";
+            this.btnSetMFColor.UseVisualStyleBackColor = true;
+            this.btnSetMFColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // btnSetPlayersXColor
             // 
@@ -1032,7 +1098,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.mainPanel.RowCount = 2;
             this.mainPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.mainPanel.Size = new System.Drawing.Size(692, 540);
+            this.mainPanel.Size = new System.Drawing.Size(694, 540);
             this.mainPanel.TabIndex = 23;
             // 
             // panel1
@@ -1044,13 +1110,13 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.panel1.Location = new System.Drawing.Point(0, 508);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(692, 32);
+            this.panel1.Size = new System.Drawing.Size(694, 32);
             this.panel1.TabIndex = 21;
             // 
             // btnSaveAs
             // 
             this.btnSaveAs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSaveAs.Location = new System.Drawing.Point(518, 6);
+            this.btnSaveAs.Location = new System.Drawing.Point(520, 6);
             this.btnSaveAs.Name = "btnSaveAs";
             this.btnSaveAs.Size = new System.Drawing.Size(75, 23);
             this.btnSaveAs.TabIndex = 1;
@@ -1061,7 +1127,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // btnUndo
             // 
             this.btnUndo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUndo.Location = new System.Drawing.Point(598, 6);
+            this.btnUndo.Location = new System.Drawing.Point(600, 6);
             this.btnUndo.Name = "btnUndo";
             this.btnUndo.Size = new System.Drawing.Size(90, 23);
             this.btnUndo.TabIndex = 0;
@@ -1072,7 +1138,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(436, 6);
+            this.btnSave.Location = new System.Drawing.Point(438, 6);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 0;
@@ -1080,78 +1146,13 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // btnSetMFColor
-            // 
-            this.btnSetMFColor.Location = new System.Drawing.Point(392, 19);
-            this.btnSetMFColor.Margin = new System.Windows.Forms.Padding(0);
-            this.btnSetMFColor.Name = "btnSetMFColor";
-            this.btnSetMFColor.Size = new System.Drawing.Size(74, 25);
-            this.btnSetMFColor.TabIndex = 32;
-            this.btnSetMFColor.Text = "Color";
-            this.btnSetMFColor.UseVisualStyleBackColor = true;
-            this.btnSetMFColor.Click += new System.EventHandler(this.btnSelectColor);
-            // 
-            // btnSetExtraGoldColor
-            // 
-            this.btnSetExtraGoldColor.Location = new System.Drawing.Point(392, 52);
-            this.btnSetExtraGoldColor.Margin = new System.Windows.Forms.Padding(0);
-            this.btnSetExtraGoldColor.Name = "btnSetExtraGoldColor";
-            this.btnSetExtraGoldColor.Size = new System.Drawing.Size(74, 25);
-            this.btnSetExtraGoldColor.TabIndex = 33;
-            this.btnSetExtraGoldColor.Text = "Color";
-            this.btnSetExtraGoldColor.UseVisualStyleBackColor = true;
-            this.btnSetExtraGoldColor.Click += new System.EventHandler(this.btnSelectColor);
-            // 
-            // btnSetAttackerSelfDamageColor
-            // 
-            this.btnSetAttackerSelfDamageColor.Location = new System.Drawing.Point(392, 84);
-            this.btnSetAttackerSelfDamageColor.Margin = new System.Windows.Forms.Padding(0);
-            this.btnSetAttackerSelfDamageColor.Name = "btnSetAttackerSelfDamageColor";
-            this.btnSetAttackerSelfDamageColor.Size = new System.Drawing.Size(74, 25);
-            this.btnSetAttackerSelfDamageColor.TabIndex = 34;
-            this.btnSetAttackerSelfDamageColor.Text = "Color";
-            this.btnSetAttackerSelfDamageColor.UseVisualStyleBackColor = true;
-            this.btnSetAttackerSelfDamageColor.Click += new System.EventHandler(this.btnSelectColor);
-            // 
-            // checkBoxMagicFind
-            // 
-            this.checkBoxMagicFind.AutoSize = true;
-            this.checkBoxMagicFind.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.checkBoxMagicFind.Location = new System.Drawing.Point(259, 24);
-            this.checkBoxMagicFind.Name = "checkBoxMagicFind";
-            this.checkBoxMagicFind.Size = new System.Drawing.Size(78, 17);
-            this.checkBoxMagicFind.TabIndex = 35;
-            this.checkBoxMagicFind.Text = "Magic Find";
-            this.checkBoxMagicFind.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxMonsterGold
-            // 
-            this.checkBoxMonsterGold.AutoSize = true;
-            this.checkBoxMonsterGold.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.checkBoxMonsterGold.Location = new System.Drawing.Point(259, 57);
-            this.checkBoxMonsterGold.Name = "checkBoxMonsterGold";
-            this.checkBoxMonsterGold.Size = new System.Drawing.Size(75, 17);
-            this.checkBoxMonsterGold.TabIndex = 36;
-            this.checkBoxMonsterGold.Text = "Extra Gold";
-            this.checkBoxMonsterGold.UseVisualStyleBackColor = true;
-            // 
-            // checkBox3
-            // 
-            this.checkBoxAttackerSelfDamage.AutoSize = true;
-            this.checkBoxAttackerSelfDamage.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.checkBoxAttackerSelfDamage.Location = new System.Drawing.Point(259, 89);
-            this.checkBoxAttackerSelfDamage.Name = "checkBox3";
-            this.checkBoxAttackerSelfDamage.Size = new System.Drawing.Size(130, 17);
-            this.checkBoxAttackerSelfDamage.TabIndex = 37;
-            this.checkBoxAttackerSelfDamage.Text = "Attacker Self Damage";
-            this.checkBoxAttackerSelfDamage.UseVisualStyleBackColor = true;
-            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(692, 540);
             this.Controls.Add(this.mainPanel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(700, 538);
             this.Name = "SettingsWindow";

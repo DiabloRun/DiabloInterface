@@ -61,7 +61,7 @@ namespace Zutatensuppe.D2Reader.Readers
         {
         }
 
-        public new string ToString(StringLookupTable stringLookupTable)
+        public new string ToString(IStringLookupTable stringLookupTable)
         {
             int min = CalculatedDamage(this.min);
             int max = CalculatedDamage(this.max);
