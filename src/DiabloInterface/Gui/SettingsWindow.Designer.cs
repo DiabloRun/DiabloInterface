@@ -246,7 +246,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.AutoSplitLayout.RowCount = 2;
             this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.AutoSplitLayout.Size = new System.Drawing.Size(503, 476);
+            this.AutoSplitLayout.Size = new System.Drawing.Size(505, 476);
             this.AutoSplitLayout.TabIndex = 21;
             // 
             // AutoSplitToolbar
@@ -261,7 +261,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.AutoSplitToolbar.Location = new System.Drawing.Point(0, 445);
             this.AutoSplitToolbar.Margin = new System.Windows.Forms.Padding(0);
             this.AutoSplitToolbar.Name = "AutoSplitToolbar";
-            this.AutoSplitToolbar.Size = new System.Drawing.Size(503, 31);
+            this.AutoSplitToolbar.Size = new System.Drawing.Size(505, 31);
             this.AutoSplitToolbar.TabIndex = 20;
             // 
             // autoSplitHotkeyControl
@@ -298,7 +298,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.EnableAutosplitCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.EnableAutosplitCheckBox.AutoSize = true;
-            this.EnableAutosplitCheckBox.Location = new System.Drawing.Point(356, 9);
+            this.EnableAutosplitCheckBox.Location = new System.Drawing.Point(358, 9);
             this.EnableAutosplitCheckBox.Name = "EnableAutosplitCheckBox";
             this.EnableAutosplitCheckBox.Size = new System.Drawing.Size(59, 17);
             this.EnableAutosplitCheckBox.TabIndex = 1;
@@ -308,7 +308,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // AddAutoSplitButton
             // 
             this.AddAutoSplitButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddAutoSplitButton.Location = new System.Drawing.Point(420, 5);
+            this.AddAutoSplitButton.Location = new System.Drawing.Point(422, 5);
             this.AddAutoSplitButton.Name = "AddAutoSplitButton";
             this.AddAutoSplitButton.Size = new System.Drawing.Size(79, 23);
             this.AddAutoSplitButton.TabIndex = 11;
@@ -930,7 +930,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPageSettingsRunes.Controls.Add(this.runeSettingsPage);
             this.tabPageSettingsRunes.Location = new System.Drawing.Point(4, 22);
             this.tabPageSettingsRunes.Name = "tabPageSettingsRunes";
-            this.tabPageSettingsRunes.Size = new System.Drawing.Size(503, 476);
+            this.tabPageSettingsRunes.Size = new System.Drawing.Size(505, 476);
             this.tabPageSettingsRunes.TabIndex = 2;
             this.tabPageSettingsRunes.Text = "Runes";
             this.tabPageSettingsRunes.UseVisualStyleBackColor = true;
@@ -942,7 +942,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.runeSettingsPage.Margin = new System.Windows.Forms.Padding(4);
             this.runeSettingsPage.Name = "runeSettingsPage";
             this.runeSettingsPage.SettingsList = ((System.Collections.Generic.IReadOnlyList<Zutatensuppe.DiabloInterface.Business.Settings.ClassRuneSettings>)(resources.GetObject("runeSettingsPage.SettingsList")));
-            this.runeSettingsPage.Size = new System.Drawing.Size(503, 476);
+            this.runeSettingsPage.Size = new System.Drawing.Size(505, 476);
             this.runeSettingsPage.TabIndex = 0;
             // 
             // tabPageSettingsAutosplit
@@ -950,7 +950,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPageSettingsAutosplit.Controls.Add(this.AutoSplitLayout);
             this.tabPageSettingsAutosplit.Location = new System.Drawing.Point(4, 22);
             this.tabPageSettingsAutosplit.Name = "tabPageSettingsAutosplit";
-            this.tabPageSettingsAutosplit.Size = new System.Drawing.Size(503, 476);
+            this.tabPageSettingsAutosplit.Size = new System.Drawing.Size(505, 476);
             this.tabPageSettingsAutosplit.TabIndex = 0;
             this.tabPageSettingsAutosplit.Text = "Auto-Split";
             this.tabPageSettingsAutosplit.UseVisualStyleBackColor = true;
@@ -963,7 +963,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPageSettingsMisc.Location = new System.Drawing.Point(4, 22);
             this.tabPageSettingsMisc.Name = "tabPageSettingsMisc";
             this.tabPageSettingsMisc.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSettingsMisc.Size = new System.Drawing.Size(503, 476);
+            this.tabPageSettingsMisc.Size = new System.Drawing.Size(505, 476);
             this.tabPageSettingsMisc.TabIndex = 3;
             this.tabPageSettingsMisc.Text = "Misc";
             this.tabPageSettingsMisc.UseVisualStyleBackColor = true;
@@ -1150,9 +1150,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(692, 540);
+            this.ClientSize = new System.Drawing.Size(694, 540);
             this.Controls.Add(this.mainPanel);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(700, 538);
             this.Name = "SettingsWindow";
