@@ -95,6 +95,7 @@ namespace Zutatensuppe.D2Reader
         IProcessMemoryReader reader;
         IInventoryReader inventoryReader;
         UnitReader unitReader;
+        IStringLookupTable stringReader;
         ISkillReader skillReader;
         GameMemoryTable memory;
 
@@ -227,8 +228,8 @@ namespace Zutatensuppe.D2Reader
             try
             {
                 memory = CreateGameMemoryTableForReader(reader);
+                stringReader = new StringLookupTable(reader, memory);
                 skillReader = new SkillReader(reader, memory);
-                var stringReader = new StringLookupTable(reader, memory.Address);
                 unitReader = new UnitReader(reader, memory, stringReader, skillReader);
                 inventoryReader = new InventoryReader(reader, unitReader);
                 return true;
@@ -265,7 +266,37 @@ namespace Zutatensuppe.D2Reader
             unitReader = null;
             skillReader = null;
         }
-        
+
+        private IEnumerable<D2Unit> GetInventoryItemsFiltered(D2Unit owner, Func<D2ItemData, D2Unit, bool> filter)
+        {
+            if (owner == null)
+                return new List<D2Unit>(0);
+
+            var inventory = inventoryReader.EnumerateInventoryBackward(owner);
+            return inventoryReader.Filter(inventory, filter);
+        }
+
+        private List<int> ReadInventoryItemIds(D2Unit owner)
+        {
+            if (owner == null)
+                return new List<int>(0);
+
+            var baseItems = inventoryReader.EnumerateInventoryBackward(owner);
+            var socketedItems = baseItems.SelectMany(item => unitReader.GetSocketedItems(item, inventoryReader));
+            var allItems = baseItems.Concat(socketedItems);
+            return (from item in allItems select item.eClass).ToList();
+        }
+
+        private IEnumerable<D2Unit> GetEquippedItems(D2Unit owner)
+        {
+            return GetInventoryItemsFiltered(owner, (D2ItemData d, D2Unit u) => d.IsEquipped());
+        }
+
+        private IEnumerable<D2Unit> GetItemsEquippedInSlot(D2Unit owner, List<BodyLocation> slots)
+        {
+            return GetInventoryItemsFiltered(owner, (D2ItemData d, D2Unit u) => slots.FindIndex(x => d.IsEquippedInSlot(x)) >= 0);
+        }
+
         public void ItemSlotAction(List<BodyLocation> slots, Action<D2Unit, D2Unit, UnitReader, IInventoryReader> action)
         {
             if (!ValidateGameDataReaders()) return;
@@ -273,12 +304,9 @@ namespace Zutatensuppe.D2Reader
             var gameInfo= ReadGameInfo();
             if (gameInfo == null) return;
 
-            // Add all items found in the slots.
-            bool Filter(D2ItemData d, D2Unit u) => slots.FindIndex(x => d.IsEquippedInSlot(x)) >= 0;
-
             try
             {
-                foreach (D2Unit item in inventoryReader.EnumerateInventoryBackward(gameInfo.Player, Filter))
+                foreach (D2Unit item in GetItemsEquippedInSlot(gameInfo.Player, slots))
                 {
                     action?.Invoke(item, gameInfo.Player, unitReader, inventoryReader);
                 }
@@ -297,7 +325,7 @@ namespace Zutatensuppe.D2Reader
             {
                 Thread.Sleep(PollingRate);
 
-                // Block here until we have a valid reader.
+                // "Block" here until we have a valid reader.
                 if (!ValidateGameDataReaders())
                 {
                     continue;
@@ -346,9 +374,7 @@ namespace Zutatensuppe.D2Reader
                 //         player = reader.Read<D2Unit>(playerAddress)
                 //     }
                 // }
-                IntPtr playerAddress = reader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
                 DataPointer unitAddress = game.UnitLists[0][client.UnitId & 0x7F];
-                Logger.Debug($"read address of player: {playerAddress} VS {unitAddress.Address}");
                 if (unitAddress.IsNull) return null;
 
                 // Read player with player data.
@@ -366,8 +392,8 @@ namespace Zutatensuppe.D2Reader
 
         D2Game ReadActiveGameInstance()
         {
-            uint gameId = reader.ReadUInt32(memory.Address.GameId, AddressingMode.Relative);
-            IntPtr worldPointer = reader.ReadAddress32(memory.Address.World, AddressingMode.Relative);
+            uint gameId = reader.ReadUInt32(memory.GameId, AddressingMode.Relative);
+            IntPtr worldPointer = reader.ReadAddress32(memory.World, AddressingMode.Relative);
 
             // Get world if game is loaded.
             if (worldPointer == IntPtr.Zero) return null;
@@ -378,6 +404,11 @@ namespace Zutatensuppe.D2Reader
             uint gameOffset = (gameIndex * 0x0C) + 0x08;
             IntPtr gamePointer = reader.ReadAddress32(world.GameBuffer + gameOffset);
 
+            // TODO: move this out of this function
+            // btw: GameMemoryTable.GameId cannot be used,
+            // diablo interface may have been started later, and the
+            // earlier runs should probably not count
+            // also, if d2 is shut down, game count should still go up
             if (firstGameId == 0 && gameId != 0)
             {
                 firstGameId = gameId;
@@ -393,26 +424,19 @@ namespace Zutatensuppe.D2Reader
 
         void ProcessGameData()
         {
-            Logger.Debug("ProcessGameData");
+            unitReader.ResetCache();
+
             // Make sure the game is loaded.
             var gameInfo = ReadGameInfo();
             if (gameInfo == null)
             {
-                Logger.Debug("gameInfo is null");
                 wasInTitleScreen = true;
                 return;
             }
 
-            Logger.Debug("ProcessCharacterData");
             CurrentCharacter = ProcessCharacterData(gameInfo);
-
-            Logger.Debug("ProcessQuests");
             gameQuests = ProcessQuests(gameInfo);
-
-            Logger.Debug("ProcessCurrentDifficulty");
             currentDifficulty = ProcessCurrentDifficulty(gameInfo);
-
-            Logger.Debug("OnDataRead");
             OnDataRead(new DataReadEventArgs(
                 CurrentCharacter,
                 ProcessEquippedItemStrings(gameInfo.Player),
@@ -424,8 +448,6 @@ namespace Zutatensuppe.D2Reader
                 gameQuests,
                 GameCounter
             ));
-
-            Logger.Debug("Done");
         }
 
         List<QuestCollection> ProcessQuests(D2GameInfo gameInfo)
@@ -460,14 +482,14 @@ namespace Zutatensuppe.D2Reader
         int ProcessCurrentArea()
         {
             return ReadFlags.HasFlag(DataReaderEnableFlags.CurrentArea)
-                ? reader.ReadByte(memory.Address.Area, AddressingMode.Relative)
+                ? reader.ReadByte(memory.Area, AddressingMode.Relative)
                 : -1;
         }
 
         int ProcessCurrentPlayersX()
         {
             return ReadFlags.HasFlag(DataReaderEnableFlags.CurrentPlayersX)
-                ? Math.Max(reader.ReadByte(memory.Address.PlayersX, AddressingMode.Relative), (byte)1)
+                ? Math.Max(reader.ReadByte(memory.PlayersX, AddressingMode.Relative), (byte)1)
                 : -1;
         }
 
@@ -478,23 +500,17 @@ namespace Zutatensuppe.D2Reader
                 : GameDifficulty.Normal;
         }
 
-        Dictionary<BodyLocation, string> ProcessEquippedItemStrings(D2Unit player)
+        Dictionary<BodyLocation, string> ProcessEquippedItemStrings(D2Unit owner)
         {
             return ReadFlags.HasFlag(DataReaderEnableFlags.EquippedItemStrings)
-                ? ReadEquippedItemStrings(player)
+                ? ReadEquippedItemStrings(owner)
                 : new Dictionary<BodyLocation, string>();
         }
 
-        Dictionary<BodyLocation, string> ReadEquippedItemStrings(D2Unit player)
+        Dictionary<BodyLocation, string> ReadEquippedItemStrings(D2Unit owner)
         {
-            if (player == null)
-                return new Dictionary<BodyLocation, string>();
-
-            // Build filter to get only equipped items.
-            bool Filter(D2ItemData d, D2Unit u) => d.IsEquipped();
-
             var itemStrings = new Dictionary<BodyLocation, string>();
-            foreach (D2Unit item in inventoryReader.EnumerateInventoryBackward(player, Filter))
+            foreach (D2Unit item in GetEquippedItems(owner))
             {
                 // TODO: check why this get stats call is needed here
                 List<D2Stat> itemStats = unitReader.GetStats(item);
@@ -504,7 +520,7 @@ namespace Zutatensuppe.D2Reader
                 statBuilder.Append(unitReader.GetFullItemName(item));
                 statBuilder.Append(Environment.NewLine);
 
-                List<string> magicalStrings = unitReader.GetMagicalStrings(item, player, inventoryReader);
+                List<string> magicalStrings = unitReader.GetMagicalStrings(item, owner, inventoryReader);
                 foreach (string str in magicalStrings)
                 {
                     statBuilder.Append("    ");
@@ -527,17 +543,6 @@ namespace Zutatensuppe.D2Reader
             return ReadFlags.HasFlag(DataReaderEnableFlags.InventoryItemIds)
                 ? ReadInventoryItemIds(player)
                 : new List<int>();
-        }
-
-        List<int> ReadInventoryItemIds(D2Unit player)
-        {
-            if (player == null)
-                return new List<int>();
-
-            IReadOnlyCollection<D2Unit> baseItems = inventoryReader.EnumerateInventoryBackward(player).ToList(); 
-            IEnumerable<D2Unit> socketedItems = baseItems.SelectMany(item => unitReader.GetSocketedItems(item, inventoryReader));
-            IEnumerable<D2Unit> allItems = baseItems.Concat(socketedItems);
-            return (from item in allItems select item.eClass).ToList();
         }
 
         bool IsAutosplitCharacter(Character character)

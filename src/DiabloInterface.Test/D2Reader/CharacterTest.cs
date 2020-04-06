@@ -73,8 +73,7 @@ namespace DiabloInterface.Test.D2Reader
             var inventoryReader = new Mock<IInventoryReader>();
             inventoryReader
                 .Setup(x => x.EnumerateInventoryForward(
-                    It.Is<D2Unit>(p => p.Equals(unit)),
-                    It.IsAny<Func<D2ItemData, D2Unit, bool>>()
+                    It.Is<D2Unit>(p => p.Equals(unit))
                 ))
                 .Returns(startingItems);
 
@@ -122,8 +121,7 @@ namespace DiabloInterface.Test.D2Reader
 
             inventoryReader
                 .Setup(x => x.EnumerateInventoryForward(
-                    It.Is<D2Unit>(p => p.Equals(unit)),
-                    It.IsAny<Func<D2ItemData, D2Unit, bool>>()
+                    It.Is<D2Unit>(p => p.Equals(unit))
                 ))
                 .Returns(new D2Unit[] {
                     new D2Unit { eClass = 0x24b },
@@ -139,8 +137,7 @@ namespace DiabloInterface.Test.D2Reader
             Assert.AreEqual(false, Character.IsNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
             inventoryReader
                 .Setup(x => x.EnumerateInventoryForward(
-                    It.Is<D2Unit>(p => p.Equals(unit)),
-                    It.IsAny<Func<D2ItemData, D2Unit, bool>>()
+                    It.Is<D2Unit>(p => p.Equals(unit))
                 ))
                 .Returns(startingItems);
             Assert.AreEqual(true, Character.IsNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));

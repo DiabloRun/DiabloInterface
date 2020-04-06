@@ -15,8 +15,8 @@ namespace Zutatensuppe.D2Reader.Readers
         {
             this.reader = reader;
 
-            globals = reader.Read<D2GlobalData>(reader.ReadAddress32(memory.Address.GlobalData, AddressingMode.Relative));
-            stringReader = new StringLookupTable(reader, memory.Address);
+            globals = reader.Read<D2GlobalData>(reader.ReadAddress32(memory.GlobalData, AddressingMode.Relative));
+            stringReader = new StringLookupTable(reader, memory);
         }
 
         public IEnumerable<D2Skill> EnumerateSkills(D2Unit unit)

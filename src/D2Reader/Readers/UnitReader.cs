@@ -8,11 +8,15 @@ using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.D2Reader.Struct.Item.Modifier;
 using Zutatensuppe.D2Reader.Struct.Stat;
 using Zutatensuppe.D2Reader.Struct.Skill;
+using Zutatensuppe.DiabloInterface.Core.Logging;
+using System.Reflection;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
     public class UnitReader
     {
+        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+
         static D2ItemStatCost[] ItemStatCost = null;
 
         Dictionary<IntPtr, D2ItemData> cachedItemData;
@@ -43,11 +47,11 @@ namespace Zutatensuppe.D2Reader.Readers
             cachedItemData = new Dictionary<IntPtr, D2ItemData>();
             cachedDescriptions = new Dictionary<int, D2ItemDescription>();
 
-            globals = reader.Read<D2GlobalData>(reader.ReadAddress32(memory.Address.GlobalData, AddressingMode.Relative));
-            lowQualityTable = reader.Read<D2SafeArray>(memory.Address.LowQualityItems, AddressingMode.Relative);
-            descriptionTable = reader.Read<D2SafeArray>(memory.Address.ItemDescriptions, AddressingMode.Relative);
-            magicModifiers = reader.Read<ModifierTable>(memory.Address.MagicModifierTable, AddressingMode.Relative);
-            rareModifiers = reader.Read<ModifierTable>(memory.Address.RareModifierTable, AddressingMode.Relative);
+            globals = reader.Read<D2GlobalData>(reader.ReadAddress32(memory.GlobalData, AddressingMode.Relative));
+            lowQualityTable = reader.Read<D2SafeArray>(memory.LowQualityItems, AddressingMode.Relative);
+            descriptionTable = reader.Read<D2SafeArray>(memory.ItemDescriptions, AddressingMode.Relative);
+            magicModifiers = reader.Read<ModifierTable>(memory.MagicModifierTable, AddressingMode.Relative);
+            rareModifiers = reader.Read<ModifierTable>(memory.RareModifierTable, AddressingMode.Relative);
             if (globals != null)
             {
                 opNestings = reader.ReadArray<ushort>(globals.OpStatNesting, (int)globals.OpStatNestingCount);
@@ -61,6 +65,7 @@ namespace Zutatensuppe.D2Reader.Readers
 
         public void ResetCache()
         {
+            cachedItemData.Clear();
             cachedDescriptions.Clear();
         }
 
@@ -131,6 +136,9 @@ namespace Zutatensuppe.D2Reader.Readers
             if (!D2Unit.IsItem(unit)) return null;
             if (unit.UnitData.IsNull) return null;
 
+            // todo: determine if the cache here is actually useful
+            //       maybe creates more problems than it solves, pointer changes,
+            //       so reading data without clearing cache can result in wrong data
             if (cachedItemData.TryGetValue(unit.UnitData, out D2ItemData itemData))
                 return itemData;
 
@@ -138,6 +146,24 @@ namespace Zutatensuppe.D2Reader.Readers
             itemData = reader.Read<D2ItemData>(unit.UnitData);
             cachedItemData[unit.UnitData] = itemData;
             return itemData;
+        }
+
+        private D2ItemDescription GetItemDescription(D2Unit unit)
+        {
+            if (!D2Unit.IsItem(unit)) return null;
+
+            int itemIndex = unit.eClass;
+
+            // Early exit if memory already read.
+            if (cachedDescriptions.ContainsKey(itemIndex))
+                return cachedDescriptions[itemIndex];
+
+            // Read item description from the description table.
+            var description = reader.IndexIntoArray<D2ItemDescription>(descriptionTable.Memory, unit.eClass, descriptionTable.Length);
+
+            // Cache the value to reduce reads.
+            cachedDescriptions[itemIndex] = description;
+            return description;
         }
 
         public string GetFullItemName(D2Unit unit)
@@ -238,7 +264,7 @@ namespace Zutatensuppe.D2Reader.Readers
             return fullName;
         }
         
-        public List<string> GetMagicalStrings(D2Unit item, D2Unit unit, IInventoryReader inventoryReader)
+        public List<string> GetMagicalStrings(D2Unit item, D2Unit owner, IInventoryReader inventoryReader)
         {
             List<D2Stat> magicalStats = GetMagicalStats(item, inventoryReader);
             if (magicalStats.Count == 0) return new List<string>(0);
@@ -253,7 +279,7 @@ namespace Zutatensuppe.D2Reader.Readers
                     return description;
 
                 // If not handled specially, do default handling.
-                return GetStatPropertyDescription(magicalStats, stat, unit);
+                return GetStatPropertyDescription(magicalStats, stat, owner);
             }
 
             // Only get stat descriptions for stat identifiers contained in the opNestings array.
@@ -304,9 +330,9 @@ namespace Zutatensuppe.D2Reader.Readers
             return LookupModifierTable<RareModifier>(rareModifiers, index);
         }
 
-        private MagicModifier GetMagicPrefixModifier(D2Unit item, int index)
+        private MagicModifier GetMagicPrefixModifier(D2Unit unit, int index)
         {
-            var itemData = GetItemData(item);
+            var itemData = GetItemData(unit);
             if (itemData == null) return null;
             if (index >= itemData.MagicPrefix.Length)
                 return null;
@@ -314,9 +340,9 @@ namespace Zutatensuppe.D2Reader.Readers
             return LookupMagicModifier(itemData.MagicPrefix[index]);
         }
 
-        private MagicModifier GetMagicSuffixModifier(D2Unit item, int index)
+        private MagicModifier GetMagicSuffixModifier(D2Unit unit, int index)
         {
-            var itemData = GetItemData(item);
+            var itemData = GetItemData(unit);
             if (itemData == null) return null;
             if (index >= itemData.MagicSuffix.Length)
                 return null;
@@ -324,17 +350,17 @@ namespace Zutatensuppe.D2Reader.Readers
             return LookupMagicModifier(itemData.MagicSuffix[index]);
         }
 
-        private RareModifier GetRarePrefixModifier(D2Unit item)
+        private RareModifier GetRarePrefixModifier(D2Unit unit)
         {
-            var itemData = GetItemData(item);
+            var itemData = GetItemData(unit);
             if (itemData == null) return null;
 
             return LookupRareModifier(itemData.RarePrefix);
         }
 
-        private RareModifier GetRareSuffixModifier(D2Unit item)
+        private RareModifier GetRareSuffixModifier(D2Unit unit)
         {
-            var itemData = GetItemData(item);
+            var itemData = GetItemData(unit);
             if (itemData == null) return null;
 
             return LookupRareModifier(itemData.RareSuffix);
@@ -350,32 +376,32 @@ namespace Zutatensuppe.D2Reader.Readers
             return stringReader.ConvertCFormatString(input, out arguments);
         }
 
-        private string GetMagicPrefixName(D2Unit item)
+        private string GetMagicPrefixName(D2Unit unit)
         {
             // Name is always first prefix.
-            var prefixModifier = GetMagicPrefixModifier(item, 0);
+            var prefixModifier = GetMagicPrefixModifier(unit, 0);
             if (prefixModifier == null) return null;
             return GetString(prefixModifier.ModifierNameHash);
         }
 
-        private string GetMagicSuffixName(D2Unit item)
+        private string GetMagicSuffixName(D2Unit unit)
         {
             // Name is always first suffix.
-            var suffixModifier = GetMagicSuffixModifier(item, 0);
+            var suffixModifier = GetMagicSuffixModifier(unit, 0);
             if (suffixModifier == null) return null;
             return GetString(suffixModifier.ModifierNameHash);
         }
 
-        private string GetRarePrefixName(D2Unit item)
+        private string GetRarePrefixName(D2Unit unit)
         {
-            var prefixModifier = GetRarePrefixModifier(item);
+            var prefixModifier = GetRarePrefixModifier(unit);
             if (prefixModifier == null) return null;
             return GetString(prefixModifier.ModifierNameHash);
         }
 
-        private string GetRareSuffixName(D2Unit item)
+        private string GetRareSuffixName(D2Unit unit)
         {
-            var suffixModifier = GetRareSuffixModifier(item);
+            var suffixModifier = GetRareSuffixModifier(unit);
             if (suffixModifier == null) return null;
             return GetString(suffixModifier.ModifierNameHash);
         }
@@ -387,16 +413,16 @@ namespace Zutatensuppe.D2Reader.Readers
             return itemData.Quality == quality;
         }
 
-        private string GetItemUniqueName(D2Unit item)
+        private string GetItemUniqueName(D2Unit unit)
         {
-            var description = GetUniqueItemDescription(item);
+            var description = GetUniqueItemDescription(unit);
             if (description == null) return null;
             return GetString(description.StringIdentifier);
         }
 
-        private string GetItemSetName(D2Unit item)
+        private string GetItemSetName(D2Unit unit)
         {
-            var description = GetSetItemDescription(item);
+            var description = GetSetItemDescription(unit);
             if (description == null) return null;
             return GetString(description.StringIdentifier);
         }
@@ -408,10 +434,10 @@ namespace Zutatensuppe.D2Reader.Readers
             return itemData.ItemFlags.HasFlag(flag);
         }
 
-        private string GetRunewordName(D2Unit item)
+        private string GetRunewordName(D2Unit unit)
         {
-            if (!D2Unit.IsItem(item)) return null;
-            var itemData = GetItemData(item);
+            if (!D2Unit.IsItem(unit)) return null;
+            var itemData = GetItemData(unit);
 
             // Only if runeword flag is set.
             if (itemData == null || !itemData.ItemFlags.HasFlag(ItemFlag.Runeword))
@@ -422,16 +448,16 @@ namespace Zutatensuppe.D2Reader.Readers
             return GetString(runewordHash);
         }
 
-        private string GetSuperiorItemName(D2Unit item)
+        private string GetSuperiorItemName(D2Unit unit)
         {
-            if (!IsItemOfQuality(item, ItemQuality.Superior))
+            if (!IsItemOfQuality(unit, ItemQuality.Superior))
                 return null;
             return GetString(StringConstants.Superior);
         }
 
-        private string GetLowQualityItemName(D2Unit item)
+        private string GetLowQualityItemName(D2Unit unit)
         {
-            var description = GetLowQualityItemDescription(item);
+            var description = GetLowQualityItemDescription(unit);
             if (description == null) return null;
             return GetString(description.StringIdentifier);
         }
@@ -469,27 +495,9 @@ namespace Zutatensuppe.D2Reader.Readers
             return value;
         }
 
-        private D2ItemDescription GetItemDescription(D2Unit item)
+        private D2LowQualityItemDescription GetLowQualityItemDescription(D2Unit unit)
         {
-            if (!D2Unit.IsItem(item)) return null;
-
-            int itemIndex = item.eClass;
-
-            // Early exit if memory already read.
-            if (cachedDescriptions.ContainsKey(itemIndex))
-                return cachedDescriptions[itemIndex];
-
-            // Read item description from the description table.
-            var description = reader.IndexIntoArray<D2ItemDescription>(descriptionTable.Memory, item.eClass, descriptionTable.Length);
-
-            // Cache the value to reduce reads.
-            cachedDescriptions[itemIndex] = description;
-            return description;
-        }
-
-        private D2LowQualityItemDescription GetLowQualityItemDescription(D2Unit item)
-        {
-            var itemData = GetItemData(item);
+            var itemData = GetItemData(unit);
             if (itemData == null) return null;
             if (itemData.Quality != ItemQuality.Low) return null;
 
@@ -500,9 +508,9 @@ namespace Zutatensuppe.D2Reader.Readers
             return reader.IndexIntoArray<D2LowQualityItemDescription>(array, index, count);
         }
 
-        private D2UniqueItemDescription GetUniqueItemDescription(D2Unit item)
+        private D2UniqueItemDescription GetUniqueItemDescription(D2Unit unit)
         {
-            var itemData = GetItemData(item);
+            var itemData = GetItemData(unit);
             if (itemData == null) return null;
             if (itemData.Quality != ItemQuality.Unique) return null;
 
@@ -513,9 +521,9 @@ namespace Zutatensuppe.D2Reader.Readers
             return reader.IndexIntoArray<D2UniqueItemDescription>(array, index, count);
         }
 
-        private D2SetItemDescription GetSetItemDescription(D2Unit item)
+        private D2SetItemDescription GetSetItemDescription(D2Unit unit)
         {
-            var itemData = GetItemData(item);
+            var itemData = GetItemData(unit);
             if (itemData == null) return null;
             if (itemData.Quality != ItemQuality.Set) return null;
 
@@ -880,12 +888,12 @@ namespace Zutatensuppe.D2Reader.Readers
             return stats;
         }
 
-        private D2StatList FindStatListNode(D2Unit item, uint state)
+        private D2StatList FindStatListNode(D2Unit unit, uint state)
         {
-            if (item.StatListNode.IsNull)
+            if (unit.StatListNode.IsNull)
                 return null;
 
-            var statNodeEx = reader.Read<D2StatListEx>(item.StatListNode);
+            var statNodeEx = reader.Read<D2StatListEx>(unit.StatListNode);
 
             // Get the appropriate stat node.
             DataPointer statsPointer = statNodeEx.pMyStats;

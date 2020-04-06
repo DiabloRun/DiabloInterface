@@ -58,11 +58,11 @@ namespace Zutatensuppe.D2Reader.Readers
     public class StringLookupTable: IStringLookupTable
     {
         IProcessMemoryReader reader;
-        GameMemoryAddressTable memory;
+        GameMemoryTable memory;
 
         static Dictionary<ushort, string> StringCache = new Dictionary<ushort, string>();
 
-        public StringLookupTable(IProcessMemoryReader reader, GameMemoryAddressTable memory)
+        public StringLookupTable(IProcessMemoryReader reader, GameMemoryTable memory)
         {
             this.reader = reader;
             this.memory = memory;

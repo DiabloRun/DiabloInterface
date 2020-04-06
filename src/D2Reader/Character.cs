@@ -183,7 +183,6 @@ namespace Zutatensuppe.D2Reader
 
         internal void ParseStats(UnitReader unitReader, D2GameInfo gameInfo)
         {
-            Logger.Debug("ParseStats(UnitReader, D2GameInfo)");
             ParseStats(unitReader.GetStatsMap(gameInfo.Player), gameInfo);
         }
 
@@ -194,7 +193,6 @@ namespace Zutatensuppe.D2Reader
             Dictionary<StatIdentifier, D2Stat> data,
             D2GameInfo gameInfo
         ) {
-            Logger.Debug("ParseStats(Dictionary<StatIdentifier, D2Stat>, Dictionary<StatIdentifier, D2Stat>, D2GameInfo)");
             CharClass = (CharacterClass)gameInfo.Player.eClass;
 
             int penalty = (int)ResistancePenalty.GetPenaltyByGameDifficulty((GameDifficulty)gameInfo.Game.Difficulty);

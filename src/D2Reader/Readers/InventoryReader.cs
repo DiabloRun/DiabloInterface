@@ -4,11 +4,15 @@ using Zutatensuppe.D2Reader.Struct.Item;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Zutatensuppe.DiabloInterface.Core.Logging;
+using System.Reflection;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
     public class InventoryReader : IInventoryReader
     {
+        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+
         private IProcessMemoryReader processReader;
 
         private UnitReader unitReader { get; }
@@ -19,37 +23,40 @@ namespace Zutatensuppe.D2Reader.Readers
             this.unitReader = unitReader;
         }
 
-        public IEnumerable<D2Unit> EnumerateInventoryBackward(
-            D2Unit unit,
+        public IEnumerable<D2Unit> Filter(
+            IEnumerable<D2Unit> enumerable,
             Func<D2ItemData, D2Unit, bool> filter = null
         ) {
+            return from item in enumerable
+                   let itemData = unitReader.GetItemData(item)
+                   where itemData != null && filter(itemData, item)
+                   select item;
+        }
+
+        public IEnumerable<D2Unit> EnumerateInventoryBackward(D2Unit unit)
+        {
             return EnumerateInventory(
                 unit,
                 (D2Inventory i) => i.pLastItem,
-                (D2ItemData i) => i.PreviousItem,
-                filter
+                (D2ItemData i) => i.PreviousItem
             );
         }
 
-        public IEnumerable<D2Unit> EnumerateInventoryForward(
-            D2Unit unit,
-            Func<D2ItemData, D2Unit, bool> filter = null
-        ) {
+        public IEnumerable<D2Unit> EnumerateInventoryForward(D2Unit unit)
+        {
             return EnumerateInventory(
                 unit,
                 (D2Inventory i) => i.pFirstItem,
-                (D2ItemData i) => i.NextItem,
-                filter
+                (D2ItemData i) => i.NextItem
             );
         }
 
         private IEnumerable<D2Unit> EnumerateInventory(
             D2Unit unit,
             Func<D2Inventory, DataPointer> starter,
-            Func<D2ItemData, DataPointer> advancer,
-            Func<D2ItemData, D2Unit, bool> filter = null
+            Func<D2ItemData, DataPointer> advancer
         ) {
-            if (unit.pInventory.IsNull)
+            if (unit == null || unit.pInventory.IsNull)
                 yield break;
 
             var inventory = processReader.Read<D2Inventory>(unit.pInventory);
@@ -69,10 +76,9 @@ namespace Zutatensuppe.D2Reader.Readers
 
                 var itemData = unitReader.GetItemData(item);
                 if (itemData == null)
-                    break;
+                    yield break;
 
-                if (filter == null || filter(itemData, item))
-                    yield return item;
+                yield return item;
 
                 item = GetUnit(advancer(itemData));
             }
