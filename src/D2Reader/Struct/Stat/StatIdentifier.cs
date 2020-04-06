@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.D2Reader.Struct.Stat
+namespace Zutatensuppe.D2Reader.Struct.Stat
 {
     // see ItemStatCost.txt
     public enum StatIdentifier : ushort
@@ -106,5 +106,10 @@
 
         // Not listed in ItemStatCost.txt, but used for poison calculations.
         PoisonDivisor           = 326
+
+        // some things that came up but we dont define yet:
+        // 252 3   (seen on: Felloak, lvl req?)
+        // 201 (values: 10, 10)
+        // 
     }
 }

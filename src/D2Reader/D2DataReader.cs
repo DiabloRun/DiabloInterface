@@ -93,7 +93,9 @@ namespace Zutatensuppe.D2Reader
         bool isDisposed;
 
         IProcessMemoryReader reader;
+        IInventoryReader inventoryReader;
         UnitReader unitReader;
+        ISkillReader skillReader;
         GameMemoryTable memory;
 
         GameDifficulty currentDifficulty;
@@ -225,7 +227,10 @@ namespace Zutatensuppe.D2Reader
             try
             {
                 memory = CreateGameMemoryTableForReader(reader);
-                unitReader = CreateUnitReader(reader, memory);
+                skillReader = new SkillReader(reader, memory);
+                var stringReader = new StringLookupTable(reader, memory.Address);
+                unitReader = new UnitReader(reader, memory, stringReader, skillReader);
+                inventoryReader = new InventoryReader(reader, unitReader);
                 return true;
             }
             catch (ModuleNotLoadedException e)
@@ -249,38 +254,40 @@ namespace Zutatensuppe.D2Reader
 
                 return false;
             }
-
-            void CleanUpDataReaders()
-            {
-                reader?.Dispose();
-                reader = null;
-                memory = null;
-                unitReader = null;
-            }
         }
 
-        public void ItemSlotAction(List<BodyLocation> slots, Action<ItemReader, D2Unit> action)
+        void CleanUpDataReaders()
         {
-            if (reader == null) return;
+            reader?.Dispose();
+            reader = null;
+            memory = null;
+            inventoryReader = null;
+            unitReader = null;
+            skillReader = null;
+        }
+        
+        public void ItemSlotAction(List<BodyLocation> slots, Action<D2Unit, D2Unit, UnitReader, IInventoryReader> action)
+        {
+            if (!ValidateGameDataReaders()) return;
 
-            if (unitReader == null) return;
-
-            var player = unitReader.GetPlayer();
-            if (player == null) return;
+            var gameInfo= ReadGameInfo();
+            if (gameInfo == null) return;
 
             // Add all items found in the slots.
-            bool FilterSlots(D2ItemData d) => slots.FindIndex(x => d.IsEquippedInSlot(x)) >= 0;
+            bool Filter(D2ItemData d, D2Unit u) => slots.FindIndex(x => d.IsEquippedInSlot(x)) >= 0;
 
             try
             {
-                foreach (D2Unit item in unitReader.InventoryReader.EnumerateInventoryBackward(player, FilterSlots))
+                foreach (D2Unit item in inventoryReader.EnumerateInventoryBackward(gameInfo.Player, Filter))
                 {
-                    action?.Invoke(unitReader.InventoryReader.ItemReader, item);
+                    action?.Invoke(item, gameInfo.Player, unitReader, inventoryReader);
                 }
             } catch (Exception e)
             {
                 string s = String.Join(",", from slot in slots select slot.ToString());
                 Logger.Error($"Unable to execute ItemSlotAction. {s}", e);
+                
+                unitReader.ResetCache();
             }
         }
 
@@ -292,7 +299,9 @@ namespace Zutatensuppe.D2Reader
 
                 // Block here until we have a valid reader.
                 if (!ValidateGameDataReaders())
+                {
                     continue;
+                }
 
                 try
                 {
@@ -300,14 +309,19 @@ namespace Zutatensuppe.D2Reader
                 }
                 catch (ThreadAbortException)
                 {
+                    Logger.Debug("ThreadAbortException");
                     throw;
                 }
                 catch (Exception e)
                 {
+                    Logger.Debug("Other Exception");
 #if DEBUG
                     // Print errors to console in debug builds.
                     Console.WriteLine("Exception: {0}", e);
 #endif
+                    // cleaning up readers, so they are recreated in next loop
+                    // otherwise data reading will stop here
+                    CleanUpDataReaders();
                 }
             }
         }
@@ -325,7 +339,16 @@ namespace Zutatensuppe.D2Reader
                 if (client.UnitType != 0) return null;
 
                 // Get the player address from the list of units.
+                // note: previously used way to get the player was
+                // if ((long)memory.Address.PlayerUnit > 0) {
+                //     IntPtr playerAddress = reader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
+                //     if ((long)playerAddress > 0) {
+                //         player = reader.Read<D2Unit>(playerAddress)
+                //     }
+                // }
+                IntPtr playerAddress = reader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
                 DataPointer unitAddress = game.UnitLists[0][client.UnitId & 0x7F];
+                Logger.Debug($"read address of player: {playerAddress} VS {unitAddress.Address}");
                 if (unitAddress.IsNull) return null;
 
                 // Read player with player data.
@@ -333,7 +356,6 @@ namespace Zutatensuppe.D2Reader
                 var playerData = player.UnitData.IsNull
                     ? null
                     : reader.Read<D2PlayerData>(player.UnitData);
-
                 return new D2GameInfo(game, player, playerData);
             }
             catch (ProcessMemoryReadException)
@@ -371,18 +393,26 @@ namespace Zutatensuppe.D2Reader
 
         void ProcessGameData()
         {
+            Logger.Debug("ProcessGameData");
             // Make sure the game is loaded.
             var gameInfo = ReadGameInfo();
             if (gameInfo == null)
             {
+                Logger.Debug("gameInfo is null");
                 wasInTitleScreen = true;
                 return;
             }
 
+            Logger.Debug("ProcessCharacterData");
             CurrentCharacter = ProcessCharacterData(gameInfo);
+
+            Logger.Debug("ProcessQuests");
             gameQuests = ProcessQuests(gameInfo);
+
+            Logger.Debug("ProcessCurrentDifficulty");
             currentDifficulty = ProcessCurrentDifficulty(gameInfo);
 
+            Logger.Debug("OnDataRead");
             OnDataRead(new DataReadEventArgs(
                 CurrentCharacter,
                 ProcessEquippedItemStrings(gameInfo.Player),
@@ -394,24 +424,8 @@ namespace Zutatensuppe.D2Reader
                 gameQuests,
                 GameCounter
             ));
-        }
 
-        UnitReader CreateUnitReader(
-            IProcessMemoryReader reader,
-            GameMemoryTable memory
-        ) {
-            // could this cause problems that stuff cannot be cleaned up?
-            var stringReader = new StringLookupTable(reader, memory.Address);
-            var skillReader = new SkillReader(reader, memory);
-
-            var itemReader = new ItemReader(reader, memory, stringReader, skillReader);
-            var inventoryReader = new InventoryReader(reader, itemReader);
-            itemReader.InventoryReader = inventoryReader;
-
-            var unitReader = new UnitReader(reader, memory, stringReader, skillReader);
-            unitReader.InventoryReader = inventoryReader;
-            Logger.Debug($"Unit reader created.");
-            return unitReader;
+            Logger.Debug("Done");
         }
 
         List<QuestCollection> ProcessQuests(D2GameInfo gameInfo)
@@ -477,19 +491,20 @@ namespace Zutatensuppe.D2Reader
                 return new Dictionary<BodyLocation, string>();
 
             // Build filter to get only equipped items.
-            bool Filter(D2ItemData d) => d.IsEquipped();
+            bool Filter(D2ItemData d, D2Unit u) => d.IsEquipped();
 
             var itemStrings = new Dictionary<BodyLocation, string>();
-            foreach (D2Unit item in unitReader.InventoryReader.EnumerateInventoryBackward(player, Filter))
+            foreach (D2Unit item in inventoryReader.EnumerateInventoryBackward(player, Filter))
             {
                 // TODO: check why this get stats call is needed here
                 List<D2Stat> itemStats = unitReader.GetStats(item);
                 if (itemStats.Count == 0) continue;
 
                 StringBuilder statBuilder = new StringBuilder();
-                statBuilder.Append(unitReader.InventoryReader.ItemReader.GetFullItemName(item));
+                statBuilder.Append(unitReader.GetFullItemName(item));
                 statBuilder.Append(Environment.NewLine);
-                List<string> magicalStrings = unitReader.InventoryReader.ItemReader.GetMagicalStrings(item);
+
+                List<string> magicalStrings = unitReader.GetMagicalStrings(item, player, inventoryReader);
                 foreach (string str in magicalStrings)
                 {
                     statBuilder.Append("    ");
@@ -519,8 +534,8 @@ namespace Zutatensuppe.D2Reader
             if (player == null)
                 return new List<int>();
 
-            IReadOnlyCollection<D2Unit> baseItems = unitReader.InventoryReader.EnumerateInventoryBackward(player).ToList();
-            IEnumerable<D2Unit> socketedItems = baseItems.SelectMany(item => unitReader.InventoryReader.ItemReader.GetSocketedItems(item));
+            IReadOnlyCollection<D2Unit> baseItems = inventoryReader.EnumerateInventoryBackward(player).ToList(); 
+            IEnumerable<D2Unit> socketedItems = baseItems.SelectMany(item => unitReader.GetSocketedItems(item, inventoryReader));
             IEnumerable<D2Unit> allItems = baseItems.Concat(socketedItems);
             return (from item in allItems select item.eClass).ToList();
         }
@@ -549,7 +564,7 @@ namespace Zutatensuppe.D2Reader
                 // A brand new character has been started.
                 // The extra wasInTitleScreen check prevents DI from splitting
                 // when it was started AFTER Diablo 2, but the char is still a new char
-                if (unitReader.IsNewChar(gameInfo.Player))
+                if (Character.IsNewChar(gameInfo.Player, unitReader, inventoryReader, skillReader))
                 {
                     Logger.Info($"A new chararacter was created: {character.Name}");
                     ActiveCharacterTimestamp = DateTime.Now;

@@ -52,12 +52,12 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         protected abstract Panel RuneLayoutPanel { get; }
 
-        protected void add(string nam, string maxStr, Func<ApplicationSettings, Tuple<bool, Color, int>> s, params string[] names)
+        protected void Add(string nam, string maxStr, Func<ApplicationSettings, Tuple<bool, Color, int>> s, params string[] names)
         {
             def.Add(nam, new Def(nam, maxStr, s, names));
         }
 
-        protected void updateLabel(string nam, string value)
+        protected void UpdateLabel(string nam, string value)
         {
             foreach (Label l in def[nam].labels)
             {
@@ -65,9 +65,9 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             }
         }
 
-        protected void updateLabel(string nam, int value)
+        protected void UpdateLabel(string nam, int value)
         {
-            updateLabel(nam, "" + value);
+            UpdateLabel(nam, "" + value);
         }
 
         protected void RegisterServiceEventHandlers()

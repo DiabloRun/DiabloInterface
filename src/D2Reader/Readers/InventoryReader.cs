@@ -7,77 +7,80 @@ using System.Linq;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
-    public class InventoryReader: IInventoryReader
+    public class InventoryReader : IInventoryReader
     {
-        IProcessMemoryReader processReader;
-        public ItemReader ItemReader { get; }
+        private IProcessMemoryReader processReader;
 
-        public InventoryReader(IProcessMemoryReader reader, ItemReader itemReader)
+        private UnitReader unitReader { get; }
+
+        public InventoryReader(IProcessMemoryReader reader, UnitReader unitReader)
         {
             processReader = reader;
-            ItemReader = itemReader;
+            this.unitReader = unitReader;
         }
 
-        public IEnumerable<D2Unit> EnumerateInventoryBackward(D2Unit unit, Func<D2ItemData, bool> filter)
-        {
-            return from item in EnumerateInventoryBackward(unit)
-                   let itemData = ItemReader.GetItemData(item)
-                   where itemData != null && filter(itemData)
-                   select item;
+        public IEnumerable<D2Unit> EnumerateInventoryBackward(
+            D2Unit unit,
+            Func<D2ItemData, D2Unit, bool> filter = null
+        ) {
+            return EnumerateInventory(
+                unit,
+                (D2Inventory i) => i.pLastItem,
+                (D2ItemData i) => i.PreviousItem,
+                filter
+            );
         }
 
-        public IEnumerable<D2Unit> EnumerateInventoryBackward(D2Unit unit)
-        {
+        public IEnumerable<D2Unit> EnumerateInventoryForward(
+            D2Unit unit,
+            Func<D2ItemData, D2Unit, bool> filter = null
+        ) {
+            return EnumerateInventory(
+                unit,
+                (D2Inventory i) => i.pFirstItem,
+                (D2ItemData i) => i.NextItem,
+                filter
+            );
+        }
+
+        private IEnumerable<D2Unit> EnumerateInventory(
+            D2Unit unit,
+            Func<D2Inventory, DataPointer> starter,
+            Func<D2ItemData, DataPointer> advancer,
+            Func<D2ItemData, D2Unit, bool> filter = null
+        ) {
             if (unit.pInventory.IsNull)
                 yield break;
 
             var inventory = processReader.Read<D2Inventory>(unit.pInventory);
-            if (inventory.pLastItem.IsNull)
+            if (inventory == null)
                 yield break;
 
-            var item = GetUnit(inventory.pLastItem);
-            for (; item != null; item = GetPreviousItem(item))
+            // prevent endless loop that sometimes happens by storing the found guids
+            // seems to happen sometimes when characters are changed
+            // probably the incoming unit addresses are not the ones from the game at
+            // that point anymore
+            var guids = new Dictionary<int, bool>();
+
+            var item = GetUnit(starter(inventory));
+            while (item != null && !guids.ContainsKey(item.GUID))
             {
-                yield return item;
+                guids[item.GUID] = true;
+
+                var itemData = unitReader.GetItemData(item);
+                if (itemData == null)
+                    break;
+
+                if (filter == null || filter(itemData, item))
+                    yield return item;
+
+                item = GetUnit(advancer(itemData));
             }
-        }
-
-        public IEnumerable<D2Unit> EnumerateInventoryForward(D2Unit unit)
-        {
-            if (unit.pInventory.IsNull)
-                yield break;
-
-            var inventory = processReader.Read<D2Inventory>(unit.pInventory);
-            if (inventory.pFirstItem.IsNull)
-                yield break;
-
-            var item = GetUnit(inventory.pFirstItem);
-            for (; item != null; item = GetNextItem(item))
-            {
-                yield return item;
-            }
-        }
-
-        private D2Unit GetPreviousItem(D2Unit item)
-        {
-            var itemData = ItemReader.GetItemData(item);
-            if (itemData == null) return null;
-
-            return GetUnit(itemData.PreviousItem);
-        }
-
-        private D2Unit GetNextItem(D2Unit item)
-        {
-            var itemData = ItemReader.GetItemData(item);
-            if (itemData == null) return null;
-
-            return GetUnit(itemData.NextItem);
         }
 
         private D2Unit GetUnit(DataPointer pointer)
         {
-            if (pointer.IsNull) return null;
-            return processReader.Read<D2Unit>(pointer);
+            return pointer.IsNull ? null : processReader.Read<D2Unit>(pointer);
         }
     }
 }

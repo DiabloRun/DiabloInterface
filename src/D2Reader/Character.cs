@@ -2,14 +2,20 @@ namespace Zutatensuppe.D2Reader
 {
     using System;
     using System.Collections.Generic;
-
+    using System.Linq;
+    using System.Reflection;
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.D2Reader.Readers;
+    using Zutatensuppe.D2Reader.Struct;
+    using Zutatensuppe.D2Reader.Struct.Skill;
     using Zutatensuppe.D2Reader.Struct.Stat;
     using Zutatensuppe.DiabloInterface.Core;
+    using Zutatensuppe.DiabloInterface.Core.Logging;
 
     public class Character
     {
+        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+
         // every class starts with:
         // 4 potions (0x24b)
         // 1 scroll ident (0x212)
@@ -177,11 +183,8 @@ namespace Zutatensuppe.D2Reader
 
         internal void ParseStats(UnitReader unitReader, D2GameInfo gameInfo)
         {
-            ParseStats(
-                unitReader.GetStatsMap(gameInfo.Player),
-                unitReader.GetItemStatsMap(gameInfo.Player),
-                gameInfo
-            );
+            Logger.Debug("ParseStats(UnitReader, D2GameInfo)");
+            ParseStats(unitReader.GetStatsMap(gameInfo.Player), gameInfo);
         }
 
         /// <summary>
@@ -189,9 +192,9 @@ namespace Zutatensuppe.D2Reader
         /// </summary>
         private void ParseStats(
             Dictionary<StatIdentifier, D2Stat> data,
-            Dictionary<StatIdentifier, D2Stat> itemData,
             D2GameInfo gameInfo
         ) {
+            Logger.Debug("ParseStats(Dictionary<StatIdentifier, D2Stat>, Dictionary<StatIdentifier, D2Stat>, D2GameInfo)");
             CharClass = (CharacterClass)gameInfo.Player.eClass;
 
             int penalty = (int)ResistancePenalty.GetPenaltyByGameDifficulty((GameDifficulty)gameInfo.Game.Difficulty);
@@ -202,20 +205,21 @@ namespace Zutatensuppe.D2Reader
                 return d.TryGetValue(statID, out D2Stat stat) ? stat.Value : 0;
             }
 
-            Func<StatIdentifier, int> getStat = statID => ValueByStatID(data, statID);
-            Func<StatIdentifier, int> getItemStat = statID => ValueByStatID(itemData, statID);
+            int getStat(StatIdentifier statID) => ValueByStatID(data, statID);
 
             Level = getStat(StatIdentifier.Level);
             Experience = getStat(StatIdentifier.Experience);
-
-            VelocityPercent = getStat(StatIdentifier.VelocityPercent);
-            AttackRate = getStat(StatIdentifier.AttackRate);
 
             Strength = getStat(StatIdentifier.Strength);
             Dexterity = getStat(StatIdentifier.Dexterity);
             Vitality = getStat(StatIdentifier.Vitality);
             Energy = getStat(StatIdentifier.Energy);
 
+            Gold = getStat(StatIdentifier.Gold);
+            GoldStash = getStat(StatIdentifier.GoldStash);
+
+            VelocityPercent = getStat(StatIdentifier.VelocityPercent);
+            AttackRate = getStat(StatIdentifier.AttackRate);
             Defense = getStat(StatIdentifier.Defense);
 
             int maxFire = BASE_MAX_RESIST + getStat(StatIdentifier.ResistFireMax);
@@ -228,18 +232,15 @@ namespace Zutatensuppe.D2Reader
             LightningResist = Utility.Clamp(getStat(StatIdentifier.ResistLightning) + penalty, MIN_RESIST, maxLightning);
             PoisonResist = Utility.Clamp(getStat(StatIdentifier.ResistPoison) + penalty, MIN_RESIST, maxPoison);
 
-            FasterHitRecovery = getItemStat(StatIdentifier.FasterHitRecovery);
-            FasterRunWalk = getItemStat(StatIdentifier.FasterRunWalk);
-            FasterCastRate = getItemStat(StatIdentifier.FasterCastRate);
-            IncreasedAttackSpeed = getItemStat(StatIdentifier.IncreasedAttackSpeed);
+            FasterHitRecovery = getStat(StatIdentifier.FasterHitRecovery);
+            FasterRunWalk = getStat(StatIdentifier.FasterRunWalk);
+            FasterCastRate = getStat(StatIdentifier.FasterCastRate);
+            IncreasedAttackSpeed = getStat(StatIdentifier.IncreasedAttackSpeed);
 
             AttackerSelfDamage = getStat(StatIdentifier.AttackerSelfDamage);
 
             MagicFind = getStat(StatIdentifier.MagicFind);
             MonsterGold = getStat(StatIdentifier.MonsterGold);
-
-            Gold = getStat(StatIdentifier.Gold);
-            GoldStash = getStat(StatIdentifier.GoldStash);
         }
 
         public void UpdateMode(D2Data.Mode mode)
@@ -254,6 +255,66 @@ namespace Zutatensuppe.D2Reader
             {
                 Deaths++;
             }
+        }
+
+        public static bool IsNewChar(
+            D2Unit unit,
+            UnitReader unitReader,
+            IInventoryReader inventoryReader,
+            ISkillReader skillReader
+        ) {
+            return MatchesStartingProps(unit, unitReader)
+                && MatchesStartingItems(unit, inventoryReader)
+                && MatchesStartingSkills(unit, skillReader);
+        }
+
+        private static bool MatchesStartingProps(D2Unit p, UnitReader unitReader)
+        {
+            // check -act2/3/4/5 level|xp
+            int level = unitReader.GetStatValue(p, StatIdentifier.Level) ?? 0;
+            int experience = unitReader.GetStatValue(p, StatIdentifier.Experience) ?? 0;
+
+            // first we will check the level and XP
+            // act should be set to the act we are currently in
+            return
+                (level == 1 && experience == 0 && p.actNo == 0)
+                || (level == 16 && experience == 220165 && p.actNo == 1)
+                || (level == 21 && experience == 839864 && p.actNo == 2)
+                || (level == 27 && experience == 2563061 && p.actNo == 3)
+                || (level == 33 && experience == 7383752 && p.actNo == 4);
+        }
+
+        private static bool MatchesStartingItems(D2Unit p, IInventoryReader inventoryReader)
+        {
+            int[] list = (
+                from item
+                in inventoryReader.EnumerateInventoryForward(p)
+                select item.eClass
+            ).ToArray();
+
+            return list.SequenceEqual(StartingItems[(CharacterClass)p.eClass]);
+        }
+
+        private static bool MatchesStartingSkills(D2Unit p, ISkillReader skillReader)
+        {
+            int skillCount = 0;
+            foreach (D2Skill skill in skillReader.EnumerateSkills(p))
+            {
+                var skillData = skillReader.ReadSkillData(skill);
+                Skill skillId = (Skill)skillData.SkillId;
+                if (!StartingSkills[(CharacterClass)p.eClass].ContainsKey(skillId))
+                {
+                    return false;
+                }
+
+                if (StartingSkills[(CharacterClass)p.eClass][skillId] != skillReader.GetTotalNumberOfSkillPoints(skill))
+                {
+                    return false;
+                }
+                skillCount++;
+            }
+
+            return skillCount == StartingSkills[(CharacterClass)p.eClass].Count;
         }
     }
 }

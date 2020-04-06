@@ -64,11 +64,10 @@
     <Compile Include="Readers\InventoryReader.cs" />
     <Compile Include="Readers\ISkillReader.cs" />
     <Compile Include="Readers\IStringLookupTable.cs" />
-    <Compile Include="Readers\ItemReader.cs" />
+    <Compile Include="Readers\UnitReader.cs" />
     <Compile Include="Readers\RangeStatData.cs" />
     <Compile Include="Readers\SkillReader.cs" />
     <Compile Include="Readers\StringLookupTable.cs" />
-    <Compile Include="Readers\UnitReader.cs" />
     <Compile Include="Struct\D2CharacterClassSkillIconStruct.cs" />
     <Compile Include="Struct\D2CharacterItemInfo.cs" />
     <Compile Include="Struct\D2CharacterStats.cs" />

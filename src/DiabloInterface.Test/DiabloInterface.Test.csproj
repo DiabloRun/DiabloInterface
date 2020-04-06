@@ -66,7 +66,7 @@
     <Compile Include="Business\Services\AutoSplitServiceTest.cs" />
     <Compile Include="Business\Services\GameServiceTest.cs" />
     <Compile Include="Core\Extensions\EnumFlagExtensionTest.cs" />
-    <Compile Include="D2Reader\Readers\UnitReaderTest.cs" />
+    <Compile Include="D2Reader\CharacterTest.cs" />
     <Compile Include="Mocks\CharacterStatsMock.cs" />
     <Compile Include="Business\IO\StatFileWriterTest.cs" />
     <Compile Include="Mocks\TextFileWriterMock.cs" />

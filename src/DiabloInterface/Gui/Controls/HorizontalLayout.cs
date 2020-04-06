@@ -33,33 +33,33 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         protected void InitializeComponent()
         {
-            add("name", "WWW_WWWWWWWWW", (ApplicationSettings s) => Tuple.Create(s.DisplayName, s.ColorName, s.FontSizeTitle), "{}");
-            add("playersx", "8", (ApplicationSettings s) => Tuple.Create(s.DisplayPlayersX, s.ColorPlayersX, s.FontSize), "/players {}");
-            add("deaths", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayDeathCounter, s.ColorDeaths, s.FontSize), "DEATHS: {}");
-            add("runs", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayGameCounter, s.ColorGameCounter, s.FontSize), "RUNS: {}");
-            add("gold", "2500000", (ApplicationSettings s) => Tuple.Create(s.DisplayGold, s.ColorGold, s.FontSize), "GOLD: {}");
-            add("mf", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayMagicFind, s.ColorMagicFind, s.FontSize), "MF: {}");
-            add("monstergold", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayMonsterGold, s.ColorMonsterGold, s.FontSize), "EMG: {}");
-            add("atd", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAttackerSelfDamage, s.ColorAttackerSelfDamage, s.FontSize), "ATD: {}");
-            add("lvl", "99", (ApplicationSettings s) => Tuple.Create(s.DisplayLevel, s.ColorLevel, s.FontSize), "LVL: {}");
-            add("str", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "STR:", "{}");
-            add("vit", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "VIT:", "{}");
-            add("dex", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "DEX:", "{}");
-            add("ene", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "ENE:", "{}");
-            add("ias", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "IAS:", "{}");
-            add("frw", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "FRW:", "{}");
-            add("fcr", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "FCR:", "{}");
-            add("fhr", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "FHR:", "{}");
-            add("cold", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorColdRes, s.FontSize), "COLD:", "{}");
-            add("ligh", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorLightningRes, s.FontSize), "LIGH:", "{}");
-            add("pois", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorPoisonRes, s.FontSize), "POIS:", "{}");
-            add("fire", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorFireRes, s.FontSize), "FIRE:", "{}");
-            add("norm", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NORM:", "{}%");
-            add("nm", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NM:", "{}%");
-            add("hell", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "HELL:", "{}%");
-            add("norm_inline", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NO: {}%");
-            add("nm_inline", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NM: {}%");
-            add("hell_inline", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "HE: {}%");
+            Add("name", "WWW_WWWWWWWWW", (ApplicationSettings s) => Tuple.Create(s.DisplayName, s.ColorName, s.FontSizeTitle), "{}");
+            Add("playersx", "8", (ApplicationSettings s) => Tuple.Create(s.DisplayPlayersX, s.ColorPlayersX, s.FontSize), "/players {}");
+            Add("deaths", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayDeathCounter, s.ColorDeaths, s.FontSize), "DEATHS: {}");
+            Add("runs", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayGameCounter, s.ColorGameCounter, s.FontSize), "RUNS: {}");
+            Add("gold", "2500000", (ApplicationSettings s) => Tuple.Create(s.DisplayGold, s.ColorGold, s.FontSize), "GOLD: {}");
+            Add("mf", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayMagicFind, s.ColorMagicFind, s.FontSize), "MF: {}");
+            Add("monstergold", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayMonsterGold, s.ColorMonsterGold, s.FontSize), "EMG: {}");
+            Add("atd", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAttackerSelfDamage, s.ColorAttackerSelfDamage, s.FontSize), "ATD: {}");
+            Add("lvl", "99", (ApplicationSettings s) => Tuple.Create(s.DisplayLevel, s.ColorLevel, s.FontSize), "LVL: {}");
+            Add("str", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "STR:", "{}");
+            Add("vit", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "VIT:", "{}");
+            Add("dex", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "DEX:", "{}");
+            Add("ene", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "ENE:", "{}");
+            Add("ias", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "IAS:", "{}");
+            Add("frw", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "FRW:", "{}");
+            Add("fcr", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "FCR:", "{}");
+            Add("fhr", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "FHR:", "{}");
+            Add("cold", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorColdRes, s.FontSize), "COLD:", "{}");
+            Add("ligh", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorLightningRes, s.FontSize), "LIGH:", "{}");
+            Add("pois", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorPoisonRes, s.FontSize), "POIS:", "{}");
+            Add("fire", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorFireRes, s.FontSize), "FIRE:", "{}");
+            Add("norm", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NORM:", "{}%");
+            Add("nm", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NM:", "{}%");
+            Add("hell", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "HELL:", "{}%");
+            Add("norm_inline", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NO: {}%");
+            Add("nm_inline", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NM: {}%");
+            Add("hell_inline", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "HE: {}%");
 
             // display multiple "things" in 1 row (a table with 1 row and x columns)
             TableLayoutPanel rowthing(params string[] names)
@@ -297,35 +297,35 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         protected override void UpdateLabels(Character player, IList<QuestCollection> quests, int currentPlayersX, uint gameIndex)
         {
-            updateLabel("name", player.Name);
-            updateLabel("playersx", currentPlayersX);
-            updateLabel("deaths", player.Deaths);
-            updateLabel("runs", (int)gameIndex);
-            updateLabel("gold", player.Gold + player.GoldStash);
-            updateLabel("mf", player.MagicFind);
-            updateLabel("monstergold", player.MonsterGold);
-            updateLabel("atd", player.AttackerSelfDamage);
-            updateLabel("lvl", player.Level);
-            updateLabel("str", player.Strength);
-            updateLabel("vit", player.Vitality);
-            updateLabel("dex", player.Dexterity);
-            updateLabel("ene", player.Energy);
-            updateLabel("ias", realFrwIas ? player.RealIAS() : player.IncreasedAttackSpeed);
-            updateLabel("frw", realFrwIas ? player.RealFRW() : player.FasterRunWalk);
-            updateLabel("fcr", player.FasterCastRate);
-            updateLabel("fhr", player.FasterHitRecovery);
-            updateLabel("cold", player.ColdResist);
-            updateLabel("ligh", player.LightningResist);
-            updateLabel("pois", player.PoisonResist);
-            updateLabel("fire", player.FireResist);
+            UpdateLabel("name", player.Name);
+            UpdateLabel("playersx", currentPlayersX);
+            UpdateLabel("deaths", player.Deaths);
+            UpdateLabel("runs", (int)gameIndex);
+            UpdateLabel("gold", player.Gold + player.GoldStash);
+            UpdateLabel("mf", player.MagicFind);
+            UpdateLabel("monstergold", player.MonsterGold);
+            UpdateLabel("atd", player.AttackerSelfDamage);
+            UpdateLabel("lvl", player.Level);
+            UpdateLabel("str", player.Strength);
+            UpdateLabel("vit", player.Vitality);
+            UpdateLabel("dex", player.Dexterity);
+            UpdateLabel("ene", player.Energy);
+            UpdateLabel("ias", realFrwIas ? player.RealIAS() : player.IncreasedAttackSpeed);
+            UpdateLabel("frw", realFrwIas ? player.RealFRW() : player.FasterRunWalk);
+            UpdateLabel("fcr", player.FasterCastRate);
+            UpdateLabel("fhr", player.FasterHitRecovery);
+            UpdateLabel("cold", player.ColdResist);
+            UpdateLabel("ligh", player.LightningResist);
+            UpdateLabel("pois", player.PoisonResist);
+            UpdateLabel("fire", player.FireResist);
 
             IList<float> completions = quests.Select(q => q.CompletionProgress).ToList();
-            updateLabel("norm", $@"{completions[0] * 100:0}");
-            updateLabel("nm", $@"{completions[1] * 100:0}");
-            updateLabel("hell", $@"{completions[2] * 100:0}");
-            updateLabel("norm_inline", $@"{completions[0] * 100:0}");
-            updateLabel("nm_inline", $@"{completions[1] * 100:0}");
-            updateLabel("hell_inline", $@"{completions[2] * 100:0}");
+            UpdateLabel("norm", $@"{completions[0] * 100:0}");
+            UpdateLabel("nm", $@"{completions[1] * 100:0}");
+            UpdateLabel("hell", $@"{completions[2] * 100:0}");
+            UpdateLabel("norm_inline", $@"{completions[0] * 100:0}");
+            UpdateLabel("nm_inline", $@"{completions[1] * 100:0}");
+            UpdateLabel("hell_inline", $@"{completions[2] * 100:0}");
         }
     }
 }

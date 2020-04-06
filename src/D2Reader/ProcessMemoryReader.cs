@@ -29,8 +29,13 @@ namespace Zutatensuppe.D2Reader
 
     public class ProcessMemoryReadException : Exception
     {
-        public ProcessMemoryReadException(IntPtr address) :
-            base($"Failed to read memory at: 0x{address.ToInt64():X8}")
+        public ProcessMemoryReadException(
+            IntPtr address,
+            bool success,
+            uint bytesRead,
+            int dataLength
+        ) :
+            base($"Failed to read memory at: 0x{address.ToInt64():X8} {success} {bytesRead} {dataLength}")
         { }
     }
 
@@ -256,7 +261,12 @@ namespace Zutatensuppe.D2Reader
             // Make sure we read successfully.
             if (!success || bytesRead != (uint)data.Length)
             {
-                throw new ProcessMemoryReadException(address);
+                throw new ProcessMemoryReadException(
+                    address,
+                    success,
+                    bytesRead,
+                    data.Length
+                );
             }
             return data;
         }
