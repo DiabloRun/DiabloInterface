@@ -1,14 +1,18 @@
+using Zutatensuppe.D2Reader.Struct;
+
 namespace Zutatensuppe.D2Reader
 {
     class D2GameInfo
     {
-        public Struct.D2Game Game { get; private set; }
-        public Struct.D2Unit Player { get; private set; }
-        public Struct.D2PlayerData PlayerData { get; private set; }
+        public D2Game Game { get; private set; }
+        public D2Client Client { get; private set; }
+        public D2Unit Player { get; private set; }
+        public D2PlayerData PlayerData { get; private set; }
 
-        public D2GameInfo(Struct.D2Game game, Struct.D2Unit player, Struct.D2PlayerData playerData)
+        public D2GameInfo(D2Game game, D2Client client, D2Unit player, D2PlayerData playerData)
         {
             Game = game;
+            Client = client;
             Player = player;
             PlayerData = playerData;
         }

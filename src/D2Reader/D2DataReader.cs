@@ -49,8 +49,8 @@ namespace Zutatensuppe.D2Reader
             List<int> itemIds,
             bool isAutosplitCharacter,
             IList<QuestCollection> quests,
-            uint gameCounter)
-        {
+            uint gameCounter
+        ) {
             Character = character;
             ItemStrings = itemStrings;
             CurrentArea = currentArea;
@@ -362,7 +362,6 @@ namespace Zutatensuppe.D2Reader
                 if (game == null || game.Client.IsNull) return null;
 
                 D2Client client = reader.Read<D2Client>(game.Client);
-
                 // Make sure we are reading a player type.
                 if (client.UnitType != 0) return null;
 
@@ -382,7 +381,7 @@ namespace Zutatensuppe.D2Reader
                 var playerData = player.UnitData.IsNull
                     ? null
                     : reader.Read<D2PlayerData>(player.UnitData);
-                return new D2GameInfo(game, player, playerData);
+                return new D2GameInfo(game, client, player, playerData);
             }
             catch (ProcessMemoryReadException)
             {
@@ -582,6 +581,8 @@ namespace Zutatensuppe.D2Reader
             }
 
             character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
+            character.IsHardcore = gameInfo.Client.IsHardcore();
+            character.IsExpansion = gameInfo.Client.IsExpansion();
 
             // Don't update stats while dead.
             if (!character.IsDead)
