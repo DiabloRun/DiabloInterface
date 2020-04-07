@@ -1,26 +1,21 @@
-﻿namespace Zutatensuppe.D2Reader.Models
+using Zutatensuppe.D2Reader.Struct;
+
+namespace Zutatensuppe.D2Reader.Models
 {
-
-    public enum ResistancePenaltyEnum
+    public class ResistancePenalty
     {
-        Normal = 0,
-        Nightmare = -40,
-        Hell = -100,
-    }
-
-    class ResistancePenalty
-    {
-
-        public static ResistancePenaltyEnum GetPenaltyByGameDifficulty(GameDifficulty gameDifficulty)
+        public static int GetPenaltyByGame(D2Game game)
         {
-            switch (gameDifficulty)
+            // @see https://diablo.gamepedia.com/Resistances_(Diablo_II)
+            // todo: read current resistance penalty directly from game
+            switch ((GameDifficulty) game.Difficulty)
             {
                 case GameDifficulty.Nightmare:
-                    return ResistancePenaltyEnum.Nightmare;
+                    return game.LODFlag == 1 ? -40 : -20;
                 case GameDifficulty.Hell:
-                    return ResistancePenaltyEnum.Hell;
+                    return game.LODFlag == 1 ? -100 : -50;
                 default:
-                    return ResistancePenaltyEnum.Normal;
+                    return 0;
             }
         }
     }

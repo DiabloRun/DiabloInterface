@@ -195,7 +195,7 @@ namespace Zutatensuppe.D2Reader
         ) {
             CharClass = (CharacterClass)gameInfo.Player.eClass;
 
-            int penalty = (int)ResistancePenalty.GetPenaltyByGameDifficulty((GameDifficulty)gameInfo.Game.Difficulty);
+            int penalty = ResistancePenalty.GetPenaltyByGame(gameInfo.Game);
 
             int ValueByStatID(Dictionary<StatIdentifier, D2Stat> d, StatIdentifier statID)
             {
