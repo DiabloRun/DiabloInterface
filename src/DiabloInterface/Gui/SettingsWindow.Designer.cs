@@ -67,6 +67,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.label1 = new System.Windows.Forms.Label();
             this.comboBoxLayout = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnColorAll = new System.Windows.Forms.Button();
+            this.chkDisplayExpansionClassic = new System.Windows.Forms.CheckBox();
+            this.btnColorExpansionClassic = new System.Windows.Forms.Button();
+            this.chkDisplayHardcoreSoftcore = new System.Windows.Forms.CheckBox();
+            this.btnColorHardcoreSoftcore = new System.Windows.Forms.Button();
             this.checkBoxAttackerSelfDamage = new System.Windows.Forms.CheckBox();
             this.checkBoxMonsterGold = new System.Windows.Forms.CheckBox();
             this.checkBoxMagicFind = new System.Windows.Forms.CheckBox();
@@ -365,40 +370,40 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.menuClone,
             this.menuDelete});
             this.ctxConfigFileList.Name = "ctxConfigFileList";
-            this.ctxConfigFileList.Size = new System.Drawing.Size(114, 114);
+            this.ctxConfigFileList.Size = new System.Drawing.Size(118, 114);
             // 
             // menuNew
             // 
             this.menuNew.Name = "menuNew";
-            this.menuNew.Size = new System.Drawing.Size(113, 22);
+            this.menuNew.Size = new System.Drawing.Size(117, 22);
             this.menuNew.Text = "New";
             this.menuNew.Click += new System.EventHandler(this.menuNew_Click);
             // 
             // menuLoad
             // 
             this.menuLoad.Name = "menuLoad";
-            this.menuLoad.Size = new System.Drawing.Size(113, 22);
+            this.menuLoad.Size = new System.Drawing.Size(117, 22);
             this.menuLoad.Text = "Load";
             this.menuLoad.Click += new System.EventHandler(this.menuLoad_Click);
             // 
             // renameToolStripMenuItem
             // 
             this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            this.renameToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.renameToolStripMenuItem.Text = "Rename";
             this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // menuClone
             // 
             this.menuClone.Name = "menuClone";
-            this.menuClone.Size = new System.Drawing.Size(113, 22);
+            this.menuClone.Size = new System.Drawing.Size(117, 22);
             this.menuClone.Text = "Clone";
             this.menuClone.Click += new System.EventHandler(this.menuClone_Click);
             // 
             // menuDelete
             // 
             this.menuDelete.Name = "menuDelete";
-            this.menuDelete.Size = new System.Drawing.Size(113, 22);
+            this.menuDelete.Size = new System.Drawing.Size(117, 22);
             this.menuDelete.Text = "Delete";
             this.menuDelete.Click += new System.EventHandler(this.menuDelete_Click);
             // 
@@ -520,6 +525,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnColorAll);
+            this.groupBox1.Controls.Add(this.chkDisplayExpansionClassic);
+            this.groupBox1.Controls.Add(this.btnColorExpansionClassic);
+            this.groupBox1.Controls.Add(this.chkDisplayHardcoreSoftcore);
+            this.groupBox1.Controls.Add(this.btnColorHardcoreSoftcore);
             this.groupBox1.Controls.Add(this.checkBoxAttackerSelfDamage);
             this.groupBox1.Controls.Add(this.checkBoxMonsterGold);
             this.groupBox1.Controls.Add(this.checkBoxMagicFind);
@@ -561,6 +571,60 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.groupBox1.TabIndex = 18;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Display";
+            // 
+            // btnColorAll
+            // 
+            this.btnColorAll.Location = new System.Drawing.Point(329, 266);
+            this.btnColorAll.Name = "btnColorAll";
+            this.btnColorAll.Size = new System.Drawing.Size(136, 23);
+            this.btnColorAll.TabIndex = 42;
+            this.btnColorAll.Text = "Text Color (All)";
+            this.btnColorAll.UseVisualStyleBackColor = true;
+            this.btnColorAll.Click += new System.EventHandler(this.btnColorAll_Click);
+            // 
+            // chkDisplayExpansionClassic
+            // 
+            this.chkDisplayExpansionClassic.AutoSize = true;
+            this.chkDisplayExpansionClassic.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.chkDisplayExpansionClassic.Location = new System.Drawing.Point(259, 179);
+            this.chkDisplayExpansionClassic.Name = "chkDisplayExpansionClassic";
+            this.chkDisplayExpansionClassic.Size = new System.Drawing.Size(86, 17);
+            this.chkDisplayExpansionClassic.TabIndex = 41;
+            this.chkDisplayExpansionClassic.Text = "Classic/LOD";
+            this.chkDisplayExpansionClassic.UseVisualStyleBackColor = true;
+            // 
+            // btnColorExpansionClassic
+            // 
+            this.btnColorExpansionClassic.Location = new System.Drawing.Point(392, 174);
+            this.btnColorExpansionClassic.Margin = new System.Windows.Forms.Padding(0);
+            this.btnColorExpansionClassic.Name = "btnColorExpansionClassic";
+            this.btnColorExpansionClassic.Size = new System.Drawing.Size(74, 25);
+            this.btnColorExpansionClassic.TabIndex = 40;
+            this.btnColorExpansionClassic.Text = "Color";
+            this.btnColorExpansionClassic.UseVisualStyleBackColor = true;
+            this.btnColorExpansionClassic.Click += new System.EventHandler(this.btnSelectColor);
+            // 
+            // chkDisplayHardcoreSoftcore
+            // 
+            this.chkDisplayHardcoreSoftcore.AutoSize = true;
+            this.chkDisplayHardcoreSoftcore.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.chkDisplayHardcoreSoftcore.Location = new System.Drawing.Point(259, 148);
+            this.chkDisplayHardcoreSoftcore.Name = "chkDisplayHardcoreSoftcore";
+            this.chkDisplayHardcoreSoftcore.Size = new System.Drawing.Size(60, 17);
+            this.chkDisplayHardcoreSoftcore.TabIndex = 39;
+            this.chkDisplayHardcoreSoftcore.Text = "HC/SC";
+            this.chkDisplayHardcoreSoftcore.UseVisualStyleBackColor = true;
+            // 
+            // btnColorHardcoreSoftcore
+            // 
+            this.btnColorHardcoreSoftcore.Location = new System.Drawing.Point(392, 143);
+            this.btnColorHardcoreSoftcore.Margin = new System.Windows.Forms.Padding(0);
+            this.btnColorHardcoreSoftcore.Name = "btnColorHardcoreSoftcore";
+            this.btnColorHardcoreSoftcore.Size = new System.Drawing.Size(74, 25);
+            this.btnColorHardcoreSoftcore.TabIndex = 38;
+            this.btnColorHardcoreSoftcore.Text = "Color";
+            this.btnColorHardcoreSoftcore.UseVisualStyleBackColor = true;
+            this.btnColorHardcoreSoftcore.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // checkBoxAttackerSelfDamage
             // 
@@ -704,9 +768,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetBackgroundColor
             // 
-            this.btnSetBackgroundColor.Location = new System.Drawing.Point(351, 271);
+            this.btnSetBackgroundColor.Location = new System.Drawing.Point(329, 295);
             this.btnSetBackgroundColor.Name = "btnSetBackgroundColor";
-            this.btnSetBackgroundColor.Size = new System.Drawing.Size(112, 23);
+            this.btnSetBackgroundColor.Size = new System.Drawing.Size(136, 23);
             this.btnSetBackgroundColor.TabIndex = 23;
             this.btnSetBackgroundColor.Text = "Background color";
             this.btnSetBackgroundColor.UseVisualStyleBackColor = true;
@@ -714,9 +778,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(351, 308);
+            this.button1.Location = new System.Drawing.Point(329, 324);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(112, 23);
+            this.button1.Size = new System.Drawing.Size(136, 23);
             this.button1.TabIndex = 8;
             this.button1.Text = "Reset to default colors";
             this.button1.UseVisualStyleBackColor = true;
@@ -1280,5 +1344,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private System.Windows.Forms.Button btnSetAttackerSelfDamageColor;
         private System.Windows.Forms.Button btnSetExtraGoldColor;
         private System.Windows.Forms.Button btnSetMFColor;
+        private System.Windows.Forms.CheckBox chkDisplayExpansionClassic;
+        private System.Windows.Forms.Button btnColorExpansionClassic;
+        private System.Windows.Forms.CheckBox chkDisplayHardcoreSoftcore;
+        private System.Windows.Forms.Button btnColorHardcoreSoftcore;
+        private System.Windows.Forms.Button btnColorAll;
     }
 }

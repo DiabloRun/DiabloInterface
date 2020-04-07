@@ -23,8 +23,6 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         private TableLayoutPanel panelAdvancedStats;
         private TableLayoutPanel panelResistances;
         private TableLayoutPanel panelDiffPercentages;
-        private TableLayoutPanel panelDeathsLvl;
-        private TableLayoutPanel panelSimpleStats;
         private FlowLayoutPanel panelStats;
         private TableLayoutPanel panelDiffPercentages2;
         private FlowLayoutPanel panelRuneDisplayHorizontal;
@@ -34,6 +32,8 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         protected void InitializeComponent()
         {
             Add("name", "WWW_WWWWWWWWW", (ApplicationSettings s) => Tuple.Create(s.DisplayName, s.ColorName, s.FontSizeTitle), "{}");
+            Add("hc_sc", "HARDCORE", (ApplicationSettings s) => Tuple.Create(s.DisplayHardcoreSoftcore, s.ColorHardcoreSoftcore, s.FontSize), "{}");
+            Add("exp_classic", "EXPANSION", (ApplicationSettings s) => Tuple.Create(s.DisplayExpansionClassic, s.ColorExpansionClassic, s.FontSize), "{}");
             Add("playersx", "8", (ApplicationSettings s) => Tuple.Create(s.DisplayPlayersX, s.ColorPlayersX, s.FontSize), "/players {}");
             Add("deaths", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayDeathCounter, s.ColorDeaths, s.FontSize), "DEATHS: {}");
             Add("runs", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayGameCounter, s.ColorGameCounter, s.FontSize), "RUNS: {}");
@@ -112,9 +112,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 t.ResumeLayout(false);
                 return t;
             }
-
-            this.panelSimpleStats = rowthing("gold", "mf");
-            this.panelDeathsLvl = rowthing("deaths", "lvl");
+            
             this.panelBaseStats = tablething("str", "dex", "vit", "ene");
             this.panelAdvancedStats = tablething("frw", "fhr", "fcr", "ias");
             this.panelResistances = tablething("fire", "cold", "ligh", "pois");
@@ -149,15 +147,13 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             this.flowLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.Controls.Add(def["name"].labels[0]);
-            this.flowLayoutPanel1.Controls.Add(def["playersx"].labels[0]);
-            this.flowLayoutPanel1.Controls.Add(def["runs"].labels[0]);
-            this.flowLayoutPanel1.Controls.Add(this.panelDeathsLvl);
-            this.flowLayoutPanel1.Controls.Add(def["atd"].labels[0]);
-            this.flowLayoutPanel1.Controls.Add(def["monstergold"].labels[0]);
-            this.flowLayoutPanel1.Controls.Add(this.panelSimpleStats);
-            this.flowLayoutPanel1.Controls.Add(this.panelStats);
-            this.flowLayoutPanel1.Controls.Add(this.panelDiffPercentages2);
-            this.flowLayoutPanel1.Controls.Add(this.panelRuneDisplayHorizontal);
+            this.flowLayoutPanel1.Controls.Add(rowthing("hc_sc", "exp_classic", "playersx"));
+            this.flowLayoutPanel1.Controls.Add(rowthing("lvl", "deaths", "runs"));
+            this.flowLayoutPanel1.Controls.Add(rowthing("atd", "monstergold"));
+            this.flowLayoutPanel1.Controls.Add(rowthing("gold", "mf"));
+            this.flowLayoutPanel1.Controls.Add(panelStats);
+            this.flowLayoutPanel1.Controls.Add(panelDiffPercentages2);
+            this.flowLayoutPanel1.Controls.Add(panelRuneDisplayHorizontal);
             this.flowLayoutPanel1.FlowDirection = FlowDirection.TopDown;
             this.flowLayoutPanel1.Margin = new Padding(0);
 
@@ -298,6 +294,8 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         protected override void UpdateLabels(Character player, IList<QuestCollection> quests, int currentPlayersX, uint gameIndex)
         {
             UpdateLabel("name", player.Name);
+            UpdateLabel("hc_sc", player.IsHardcore ? "HARDCORE" : "SOFTCORE");
+            UpdateLabel("exp_classic", player.IsExpansion ? "EXPANSION" : "CLASSIC");
             UpdateLabel("playersx", currentPlayersX);
             UpdateLabel("deaths", player.Deaths);
             UpdateLabel("runs", (int)gameIndex);

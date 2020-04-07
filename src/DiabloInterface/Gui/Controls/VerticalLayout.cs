@@ -40,6 +40,8 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         protected void InitializeComponent()
         {
             Add("name", new string('W', 15), (ApplicationSettings s) => Tuple.Create(s.DisplayName, s.ColorName, s.FontSizeTitle), "{}");
+            Add("hc_sc", "HARDCORE", (ApplicationSettings s) => Tuple.Create(s.DisplayHardcoreSoftcore, s.ColorHardcoreSoftcore, s.FontSize), "{}");
+            Add("exp_classic", "EXPANSION", (ApplicationSettings s) => Tuple.Create(s.DisplayExpansionClassic, s.ColorExpansionClassic, s.FontSize), "{}");
             Add("playersx", "8", (ApplicationSettings s) => Tuple.Create(s.DisplayPlayersX, s.ColorPlayersX, s.FontSize), "/players {}");
             Add("deaths", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayDeathCounter, s.ColorDeaths, s.FontSize), "DEATHS: {}");
             Add("runs", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayGameCounter, s.ColorGameCounter, s.FontSize), "RUNS: {}");
@@ -63,7 +65,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             Add("norm", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NORM:", "{}%");
             Add("nm", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NM:", "{}%");
             Add("hell", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "HELL:", "{}%");
-
+            
             table = new TableLayoutPanel();
             table.SuspendLayout();
             table.AutoSize = true;
@@ -130,6 +132,8 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         protected override void UpdateLabels(Character player, IList<QuestCollection> quests, int currentPlayersX, uint gameIndex)
         {
             UpdateLabel("name", player.Name);
+            UpdateLabel("hc_sc", player.IsHardcore ? "HARDCORE" : "SOFTCORE");
+            UpdateLabel("exp_classic", player.IsExpansion ? "EXPANSION" : "CLASSIC");
             UpdateLabel("playersx", currentPlayersX);
             UpdateLabel("deaths", player.Deaths);
             UpdateLabel("runs", (int) gameIndex);
