@@ -103,7 +103,8 @@ namespace Zutatensuppe.D2Reader
         bool wasInTitleScreen;
         IList<QuestCollection> gameQuests = new List<QuestCollection>();
 
-        private uint firstGameId = 0;
+        private uint lastGameId = 0;
+        private uint gameCount = 0;
 
         public D2DataReader(
             IGameMemoryTableFactory memoryTableFactory,
@@ -135,8 +136,6 @@ namespace Zutatensuppe.D2Reader
         public Character ActiveCharacter { get; private set; }
 
         public Character CurrentCharacter { get; private set; }
-
-        public uint GameCounter { get; private set; }
 
         /// <summary>
         /// Gets or sets reader polling rate.
@@ -207,6 +206,7 @@ namespace Zutatensuppe.D2Reader
                 try
                 {
                     reader = new ProcessMemoryReader(desc.ProcessName, desc.ModuleName, desc.SubModules);
+                    memory = CreateGameMemoryTableForReader(reader);
                 }
                 catch (ProcessNotFoundException)
                 {
@@ -227,11 +227,7 @@ namespace Zutatensuppe.D2Reader
 
             try
             {
-                memory = CreateGameMemoryTableForReader(reader);
-                stringReader = new StringLookupTable(reader, memory);
-                skillReader = new SkillReader(reader, memory);
-                unitReader = new UnitReader(reader, memory, stringReader, skillReader);
-                inventoryReader = new InventoryReader(reader, unitReader);
+                CreateReaders();
                 return true;
             }
             catch (ModuleNotLoadedException e)
@@ -267,6 +263,17 @@ namespace Zutatensuppe.D2Reader
             skillReader = null;
         }
 
+        void CreateReaders()
+        {
+            stringReader = new StringLookupTable(reader, memory);
+            skillReader = new SkillReader(reader, memory);
+
+            // note: readers need to be recreated everytime before read.. at least unitReader
+            // unitReader fails sometimes... if this is not done .. why? not sure yet ~_~
+            unitReader = new UnitReader(reader, memory, stringReader, skillReader);
+            inventoryReader = new InventoryReader(reader, unitReader);
+        }
+
         private IEnumerable<D2Unit> GetInventoryItemsFiltered(D2Unit owner, Func<D2ItemData, D2Unit, bool> filter)
         {
             if (owner == null)
@@ -297,18 +304,18 @@ namespace Zutatensuppe.D2Reader
             return GetInventoryItemsFiltered(owner, (D2ItemData d, D2Unit u) => slots.FindIndex(x => d.IsEquippedInSlot(x)) >= 0);
         }
 
-        public void ItemSlotAction(List<BodyLocation> slots, Action<D2Unit, D2Unit, UnitReader, IInventoryReader> action)
+        public void ItemSlotAction(List<BodyLocation> slots, Action<D2Unit, D2Unit, UnitReader, IStringLookupTable, IInventoryReader> action)
         {
             if (!ValidateGameDataReaders()) return;
 
-            var gameInfo= ReadGameInfo();
+            var gameInfo = ReadGameInfo();
             if (gameInfo == null) return;
 
             try
             {
                 foreach (D2Unit item in GetItemsEquippedInSlot(gameInfo.Player, slots))
                 {
-                    action?.Invoke(item, gameInfo.Player, unitReader, inventoryReader);
+                    action?.Invoke(item, gameInfo.Player, unitReader, stringReader, inventoryReader);
                 }
             } catch (Exception e)
             {
@@ -403,27 +410,32 @@ namespace Zutatensuppe.D2Reader
             uint gameOffset = (gameIndex * 0x0C) + 0x08;
             IntPtr gamePointer = reader.ReadAddress32(world.GameBuffer + gameOffset);
 
-            // TODO: move this out of this function
-            // btw: GameMemoryTable.GameId cannot be used,
-            // diablo interface may have been started later, and the
-            // earlier runs should probably not count
-            // also, if d2 is shut down, game count should still go up
-            if (firstGameId == 0 && gameId != 0)
-            {
-                firstGameId = gameId;
-            }
-            GameCounter = gameId - firstGameId + 1;
             // Check for invalid pointers, this value can actually be negative during transition
             // screens, so we need to reinterpret the pointer as a signed integer.
             if (unchecked((int)gamePointer.ToInt64()) < 0)
                 return null;
+
+
+            // TODO: move this out of this function
+            // TODO: fix bug with not increasing gameCount (maybe use some more info from D2Game obj)
+            // Note: gameId can be the same across D2 restarts
+            // - launch d2
+            // - start game (counter increases)
+            // - close d2
+            // - launch d2
+            // - start game (counter doesnt increase)
+            if (gameId != 0 && (lastGameId != gameId))
+            {
+                gameCount++;
+                lastGameId = gameId;
+            }
 
             return reader.Read<D2Game>(gamePointer);
         }
 
         void ProcessGameData()
         {
-            unitReader.ResetCache();
+            CreateReaders();
 
             // Make sure the game is loaded.
             var gameInfo = ReadGameInfo();
@@ -445,7 +457,7 @@ namespace Zutatensuppe.D2Reader
                 ProcessInventoryItemIds(gameInfo.Player),
                 IsAutosplitCharacter(CurrentCharacter),
                 gameQuests,
-                GameCounter
+                gameCount
             ));
         }
 
