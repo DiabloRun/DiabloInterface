@@ -43,10 +43,10 @@ namespace DiabloInterface.Test.Business.Services
             questCollection.Add(new QuestCollection(quests)); // NORMAL
             questCollection.Add(new QuestCollection(quests)); // NIGHTMARE
             questCollection.Add(new QuestCollection(quests)); // HELL
-
-
+            
             var mock = new Mock<Character>();
             mock.SetupGet(x => x.Level).Returns(9);
+            mock.SetupGet(x => x.IsAutosplitChar).Returns(true);
 
             // test autosplit by level
             gameService.triggerDataRead(null, new DataReadEventArgs(
@@ -56,7 +56,6 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 new List<int>(), // item ids
-                true, // is autosplit char
                 questCollection,
                 0 // game counter
             ));
@@ -70,7 +69,6 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 new List<int>(), // item ids
-                true, // is autosplit char
                 questCollection,
                 0 // game counter
             ));
@@ -169,6 +167,7 @@ namespace DiabloInterface.Test.Business.Services
 
             var characterMock = new Mock<Character>();
             characterMock.SetupGet(x => x.Level).Returns(9);
+            characterMock.SetupGet(x => x.IsAutosplitChar).Returns(true);
 
             var itemStrings = new Dictionary<BodyLocation, string>();
             var itemsIds = new List<int>();
@@ -182,7 +181,6 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                true, // is autosplit char
                 questCollection,
                 0 // game counter
             ));
@@ -197,7 +195,6 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                true, // is autosplit char
                 questCollection,
                 0 // game counter
             ));
@@ -211,7 +208,6 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                true, // is autosplit char
                 questCollection,
                 0 // game counter
             ));
@@ -226,7 +222,6 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                true, // is autosplit char
                 questCollection,
                 0 // game counter
             ));
@@ -243,7 +238,6 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                true, // is autosplit char
                 questCollection,
                 0 // game counter
             ));
@@ -262,7 +256,6 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                true, // is autosplit char
                 questCollection,
                 0 // game counter
             ));
@@ -280,7 +273,6 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                true, // is autosplit char
                 questCollection,
                 0 // game counter
             ));
@@ -298,7 +290,6 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                true, // is autosplit char
                 questCollection,
                 0 // game counter
             ));
@@ -313,7 +304,6 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                true, // is autosplit char
                 questCollection,
                 0 // game counter
             ));

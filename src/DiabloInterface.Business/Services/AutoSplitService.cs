@@ -91,7 +91,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
         private void UpdateAutoSplits(ApplicationSettings settings, DataReadEventArgs eventArgs)
         {
             // Update autosplits only if the character was a freshly started character.
-            if (!eventArgs.IsAutosplitCharacter) return;
+            if (!eventArgs.Character.IsAutosplitChar) return;
 
             var difficulty = eventArgs.CurrentDifficulty;
             IList<QuestCollection> gameQuests = eventArgs.Quests;

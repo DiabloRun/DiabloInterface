@@ -47,7 +47,6 @@ namespace Zutatensuppe.D2Reader
             GameDifficulty currentDifficulty,
             int currentPlayersX,
             List<int> itemIds,
-            bool isAutosplitCharacter,
             IList<QuestCollection> quests,
             uint gameCounter
         ) {
@@ -57,7 +56,6 @@ namespace Zutatensuppe.D2Reader
             CurrentDifficulty = currentDifficulty;
             CurrentPlayersX = currentPlayersX;
             ItemIds = itemIds;
-            IsAutosplitCharacter = isAutosplitCharacter;
             Quests = quests;
             GameCounter = gameCounter;
         }
@@ -68,7 +66,6 @@ namespace Zutatensuppe.D2Reader
         public int CurrentPlayersX { get; }
         public GameDifficulty CurrentDifficulty { get; }
         public List<int> ItemIds { get; }
-        public bool IsAutosplitCharacter { get; }
         public IList<QuestCollection> Quests { get; }
         public uint GameCounter { get;  }
     }
@@ -283,6 +280,55 @@ namespace Zutatensuppe.D2Reader
             return inventoryReader.Filter(inventory, filter);
         }
 
+        Dictionary<BodyLocation, string> ProcessEquippedItemStrings(D2Unit owner)
+        {
+            return ReadFlags.HasFlag(DataReaderEnableFlags.EquippedItemStrings)
+                ? ReadEquippedItemStrings(owner)
+                : new Dictionary<BodyLocation, string>();
+        }
+
+        Dictionary<BodyLocation, string> ReadEquippedItemStrings(D2Unit owner)
+        {
+            var itemStrings = new Dictionary<BodyLocation, string>();
+            foreach (D2Unit item in GetEquippedItems(owner))
+            {
+                // TODO: check why this get stats call is needed here
+                List<D2Stat> itemStats = unitReader.GetStats(item);
+                if (itemStats.Count == 0) continue;
+
+                // TODO: not read D2ItemData again, it is already read in EnumerateInventory
+                D2ItemData itemData = reader.Read<D2ItemData>(item.UnitData);
+                if (!itemStrings.ContainsKey(itemData.BodyLoc))
+                {
+                    itemStrings.Add(itemData.BodyLoc, ReadEquippedItemString(item, owner));
+                }
+            }
+            return itemStrings;
+        }
+
+        private string ReadEquippedItemString(D2Unit item, D2Unit owner)
+        {
+            StringBuilder statBuilder = new StringBuilder();
+            statBuilder.Append(unitReader.GetFullItemName(item));
+            statBuilder.Append(Environment.NewLine);
+
+            List<string> magicalStrings = unitReader.GetMagicalStrings(item, owner, inventoryReader);
+            foreach (string str in magicalStrings)
+            {
+                statBuilder.Append("    ");
+                statBuilder.Append(str);
+                statBuilder.Append(Environment.NewLine);
+            }
+            return statBuilder.ToString();
+        }
+
+        List<int> ProcessInventoryItemIds(D2Unit player)
+        {
+            return ReadFlags.HasFlag(DataReaderEnableFlags.InventoryItemIds)
+                ? ReadInventoryItemIds(player)
+                : new List<int>();
+        }
+
         private List<int> ReadInventoryItemIds(D2Unit owner)
         {
             if (owner == null)
@@ -446,16 +492,20 @@ namespace Zutatensuppe.D2Reader
             }
 
             CurrentCharacter = ProcessCharacterData(gameInfo);
+            var equippedItemStrings = ProcessEquippedItemStrings(gameInfo.Player);
+            var inventoryItems = ProcessInventoryItemIds(gameInfo.Player);
+
+            var currentArea = ProcessCurrentArea();
+            var currentPlayersX = ProcessCurrentPlayersX();
             gameQuests = ProcessQuests(gameInfo);
             currentDifficulty = ProcessCurrentDifficulty(gameInfo);
             OnDataRead(new DataReadEventArgs(
                 CurrentCharacter,
-                ProcessEquippedItemStrings(gameInfo.Player),
-                ProcessCurrentArea(),
+                equippedItemStrings,
+                currentArea,
                 currentDifficulty,
-                ProcessCurrentPlayersX(),
-                ProcessInventoryItemIds(gameInfo.Player),
-                IsAutosplitCharacter(CurrentCharacter),
+                currentPlayersX,
+                inventoryItems,
                 gameQuests,
                 gameCount
             ));
@@ -510,57 +560,7 @@ namespace Zutatensuppe.D2Reader
                 ? (GameDifficulty)gameInfo.Game.Difficulty
                 : GameDifficulty.Normal;
         }
-
-        Dictionary<BodyLocation, string> ProcessEquippedItemStrings(D2Unit owner)
-        {
-            return ReadFlags.HasFlag(DataReaderEnableFlags.EquippedItemStrings)
-                ? ReadEquippedItemStrings(owner)
-                : new Dictionary<BodyLocation, string>();
-        }
-
-        Dictionary<BodyLocation, string> ReadEquippedItemStrings(D2Unit owner)
-        {
-            var itemStrings = new Dictionary<BodyLocation, string>();
-            foreach (D2Unit item in GetEquippedItems(owner))
-            {
-                // TODO: check why this get stats call is needed here
-                List<D2Stat> itemStats = unitReader.GetStats(item);
-                if (itemStats.Count == 0) continue;
-
-                StringBuilder statBuilder = new StringBuilder();
-                statBuilder.Append(unitReader.GetFullItemName(item));
-                statBuilder.Append(Environment.NewLine);
-
-                List<string> magicalStrings = unitReader.GetMagicalStrings(item, owner, inventoryReader);
-                foreach (string str in magicalStrings)
-                {
-                    statBuilder.Append("    ");
-                    statBuilder.Append(str);
-                    statBuilder.Append(Environment.NewLine);
-                }
-
-                // TODO: not read this again, it is already read in EnumerateInventory
-                D2ItemData itemData = reader.Read<D2ItemData>(item.UnitData);
-                if (!itemStrings.ContainsKey(itemData.BodyLoc))
-                {
-                    itemStrings.Add(itemData.BodyLoc, statBuilder.ToString());
-                }
-            }
-            return itemStrings;
-        }
-
-        List<int> ProcessInventoryItemIds(D2Unit player)
-        {
-            return ReadFlags.HasFlag(DataReaderEnableFlags.InventoryItemIds)
-                ? ReadInventoryItemIds(player)
-                : new List<int>();
-        }
-
-        bool IsAutosplitCharacter(Character character)
-        {
-            return ActiveCharacter == character;
-        }
-
+        
         Character CharacterByNameCached(string playerName)
         {
             if (!characters.TryGetValue(playerName, out Character character))
@@ -584,6 +584,7 @@ namespace Zutatensuppe.D2Reader
                 {
                     Logger.Info($"A new chararacter was created: {character.Name}");
                     ActiveCharacterTimestamp = DateTime.Now;
+                    character.IsAutosplitChar = true;
                     ActiveCharacter = character;
                     OnCharacterCreated(new CharacterCreatedEventArgs(character));
                 }
@@ -601,6 +602,7 @@ namespace Zutatensuppe.D2Reader
             {
                 character.ParseStats(unitReader, gameInfo);
             }
+
             return character;
         }
 
