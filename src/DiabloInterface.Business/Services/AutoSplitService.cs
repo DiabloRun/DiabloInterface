@@ -73,6 +73,14 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
 
         private void GameServiceOnDataRead(object sender, DataReadEventArgs e)
         {
+            // TODO: fix bug... when splits are add during the run, the last split seems to trigger again on save
+            // setup autosplits:
+            // - start game
+            // - area (cold plains)
+            // start game, go to cold plains (2 splits should have happened)
+            // add another autosplit:
+            // - area (stony fields)
+            // should not trigger another split automatically, but does
             var settings = settingsService.CurrentSettings;
             if (settings.DoAutosplit)
             {
