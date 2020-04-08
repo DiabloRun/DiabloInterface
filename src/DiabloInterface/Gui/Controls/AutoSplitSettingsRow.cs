@@ -118,7 +118,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 case AutoSplit.SplitType.CharLevel:
                     for (int i = 1; i < 100; i++)
                     {
-                        cmbValue.Items.Add(new Item("" + i, i));
+                        cmbValue.Items.Add(new Item($"Lvl {i}", i));
                     }
                     break;
                 case AutoSplit.SplitType.Area:
