@@ -8,7 +8,9 @@ namespace Zutatensuppe.D2Reader.Readers
 {
     public static class StringConstants
     {
-        public const ushort Superior    = 0x06BF;
+        public const ushort SinglePlayer = 5106;
+
+        public const ushort Superior = 0x06BF;
 
         public const ushort Durability              = 0x0D81; // "Durability:"
         public const ushort Defense                 = 0x0D85; // "Defense:"
@@ -71,8 +73,6 @@ namespace Zutatensuppe.D2Reader.Readers
 
         static Dictionary<Language, Dictionary<ushort, string>> Cache = new Dictionary<Language, Dictionary<ushort, string>>();
 
-        const int ID_STR_SINGLE_PLAYER = 5106;
-
         public Language Language { get; }
 
         public StringLookupTable(IProcessMemoryReader reader, GameMemoryTable memory)
@@ -87,8 +87,7 @@ namespace Zutatensuppe.D2Reader.Readers
 
         private Language DetectLanguage()
         {
-            var str = LookupStringTable(ID_STR_SINGLE_PLAYER);
-            switch (str)
+            switch (LookupStringTable(StringConstants.SinglePlayer))
             {
                 case "SINGLE PLAYER": return Language.English;
                 case "EINZELSPIELER": return Language.German;

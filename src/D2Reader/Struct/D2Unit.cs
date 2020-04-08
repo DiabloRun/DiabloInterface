@@ -96,9 +96,9 @@ namespace Zutatensuppe.D2Reader.Struct
             return eClass == 603 || eClass == 604 || eClass == 605;
         }
 
-        public static bool IsItem(D2Unit unit)
+        public bool IsItem()
         {
-            return unit != null && unit.eType == D2UnitType.Item;
+            return eType == D2UnitType.Item;
         }
     }
 }

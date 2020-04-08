@@ -97,22 +97,12 @@ namespace Zutatensuppe.D2Reader.Struct.Item
         [ExpectOffset(0x70)] public int __unknown8;          // 0x70
         #endregion
 
-        internal bool IsInInventory()
-        {
-            return InvPage == InventoryPage.Inventory;
-        }
-
         internal bool IsEquipped()
         {
             return InvPage == InventoryPage.Equipped
                 // not handled as equipped if in secondary weapon/shield slot
                 && BodyLoc != BodyLocation.SecondaryLeft
                 && BodyLoc != BodyLocation.SecondaryRight;
-        }
-
-        internal bool AreRequirementsMet()
-        {
-            return !ItemFlags.HasFlag(ItemFlag.RequirementsNotMet);
         }
 
         internal bool IsEquippedInSlot(BodyLocation loc)

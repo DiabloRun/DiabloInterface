@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Zutatensuppe.D2Reader;
+using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Readers;
 using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Item;
@@ -46,18 +47,18 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
         }
 
         private ItemInfo(
-            D2Unit item,
+            Item item,
             D2Unit owner,
             UnitReader unitReader,
             IStringLookupTable stringReader,
             IInventoryReader inventoryReader
         ) {
-            Class = item.eClass;
+            Class = item.Unit.eClass;
             ItemName = unitReader.GetFullItemName(item);
             ItemBaseName = BaseItemName(item, unitReader);
-            QualityColor = QualityColorDefault(item, unitReader);
+            QualityColor = QualityColorDefault(item);
             Properties = unitReader.GetMagicalStrings(item, owner, inventoryReader);
-            Location = unitReader.GetItemData(item)?.BodyLoc ?? BodyLocation.None;
+            Location = item.ItemData.BodyLoc;
 
             // TODO: fill with something useful
             ImageId = "";
@@ -76,28 +77,24 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             else
             {
                 BaseItem = BaseItemNameFallback(item, unitReader);
-                Quality = QualityColorFallback(item, unitReader);
+                Quality = QualityColorFallback(item);
             }
         }
 
-        private string BaseItemName(D2Unit unit, UnitReader unitReader)
+        private string BaseItemName(Item item, UnitReader unitReader)
         {
-            if (!D2Unit.IsItem(unit)) return null;
-            var n = unitReader.GetGrammaticalName(unitReader.GetItemName(unit));
+            var n = unitReader.GetGrammaticalName(unitReader.GetItemName(item));
             return n.Item1;
         }
 
-        private string BaseItemNameFallback(D2Unit unit, UnitReader unitReader)
+        private string BaseItemNameFallback(Item item, UnitReader unitReader)
         {
-            if (!D2Unit.IsItem(unit)) return null;
-            return unit.eClass < BaseNames.Length ? BaseNames[unit.eClass] : null;
+            return item.Unit.eClass < BaseNames.Length ? BaseNames[item.Unit.eClass] : null;
         }
 
-        private string QualityColorDefault(D2Unit unit, UnitReader unitReader)
+        private string QualityColorDefault(Item item)
         {
-            if (!D2Unit.IsItem(unit)) return null;
-
-            switch (unitReader.GetItemQuality(unit))
+            switch (item.ItemQuality())
             {
                 case ItemQuality.Low:
                 case ItemQuality.Normal:
@@ -119,11 +116,9 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             }
         }
 
-        private string QualityColorFallback(D2Unit unit, UnitReader unitReader)
+        private string QualityColorFallback(Item item)
         {
-            if (!D2Unit.IsItem(unit)) return null;
-
-            switch (unitReader.GetItemQuality(unit))
+            switch (item.ItemQuality())
             {
                 case ItemQuality.Low:
                 case ItemQuality.Normal:

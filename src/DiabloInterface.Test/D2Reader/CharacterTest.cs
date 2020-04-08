@@ -59,15 +59,15 @@ namespace DiabloInterface.Test.D2Reader
                 .Returns<IntPtr, int, AddressingMode>((p, i, m) => i == 0 ? new D2Stat[] { } : d2StatArray);
 
             // starting items for amazon
-            var startingItems = new D2Unit[] {
-                new D2Unit { eClass = 0x2f },
-                new D2Unit { eClass = 0x148 },
-                new D2Unit { eClass = 0x24b },
-                new D2Unit { eClass = 0x24b },
-                new D2Unit { eClass = 0x24b },
-                new D2Unit { eClass = 0x24b },
-                new D2Unit { eClass = 0x211 },
-                new D2Unit { eClass = 0x212 },
+            var startingItems = new Item[] {
+                new Item { Unit = new D2Unit { eClass = 0x2f } },
+                new Item { Unit = new D2Unit { eClass = 0x148 } },
+                new Item { Unit = new D2Unit { eClass = 0x24b } },
+                new Item { Unit = new D2Unit { eClass = 0x24b } },
+                new Item { Unit = new D2Unit { eClass = 0x24b } },
+                new Item { Unit = new D2Unit { eClass = 0x24b } },
+                new Item { Unit = new D2Unit { eClass = 0x211 } },
+                new Item { Unit = new D2Unit { eClass = 0x212 } },
             };
 
             var inventoryReader = new Mock<IInventoryReader>();
@@ -123,15 +123,15 @@ namespace DiabloInterface.Test.D2Reader
                 .Setup(x => x.EnumerateInventoryForward(
                     It.Is<D2Unit>(p => p.Equals(unit))
                 ))
-                .Returns(new D2Unit[] {
-                    new D2Unit { eClass = 0x24b },
-                    new D2Unit { eClass = 0x211 },
-                    new D2Unit { eClass = 0x212 },
-                    new D2Unit { eClass = 0x2f },
-                    new D2Unit { eClass = 0x148 },
-                    new D2Unit { eClass = 0x24b },
-                    new D2Unit { eClass = 0x24b },
-                    new D2Unit { eClass = 0x24b },
+                .Returns(new Item[] {
+                    new Item { Unit = new D2Unit { eClass = 0x24b } },
+                    new Item { Unit = new D2Unit { eClass = 0x211 } },
+                    new Item { Unit = new D2Unit { eClass = 0x212 } },
+                    new Item { Unit = new D2Unit { eClass = 0x2f } },
+                    new Item { Unit = new D2Unit { eClass = 0x148 } },
+                    new Item { Unit = new D2Unit { eClass = 0x24b } },
+                    new Item { Unit = new D2Unit { eClass = 0x24b } },
+                    new Item { Unit = new D2Unit { eClass = 0x24b } },
                 });
 
             Assert.AreEqual(false, Character.IsNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));

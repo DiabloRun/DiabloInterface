@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using System.Reflection;
+using Zutatensuppe.D2Reader.Models;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
@@ -23,17 +24,14 @@ namespace Zutatensuppe.D2Reader.Readers
             this.unitReader = unitReader;
         }
 
-        public IEnumerable<D2Unit> Filter(
-            IEnumerable<D2Unit> enumerable,
-            Func<D2ItemData, D2Unit, bool> filter = null
+        public IEnumerable<Item> Filter(
+            IEnumerable<Item> enumerable,
+            Func<Item, bool> filter = null
         ) {
-            return from item in enumerable
-                   let itemData = unitReader.GetItemData(item)
-                   where itemData != null && filter(itemData, item)
-                   select item;
+            return from item in enumerable where filter(item) select item;
         }
 
-        public IEnumerable<D2Unit> EnumerateInventoryBackward(D2Unit unit)
+        public IEnumerable<Item> EnumerateInventoryBackward(D2Unit unit)
         {
             return EnumerateInventory(
                 unit,
@@ -42,7 +40,7 @@ namespace Zutatensuppe.D2Reader.Readers
             );
         }
 
-        public IEnumerable<D2Unit> EnumerateInventoryForward(D2Unit unit)
+        public IEnumerable<Item> EnumerateInventoryForward(D2Unit unit)
         {
             return EnumerateInventory(
                 unit,
@@ -51,7 +49,7 @@ namespace Zutatensuppe.D2Reader.Readers
             );
         }
 
-        private IEnumerable<D2Unit> EnumerateInventory(
+        private IEnumerable<Item> EnumerateInventory(
             D2Unit unit,
             Func<D2Inventory, DataPointer> starter,
             Func<D2ItemData, DataPointer> advancer
@@ -78,7 +76,7 @@ namespace Zutatensuppe.D2Reader.Readers
                 if (itemData == null)
                     yield break;
 
-                yield return item;
+                yield return new Item { ItemData = itemData, Unit = item };
 
                 item = GetUnit(advancer(itemData));
             }

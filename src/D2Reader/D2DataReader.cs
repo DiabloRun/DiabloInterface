@@ -271,10 +271,10 @@ namespace Zutatensuppe.D2Reader
             inventoryReader = new InventoryReader(reader, unitReader);
         }
 
-        private IEnumerable<D2Unit> GetInventoryItemsFiltered(D2Unit owner, Func<D2ItemData, D2Unit, bool> filter)
+        private IEnumerable<Item> GetInventoryItemsFiltered(D2Unit owner, Func<Item, bool> filter)
         {
             if (owner == null)
-                return new List<D2Unit>(0);
+                return new List<Item>(0);
 
             var inventory = inventoryReader.EnumerateInventoryBackward(owner);
             return inventoryReader.Filter(inventory, filter);
@@ -290,36 +290,34 @@ namespace Zutatensuppe.D2Reader
         Dictionary<BodyLocation, string> ReadEquippedItemStrings(D2Unit owner)
         {
             var itemStrings = new Dictionary<BodyLocation, string>();
-            foreach (D2Unit item in GetEquippedItems(owner))
+            foreach (Item item in GetEquippedItems(owner))
             {
                 // TODO: check why this get stats call is needed here
-                List<D2Stat> itemStats = unitReader.GetStats(item);
+                List<D2Stat> itemStats = unitReader.GetStats(item.Unit);
                 if (itemStats.Count == 0) continue;
 
-                // TODO: not read D2ItemData again, it is already read in EnumerateInventory
-                D2ItemData itemData = reader.Read<D2ItemData>(item.UnitData);
-                if (!itemStrings.ContainsKey(itemData.BodyLoc))
+                if (!itemStrings.ContainsKey(item.BodyLocation()))
                 {
-                    itemStrings.Add(itemData.BodyLoc, ReadEquippedItemString(item, owner));
+                    itemStrings.Add(item.BodyLocation(), ReadEquippedItemString(item, owner));
                 }
             }
             return itemStrings;
         }
 
-        private string ReadEquippedItemString(D2Unit item, D2Unit owner)
+        private string ReadEquippedItemString(Item item, D2Unit owner)
         {
-            StringBuilder statBuilder = new StringBuilder();
-            statBuilder.Append(unitReader.GetFullItemName(item));
-            statBuilder.Append(Environment.NewLine);
+            StringBuilder s = new StringBuilder();
+            s.Append(unitReader.GetFullItemName(item));
+            s.Append(Environment.NewLine);
 
             List<string> magicalStrings = unitReader.GetMagicalStrings(item, owner, inventoryReader);
             foreach (string str in magicalStrings)
             {
-                statBuilder.Append("    ");
-                statBuilder.Append(str);
-                statBuilder.Append(Environment.NewLine);
+                s.Append("    ");
+                s.Append(str);
+                s.Append(Environment.NewLine);
             }
-            return statBuilder.ToString();
+            return s.ToString();
         }
 
         List<int> ProcessInventoryItemIds(D2Unit player)
@@ -337,20 +335,20 @@ namespace Zutatensuppe.D2Reader
             var baseItems = inventoryReader.EnumerateInventoryBackward(owner);
             var socketedItems = baseItems.SelectMany(item => unitReader.GetSocketedItems(item, inventoryReader));
             var allItems = baseItems.Concat(socketedItems);
-            return (from item in allItems select item.eClass).ToList();
+            return (from item in allItems select item.Unit.eClass).ToList();
         }
 
-        private IEnumerable<D2Unit> GetEquippedItems(D2Unit owner)
+        private IEnumerable<Item> GetEquippedItems(D2Unit owner)
         {
-            return GetInventoryItemsFiltered(owner, (D2ItemData d, D2Unit u) => d.IsEquipped());
+            return GetInventoryItemsFiltered(owner, (Item i) => i.IsEquipped());
         }
 
-        private IEnumerable<D2Unit> GetItemsEquippedInSlot(D2Unit owner, List<BodyLocation> slots)
+        private IEnumerable<Item> GetItemsEquippedInSlot(D2Unit owner, List<BodyLocation> slots)
         {
-            return GetInventoryItemsFiltered(owner, (D2ItemData d, D2Unit u) => slots.FindIndex(x => d.IsEquippedInSlot(x)) >= 0);
+            return GetInventoryItemsFiltered(owner, (Item i) => slots.FindIndex(x => i.IsEquippedInSlot(x)) >= 0);
         }
 
-        public void ItemSlotAction(List<BodyLocation> slots, Action<D2Unit, D2Unit, UnitReader, IStringLookupTable, IInventoryReader> action)
+        public void ItemSlotAction(List<BodyLocation> slots, Action<Item, D2Unit, UnitReader, IStringLookupTable, IInventoryReader> action)
         {
             if (!ValidateGameDataReaders()) return;
 
@@ -359,7 +357,7 @@ namespace Zutatensuppe.D2Reader
 
             try
             {
-                foreach (D2Unit item in GetItemsEquippedInSlot(gameInfo.Player, slots))
+                foreach (Item item in GetItemsEquippedInSlot(gameInfo.Player, slots))
                 {
                     action?.Invoke(item, gameInfo.Player, unitReader, stringReader, inventoryReader);
                 }

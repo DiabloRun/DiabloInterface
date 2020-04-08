@@ -47,6 +47,7 @@
     <Compile Include="GameMemoryTable.cs" />
     <Compile Include="IProcessMemoryReader.cs" />
     <Compile Include="Models\CharacterClass.cs" />
+    <Compile Include="Models\Item.cs" />
     <Compile Include="Models\Rune.cs" />
     <Compile Include="Models\ResistancePenalty.cs" />
     <Compile Include="Models\Skill.cs" />

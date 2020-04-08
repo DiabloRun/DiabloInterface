@@ -292,7 +292,7 @@ namespace Zutatensuppe.D2Reader
             int[] list = (
                 from item
                 in inventoryReader.EnumerateInventoryForward(p)
-                select item.eClass
+                select item.Unit.eClass
             ).ToArray();
 
             return list.SequenceEqual(StartingItems[(CharacterClass)p.eClass]);
