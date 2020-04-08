@@ -55,24 +55,54 @@ namespace Zutatensuppe.D2Reader.Readers
         }
     }
 
+    public enum Language
+    {
+        Unknown,
+        English,
+        German,
+        Korean,
+        Polish,
+    }
+
     public class StringLookupTable: IStringLookupTable
     {
         IProcessMemoryReader reader;
         GameMemoryTable memory;
 
-        static Dictionary<ushort, string> StringCache = new Dictionary<ushort, string>();
+        static Dictionary<Language, Dictionary<ushort, string>> Cache = new Dictionary<Language, Dictionary<ushort, string>>();
+
+        const int ID_STR_SINGLE_PLAYER = 5106;
+
+        public Language Language { get; }
 
         public StringLookupTable(IProcessMemoryReader reader, GameMemoryTable memory)
         {
             this.reader = reader;
             this.memory = memory;
+
+            Language = DetectLanguage();
+            if (!Cache.ContainsKey(Language))
+                Cache[Language] = new Dictionary<ushort, string>();
+        }
+
+        private Language DetectLanguage()
+        {
+            var str = LookupStringTable(ID_STR_SINGLE_PLAYER);
+            switch (str)
+            {
+                case "SINGLE PLAYER": return Language.English;
+                case "EINZELSPIELER": return Language.German;
+                case "싱글 플레이어": return Language.Korean;
+                case "JEDEN GRACZ": return Language.Polish;
+                default: return Language.Unknown;
+            }
         }
 
         public string GetString(ushort identifier)
         {
             // Check cache before reading from process.
             string identifierString;
-            if (StringCache.TryGetValue(identifier, out identifierString))
+            if (Cache[Language].TryGetValue(identifier, out identifierString))
                 return identifierString;
 
             // Look up the string using the correct tables.
@@ -80,7 +110,7 @@ namespace Zutatensuppe.D2Reader.Readers
 
             // Only cache valid strings.
             if (identifierString != null)
-                StringCache[identifier] = identifierString;
+                Cache[Language][identifier] = identifierString;
             return identifierString;
         }
 

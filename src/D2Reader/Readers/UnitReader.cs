@@ -462,7 +462,7 @@ namespace Zutatensuppe.D2Reader.Readers
             return GetString(description.StringIdentifier);
         }
 
-        private Tuple<string, string> GetGrammaticalName(string name)
+        public Tuple<string, string> GetGrammaticalName(string name)
         {
             if (name == null)
                 return new Tuple<string, string>(name, null);
