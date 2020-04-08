@@ -143,7 +143,7 @@ namespace Zutatensuppe.DiabloInterface.Server
                     requestHandlers,
                     request
                 );
-                cache.Set(cacheKey, resp, 10000);
+                cache.Set(cacheKey, resp, 2000);
             }
             return (Response)resp;
         }
