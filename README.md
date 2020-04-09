@@ -75,6 +75,21 @@ Please note that automatic splits will only work if you start a new character wh
 
 There is no timer integrated directly into this tool (yet).
 
+## Twitch integration
+_Note: D2ID and twitch extensions are made by [palmettos](https://github.com/palmettos)._ 
+
+D2ID: https://github.com/palmettos/D2ID  
+Twitch extension: https://dashboard.twitch.tv/extensions/l0m154prxsmwu1m0tyic1ei0915byb-0.0.4
+
+D2ID (v0.1.4) comes bundled with an outdated version of DiabloInterface. It is old but works out of the box.
+
+How to use a current version of DiabloInterface with D2ID:
+  - Launch new version of DiabloInterface
+  - Open `Settings`
+  - Go to `Misc` tab
+  - Change the `Pipe Name` in the `Pipe Server` section to `DiabloInterfaceItems`
+  - Done 🎉
+
 ## Downloads/Builds
 
 Let us know if something is broken or if you need a different build. Best create an [issue][issues-link].
