@@ -398,8 +398,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
         void SaveSettings(string filename = null)
         {
             UseWaitCursor = true;
-            settingsService.SaveSettings(filename ?? settingsService.CurrentSettingsFile, CopyModifiedSettings());
-            settingsService.LoadSettings(filename ?? settingsService.CurrentSettingsFile);
+            var path = filename ?? settingsService.CurrentSettingsFile;
+            settingsService.SaveSettings(path, CopyModifiedSettings());
+            settingsService.LoadSettings(path);
             UseWaitCursor = false;
         }
 
@@ -500,7 +501,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     menuLoad.Enabled = true;
                     menuNew.Enabled = true;
                     menuDelete.Enabled = true;
-                    lstConfigFiles.ContextMenuStrip.Show(lstConfigFiles,new Point(e.X,e.Y));
                 }
                 else
                 {
@@ -508,8 +508,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     menuLoad.Enabled = false;
                     menuNew.Enabled = true;
                     menuDelete.Enabled = false;
-                    lstConfigFiles.ContextMenuStrip.Show(lstConfigFiles, new Point(e.X, e.Y));
                 }
+                lstConfigFiles.ContextMenuStrip.Show(lstConfigFiles, new Point(e.X, e.Y));
             }
         }
 
@@ -548,7 +548,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 {
                     CloneSettings(
                         ((ConfigEntry)lstConfigFiles.SelectedItem).Path,
-                        Path.Combine(SettingsFilePath, saveDialog.NewFileName) + ".conf");
+                        Path.Combine(SettingsFilePath, saveDialog.NewFileName) + ".conf"
+                    );
                 }
             }
         }
