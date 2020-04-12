@@ -28,19 +28,13 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
         ) {
             Logger.Info("Creating auto split service.");
 
-            this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-            this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
-            this.keyService = keyService ?? throw new ArgumentNullException(nameof(keyService));
+            this.settingsService = settingsService;
+            this.gameService = gameService;
+            this.keyService = keyService;
 
-            RegisterServiceEventHandlers();
-        }
-
-        private void RegisterServiceEventHandlers()
-        {
-            settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
-
-            gameService.DataRead += GameServiceOnDataRead;
-            gameService.CharacterCreated += GameServiceOnCharacterCreated;
+            this.settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
+            this.gameService.DataRead += GameServiceOnDataRead;
+            this.gameService.CharacterCreated += GameServiceOnCharacterCreated;
         }
 
         private void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
@@ -59,19 +53,27 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             var logMessage = new StringBuilder();
             logMessage.Append("Configured auto splits:");
 
-            for (var i = 0; i < settings.Autosplits.Count; ++i)
+            int i = 0;
+            foreach (var split in settings.Autosplits)
             {
-                var split = settings.Autosplits[i];
-
                 logMessage.AppendLine();
-                logMessage.Append("  ");
-                logMessage.Append($"#{i} [{split.Type}, {split.Value}, {split.Difficulty}] \"{split.Name}\"");
+                logMessage.Append(AutoSplitString(i++, split));
             }
 
             Logger.Info(logMessage.ToString());
         }
 
+        private string AutoSplitString(int i, AutoSplit s)
+        {
+            return $"#{i} [{s.Type}, {s.Value}, {s.Difficulty}] \"{s.Name}\"";
+        }
+
         private void GameServiceOnDataRead(object sender, DataReadEventArgs e)
+        {
+            DoAutoSplits(e);
+        }
+
+        private void DoAutoSplits(DataReadEventArgs e)
         {
             // TODO: fix bug... when splits are add during the run, the last split seems to trigger again on save
             // setup autosplits:
@@ -82,142 +84,54 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             // - area (stony fields)
             // should not trigger another split automatically, but does
             var settings = settingsService.CurrentSettings;
-            if (settings.DoAutosplit)
-            {
-                UpdateAutoSplits(settings, e);
-            }
-        }
-
-        private void UpdateAutoSplits(ApplicationSettings settings, DataReadEventArgs eventArgs)
-        {
-            // Update autosplits only if the character was a freshly started character.
-            if (!eventArgs.Character.IsAutosplitChar) return;
-
-            var difficulty = eventArgs.CurrentDifficulty;
-            IList<QuestCollection> gameQuests = eventArgs.Quests;
-            var currentQuests = gameQuests[(int)difficulty];
-
-            foreach (var autoSplit in settings.Autosplits)
-            {
-                if (autoSplit.IsReached)
-                {
-                    continue;
-                }
-
-                if (autoSplit.Type != AutoSplit.SplitType.Special)
-                {
-                    continue;
-                }
-
-                if (autoSplit.Value == (int)AutoSplit.Special.GameStart)
-                {
-                    CompleteAutoSplit(autoSplit);
-                }
-
-                if (autoSplit.Value == (int)AutoSplit.Special.Clear100Percent
-                    && currentQuests.IsFullyCompleted
-                    && autoSplit.MatchesDifficulty(difficulty))
-                {
-                    CompleteAutoSplit(autoSplit);
-                }
-
-                if (autoSplit.Value == (int)AutoSplit.Special.Clear100PercentAllDifficulties
-                    && gameQuests.All(quests => quests.IsFullyCompleted))
-                {
-                    CompleteAutoSplit(autoSplit);
-                }
-            }
-
-            // if no unreached splits, return
-            if (!HaveUnreachedSplits(settings.Autosplits, difficulty))
-            {
+            if (!settings.DoAutosplit || !e.Character.IsAutosplitChar)
                 return;
-            }
 
-            foreach (var autoSplit in settings.Autosplits)
+            int i = 0;
+            foreach (var split in settings.Autosplits)
             {
-                if(IsCompleteableAutosplit(autoSplit, currentQuests, eventArgs, difficulty))
-                {
-                    CompleteAutoSplit(autoSplit);
-                }
-            }
-        }
-
-        private static bool IsCompleteableAutosplit(
-            AutoSplit autoSplit,
-            QuestCollection currentQuests,
-            DataReadEventArgs eventArgs,
-            GameDifficulty difficulty
-        ) {
-            if (autoSplit.IsReached || !autoSplit.MatchesDifficulty(difficulty))
-            {
-                return false;
-            }
-
-            switch (autoSplit.Type)
-            {
-                case AutoSplit.SplitType.CharLevel:
-                    return autoSplit.Value <= eventArgs.Character.Level;
-                case AutoSplit.SplitType.Area:
-                    return autoSplit.Value == eventArgs.CurrentArea;
-                case AutoSplit.SplitType.Item:
-                    return eventArgs.ItemIds.Contains(autoSplit.Value);
-                case AutoSplit.SplitType.Quest:
-                    return currentQuests != null && currentQuests.IsQuestCompleted((QuestId)autoSplit.Value);
-                case AutoSplit.SplitType.Gems:
-                    return eventArgs.ItemIds.Contains(autoSplit.Value);
-            }
-            return false;
-        }
-
-        private static bool HaveUnreachedSplits(List<AutoSplit> autoSplits, GameDifficulty difficulty)
-        {
-            foreach (var autoSplit in autoSplits)
-            {
-                if (autoSplit.IsReached || !autoSplit.MatchesDifficulty(difficulty))
-                {
+                if (!IsCompleteableAutoSplit(split, e))
                     continue;
-                }
 
-                switch (autoSplit.Type)
-                {
-                    case AutoSplit.SplitType.CharLevel:
-                        return true;
-                    case AutoSplit.SplitType.Area:
-                        return true;
-                    case AutoSplit.SplitType.Item:
-                        return true;
-                    case AutoSplit.SplitType.Quest:
-                        return true;
-                    case AutoSplit.SplitType.Gems:
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
-        private void CompleteAutoSplit(AutoSplit split)
-        {
-            // Autosplit already reached.
-            if (split.IsReached) return;
-
-            split.IsReached = true;
-            TriggerAutosplit();
-
-            var i = settingsService.CurrentSettings.Autosplits.IndexOf(split);
-            Logger.Info($"AutoSplit: #{i} ({split.Name}, {split.Difficulty}) Reached.");
-        }
-
-        private void TriggerAutosplit()
-        {
-            var settings = settingsService.CurrentSettings;
-            if (settings.DoAutosplit && settings.AutosplitHotkey != Keys.None)
-            {
+                split.IsReached = true;
                 keyService.TriggerHotkey(settings.AutosplitHotkey);
+                Logger.Info($"AutoSplit reached: {AutoSplitString(i++, split)}");
             }
         }
 
+        private bool IsCompleteableAutoSplit(AutoSplit split, DataReadEventArgs args)
+        {
+            if (split.IsReached || !split.MatchesDifficulty(args.CurrentDifficulty))
+                return false;
+
+            switch (split.Type)
+            {
+                case AutoSplit.SplitType.Special:
+                    switch (split.Value)
+                    {
+                        case (int)AutoSplit.Special.GameStart:
+                            return true;
+                        case (int)AutoSplit.Special.Clear100Percent:
+                            return args.CurrentQuests.IsFullyCompleted;
+                        case (int)AutoSplit.Special.Clear100PercentAllDifficulties:
+                            return args.Quests.All(quests => quests.IsFullyCompleted);
+                        default:
+                            return false;
+                    }
+                case AutoSplit.SplitType.Quest:
+                    return args.CurrentQuests != null && args.CurrentQuests.IsQuestCompleted((QuestId)split.Value);
+                case AutoSplit.SplitType.CharLevel:
+                    return split.Value <= args.Character.Level;
+                case AutoSplit.SplitType.Area:
+                    return split.Value == args.CurrentArea;
+                case AutoSplit.SplitType.Item:
+                case AutoSplit.SplitType.Gems:
+                    return args.ItemIds.Contains(split.Value);
+                default:
+                    return false;
+            }
+        }
+        
         private void GameServiceOnCharacterCreated(object sender, CharacterCreatedEventArgs e)
         {
             Logger.Info($"A new character was created. Auto splits enabled for {e.Character.Name}");
