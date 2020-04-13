@@ -555,14 +555,11 @@ namespace Zutatensuppe.D2Reader
                 : GameDifficulty.Normal;
         }
         
-        Character CharacterByNameCached(string playerName)
+        Character CharacterByNameCached(string name)
         {
-            if (!characters.TryGetValue(playerName, out Character character))
-            {
-                character = new Character { Name = playerName };
-                characters[playerName] = character;
-            }
-            return character;
+            if (!characters.ContainsKey(name))
+                characters[name] = new Character { Name = name };
+            return characters[name];
         }
 
         Character ProcessCharacterData(D2GameInfo gameInfo)
@@ -577,8 +574,9 @@ namespace Zutatensuppe.D2Reader
                 if (Character.IsNewChar(gameInfo.Player, unitReader, inventoryReader, skillReader))
                 {
                     Logger.Info($"A new chararacter was created: {character.Name}");
-                    ActiveCharacterTimestamp = DateTime.Now;
+                    character.Deaths = 0;
                     character.IsAutosplitChar = true;
+                    ActiveCharacterTimestamp = DateTime.Now;
                     ActiveCharacter = character;
                     OnCharacterCreated(new CharacterCreatedEventArgs(character));
                 }
