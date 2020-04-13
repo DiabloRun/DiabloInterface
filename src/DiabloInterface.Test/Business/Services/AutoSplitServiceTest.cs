@@ -245,13 +245,6 @@ namespace DiabloInterface.Test.Business.Services
             gameService.triggerDataRead(null, args);
             Assert.AreEqual(true, splitOnGameClearAllDifficulties.IsReached);
         }
-
-        private Character CreateCharacter(int lvl)
-        {
-            var mock = new Mock<Character>();
-            mock.SetupGet(x => x.Level).Returns(lvl);
-            return mock.Object;
-        }
     }
 
     class GameServiceMock : IGameService

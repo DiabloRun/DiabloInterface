@@ -25,10 +25,10 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             switch (arguments[0].ToLowerInvariant())
             {
                 case "active":
-                    payload = BuildPayload(dataReader.ActiveCharacter, dataReader.ActiveCharacterTimestamp);
+                    payload = BuildPayload(dataReader.ActiveCharacter);
                     break;
                 case "current":
-                    payload = BuildPayload(dataReader.CurrentCharacter, DateTime.Now);
+                    payload = BuildPayload(dataReader.CurrentCharacter);
                     break;
                 default:
                     throw new RequestHandlerInvalidException(InvalidMessage);
@@ -41,7 +41,7 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             };
         }
 
-        object BuildPayload(Character character, DateTime timestamp)
+        object BuildPayload(Character character)
         {
             if (character == null)
                 return null;
@@ -50,7 +50,7 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             {
                 IsCurrentCharacter = character == dataReader.CurrentCharacter,
                 character.Name,
-                Created = timestamp,
+                character.Created,
                 character.Level,
                 character.Experience,
                 Stats = new

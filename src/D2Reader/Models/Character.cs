@@ -176,9 +176,12 @@ namespace Zutatensuppe.D2Reader.Models
 
         public int Defense { get; private set; }
 
+        public DateTime Created { get; set; }
+
         // TODO: use Item model for these:
         virtual public Dictionary<BodyLocation, string> EquippedItemStrings { get; set; }
         virtual public List<int> InventoryItemIds { get; set; }
+        
 
         public int RealFRW()
         {

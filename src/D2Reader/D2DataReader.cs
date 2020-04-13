@@ -94,9 +94,7 @@ namespace Zutatensuppe.D2Reader
         public event EventHandler<CharacterCreatedEventArgs> CharacterCreated;
 
         public event EventHandler<DataReadEventArgs> DataRead;
-
-        public DateTime ActiveCharacterTimestamp { get; private set; }
-
+        
         public Character ActiveCharacter { get; private set; }
 
         public Character CurrentCharacter { get; private set; }
@@ -480,16 +478,16 @@ namespace Zutatensuppe.D2Reader
             .Select((data, index) => QuestFactory.CreateFromBufferIndex(index, data))
             .Where(quest => quest != null).ToList();
 
-        Character CharacterByNameCached(string name)
+        Character CharacterByName(string name)
         {
             if (!characters.ContainsKey(name))
-                characters[name] = new Character { Name = name };
+                characters[name] = new Character { Name = name, Created = DateTime.Now };
             return characters[name];
         }
 
         Character ReadCharacterData(D2GameInfo gameInfo)
         {
-            Character character = CharacterByNameCached(gameInfo.PlayerData.PlayerName);
+            Character character = CharacterByName(gameInfo.PlayerData.PlayerName);
 
             if (wasInTitleScreen)
             {
@@ -498,11 +496,14 @@ namespace Zutatensuppe.D2Reader
                 // when it was started AFTER Diablo 2, but the char is still a new char
                 if (Character.IsNewChar(gameInfo.Player, unitReader, inventoryReader, skillReader))
                 {
+                    // disable IsAutosplitChar from the other chars created so far
+                    foreach (var pair in characters)
+                        pair.Value.IsAutosplitChar = false;
+
                     Logger.Info($"A new chararacter was created: {character.Name}");
                     charCount++;
                     character.Deaths = 0;
                     character.IsAutosplitChar = true;
-                    ActiveCharacterTimestamp = DateTime.Now;
                     ActiveCharacter = character;
                     OnCharacterCreated(new CharacterCreatedEventArgs(character));
                 }
