@@ -1234,6 +1234,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnColorCharCount.TabIndex = 44;
             this.btnColorCharCount.Text = "Color";
             this.btnColorCharCount.UseVisualStyleBackColor = true;
+            this.btnColorCharCount.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // SettingsWindow
             // 
