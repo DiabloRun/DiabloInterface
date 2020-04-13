@@ -33,10 +33,19 @@ You can configure what data is displayed and how that data is presented.
 - Gold
 - Base stats (strength, dexterity, vitality, energy)
 - Advanced stats (FHR, FCR, FRW, IAS)
-- Deathcount (is reset after DiabloInterface is restarted)
 - Character level
 - Resistances
 - Quests completed in percent
+- Magic find
+- Attacker takes dmg
+- Extra monster gold
+- /players X value
+- Hardcore/Softcore
+- Expansion/Classic
+- Counters (tracked while the game is running)
+  - Number of deaths (resets with new character creation)
+  - Number of games started
+  - Number of characters created
 - Runes collected (configurable to show only relevant ones)
 
 **Presentation**  
