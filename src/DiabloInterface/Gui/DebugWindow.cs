@@ -124,7 +124,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
             foreach (GameDifficulty difficulty in Enum.GetValues(typeof(GameDifficulty)))
             {
-                var quests = e.Quests.ElementAtOrDefault((int)difficulty);
+                var quests = e.Quests.ByDifficulty(difficulty);
                 if (quests == null) continue;
 
                 UpdateQuestData(quests, difficulty);
@@ -133,7 +133,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             UpdateItemStats(e.ItemStrings);
         }
 
-        void UpdateQuestData(QuestCollection quests, GameDifficulty difficulty)
+        void UpdateQuestData(List<Quest> quests, GameDifficulty difficulty)
         {
             QuestDebugRow[,] rows = questRows[difficulty];
 

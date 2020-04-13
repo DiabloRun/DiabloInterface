@@ -112,14 +112,14 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
                         case (int)AutoSplit.Special.GameStart:
                             return true;
                         case (int)AutoSplit.Special.Clear100Percent:
-                            return args.CurrentQuests.IsFullyCompleted;
+                            return args.Quests.DifficultyCompleted(args.CurrentDifficulty);
                         case (int)AutoSplit.Special.Clear100PercentAllDifficulties:
-                            return args.Quests.All(quests => quests.IsFullyCompleted);
+                            return args.Quests.FullyCompleted();
                         default:
                             return false;
                     }
                 case AutoSplit.SplitType.Quest:
-                    return args.CurrentQuests != null && args.CurrentQuests.IsQuestCompleted((QuestId)split.Value);
+                    return args.Quests.QuestCompleted(args.CurrentDifficulty, (QuestId)split.Value);
                 case AutoSplit.SplitType.CharLevel:
                     return split.Value <= args.Character.Level;
                 case AutoSplit.SplitType.Area:

@@ -47,7 +47,7 @@ namespace Zutatensuppe.D2Reader
             GameDifficulty currentDifficulty,
             int currentPlayersX,
             List<int> itemIds,
-            IList<QuestCollection> quests,
+            Quests quests,
             uint gameCounter
         ) {
             Character = character;
@@ -66,7 +66,7 @@ namespace Zutatensuppe.D2Reader
         public int CurrentPlayersX { get; }
         public GameDifficulty CurrentDifficulty { get; }
         public List<int> ItemIds { get; }
-        public IList<QuestCollection> Quests { get; }
+        public Quests Quests { get; }
         public uint GameCounter { get;  }
     }
 
@@ -98,7 +98,7 @@ namespace Zutatensuppe.D2Reader
 
         GameDifficulty currentDifficulty;
         bool wasInTitleScreen;
-        IList<QuestCollection> gameQuests = new List<QuestCollection>();
+        Quests gameQuests = new Quests();
 
         private uint lastGameId = 0;
         private uint gameCount = 0;
@@ -139,12 +139,8 @@ namespace Zutatensuppe.D2Reader
         /// </summary>
         public TimeSpan PollingRate { get; set; } = TimeSpan.FromMilliseconds(500);
 
-        /// <summary>
-        /// Gets the most recent quest status buffer for the current difficulty.
-        /// </summary>
-        /// <returns></returns>
-        public QuestCollection CurrentQuests =>
-            gameQuests.ElementAtOrDefault((int)currentDifficulty);
+        public Quests Quests => gameQuests;
+        public GameDifficulty Difficulty => currentDifficulty;
 
         bool IsProcessReaderTerminated => reader != null && !reader.IsValid;
 
@@ -509,19 +505,19 @@ namespace Zutatensuppe.D2Reader
             ));
         }
 
-        List<QuestCollection> ProcessQuests(D2GameInfo gameInfo)
+        Quests ProcessQuests(D2GameInfo gameInfo)
         {
             return ReadFlags.HasFlag(DataReaderEnableFlags.QuestBuffers)
                 ? ReadQuests(gameInfo)
-                : new List<QuestCollection>();
+                : new Quests();
         }
 
-        List<QuestCollection> ReadQuests(D2GameInfo gameInfo) => (
+        Quests ReadQuests(D2GameInfo gameInfo) => new Quests((
             from address in gameInfo.PlayerData.Quests
             where !address.IsNull
             select ReadQuestBuffer(address) into questBuffer
             select TransformToQuestList(questBuffer) into quests
-            select new QuestCollection(quests)).ToList();
+            select quests).ToList());
 
         ushort[] ReadQuestBuffer(DataPointer address)
         {

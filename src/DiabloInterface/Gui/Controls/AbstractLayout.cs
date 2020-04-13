@@ -146,7 +146,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         abstract protected void UpdateSettings(ApplicationSettings settings);
 
-        abstract protected void UpdateLabels(Character player, IList<QuestCollection> quests, int currentPlayersX, uint gameIndex);
+        abstract protected void UpdateLabels(Character player, Quests quests, int currentPlayersX, uint gameIndex);
 
         void UpdateClassRuneList(CharacterClass characterClass)
         {

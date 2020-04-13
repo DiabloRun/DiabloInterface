@@ -38,11 +38,12 @@ namespace DiabloInterface.Test.Business.Services
                 gameService,
                 new Mock<KeyService>().Object
             );
-            var quests = new List<Quest>();
-            var questCollection = new List<QuestCollection>();
-            questCollection.Add(new QuestCollection(quests)); // NORMAL
-            questCollection.Add(new QuestCollection(quests)); // NIGHTMARE
-            questCollection.Add(new QuestCollection(quests)); // HELL
+            var quests = new Quests(new List<List<Quest>>
+            {
+                new List<Quest>(), // NORMAL
+                new List<Quest>(), // NM
+                new List<Quest>(), // HELL
+            });
             
             var mock = new Mock<Character>();
             mock.SetupGet(x => x.Level).Returns(9);
@@ -56,7 +57,7 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 new List<int>(), // item ids
-                questCollection,
+                quests,
                 0 // game counter
             ));
             Assert.AreEqual(false, split.IsReached);
@@ -69,7 +70,7 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 new List<int>(), // item ids
-                questCollection,
+                quests,
                 0 // game counter
             ));
             Assert.AreEqual(false, split.IsReached);
@@ -160,10 +161,12 @@ namespace DiabloInterface.Test.Business.Services
                 QuestFactory.Create(QuestId.Andariel, 0),
             };
 
-            var questCollection = new List<QuestCollection>();
-            questCollection.Add(new QuestCollection(normalQuests));
-            questCollection.Add(new QuestCollection(nightmareQuests));
-            questCollection.Add(new QuestCollection(hellQuests));
+            var quests = new Quests(new List<List<Quest>>
+            {
+                normalQuests,
+                nightmareQuests,
+                hellQuests,
+            });
 
             var characterMock = new Mock<Character>();
             characterMock.SetupGet(x => x.Level).Returns(9);
@@ -181,7 +184,7 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                questCollection,
+                quests,
                 0 // game counter
             ));
             Assert.AreEqual(true, splitOnGameStart.IsReached);
@@ -195,7 +198,7 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                questCollection,
+                quests,
                 0 // game counter
             ));
             Assert.AreEqual(false, splitOnCharLevel10.IsReached);
@@ -208,7 +211,7 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                questCollection,
+                quests,
                 0 // game counter
             ));
             Assert.AreEqual(true, splitOnCharLevel10.IsReached);
@@ -222,7 +225,7 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                questCollection,
+                quests,
                 0 // game counter
             ));
             Assert.AreEqual(true, splitOnArea1.IsReached);
@@ -238,7 +241,7 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                questCollection,
+                quests,
                 0 // game counter
             ));
             Assert.AreEqual(true, splitOnItem1.IsReached);
@@ -256,7 +259,7 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                questCollection,
+                quests,
                 0 // game counter
             ));
             Assert.AreEqual(true, splitOnQuest81.IsReached);
@@ -273,7 +276,7 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                questCollection,
+                quests,
                 0 // game counter
             ));
             Assert.AreEqual(true, splitOnGameClear.IsReached);
@@ -290,7 +293,7 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                questCollection,
+                quests,
                 0 // game counter
             ));
             Assert.AreEqual(false, splitOnGameClearAllDifficulties.IsReached);
@@ -304,7 +307,7 @@ namespace DiabloInterface.Test.Business.Services
                 GameDifficulty.Normal, // difficulty
                 1, // players x
                 itemsIds,
-                questCollection,
+                quests,
                 0 // game counter
             ));
             Assert.AreEqual(true, splitOnGameClearAllDifficulties.IsReached);

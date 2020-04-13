@@ -129,7 +129,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             };
         }
 
-        protected override void UpdateLabels(Character player, IList<QuestCollection> quests, int currentPlayersX, uint gameIndex)
+        protected override void UpdateLabels(Character player, Quests quests, int currentPlayersX, uint gameIndex)
         {
             UpdateLabel("name", player.Name);
             UpdateLabel("hc_sc", player.IsHardcore ? "HARDCORE" : "SOFTCORE");
@@ -154,11 +154,9 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             UpdateLabel("ligh", player.LightningResist);
             UpdateLabel("pois", player.PoisonResist);
             UpdateLabel("fire", player.FireResist);
-
-            IList<float> completions = quests.Select(q => q.CompletionProgress).ToList();
-            UpdateLabel("norm", $@"{completions[0]*100:0}");
-            UpdateLabel("nm", $@"{completions[1]*100:0}");
-            UpdateLabel("hell", $@"{completions[2]*100:0}");
+            UpdateLabel("norm", $@"{quests.ProgressByDifficulty(GameDifficulty.Normal) * 100:0}");
+            UpdateLabel("nm", $@"{quests.ProgressByDifficulty(GameDifficulty.Nightmare) * 100:0}");
+            UpdateLabel("hell", $@"{quests.ProgressByDifficulty(GameDifficulty.Hell) * 100:0}");
         }
 
         protected override void UpdateSettings(ApplicationSettings s)

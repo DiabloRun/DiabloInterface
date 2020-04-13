@@ -18,14 +18,13 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
         public Response HandleRequest(Request request, IList<string> arguments)
         {
             int questId = int.Parse(arguments[0]);
-            var quests = dataReader.CurrentQuests;
-            var completed = quests == null || quests.IsQuestCompleted((QuestId)questId);
+
             return new Response()
             {
                 Status = ResponseStatus.Success,
                 Payload = new
                 {
-                    IsCompleted = completed
+                    IsCompleted = dataReader.Quests.QuestCompleted(dataReader.Difficulty, (QuestId)questId)
                 }
             };
         }

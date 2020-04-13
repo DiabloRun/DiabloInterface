@@ -48,6 +48,7 @@
     <Compile Include="IProcessMemoryReader.cs" />
     <Compile Include="Models\CharacterClass.cs" />
     <Compile Include="Models\Item.cs" />
+    <Compile Include="Models\Quests.cs" />
     <Compile Include="Models\Rune.cs" />
     <Compile Include="Models\ResistancePenalty.cs" />
     <Compile Include="Models\Skill.cs" />
@@ -55,7 +56,6 @@
     <Compile Include="GameMemoryTableFactory.cs" />
     <Compile Include="Models\GameDifficulty.cs" />
     <Compile Include="Models\Quest.cs" />
-    <Compile Include="Models\QuestCollection.cs" />
     <Compile Include="Models\QuestDetails.cs" />
     <Compile Include="Models\QuestId.cs" />
     <Compile Include="ProcessMemoryReader.cs" />
