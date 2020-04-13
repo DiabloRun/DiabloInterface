@@ -4,9 +4,9 @@ namespace Zutatensuppe.D2Reader.Models
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.D2Reader.Readers;
     using Zutatensuppe.D2Reader.Struct;
+    using Zutatensuppe.D2Reader.Struct.Item;
     using Zutatensuppe.D2Reader.Struct.Skill;
     using Zutatensuppe.D2Reader.Struct.Stat;
     using Zutatensuppe.DiabloInterface.Core;
@@ -175,6 +175,10 @@ namespace Zutatensuppe.D2Reader.Models
         public short Deaths;
 
         public int Defense { get; private set; }
+
+        // TODO: use Item model for these:
+        virtual public Dictionary<BodyLocation, string> EquippedItemStrings { get; set; }
+        virtual public List<int> InventoryItemIds { get; set; }
 
         public int RealFRW()
         {

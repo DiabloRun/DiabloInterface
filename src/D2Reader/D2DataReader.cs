@@ -14,20 +14,6 @@ namespace Zutatensuppe.D2Reader
     using Zutatensuppe.D2Reader.Struct.Stat;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
-    /// <summary>
-    ///     Describes what type of data the data reader should read.
-    /// </summary>
-    [Flags]
-    public enum DataReaderEnableFlags
-    {
-        CurrentArea = 1 << 0,
-        CurrentDifficulty = 1 << 1,
-        QuestBuffers = 1 << 2,
-        InventoryItemIds = 1 << 3,
-        EquippedItemStrings = 1 << 4,
-        CurrentPlayersX = 1 << 5,
-    }
-
     public class CharacterCreatedEventArgs : EventArgs
     {
         public CharacterCreatedEventArgs(Character character)
@@ -42,35 +28,17 @@ namespace Zutatensuppe.D2Reader
     {
         public DataReadEventArgs(
             Character character,
-            Dictionary<BodyLocation, string> itemStrings,
-            int currentArea,
-            GameDifficulty currentDifficulty,
-            int currentPlayersX,
-            List<int> itemIds,
-            Quests quests,
-            uint gameCounter,
-            uint charCounter
+            Game game,
+            Quests quests
         ) {
             Character = character;
-            ItemStrings = itemStrings;
-            CurrentArea = currentArea;
-            CurrentDifficulty = currentDifficulty;
-            CurrentPlayersX = currentPlayersX;
-            ItemIds = itemIds;
+            Game = game;
             Quests = quests;
-            GameCounter = gameCounter;
-            CharCounter = charCounter;
         }
 
         public Character Character { get; }
-        public Dictionary<BodyLocation, string> ItemStrings { get; }
-        public int CurrentArea { get; }
-        public int CurrentPlayersX { get; }
-        public GameDifficulty CurrentDifficulty { get; }
-        public List<int> ItemIds { get; }
+        public Game Game { get; }
         public Quests Quests { get; }
-        public uint GameCounter { get; }
-        public uint CharCounter { get; }
     }
 
     public class ProcessDescription
@@ -99,14 +67,15 @@ namespace Zutatensuppe.D2Reader
         ISkillReader skillReader;
         GameMemoryTable memory;
 
-        GameDifficulty currentDifficulty;
         bool wasInTitleScreen;
-        Quests gameQuests = new Quests();
 
         private uint lastGameId = 0;
         private uint gameCount = 0;
 
         private uint charCount = 0;
+
+        public Quests Quests { get; private set; } = new Quests();
+        public GameDifficulty Difficulty { get; private set; }
 
         public D2DataReader(
             IGameMemoryTableFactory memoryTableFactory,
@@ -126,13 +95,6 @@ namespace Zutatensuppe.D2Reader
 
         public event EventHandler<DataReadEventArgs> DataRead;
 
-        public DataReaderEnableFlags ReadFlags { get; set; } =
-            DataReaderEnableFlags.CurrentArea
-            | DataReaderEnableFlags.CurrentDifficulty
-            | DataReaderEnableFlags.CurrentPlayersX
-            | DataReaderEnableFlags.QuestBuffers
-            | DataReaderEnableFlags.InventoryItemIds;
-
         public DateTime ActiveCharacterTimestamp { get; private set; }
 
         public Character ActiveCharacter { get; private set; }
@@ -143,9 +105,6 @@ namespace Zutatensuppe.D2Reader
         /// Gets or sets reader polling rate.
         /// </summary>
         public TimeSpan PollingRate { get; set; } = TimeSpan.FromMilliseconds(500);
-
-        public Quests Quests => gameQuests;
-        public GameDifficulty Difficulty => currentDifficulty;
 
         bool IsProcessReaderTerminated => reader != null && !reader.IsValid;
 
@@ -281,13 +240,6 @@ namespace Zutatensuppe.D2Reader
             return inventoryReader.Filter(inventory, filter);
         }
 
-        Dictionary<BodyLocation, string> ProcessEquippedItemStrings(D2Unit owner)
-        {
-            return ReadFlags.HasFlag(DataReaderEnableFlags.EquippedItemStrings)
-                ? ReadEquippedItemStrings(owner)
-                : new Dictionary<BodyLocation, string>();
-        }
-
         Dictionary<BodyLocation, string> ReadEquippedItemStrings(D2Unit owner)
         {
             var itemStrings = new Dictionary<BodyLocation, string>();
@@ -319,13 +271,6 @@ namespace Zutatensuppe.D2Reader
                 s.Append(Environment.NewLine);
             }
             return s.ToString();
-        }
-
-        List<int> ProcessInventoryItemIds(D2Unit player)
-        {
-            return ReadFlags.HasFlag(DataReaderEnableFlags.InventoryItemIds)
-                ? ReadInventoryItemIds(player)
-                : new List<int>();
         }
 
         private List<int> ReadInventoryItemIds(D2Unit owner)
@@ -490,32 +435,27 @@ namespace Zutatensuppe.D2Reader
                 return;
             }
 
-            CurrentCharacter = ProcessCharacterData(gameInfo);
-            var equippedItemStrings = ProcessEquippedItemStrings(gameInfo.Player);
-            var inventoryItems = ProcessInventoryItemIds(gameInfo.Player);
+            CurrentCharacter = ReadCharacterData(gameInfo);
 
-            var currentArea = ProcessCurrentArea();
-            var currentPlayersX = ProcessCurrentPlayersX();
-            gameQuests = ProcessQuests(gameInfo);
-            currentDifficulty = ProcessCurrentDifficulty(gameInfo);
+            Quests = ReadQuests(gameInfo);
+            var Game = ReadGameData(gameInfo);
+            Difficulty = Game.Difficulty;
             OnDataRead(new DataReadEventArgs(
                 CurrentCharacter,
-                equippedItemStrings,
-                currentArea,
-                currentDifficulty,
-                currentPlayersX,
-                inventoryItems,
-                gameQuests,
-                gameCount,
-                charCount
+                Game,
+                Quests
             ));
         }
 
-        Quests ProcessQuests(D2GameInfo gameInfo)
+        Game ReadGameData(D2GameInfo gameInfo)
         {
-            return ReadFlags.HasFlag(DataReaderEnableFlags.QuestBuffers)
-                ? ReadQuests(gameInfo)
-                : new Quests();
+            var g = new Game();
+            g.Area = reader.ReadByte(memory.Area, AddressingMode.Relative);
+            g.PlayersX = Math.Max(reader.ReadByte(memory.PlayersX, AddressingMode.Relative), (byte)1);
+            g.Difficulty = (GameDifficulty)gameInfo.Game.Difficulty;
+            g.GameCount = gameCount;
+            g.CharCount = charCount;
+            return g;
         }
 
         Quests ReadQuests(D2GameInfo gameInfo) => new Quests((
@@ -540,27 +480,6 @@ namespace Zutatensuppe.D2Reader
             .Select((data, index) => QuestFactory.CreateFromBufferIndex(index, data))
             .Where(quest => quest != null).ToList();
 
-        int ProcessCurrentArea()
-        {
-            return ReadFlags.HasFlag(DataReaderEnableFlags.CurrentArea)
-                ? reader.ReadByte(memory.Area, AddressingMode.Relative)
-                : -1;
-        }
-
-        int ProcessCurrentPlayersX()
-        {
-            return ReadFlags.HasFlag(DataReaderEnableFlags.CurrentPlayersX)
-                ? Math.Max(reader.ReadByte(memory.PlayersX, AddressingMode.Relative), (byte)1)
-                : -1;
-        }
-
-        GameDifficulty ProcessCurrentDifficulty(D2GameInfo gameInfo)
-        {
-            return ReadFlags.HasFlag(DataReaderEnableFlags.CurrentDifficulty)
-                ? (GameDifficulty)gameInfo.Game.Difficulty
-                : GameDifficulty.Normal;
-        }
-        
         Character CharacterByNameCached(string name)
         {
             if (!characters.ContainsKey(name))
@@ -568,7 +487,7 @@ namespace Zutatensuppe.D2Reader
             return characters[name];
         }
 
-        Character ProcessCharacterData(D2GameInfo gameInfo)
+        Character ReadCharacterData(D2GameInfo gameInfo)
         {
             Character character = CharacterByNameCached(gameInfo.PlayerData.PlayerName);
 
@@ -596,10 +515,12 @@ namespace Zutatensuppe.D2Reader
             character.IsHardcore = gameInfo.Client.IsHardcore();
             character.IsExpansion = gameInfo.Client.IsExpansion();
 
-            // Don't update stats while dead.
+            // Don't update stats and items while dead.
             if (!character.IsDead)
             {
                 character.ParseStats(unitReader, gameInfo);
+                character.EquippedItemStrings = ReadEquippedItemStrings(gameInfo.Player);
+                character.InventoryItemIds = ReadInventoryItemIds(gameInfo.Player);
             }
 
             return character;

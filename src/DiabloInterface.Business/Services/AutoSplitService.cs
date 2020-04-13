@@ -5,7 +5,6 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
     using System.Linq;
     using System.Reflection;
     using System.Text;
-    using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
@@ -101,7 +100,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
 
         private bool IsCompleteableAutoSplit(AutoSplit split, DataReadEventArgs args)
         {
-            if (split.IsReached || !split.MatchesDifficulty(args.CurrentDifficulty))
+            if (split.IsReached || !split.MatchesDifficulty(args.Game.Difficulty))
                 return false;
 
             switch (split.Type)
@@ -112,21 +111,21 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
                         case (int)AutoSplit.Special.GameStart:
                             return true;
                         case (int)AutoSplit.Special.Clear100Percent:
-                            return args.Quests.DifficultyCompleted(args.CurrentDifficulty);
+                            return args.Quests.DifficultyCompleted(args.Game.Difficulty);
                         case (int)AutoSplit.Special.Clear100PercentAllDifficulties:
                             return args.Quests.FullyCompleted();
                         default:
                             return false;
                     }
                 case AutoSplit.SplitType.Quest:
-                    return args.Quests.QuestCompleted(args.CurrentDifficulty, (QuestId)split.Value);
+                    return args.Quests.QuestCompleted(args.Game.Difficulty, (QuestId)split.Value);
                 case AutoSplit.SplitType.CharLevel:
                     return split.Value <= args.Character.Level;
                 case AutoSplit.SplitType.Area:
-                    return split.Value == args.CurrentArea;
+                    return split.Value == args.Game.Area;
                 case AutoSplit.SplitType.Item:
                 case AutoSplit.SplitType.Gems:
-                    return args.ItemIds.Contains(split.Value);
+                    return args.Character.InventoryItemIds.Contains(split.Value);
                 default:
                     return false;
             }

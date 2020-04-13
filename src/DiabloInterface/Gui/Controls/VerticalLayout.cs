@@ -6,7 +6,6 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
-    using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
@@ -130,15 +129,15 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             };
         }
 
-        protected override void UpdateLabels(Character player, Quests quests, int currentPlayersX, uint gameIndex, uint charCounter)
+        protected override void UpdateLabels(Character player, Quests quests, Game game)
         {
             UpdateLabel("name", player.Name);
             UpdateLabel("hc_sc", player.IsHardcore ? "HARDCORE" : "SOFTCORE");
             UpdateLabel("exp_classic", player.IsExpansion ? "EXPANSION" : "CLASSIC");
-            UpdateLabel("playersx", currentPlayersX);
+            UpdateLabel("playersx", game.PlayersX);
             UpdateLabel("deaths", player.Deaths);
-            UpdateLabel("runs", (int) gameIndex);
-            UpdateLabel("chars", (int) charCounter);
+            UpdateLabel("runs", (int) game.GameCount);
+            UpdateLabel("chars", (int) game.CharCount);
             UpdateLabel("gold", player.Gold + player.GoldStash);
             UpdateLabel("mf", player.MagicFind);
             UpdateLabel("monstergold", player.MonsterGold);

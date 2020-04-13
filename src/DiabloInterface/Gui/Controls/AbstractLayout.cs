@@ -117,9 +117,9 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 return;
             }
 
-            UpdateLabels(e.Character, e.Quests, e.CurrentPlayersX, e.GameCounter, e.CharCounter);
+            UpdateLabels(e.Character, e.Quests, e.Game);
             UpdateClassRuneList(e.Character.CharClass);
-            UpdateRuneDisplay(e.ItemIds);
+            UpdateRuneDisplay(e.Character.InventoryItemIds);
         }
 
         public void Reset()
@@ -146,7 +146,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         abstract protected void UpdateSettings(ApplicationSettings settings);
 
-        abstract protected void UpdateLabels(Character player, Quests quests, int currentPlayersX, uint gameIndex, uint charCounter);
+        abstract protected void UpdateLabels(Character player, Quests quests, Game game);
 
         void UpdateClassRuneList(CharacterClass characterClass)
         {

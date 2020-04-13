@@ -46,7 +46,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
             this.serverService = serverService ?? throw new ArgumentNullException(nameof(serverService));
 
-            EnableReaderDebugData();
             RegisterServiceEventHandlers();
 
             // Unregister event handlers when we are done.
@@ -54,25 +53,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             {
                 Logger.Info("Disposing debug window.");
                 UnregisterServiceEventHandlers();
-                DisableReaderDebugData();
             };
 
             InitializeComponent();
             ApplyAutoSplitSettings(settingsService.CurrentSettings.Autosplits);
-        }
-
-        void EnableReaderDebugData()
-        {
-            var dataReader = gameService.DataReader;
-            var flags = dataReader.ReadFlags.SetFlag(DataReaderEnableFlags.EquippedItemStrings);
-            dataReader.ReadFlags = flags;
-        }
-
-        void DisableReaderDebugData()
-        {
-            var dataReader = gameService.DataReader;
-            var flags = dataReader.ReadFlags.ClearFlag(DataReaderEnableFlags.EquippedItemStrings);
-            dataReader.ReadFlags = flags;
         }
 
         void RegisterServiceEventHandlers()
@@ -130,7 +114,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 UpdateQuestData(quests, difficulty);
             }
 
-            UpdateItemStats(e.ItemStrings);
+            UpdateItemStats(e.Character.EquippedItemStrings);
         }
 
         void UpdateQuestData(List<Quest> quests, GameDifficulty difficulty)
