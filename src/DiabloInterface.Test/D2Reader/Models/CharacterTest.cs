@@ -10,7 +10,7 @@ using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.D2Reader.Struct.Skill;
 using Zutatensuppe.D2Reader.Struct.Stat;
 
-namespace DiabloInterface.Test.D2Reader
+namespace DiabloInterface.Test.D2Reader.Models
 {
     [TestClass]
     public class CharacterTest

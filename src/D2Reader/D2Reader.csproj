@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Character.cs" />
+    <Compile Include="Models\Character.cs" />
     <Compile Include="D2Data.cs" />
     <Compile Include="D2DataReader.cs" />
     <Compile Include="D2GameInfo.cs" />

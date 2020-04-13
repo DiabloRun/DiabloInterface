@@ -1,6 +1,6 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business.Data
+namespace Zutatensuppe.DiabloInterface.Business.Data
 {
-    using Zutatensuppe.D2Reader;
+    using Zutatensuppe.D2Reader.Models;
 
     internal class CharacterStats : ICharacterStats
     {

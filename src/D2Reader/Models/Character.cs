@@ -1,4 +1,4 @@
-namespace Zutatensuppe.D2Reader
+namespace Zutatensuppe.D2Reader.Models
 {
     using System;
     using System.Collections.Generic;
