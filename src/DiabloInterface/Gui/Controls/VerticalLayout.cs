@@ -45,6 +45,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             Add("playersx", "8", (ApplicationSettings s) => Tuple.Create(s.DisplayPlayersX, s.ColorPlayersX, s.FontSize), "/players {}");
             Add("deaths", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayDeathCounter, s.ColorDeaths, s.FontSize), "DEATHS: {}");
             Add("runs", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayGameCounter, s.ColorGameCounter, s.FontSize), "RUNS: {}");
+            Add("chars", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayCharCounter, s.ColorCharCounter, s.FontSize), "CHARS: {}");
             Add("gold", "2500000", (ApplicationSettings s) => Tuple.Create(s.DisplayGold, s.ColorGold, s.FontSize), "GOLD: {}");
             Add("mf", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayMagicFind, s.ColorMagicFind, s.FontSize), "MF:", "{}");
             Add("monstergold", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayMonsterGold, s.ColorMonsterGold, s.FontSize), "EMG:", "{}");
@@ -129,7 +130,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             };
         }
 
-        protected override void UpdateLabels(Character player, Quests quests, int currentPlayersX, uint gameIndex)
+        protected override void UpdateLabels(Character player, Quests quests, int currentPlayersX, uint gameIndex, uint charCounter)
         {
             UpdateLabel("name", player.Name);
             UpdateLabel("hc_sc", player.IsHardcore ? "HARDCORE" : "SOFTCORE");
@@ -137,6 +138,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             UpdateLabel("playersx", currentPlayersX);
             UpdateLabel("deaths", player.Deaths);
             UpdateLabel("runs", (int) gameIndex);
+            UpdateLabel("chars", (int) charCounter);
             UpdateLabel("gold", player.Gold + player.GoldStash);
             UpdateLabel("mf", player.MagicFind);
             UpdateLabel("monstergold", player.MonsterGold);

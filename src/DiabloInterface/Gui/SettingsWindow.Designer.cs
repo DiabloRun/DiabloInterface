@@ -126,6 +126,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSaveAs = new System.Windows.Forms.Button();
             this.btnUndo = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
+            this.chkDisplayCharCount = new System.Windows.Forms.CheckBox();
+            this.btnColorCharCount = new System.Windows.Forms.Button();
             this.FontGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
@@ -525,6 +527,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnColorCharCount);
+            this.groupBox1.Controls.Add(this.chkDisplayCharCount);
             this.groupBox1.Controls.Add(this.btnColorAll);
             this.groupBox1.Controls.Add(this.chkDisplayExpansionClassic);
             this.groupBox1.Controls.Add(this.btnColorExpansionClassic);
@@ -574,9 +578,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnColorAll
             // 
-            this.btnColorAll.Location = new System.Drawing.Point(329, 266);
+            this.btnColorAll.Location = new System.Drawing.Point(338, 280);
             this.btnColorAll.Name = "btnColorAll";
-            this.btnColorAll.Size = new System.Drawing.Size(136, 23);
+            this.btnColorAll.Size = new System.Drawing.Size(136, 22);
             this.btnColorAll.TabIndex = 42;
             this.btnColorAll.Text = "Text Color (All)";
             this.btnColorAll.UseVisualStyleBackColor = true;
@@ -586,7 +590,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.chkDisplayExpansionClassic.AutoSize = true;
             this.chkDisplayExpansionClassic.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkDisplayExpansionClassic.Location = new System.Drawing.Point(259, 179);
+            this.chkDisplayExpansionClassic.Location = new System.Drawing.Point(264, 138);
             this.chkDisplayExpansionClassic.Name = "chkDisplayExpansionClassic";
             this.chkDisplayExpansionClassic.Size = new System.Drawing.Size(86, 17);
             this.chkDisplayExpansionClassic.TabIndex = 41;
@@ -595,10 +599,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnColorExpansionClassic
             // 
-            this.btnColorExpansionClassic.Location = new System.Drawing.Point(392, 174);
+            this.btnColorExpansionClassic.Location = new System.Drawing.Point(397, 134);
             this.btnColorExpansionClassic.Margin = new System.Windows.Forms.Padding(0);
             this.btnColorExpansionClassic.Name = "btnColorExpansionClassic";
-            this.btnColorExpansionClassic.Size = new System.Drawing.Size(74, 25);
+            this.btnColorExpansionClassic.Size = new System.Drawing.Size(44, 22);
             this.btnColorExpansionClassic.TabIndex = 40;
             this.btnColorExpansionClassic.Text = "Color";
             this.btnColorExpansionClassic.UseVisualStyleBackColor = true;
@@ -608,7 +612,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.chkDisplayHardcoreSoftcore.AutoSize = true;
             this.chkDisplayHardcoreSoftcore.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkDisplayHardcoreSoftcore.Location = new System.Drawing.Point(259, 148);
+            this.chkDisplayHardcoreSoftcore.Location = new System.Drawing.Point(264, 115);
             this.chkDisplayHardcoreSoftcore.Name = "chkDisplayHardcoreSoftcore";
             this.chkDisplayHardcoreSoftcore.Size = new System.Drawing.Size(60, 17);
             this.chkDisplayHardcoreSoftcore.TabIndex = 39;
@@ -617,10 +621,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnColorHardcoreSoftcore
             // 
-            this.btnColorHardcoreSoftcore.Location = new System.Drawing.Point(392, 143);
+            this.btnColorHardcoreSoftcore.Location = new System.Drawing.Point(397, 111);
             this.btnColorHardcoreSoftcore.Margin = new System.Windows.Forms.Padding(0);
             this.btnColorHardcoreSoftcore.Name = "btnColorHardcoreSoftcore";
-            this.btnColorHardcoreSoftcore.Size = new System.Drawing.Size(74, 25);
+            this.btnColorHardcoreSoftcore.Size = new System.Drawing.Size(44, 22);
             this.btnColorHardcoreSoftcore.TabIndex = 38;
             this.btnColorHardcoreSoftcore.Text = "Color";
             this.btnColorHardcoreSoftcore.UseVisualStyleBackColor = true;
@@ -630,7 +634,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.checkBoxAttackerSelfDamage.AutoSize = true;
             this.checkBoxAttackerSelfDamage.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.checkBoxAttackerSelfDamage.Location = new System.Drawing.Point(259, 89);
+            this.checkBoxAttackerSelfDamage.Location = new System.Drawing.Point(264, 70);
             this.checkBoxAttackerSelfDamage.Name = "checkBoxAttackerSelfDamage";
             this.checkBoxAttackerSelfDamage.Size = new System.Drawing.Size(130, 17);
             this.checkBoxAttackerSelfDamage.TabIndex = 37;
@@ -641,7 +645,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.checkBoxMonsterGold.AutoSize = true;
             this.checkBoxMonsterGold.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.checkBoxMonsterGold.Location = new System.Drawing.Point(259, 57);
+            this.checkBoxMonsterGold.Location = new System.Drawing.Point(264, 47);
             this.checkBoxMonsterGold.Name = "checkBoxMonsterGold";
             this.checkBoxMonsterGold.Size = new System.Drawing.Size(75, 17);
             this.checkBoxMonsterGold.TabIndex = 36;
@@ -652,7 +656,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.checkBoxMagicFind.AutoSize = true;
             this.checkBoxMagicFind.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.checkBoxMagicFind.Location = new System.Drawing.Point(259, 24);
+            this.checkBoxMagicFind.Location = new System.Drawing.Point(264, 24);
             this.checkBoxMagicFind.Name = "checkBoxMagicFind";
             this.checkBoxMagicFind.Size = new System.Drawing.Size(78, 17);
             this.checkBoxMagicFind.TabIndex = 35;
@@ -661,10 +665,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetAttackerSelfDamageColor
             // 
-            this.btnSetAttackerSelfDamageColor.Location = new System.Drawing.Point(392, 84);
+            this.btnSetAttackerSelfDamageColor.Location = new System.Drawing.Point(397, 66);
             this.btnSetAttackerSelfDamageColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetAttackerSelfDamageColor.Name = "btnSetAttackerSelfDamageColor";
-            this.btnSetAttackerSelfDamageColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetAttackerSelfDamageColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetAttackerSelfDamageColor.TabIndex = 34;
             this.btnSetAttackerSelfDamageColor.Text = "Color";
             this.btnSetAttackerSelfDamageColor.UseVisualStyleBackColor = true;
@@ -672,10 +676,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetExtraGoldColor
             // 
-            this.btnSetExtraGoldColor.Location = new System.Drawing.Point(392, 52);
+            this.btnSetExtraGoldColor.Location = new System.Drawing.Point(397, 43);
             this.btnSetExtraGoldColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetExtraGoldColor.Name = "btnSetExtraGoldColor";
-            this.btnSetExtraGoldColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetExtraGoldColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetExtraGoldColor.TabIndex = 33;
             this.btnSetExtraGoldColor.Text = "Color";
             this.btnSetExtraGoldColor.UseVisualStyleBackColor = true;
@@ -683,10 +687,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetMFColor
             // 
-            this.btnSetMFColor.Location = new System.Drawing.Point(392, 19);
+            this.btnSetMFColor.Location = new System.Drawing.Point(397, 20);
             this.btnSetMFColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetMFColor.Name = "btnSetMFColor";
-            this.btnSetMFColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetMFColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetMFColor.TabIndex = 32;
             this.btnSetMFColor.Text = "Color";
             this.btnSetMFColor.UseVisualStyleBackColor = true;
@@ -694,10 +698,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetPlayersXColor
             // 
-            this.btnSetPlayersXColor.Location = new System.Drawing.Point(127, 272);
+            this.btnSetPlayersXColor.Location = new System.Drawing.Point(155, 203);
             this.btnSetPlayersXColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetPlayersXColor.Name = "btnSetPlayersXColor";
-            this.btnSetPlayersXColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetPlayersXColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetPlayersXColor.TabIndex = 29;
             this.btnSetPlayersXColor.Text = "Color";
             this.btnSetPlayersXColor.UseVisualStyleBackColor = true;
@@ -705,10 +709,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetGameCounterColor
             // 
-            this.btnSetGameCounterColor.Location = new System.Drawing.Point(127, 306);
+            this.btnSetGameCounterColor.Location = new System.Drawing.Point(155, 226);
             this.btnSetGameCounterColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetGameCounterColor.Name = "btnSetGameCounterColor";
-            this.btnSetGameCounterColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetGameCounterColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetGameCounterColor.TabIndex = 30;
             this.btnSetGameCounterColor.Text = "Color";
             this.btnSetGameCounterColor.UseVisualStyleBackColor = true;
@@ -718,7 +722,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.chkShowPlayersX.AutoSize = true;
             this.chkShowPlayersX.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkShowPlayersX.Location = new System.Drawing.Point(14, 277);
+            this.chkShowPlayersX.Location = new System.Drawing.Point(14, 207);
             this.chkShowPlayersX.Name = "chkShowPlayersX";
             this.chkShowPlayersX.Size = new System.Drawing.Size(74, 17);
             this.chkShowPlayersX.TabIndex = 31;
@@ -729,27 +733,27 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.chkShowGameCounter.AutoSize = true;
             this.chkShowGameCounter.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkShowGameCounter.Location = new System.Drawing.Point(14, 310);
+            this.chkShowGameCounter.Location = new System.Drawing.Point(14, 230);
             this.chkShowGameCounter.Name = "chkShowGameCounter";
-            this.chkShowGameCounter.Size = new System.Drawing.Size(76, 17);
+            this.chkShowGameCounter.Size = new System.Drawing.Size(106, 17);
             this.chkShowGameCounter.TabIndex = 28;
-            this.chkShowGameCounter.Text = "Run count";
+            this.chkShowGameCounter.Text = "Games launched";
             this.chkShowGameCounter.UseVisualStyleBackColor = true;
             // 
             // chkShowRealValues
             // 
             this.chkShowRealValues.AutoSize = true;
-            this.chkShowRealValues.Location = new System.Drawing.Point(207, 120);
+            this.chkShowRealValues.Location = new System.Drawing.Point(203, 92);
             this.chkShowRealValues.Name = "chkShowRealValues";
-            this.chkShowRealValues.Size = new System.Drawing.Size(170, 17);
+            this.chkShowRealValues.Size = new System.Drawing.Size(109, 17);
             this.chkShowRealValues.TabIndex = 27;
-            this.chkShowRealValues.Text = "show real values for FRW/IAS";
+            this.chkShowRealValues.Text = "calculated values";
             this.chkShowRealValues.UseVisualStyleBackColor = true;
             // 
             // chkHighContrastRunes
             // 
             this.chkHighContrastRunes.AutoSize = true;
-            this.chkHighContrastRunes.Location = new System.Drawing.Point(127, 341);
+            this.chkHighContrastRunes.Location = new System.Drawing.Point(82, 341);
             this.chkHighContrastRunes.Name = "chkHighContrastRunes";
             this.chkHighContrastRunes.Size = new System.Drawing.Size(89, 17);
             this.chkHighContrastRunes.TabIndex = 25;
@@ -768,9 +772,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetBackgroundColor
             // 
-            this.btnSetBackgroundColor.Location = new System.Drawing.Point(329, 295);
+            this.btnSetBackgroundColor.Location = new System.Drawing.Point(339, 308);
             this.btnSetBackgroundColor.Name = "btnSetBackgroundColor";
-            this.btnSetBackgroundColor.Size = new System.Drawing.Size(136, 23);
+            this.btnSetBackgroundColor.Size = new System.Drawing.Size(136, 22);
             this.btnSetBackgroundColor.TabIndex = 23;
             this.btnSetBackgroundColor.Text = "Background color";
             this.btnSetBackgroundColor.UseVisualStyleBackColor = true;
@@ -778,9 +782,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(329, 324);
+            this.button1.Location = new System.Drawing.Point(339, 336);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(136, 23);
+            this.button1.Size = new System.Drawing.Size(136, 22);
             this.button1.TabIndex = 8;
             this.button1.Text = "Reset to default colors";
             this.button1.UseVisualStyleBackColor = true;
@@ -788,10 +792,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetLevelColor
             // 
-            this.btnSetLevelColor.Location = new System.Drawing.Point(127, 177);
+            this.btnSetLevelColor.Location = new System.Drawing.Point(155, 134);
             this.btnSetLevelColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetLevelColor.Name = "btnSetLevelColor";
-            this.btnSetLevelColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetLevelColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetLevelColor.TabIndex = 7;
             this.btnSetLevelColor.Text = "Color";
             this.btnSetLevelColor.UseVisualStyleBackColor = true;
@@ -799,10 +803,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetDifficultyColor
             // 
-            this.btnSetDifficultyColor.Location = new System.Drawing.Point(127, 239);
+            this.btnSetDifficultyColor.Location = new System.Drawing.Point(155, 180);
             this.btnSetDifficultyColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetDifficultyColor.Name = "btnSetDifficultyColor";
-            this.btnSetDifficultyColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetDifficultyColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetDifficultyColor.TabIndex = 7;
             this.btnSetDifficultyColor.Text = "Color";
             this.btnSetDifficultyColor.UseVisualStyleBackColor = true;
@@ -810,54 +814,54 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetPoisonResColor
             // 
-            this.btnSetPoisonResColor.Location = new System.Drawing.Point(367, 208);
+            this.btnSetPoisonResColor.Location = new System.Drawing.Point(287, 157);
             this.btnSetPoisonResColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetPoisonResColor.Name = "btnSetPoisonResColor";
-            this.btnSetPoisonResColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetPoisonResColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetPoisonResColor.TabIndex = 7;
-            this.btnSetPoisonResColor.Text = "Poison color";
+            this.btnSetPoisonResColor.Text = "Pois.";
             this.btnSetPoisonResColor.UseVisualStyleBackColor = true;
             this.btnSetPoisonResColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // btnSetLightningResColor
             // 
-            this.btnSetLightningResColor.Location = new System.Drawing.Point(287, 208);
+            this.btnSetLightningResColor.Location = new System.Drawing.Point(243, 157);
             this.btnSetLightningResColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetLightningResColor.Name = "btnSetLightningResColor";
-            this.btnSetLightningResColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetLightningResColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetLightningResColor.TabIndex = 7;
-            this.btnSetLightningResColor.Text = "Light. color";
+            this.btnSetLightningResColor.Text = "Light.";
             this.btnSetLightningResColor.UseVisualStyleBackColor = true;
             this.btnSetLightningResColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // btnSetColdResColor
             // 
-            this.btnSetColdResColor.Location = new System.Drawing.Point(207, 208);
+            this.btnSetColdResColor.Location = new System.Drawing.Point(199, 157);
             this.btnSetColdResColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetColdResColor.Name = "btnSetColdResColor";
-            this.btnSetColdResColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetColdResColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetColdResColor.TabIndex = 7;
-            this.btnSetColdResColor.Text = "Cold color";
+            this.btnSetColdResColor.Text = "Cold";
             this.btnSetColdResColor.UseVisualStyleBackColor = true;
             this.btnSetColdResColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // btnSetFireResColor
             // 
-            this.btnSetFireResColor.Location = new System.Drawing.Point(127, 208);
+            this.btnSetFireResColor.Location = new System.Drawing.Point(155, 157);
             this.btnSetFireResColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetFireResColor.Name = "btnSetFireResColor";
-            this.btnSetFireResColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetFireResColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetFireResColor.TabIndex = 7;
-            this.btnSetFireResColor.Text = "Fire color";
+            this.btnSetFireResColor.Text = "Fire";
             this.btnSetFireResColor.UseVisualStyleBackColor = true;
             this.btnSetFireResColor.Click += new System.EventHandler(this.btnSelectColor);
             // 
             // btnSetDeathsColor
             // 
-            this.btnSetDeathsColor.Location = new System.Drawing.Point(127, 146);
+            this.btnSetDeathsColor.Location = new System.Drawing.Point(155, 111);
             this.btnSetDeathsColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetDeathsColor.Name = "btnSetDeathsColor";
-            this.btnSetDeathsColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetDeathsColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetDeathsColor.TabIndex = 7;
             this.btnSetDeathsColor.Text = "Color";
             this.btnSetDeathsColor.UseVisualStyleBackColor = true;
@@ -865,10 +869,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetAdvancedStatsColor
             // 
-            this.btnSetAdvancedStatsColor.Location = new System.Drawing.Point(127, 115);
+            this.btnSetAdvancedStatsColor.Location = new System.Drawing.Point(155, 88);
             this.btnSetAdvancedStatsColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetAdvancedStatsColor.Name = "btnSetAdvancedStatsColor";
-            this.btnSetAdvancedStatsColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetAdvancedStatsColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetAdvancedStatsColor.TabIndex = 7;
             this.btnSetAdvancedStatsColor.Text = "Color";
             this.btnSetAdvancedStatsColor.UseVisualStyleBackColor = true;
@@ -876,10 +880,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetBaseStatsColor
             // 
-            this.btnSetBaseStatsColor.Location = new System.Drawing.Point(127, 84);
+            this.btnSetBaseStatsColor.Location = new System.Drawing.Point(155, 66);
             this.btnSetBaseStatsColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetBaseStatsColor.Name = "btnSetBaseStatsColor";
-            this.btnSetBaseStatsColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetBaseStatsColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetBaseStatsColor.TabIndex = 7;
             this.btnSetBaseStatsColor.Text = "Color";
             this.btnSetBaseStatsColor.UseVisualStyleBackColor = true;
@@ -887,10 +891,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetGoldColor
             // 
-            this.btnSetGoldColor.Location = new System.Drawing.Point(127, 52);
+            this.btnSetGoldColor.Location = new System.Drawing.Point(155, 43);
             this.btnSetGoldColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetGoldColor.Name = "btnSetGoldColor";
-            this.btnSetGoldColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetGoldColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetGoldColor.TabIndex = 7;
             this.btnSetGoldColor.Text = "Color";
             this.btnSetGoldColor.UseVisualStyleBackColor = true;
@@ -898,10 +902,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // btnSetNameColor
             // 
-            this.btnSetNameColor.Location = new System.Drawing.Point(127, 19);
+            this.btnSetNameColor.Location = new System.Drawing.Point(155, 20);
             this.btnSetNameColor.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetNameColor.Name = "btnSetNameColor";
-            this.btnSetNameColor.Size = new System.Drawing.Size(74, 25);
+            this.btnSetNameColor.Size = new System.Drawing.Size(44, 22);
             this.btnSetNameColor.TabIndex = 7;
             this.btnSetNameColor.Text = "Color";
             this.btnSetNameColor.UseVisualStyleBackColor = true;
@@ -911,7 +915,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.chkDisplayDifficultyPercents.AutoSize = true;
             this.chkDisplayDifficultyPercents.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkDisplayDifficultyPercents.Location = new System.Drawing.Point(14, 244);
+            this.chkDisplayDifficultyPercents.Location = new System.Drawing.Point(14, 184);
             this.chkDisplayDifficultyPercents.Name = "chkDisplayDifficultyPercents";
             this.chkDisplayDifficultyPercents.Size = new System.Drawing.Size(77, 17);
             this.chkDisplayDifficultyPercents.TabIndex = 5;
@@ -922,7 +926,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.chkDisplayAdvancedStats.AutoSize = true;
             this.chkDisplayAdvancedStats.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkDisplayAdvancedStats.Location = new System.Drawing.Point(14, 120);
+            this.chkDisplayAdvancedStats.Location = new System.Drawing.Point(14, 92);
             this.chkDisplayAdvancedStats.Name = "chkDisplayAdvancedStats";
             this.chkDisplayAdvancedStats.Size = new System.Drawing.Size(105, 17);
             this.chkDisplayAdvancedStats.TabIndex = 5;
@@ -932,7 +936,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // chkDisplayLevel
             // 
             this.chkDisplayLevel.AutoSize = true;
-            this.chkDisplayLevel.Location = new System.Drawing.Point(14, 182);
+            this.chkDisplayLevel.Location = new System.Drawing.Point(14, 138);
             this.chkDisplayLevel.Name = "chkDisplayLevel";
             this.chkDisplayLevel.Size = new System.Drawing.Size(101, 17);
             this.chkDisplayLevel.TabIndex = 4;
@@ -942,7 +946,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // chkDisplayGold
             // 
             this.chkDisplayGold.AutoSize = true;
-            this.chkDisplayGold.Location = new System.Drawing.Point(14, 57);
+            this.chkDisplayGold.Location = new System.Drawing.Point(14, 47);
             this.chkDisplayGold.Name = "chkDisplayGold";
             this.chkDisplayGold.Size = new System.Drawing.Size(48, 17);
             this.chkDisplayGold.TabIndex = 4;
@@ -952,7 +956,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // chkDisplayResistances
             // 
             this.chkDisplayResistances.AutoSize = true;
-            this.chkDisplayResistances.Location = new System.Drawing.Point(14, 213);
+            this.chkDisplayResistances.Location = new System.Drawing.Point(14, 161);
             this.chkDisplayResistances.Name = "chkDisplayResistances";
             this.chkDisplayResistances.Size = new System.Drawing.Size(84, 17);
             this.chkDisplayResistances.TabIndex = 3;
@@ -962,7 +966,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // chkDisplayBaseStats
             // 
             this.chkDisplayBaseStats.AutoSize = true;
-            this.chkDisplayBaseStats.Location = new System.Drawing.Point(14, 89);
+            this.chkDisplayBaseStats.Location = new System.Drawing.Point(14, 70);
             this.chkDisplayBaseStats.Name = "chkDisplayBaseStats";
             this.chkDisplayBaseStats.Size = new System.Drawing.Size(107, 17);
             this.chkDisplayBaseStats.TabIndex = 2;
@@ -972,7 +976,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // chkDisplayDeathCounter
             // 
             this.chkDisplayDeathCounter.AutoSize = true;
-            this.chkDisplayDeathCounter.Location = new System.Drawing.Point(14, 151);
+            this.chkDisplayDeathCounter.Location = new System.Drawing.Point(14, 115);
             this.chkDisplayDeathCounter.Name = "chkDisplayDeathCounter";
             this.chkDisplayDeathCounter.Size = new System.Drawing.Size(60, 17);
             this.chkDisplayDeathCounter.TabIndex = 1;
@@ -1210,6 +1214,27 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // chkDisplayCharCount
+            // 
+            this.chkDisplayCharCount.AutoSize = true;
+            this.chkDisplayCharCount.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.chkDisplayCharCount.Location = new System.Drawing.Point(14, 253);
+            this.chkDisplayCharCount.Name = "chkDisplayCharCount";
+            this.chkDisplayCharCount.Size = new System.Drawing.Size(116, 17);
+            this.chkDisplayCharCount.TabIndex = 43;
+            this.chkDisplayCharCount.Text = "Characters created";
+            this.chkDisplayCharCount.UseVisualStyleBackColor = true;
+            // 
+            // btnColorCharCount
+            // 
+            this.btnColorCharCount.Location = new System.Drawing.Point(155, 249);
+            this.btnColorCharCount.Margin = new System.Windows.Forms.Padding(0);
+            this.btnColorCharCount.Name = "btnColorCharCount";
+            this.btnColorCharCount.Size = new System.Drawing.Size(44, 22);
+            this.btnColorCharCount.TabIndex = 44;
+            this.btnColorCharCount.Text = "Color";
+            this.btnColorCharCount.UseVisualStyleBackColor = true;
+            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1349,5 +1374,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private System.Windows.Forms.CheckBox chkDisplayHardcoreSoftcore;
         private System.Windows.Forms.Button btnColorHardcoreSoftcore;
         private System.Windows.Forms.Button btnColorAll;
+        private System.Windows.Forms.Button btnColorCharCount;
+        private System.Windows.Forms.CheckBox chkDisplayCharCount;
     }
 }

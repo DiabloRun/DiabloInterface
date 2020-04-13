@@ -58,7 +58,8 @@ namespace DiabloInterface.Test.Business.Services
                 1, // players x
                 new List<int>(), // item ids
                 quests,
-                0 // game counter
+                0, // game counter
+                0
             ));
             Assert.AreEqual(false, split.IsReached);
 
@@ -71,7 +72,8 @@ namespace DiabloInterface.Test.Business.Services
                 1, // players x
                 new List<int>(), // item ids
                 quests,
-                0 // game counter
+                0, // game counter
+                0
             ));
             Assert.AreEqual(false, split.IsReached);
         }
@@ -185,7 +187,8 @@ namespace DiabloInterface.Test.Business.Services
                 1, // players x
                 itemsIds,
                 quests,
-                0 // game counter
+                0, // game counter
+                0
             ));
             Assert.AreEqual(true, splitOnGameStart.IsReached);
 
@@ -199,7 +202,8 @@ namespace DiabloInterface.Test.Business.Services
                 1, // players x
                 itemsIds,
                 quests,
-                0 // game counter
+                0, // game counter
+                0
             ));
             Assert.AreEqual(false, splitOnCharLevel10.IsReached);
 
@@ -212,7 +216,8 @@ namespace DiabloInterface.Test.Business.Services
                 1, // players x
                 itemsIds,
                 quests,
-                0 // game counter
+                0, // game counter
+                0
             ));
             Assert.AreEqual(true, splitOnCharLevel10.IsReached);
 
@@ -226,7 +231,8 @@ namespace DiabloInterface.Test.Business.Services
                 1, // players x
                 itemsIds,
                 quests,
-                0 // game counter
+                0, // game counter
+                0
             ));
             Assert.AreEqual(true, splitOnArea1.IsReached);
 
@@ -242,7 +248,8 @@ namespace DiabloInterface.Test.Business.Services
                 1, // players x
                 itemsIds,
                 quests,
-                0 // game counter
+                0, // game counter
+                0
             ));
             Assert.AreEqual(true, splitOnItem1.IsReached);
             Assert.AreEqual(true, splitOnGem1.IsReached);
@@ -260,7 +267,8 @@ namespace DiabloInterface.Test.Business.Services
                 1, // players x
                 itemsIds,
                 quests,
-                0 // game counter
+                0, // game counter
+                0
             ));
             Assert.AreEqual(true, splitOnQuest81.IsReached);
 
@@ -277,7 +285,8 @@ namespace DiabloInterface.Test.Business.Services
                 1, // players x
                 itemsIds,
                 quests,
-                0 // game counter
+                0, // game counter
+                0
             ));
             Assert.AreEqual(true, splitOnGameClear.IsReached);
 
@@ -294,7 +303,8 @@ namespace DiabloInterface.Test.Business.Services
                 1, // players x
                 itemsIds,
                 quests,
-                0 // game counter
+                0, // game counter
+                0
             ));
             Assert.AreEqual(false, splitOnGameClearAllDifficulties.IsReached);
             hellQuests.Clear();
@@ -308,7 +318,8 @@ namespace DiabloInterface.Test.Business.Services
                 1, // players x
                 itemsIds,
                 quests,
-                0 // game counter
+                0, // game counter
+                0
             ));
             Assert.AreEqual(true, splitOnGameClearAllDifficulties.IsReached);
         }

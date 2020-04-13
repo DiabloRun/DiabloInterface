@@ -44,6 +44,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Settings
         public bool DisplayRealFrwIas { get; set; } = false;
         public bool DisplayPlayersX { get; set; } = false;
         public bool DisplayGameCounter { get; set; } = false;
+        public bool DisplayCharCounter { get; set; } = false;
         public bool DisplayMagicFind { get; set; } = false;
         public bool DisplayMonsterGold { get; set; } = false;
         public bool DisplayAttackerSelfDamage { get; set; } = false;
@@ -56,6 +57,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Settings
         public Color ColorDeaths { get; set; } = Color.Snow;
         public Color ColorPlayersX { get; set; } = Color.Snow;
         public Color ColorGameCounter { get; set; } = Color.Snow;
+        public Color ColorCharCounter { get; set; } = Color.Snow;
         public Color ColorLevel { get; set; } = Color.Snow;
         public Color ColorDifficultyPercentages { get; set; } = Color.Snow;
         public Color ColorGold { get; set; } = Color.Gold;

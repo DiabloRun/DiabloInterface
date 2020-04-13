@@ -48,7 +48,8 @@ namespace Zutatensuppe.D2Reader
             int currentPlayersX,
             List<int> itemIds,
             Quests quests,
-            uint gameCounter
+            uint gameCounter,
+            uint charCounter
         ) {
             Character = character;
             ItemStrings = itemStrings;
@@ -58,6 +59,7 @@ namespace Zutatensuppe.D2Reader
             ItemIds = itemIds;
             Quests = quests;
             GameCounter = gameCounter;
+            CharCounter = charCounter;
         }
 
         public Character Character { get; }
@@ -67,7 +69,8 @@ namespace Zutatensuppe.D2Reader
         public GameDifficulty CurrentDifficulty { get; }
         public List<int> ItemIds { get; }
         public Quests Quests { get; }
-        public uint GameCounter { get;  }
+        public uint GameCounter { get; }
+        public uint CharCounter { get; }
     }
 
     public class ProcessDescription
@@ -102,6 +105,8 @@ namespace Zutatensuppe.D2Reader
 
         private uint lastGameId = 0;
         private uint gameCount = 0;
+
+        private uint charCount = 0;
 
         public D2DataReader(
             IGameMemoryTableFactory memoryTableFactory,
@@ -501,7 +506,8 @@ namespace Zutatensuppe.D2Reader
                 currentPlayersX,
                 inventoryItems,
                 gameQuests,
-                gameCount
+                gameCount,
+                charCount
             ));
         }
 
@@ -574,6 +580,7 @@ namespace Zutatensuppe.D2Reader
                 if (Character.IsNewChar(gameInfo.Player, unitReader, inventoryReader, skillReader))
                 {
                     Logger.Info($"A new chararacter was created: {character.Name}");
+                    charCount++;
                     character.Deaths = 0;
                     character.IsAutosplitChar = true;
                     ActiveCharacterTimestamp = DateTime.Now;
