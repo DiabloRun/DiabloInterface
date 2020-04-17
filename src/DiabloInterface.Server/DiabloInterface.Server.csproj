@@ -48,7 +48,7 @@
     <Compile Include="Handlers\AllItemsRequestHandler.cs" />
     <Compile Include="Handlers\CharacterRequestHandler.cs" />
     <Compile Include="Handlers\ItemRequestHandler.cs" />
-    <Compile Include="Handlers\AllQuestsRequestHandler.cs" />
+    <Compile Include="Handlers\CompletedQuestsRequestHandler.cs" />
     <Compile Include="Handlers\QuestRequestHandler.cs" />
     <Compile Include="Handlers\GameRequestHandler.cs" />
     <Compile Include="Handlers\VersionRequestHandler.cs" />

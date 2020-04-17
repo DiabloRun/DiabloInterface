@@ -52,7 +52,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             pipeServer.AddRequestHandler(@"items", () => new AllItemsRequestHandler(dataReader));
             pipeServer.AddRequestHandler(@"items/(\w+)", () => new ItemRequestHandler(dataReader));
             pipeServer.AddRequestHandler(@"characters/(current|active)", () => new CharacterRequestHandler(dataReader));
-            pipeServer.AddRequestHandler(@"quests", () => new AllQuestsRequestHandler(dataReader));
+            pipeServer.AddRequestHandler(@"quests/completed", () => new CompletedQuestsRequestHandler(dataReader));
             pipeServer.AddRequestHandler(@"quests/(\d+)", () => new QuestRequestHandler(dataReader));
             pipeServer.Start();
             Servers.Add(pipeName, pipeServer);
