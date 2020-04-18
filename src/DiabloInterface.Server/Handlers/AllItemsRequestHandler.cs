@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Zutatensuppe.D2Reader;
+using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct.Item;
 
 namespace Zutatensuppe.DiabloInterface.Server.Handlers

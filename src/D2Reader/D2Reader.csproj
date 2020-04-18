@@ -49,6 +49,7 @@
     <Compile Include="Models\CharacterClass.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\Item.cs" />
+    <Compile Include="Models\ItemInfo.cs" />
     <Compile Include="Models\Quests.cs" />
     <Compile Include="Models\Rune.cs" />
     <Compile Include="Models\ResistancePenalty.cs" />

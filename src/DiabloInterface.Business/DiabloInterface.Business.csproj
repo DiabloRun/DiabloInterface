@@ -91,7 +91,7 @@
       <Name>DiabloInterface.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\DiabloInterface.Server\DiabloInterface.Server.csproj">
-      <Project>{59944B50-1A5E-4E02-B9BE-0F9B499770DF}</Project>
+      <Project>{59944b50-1a5e-4e02-b9be-0f9b499770df}</Project>
       <Name>DiabloInterface.Server</Name>
     </ProjectReference>
   </ItemGroup>

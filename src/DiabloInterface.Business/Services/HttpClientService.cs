@@ -11,8 +11,6 @@ using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.DiabloInterface.Business.Settings;
 using Zutatensuppe.DiabloInterface.Core.Logging;
-using Zutatensuppe.DiabloInterface.Server;
-using Zutatensuppe.DiabloInterface.Server.Handlers;
 
 namespace Zutatensuppe.DiabloInterface.Business.Services
 {
