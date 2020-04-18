@@ -46,7 +46,7 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
             return Items;
         }
 
-        private ItemInfo(
+        public ItemInfo(
             Item item,
             D2Unit owner,
             UnitReader unitReader,

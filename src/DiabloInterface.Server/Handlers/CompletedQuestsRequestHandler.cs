@@ -19,9 +19,9 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
         {
             var payload = new
             {
-                Normal = CompletedQuestIdsByDifficulty(GameDifficulty.Normal),
-                Nightmare = CompletedQuestIdsByDifficulty(GameDifficulty.Nightmare),
-                Hell = CompletedQuestIdsByDifficulty(GameDifficulty.Hell)
+                Normal = dataReader.Quests.CompletedQuestIdsByDifficulty(GameDifficulty.Normal),
+                Nightmare = dataReader.Quests.CompletedQuestIdsByDifficulty(GameDifficulty.Nightmare),
+                Hell = dataReader.Quests.CompletedQuestIdsByDifficulty(GameDifficulty.Hell)
             };
 
             return new Response()
@@ -29,25 +29,6 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
                 Status = payload.Normal == null ? ResponseStatus.NotFound : ResponseStatus.Success,
                 Payload = payload
             };
-        }
-
-        private List<QuestId> CompletedQuestIdsByDifficulty(GameDifficulty difficulty)
-        {
-            List<QuestId> completedIds = new List<QuestId>();
-            List<Quest> quests = dataReader.Quests.ByDifficulty(difficulty);
-
-            if (quests == null)
-                return null;
-
-            foreach (Quest quest in quests)
-            {
-                if (quest.IsCompleted)
-                {
-                    completedIds.Add(quest.Id);
-                }
-            }
-
-            return completedIds;
         }
     }
 }

@@ -27,6 +27,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private readonly ISettingsService settingsService;
         private readonly ServerService serverService;
         private readonly KeyService keyService;
+        private readonly HttpClientService httpClientService;
         AutoSplitTable autoSplitTable;
 
         bool dirty;
@@ -34,13 +35,15 @@ namespace Zutatensuppe.DiabloInterface.Gui
         public SettingsWindow(
             ISettingsService settingsService,
             ServerService serverService,
-            KeyService keyService
+            KeyService keyService,
+            HttpClientService httpClientService
         ) {
             Logger.Info("Creating settings window.");
 
             this.settingsService = settingsService;
             this.serverService = serverService;
             this.keyService = keyService;
+            this.httpClientService = httpClientService;
 
             RegisterServiceEventHandlers();
             InitializeComponent();
@@ -117,12 +120,16 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     || settings.ColorGameCounter != btnSetGameCounterColor.ForeColor
                     || settings.ColorCharCounter != btnColorCharCount.ForeColor
                     || settings.ColorMagicFind != btnSetMFColor.ForeColor
-                    || settings.ColorMonsterGold != btnSetExtraGoldColor.ForeColor 
+                    || settings.ColorMonsterGold != btnSetExtraGoldColor.ForeColor
                     || settings.ColorAttackerSelfDamage != btnSetAttackerSelfDamageColor.ForeColor
                     || settings.ColorHardcoreSoftcore != btnColorHardcoreSoftcore.ForeColor
                     || settings.ColorExpansionClassic != btnColorExpansionClassic.ForeColor
 
-                    || settings.ColorBackground != btnSetBackgroundColor.BackColor;
+                    || settings.ColorBackground != btnSetBackgroundColor.BackColor
+
+                    || settings.HttpClientUrl != textBoxHttpClientUrl.Text
+                    || settings.HttpClientHeaders != txtHttpClientHeaders.Text
+                    || settings.HttpClientEnabled != chkHttpClientEnabled.Checked;
             }
         }
 
@@ -152,6 +159,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             settingsService.SettingsChanged += SettingsServiceSettingsChanged;
             settingsService.SettingsCollectionChanged += SettingsServiceOnSettingsCollectionChanged;
             serverService.StatusChanged += ServerServiceStatusChanged;
+            httpClientService.ResponseReceived += HttpClientResponseReceived;
         }
 
         void UnregisterServiceEventHandlers()
@@ -196,6 +204,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
             return txt;
         }
 
+        void HttpClientResponseReceived(object sender, string content)
+        {
+            txtHttpClientStatus.Text = content;
+        }
+
         void InitializeAutoSplitTable()
         {
             autoSplitTable = new AutoSplitTable(settingsService) { Dock = DockStyle.Fill };
@@ -228,6 +241,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             CheckUpdatesCheckBox.Checked = settings.CheckUpdates;
             textBoxPipeName.Text = settings.PipeName;
             chkPipeServerEnabled.Checked = settings.PipeServerEnabled;
+            textBoxHttpClientUrl.Text = settings.HttpClientUrl;
+            chkHttpClientEnabled.Checked = settings.HttpClientEnabled;
+            txtHttpClientHeaders.Text = settings.HttpClientHeaders;
             chkDisplayName.Checked = settings.DisplayName;
             chkDisplayGold.Checked = settings.DisplayGold;
             chkDisplayDeathCounter.Checked = settings.DisplayDeathCounter;
@@ -304,6 +320,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             settings.CheckUpdates = CheckUpdatesCheckBox.Checked;
             settings.PipeName = textBoxPipeName.Text;
             settings.PipeServerEnabled = chkPipeServerEnabled.Checked;
+            settings.HttpClientUrl = textBoxHttpClientUrl.Text;
+            settings.HttpClientEnabled = chkHttpClientEnabled.Checked;
+            settings.HttpClientHeaders = txtHttpClientHeaders.Text;
             settings.DoAutosplit = EnableAutosplitCheckBox.Checked;
             settings.AutosplitHotkey = autoSplitHotkeyControl.Hotkey;
             settings.FontSize = (int)fontSizeNumeric.Value;
@@ -706,6 +725,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
         void AutoSplitHotkeyControlOnHotkeyChanged(object sender, Keys e)
         {
             autoSplitHotkeyControl.ForeColor = e == Keys.None ? Color.Red : SystemColors.WindowText;
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

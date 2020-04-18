@@ -87,12 +87,14 @@ namespace Zutatensuppe.DiabloInterface
                 var keyService = new KeyService();
                 var autoSplitService = new AutoSplitService(settingsService, gameService, keyService);
                 var serverService = new ServerService(gameService, settingsService);
+                var httpClientService = new HttpClientService(gameService, settingsService);
                 var mainWindow = new MainWindow(
                     settingsService,
                     gameService,
                     autoSplitService,
                     keyService,
-                    serverService
+                    serverService,
+                    httpClientService
                 );
                 Application.Run(mainWindow);
 

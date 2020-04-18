@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business.Services
+namespace Zutatensuppe.DiabloInterface.Business.Services
 {
     using System;
     using System.Collections.Generic;
@@ -91,6 +91,7 @@
             }
 
             Logger.Info($"Saving settings at: \"{path}\".");
+            Logger.Info(settings.HttpClientUrl);
 
             using (var writer = new JsonSettingsWriter(path))
             {

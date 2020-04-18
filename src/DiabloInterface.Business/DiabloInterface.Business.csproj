@@ -64,6 +64,7 @@
     <Compile Include="Services\ISettingsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\KeyService.cs" />
+    <Compile Include="Services\HttpClientService.cs" />
     <Compile Include="Services\ServerService.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Settings\ApplicationSettings.cs" />
