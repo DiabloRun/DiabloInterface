@@ -726,10 +726,5 @@ namespace Zutatensuppe.DiabloInterface.Gui
         {
             autoSplitHotkeyControl.ForeColor = e == Keys.None ? Color.Red : SystemColors.WindowText;
         }
-
-        private void label6_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

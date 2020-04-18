@@ -1102,7 +1102,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.label6.Size = new System.Drawing.Size(50, 13);
             this.label6.TabIndex = 7;
             this.label6.Text = "Headers:";
-            this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
             // txtHttpClientStatus
             // 
