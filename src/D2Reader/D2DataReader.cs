@@ -75,6 +75,7 @@ namespace Zutatensuppe.D2Reader
         private uint charCount = 0;
 
         public Quests Quests { get; private set; } = new Quests();
+        public Game Game { get; private set; }
         public GameDifficulty Difficulty { get; private set; }
 
         public D2DataReader(
@@ -436,7 +437,7 @@ namespace Zutatensuppe.D2Reader
             CurrentCharacter = ReadCharacterData(gameInfo);
 
             Quests = ReadQuests(gameInfo);
-            var Game = ReadGameData(gameInfo);
+            Game = ReadGameData(gameInfo);
             Difficulty = Game.Difficulty;
             OnDataRead(new DataReadEventArgs(
                 CurrentCharacter,

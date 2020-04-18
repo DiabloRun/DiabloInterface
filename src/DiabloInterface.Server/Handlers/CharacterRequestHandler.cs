@@ -51,6 +51,11 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
                 IsCurrentCharacter = character == dataReader.CurrentCharacter,
                 character.Name,
                 character.Created,
+                character.CharClass,
+                character.IsHardcore,
+                character.IsExpansion,
+                character.IsDead,
+                character.Deaths,
                 character.Level,
                 character.Experience,
                 Stats = new
@@ -68,7 +73,12 @@ namespace Zutatensuppe.DiabloInterface.Server.Handlers
                     Poison = character.PoisonResist
                 },
                 character.Gold,
-                character.GoldStash
+                character.GoldStash,
+                character.FasterCastRate,
+                character.FasterHitRecovery,
+                character.FasterRunWalk,
+                character.IncreasedAttackSpeed,
+                character.MagicFind
             };
         }
     }
