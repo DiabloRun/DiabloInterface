@@ -15,11 +15,13 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Dictionary<string, DiabloInterfaceServer> Servers = new Dictionary<string, DiabloInterfaceServer>();
+        private Dictionary<string, DiabloInterfaceServer> Servers = new Dictionary<string, DiabloInterfaceServer>();
 
         private GameService gameService;
 
         public event EventHandler<ServerStatusEventArgs> StatusChanged;
+
+        public Dictionary<string, bool> ServerStatuses => Servers.ToDictionary(s => s.Key, s => s.Value.Running);
 
         public ServerService(GameService gameService, SettingsService settingsService)
         {
@@ -56,7 +58,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             pipeServer.Start();
             Servers.Add(pipeName, pipeServer);
 
-            StatusChanged?.Invoke(this, new ServerStatusEventArgs(Servers));
+            StatusChanged?.Invoke(this, new ServerStatusEventArgs(ServerStatuses));
         }
 
         public void Stop()
@@ -68,17 +70,17 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             }
             Servers.Clear();
 
-            StatusChanged?.Invoke(this, new ServerStatusEventArgs(Servers));
+            StatusChanged?.Invoke(this, new ServerStatusEventArgs(ServerStatuses));
         }
     }
 
     public class ServerStatusEventArgs : EventArgs
     {
-        public ServerStatusEventArgs(Dictionary<string, DiabloInterfaceServer> servers)
+        public ServerStatusEventArgs(Dictionary<string, bool> serverStatuses)
         {
-            Servers = servers;
+            ServerStatuses = serverStatuses;
         }
 
-        public Dictionary<string, DiabloInterfaceServer> Servers { get; }
+        public Dictionary<string, bool> ServerStatuses { get; }
     }
 }

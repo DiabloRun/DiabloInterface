@@ -16,7 +16,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Gui.Controls;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
-    using Zutatensuppe.DiabloInterface.Server;
 
     public partial class SettingsWindow : WsExCompositedForm
     {
@@ -191,15 +190,15 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 return;
             }
 
-            txtPipeServer.Text = ServerStatusText(e.Servers);
+            txtPipeServer.Text = ServerStatusText(e.ServerStatuses);
         }
 
-        string ServerStatusText(Dictionary<string, DiabloInterfaceServer> servers)
+        string ServerStatusText(Dictionary<string, bool> serverStatuses)
         {
             var txt = "";
-            foreach (KeyValuePair<string, DiabloInterfaceServer> srv in servers)
+            foreach (KeyValuePair<string, bool> s in serverStatuses)
             {
-                txt += srv.Key + ": " + (srv.Value.Running ? "RUNNING" : "NOT RUNNING") + "\n";
+                txt += s.Key + ": " + (s.Value ? "RUNNING" : "NOT RUNNING") + "\n";
             }
             return txt;
         }
@@ -288,7 +287,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
             SetBackgroundColor(settings.ColorBackground);
 
-            txtPipeServer.Text = ServerStatusText(serverService.Servers);
+            txtPipeServer.Text = ServerStatusText(serverService.ServerStatuses);
         }
 
         void MarkClean()
@@ -725,6 +724,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
         void AutoSplitHotkeyControlOnHotkeyChanged(object sender, Keys e)
         {
             autoSplitHotkeyControl.ForeColor = e == Keys.None ? Color.Red : SystemColors.WindowText;
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

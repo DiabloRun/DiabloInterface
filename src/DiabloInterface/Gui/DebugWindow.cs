@@ -12,11 +12,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
     using Zutatensuppe.D2Reader.Struct.Item;
     using Zutatensuppe.DiabloInterface.Business.AutoSplits;
     using Zutatensuppe.DiabloInterface.Business.Services;
-    using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Gui.Controls;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
-    using Zutatensuppe.DiabloInterface.Server;
 
     public partial class DebugWindow : WsExCompositedForm
     {
@@ -81,9 +79,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
 
             txtPipeServer.Text = "";
-            foreach (KeyValuePair<string, DiabloInterfaceServer> s in e.Servers)
+            foreach (KeyValuePair<string, bool> s in e.ServerStatuses)
             {
-                txtPipeServer.Text += s.Key + ": " + (s.Value.Running ? "RUNNING" :"NOT RUNNING") + "\n";
+                txtPipeServer.Text += s.Key + ": " + (s.Value ? "RUNNING" :"NOT RUNNING") + "\n";
             }
         }
 
