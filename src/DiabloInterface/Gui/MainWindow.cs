@@ -23,6 +23,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private readonly IAutoSplitService autoSplitService;
         private readonly KeyService keyService;
         private readonly ServerService serverService;
+        private readonly HttpClientService httpClientService;
 
         Form debugWindow;
         AbstractLayout currentLayout;
@@ -32,7 +33,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             IGameService gameService,
             IAutoSplitService autoSplitService,
             KeyService keyService,
-            ServerService serverService
+            ServerService serverService,
+            HttpClientService httpClientService
         ) {
             Logger.Info("Creating main window.");
             this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
@@ -40,6 +42,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.autoSplitService = autoSplitService ?? throw new ArgumentNullException(nameof(autoSplitService));
             this.keyService = keyService ?? throw new ArgumentNullException(nameof(keyService));
             this.serverService = serverService ?? throw new ArgumentNullException(nameof(serverService));
+            this.httpClientService = httpClientService ?? throw new ArgumentNullException(nameof(httpClientService));
             
             RegisterServiceEventHandlers();
             InitializeComponent();
@@ -165,7 +168,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         void SettingsMenuItemOnClick(object sender, EventArgs e)
         {
-            using (var settingsWindow = new SettingsWindow(settingsService, serverService, keyService))
+            using (var settingsWindow = new SettingsWindow(settingsService, serverService, keyService, httpClientService))
             {
                 settingsWindow.ShowDialog();
             }

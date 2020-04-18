@@ -67,6 +67,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.label1 = new System.Windows.Forms.Label();
             this.comboBoxLayout = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnColorCharCount = new System.Windows.Forms.Button();
+            this.chkDisplayCharCount = new System.Windows.Forms.CheckBox();
             this.btnColorAll = new System.Windows.Forms.Button();
             this.chkDisplayExpansionClassic = new System.Windows.Forms.CheckBox();
             this.btnColorExpansionClassic = new System.Windows.Forms.Button();
@@ -110,6 +112,14 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.runeSettingsPage = new Zutatensuppe.DiabloInterface.Gui.Controls.RuneSettingsPage();
             this.tabPageSettingsAutosplit = new System.Windows.Forms.TabPage();
             this.tabPageSettingsMisc = new System.Windows.Forms.TabPage();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.txtHttpClientHeaders = new System.Windows.Forms.RichTextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtHttpClientStatus = new System.Windows.Forms.RichTextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.chkHttpClientEnabled = new System.Windows.Forms.CheckBox();
+            this.textBoxHttpClientUrl = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.groupBoxPipeServer = new System.Windows.Forms.GroupBox();
             this.txtPipeServer = new System.Windows.Forms.RichTextBox();
             this.lblPipeServerStatus = new System.Windows.Forms.Label();
@@ -126,8 +136,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSaveAs = new System.Windows.Forms.Button();
             this.btnUndo = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
-            this.chkDisplayCharCount = new System.Windows.Forms.CheckBox();
-            this.btnColorCharCount = new System.Windows.Forms.Button();
             this.FontGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
@@ -145,6 +153,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPageSettingsRunes.SuspendLayout();
             this.tabPageSettingsAutosplit.SuspendLayout();
             this.tabPageSettingsMisc.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.groupBoxPipeServer.SuspendLayout();
             this.DataGroup.SuspendLayout();
             this.UpdateGroup.SuspendLayout();
@@ -575,6 +584,28 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.groupBox1.TabIndex = 18;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Display";
+            // 
+            // btnColorCharCount
+            // 
+            this.btnColorCharCount.Location = new System.Drawing.Point(155, 249);
+            this.btnColorCharCount.Margin = new System.Windows.Forms.Padding(0);
+            this.btnColorCharCount.Name = "btnColorCharCount";
+            this.btnColorCharCount.Size = new System.Drawing.Size(44, 22);
+            this.btnColorCharCount.TabIndex = 44;
+            this.btnColorCharCount.Text = "Color";
+            this.btnColorCharCount.UseVisualStyleBackColor = true;
+            this.btnColorCharCount.Click += new System.EventHandler(this.btnSelectColor);
+            // 
+            // chkDisplayCharCount
+            // 
+            this.chkDisplayCharCount.AutoSize = true;
+            this.chkDisplayCharCount.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.chkDisplayCharCount.Location = new System.Drawing.Point(14, 253);
+            this.chkDisplayCharCount.Name = "chkDisplayCharCount";
+            this.chkDisplayCharCount.Size = new System.Drawing.Size(116, 17);
+            this.chkDisplayCharCount.TabIndex = 43;
+            this.chkDisplayCharCount.Text = "Characters created";
+            this.chkDisplayCharCount.UseVisualStyleBackColor = true;
             // 
             // btnColorAll
             // 
@@ -1025,6 +1056,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             // tabPageSettingsMisc
             // 
+            this.tabPageSettingsMisc.Controls.Add(this.groupBox3);
             this.tabPageSettingsMisc.Controls.Add(this.groupBoxPipeServer);
             this.tabPageSettingsMisc.Controls.Add(this.DataGroup);
             this.tabPageSettingsMisc.Controls.Add(this.UpdateGroup);
@@ -1035,6 +1067,88 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPageSettingsMisc.TabIndex = 3;
             this.tabPageSettingsMisc.Text = "Misc";
             this.tabPageSettingsMisc.UseVisualStyleBackColor = true;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.txtHttpClientHeaders);
+            this.groupBox3.Controls.Add(this.label6);
+            this.groupBox3.Controls.Add(this.txtHttpClientStatus);
+            this.groupBox3.Controls.Add(this.label4);
+            this.groupBox3.Controls.Add(this.chkHttpClientEnabled);
+            this.groupBox3.Controls.Add(this.textBoxHttpClientUrl);
+            this.groupBox3.Controls.Add(this.label5);
+            this.groupBox3.Location = new System.Drawing.Point(5, 277);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox3.Size = new System.Drawing.Size(361, 194);
+            this.groupBox3.TabIndex = 20;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "HTTP Client";
+            // 
+            // txtHttpClientHeaders
+            // 
+            this.txtHttpClientHeaders.Location = new System.Drawing.Point(68, 80);
+            this.txtHttpClientHeaders.Name = "txtHttpClientHeaders";
+            this.txtHttpClientHeaders.Size = new System.Drawing.Size(288, 69);
+            this.txtHttpClientHeaders.TabIndex = 8;
+            this.txtHttpClientHeaders.Text = "";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(5, 80);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(50, 13);
+            this.label6.TabIndex = 7;
+            this.label6.Text = "Headers:";
+            this.label6.Click += new System.EventHandler(this.label6_Click);
+            // 
+            // txtHttpClientStatus
+            // 
+            this.txtHttpClientStatus.Location = new System.Drawing.Point(68, 155);
+            this.txtHttpClientStatus.Name = "txtHttpClientStatus";
+            this.txtHttpClientStatus.ReadOnly = true;
+            this.txtHttpClientStatus.Size = new System.Drawing.Size(288, 34);
+            this.txtHttpClientStatus.TabIndex = 6;
+            this.txtHttpClientStatus.Text = "";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(5, 155);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(40, 13);
+            this.label4.TabIndex = 5;
+            this.label4.Text = "Status:";
+            // 
+            // chkHttpClientEnabled
+            // 
+            this.chkHttpClientEnabled.AutoSize = true;
+            this.chkHttpClientEnabled.Location = new System.Drawing.Point(68, 53);
+            this.chkHttpClientEnabled.Name = "chkHttpClientEnabled";
+            this.chkHttpClientEnabled.Size = new System.Drawing.Size(59, 17);
+            this.chkHttpClientEnabled.TabIndex = 3;
+            this.chkHttpClientEnabled.Text = "Enable";
+            this.chkHttpClientEnabled.UseVisualStyleBackColor = true;
+            // 
+            // textBoxHttpClientUrl
+            // 
+            this.textBoxHttpClientUrl.Location = new System.Drawing.Point(68, 24);
+            this.textBoxHttpClientUrl.Margin = new System.Windows.Forms.Padding(2);
+            this.textBoxHttpClientUrl.Name = "textBoxHttpClientUrl";
+            this.textBoxHttpClientUrl.Size = new System.Drawing.Size(288, 20);
+            this.textBoxHttpClientUrl.TabIndex = 1;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(3, 24);
+            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(32, 13);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "URL:";
             // 
             // groupBoxPipeServer
             // 
@@ -1214,28 +1328,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // chkDisplayCharCount
-            // 
-            this.chkDisplayCharCount.AutoSize = true;
-            this.chkDisplayCharCount.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.chkDisplayCharCount.Location = new System.Drawing.Point(14, 253);
-            this.chkDisplayCharCount.Name = "chkDisplayCharCount";
-            this.chkDisplayCharCount.Size = new System.Drawing.Size(116, 17);
-            this.chkDisplayCharCount.TabIndex = 43;
-            this.chkDisplayCharCount.Text = "Characters created";
-            this.chkDisplayCharCount.UseVisualStyleBackColor = true;
-            // 
-            // btnColorCharCount
-            // 
-            this.btnColorCharCount.Location = new System.Drawing.Point(155, 249);
-            this.btnColorCharCount.Margin = new System.Windows.Forms.Padding(0);
-            this.btnColorCharCount.Name = "btnColorCharCount";
-            this.btnColorCharCount.Size = new System.Drawing.Size(44, 22);
-            this.btnColorCharCount.TabIndex = 44;
-            this.btnColorCharCount.Text = "Color";
-            this.btnColorCharCount.UseVisualStyleBackColor = true;
-            this.btnColorCharCount.Click += new System.EventHandler(this.btnSelectColor);
-            // 
             // SettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1269,6 +1361,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPageSettingsRunes.ResumeLayout(false);
             this.tabPageSettingsAutosplit.ResumeLayout(false);
             this.tabPageSettingsMisc.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.groupBoxPipeServer.ResumeLayout(false);
             this.groupBoxPipeServer.PerformLayout();
             this.DataGroup.ResumeLayout(false);
@@ -1377,5 +1471,13 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private System.Windows.Forms.Button btnColorAll;
         private System.Windows.Forms.Button btnColorCharCount;
         private System.Windows.Forms.CheckBox chkDisplayCharCount;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.RichTextBox txtHttpClientHeaders;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.RichTextBox txtHttpClientStatus;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox chkHttpClientEnabled;
+        private System.Windows.Forms.TextBox textBoxHttpClientUrl;
+        private System.Windows.Forms.Label label5;
     }
 }

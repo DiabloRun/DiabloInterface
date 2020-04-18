@@ -52,5 +52,24 @@ namespace Zutatensuppe.D2Reader.Models
             var c = ByDifficulty(difficulty);
             return c != null && c.First(quest => quest.Id == id).IsAutoSplitReached;
         }
+
+        public List<QuestId> CompletedQuestIdsByDifficulty(GameDifficulty difficulty)
+        {
+            List<QuestId> completedIds = new List<QuestId>();
+            List<Quest> quests = ByDifficulty(difficulty);
+
+            if (quests == null)
+                return null;
+
+            foreach (Quest quest in quests)
+            {
+                if (quest.IsCompleted)
+                {
+                    completedIds.Add(quest.Id);
+                }
+            }
+
+            return completedIds;
+        }
     }
 }
