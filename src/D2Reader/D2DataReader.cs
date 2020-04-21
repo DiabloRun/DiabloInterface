@@ -361,18 +361,26 @@ namespace Zutatensuppe.D2Reader
                 // Make sure we are reading a player type.
                 if (client.UnitType != 0) return null;
 
-                // note: previously player was read from unit
-                //       address found in game.UnitLists[0][client.UnitId & 0x7F]
-                //       but this leads to a bug that wrong inventory is read sometimes
-                if ((long)memory.PlayerUnit <= 0) return null;
+                // TODO: find out why the game handles the two cases differently
+                //       for quests, the unit address from game.UnitLists works
+                //       for inventory, the unit address from memory.PlayerUnit works
+                //       the adresses may be same at the beginning but change if you make a rune word
 
+                // player address for reading the actual player unit (for inventory, skills, etc.)
+                if ((long)memory.PlayerUnit <= 0) return null;
                 IntPtr playerAddress = reader.ReadAddress32(memory.PlayerUnit, AddressingMode.Relative);
                 if ((long)playerAddress <= 0) return null;
+                D2Unit player = reader.Read<D2Unit>(playerAddress);
 
-                var player = reader.Read<D2Unit>(playerAddress);
-                var playerData = player.UnitData.IsNull
+                // player address for reading the player (name + quests)
+                DataPointer unitAddress = game.UnitLists[0][client.UnitId & 0x7F];
+                if (unitAddress.IsNull) return null;
+                // Read player with player data.
+                var tmpPlayer = reader.Read<D2Unit>(unitAddress);
+                var playerData = tmpPlayer.UnitData.IsNull
                     ? null
-                    : reader.Read<D2PlayerData>(player.UnitData);
+                    : reader.Read<D2PlayerData>(tmpPlayer.UnitData);
+
                 return new D2GameInfo(game, client, player, playerData);
             }
             catch (ProcessMemoryReadException)
