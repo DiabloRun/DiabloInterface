@@ -67,7 +67,7 @@ namespace Zutatensuppe.D2Reader
         {
             return new GameMemoryTable()
             {
-                GlobalData = new IntPtr(0x00344304),
+                GlobalData = new IntPtr(0x00344304), // game.744304
                 World = new IntPtr(0x00483D38),
                 PlayersX = new IntPtr(0x483D70),
                 GameId = new IntPtr(0x00482D0C),

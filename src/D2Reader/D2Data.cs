@@ -5,26 +5,26 @@ namespace Zutatensuppe.D2Reader
     {
         public enum Mode
         {
-            DEATH = 0,
-            NEUTRAL,
-            WALK,
-            RUN,
-            GET_HIT,
-            TOWN_NEUTRAL,
-            TOWN_WALK,
-            ATTACK_1,
-            ATTACK_2,
-            BLOCK,
-            CAST,
-            THROW,
-            KICK,
-            SKILL_1,
-            SKILL_2,
-            SKILL_3,
-            SKILL_4,
-            DEAD,
-            SEQUENCE,
-            KNOCK_BACK,
+            DEATH = 0, // 0x00
+            NEUTRAL, // 0x01
+            WALK, // 0x02
+            RUN, // 0x03
+            GET_HIT, // 0x04
+            TOWN_NEUTRAL, // 0x05
+            TOWN_WALK, // 0x06
+            ATTACK_1, // 0x07
+            ATTACK_2, // 0x08
+            BLOCK, // 0x09
+            CAST, // 0x0A
+            THROW, // 0x0B
+            KICK, // 0x0C
+            SKILL_1, // 0x0D
+            SKILL_2, // 0x0E
+            SKILL_3, // 0x0F
+            SKILL_4, // 0x10
+            DEAD, // 0x11
+            SEQUENCE, // 0x12
+            KNOCK_BACK, // 0x13
         };
         
         public enum ItemId

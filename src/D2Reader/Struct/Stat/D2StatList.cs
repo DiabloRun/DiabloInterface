@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
 namespace Zutatensuppe.D2Reader.Struct.Stat
 {
@@ -10,7 +10,7 @@ namespace Zutatensuppe.D2Reader.Struct.Stat
         [ExpectOffset(0x0008)] public int eOwnerType;              // 0x08
         [ExpectOffset(0x000C)] public int OwnerGUID;               // 0x0C
         [ExpectOffset(0x0010)] public StatListFlag Flags;          // 0x10
-        [ExpectOffset(0x0014)] public uint State;                  // 0x14
+        [ExpectOffset(0x0014)] public uint State;                  // 0x14 (values seen: 0x6A)
         [ExpectOffset(0x0018)] public int ExpireFrame;             // 0x18
         [ExpectOffset(0x001C)] public int skillNo;                 // 0x1C
         [ExpectOffset(0x0020)] public int sLvl;                    // 0x20

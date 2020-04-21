@@ -1,11 +1,13 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
 namespace Zutatensuppe.D2Reader.Struct
 {
+    // Where to find this?
+    // 1.14D: [game.744304] points to this struct 
+    // 
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
     public class D2GlobalData
     {
-
         // list of calculation modes for all the stat stuff? 
         [FieldOffset(0x040)] public DataPointer StatCalcList; // maybe (Aura)StatCalcList .. array of StatCalcType bytes
         [FieldOffset(0x044)] public uint StatCalcCount; // maybe (Aura)StatCalcCount
@@ -22,8 +24,8 @@ namespace Zutatensuppe.D2Reader.Struct
         [FieldOffset(0xBB4)] public DataPointer PassiveSkillIds; // UnknownThing2 seems like an address that points to a byte array of length PassiveSkillsCount
                                                                  // the items in that array are somehow related to SkillCount (maybe they are skill ids too?..)
 
-        [FieldOffset(0xBC4)] public DataPointer Characters;
-        [FieldOffset(0xBC8)] public uint CharacterCount;
+        [FieldOffset(0xBC4)] public DataPointer Characters; // pointer to array of D2CharacterStats
+        [FieldOffset(0xBC8)] public uint CharacterCount; // how many different classes exist. D2Unit.eClass is checked against this count to see if it is valid
 
         [FieldOffset(0xBCC)] public DataPointer ItemStatCost; 
         [FieldOffset(0xBD4)] public uint ItemStatCostCount;

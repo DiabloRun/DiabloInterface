@@ -4,12 +4,12 @@ namespace Zutatensuppe.D2Reader.Struct
 {
     public enum D2UnitType : uint
     {
-        Player,
-        Monster,
-        Object,
-        Missile,
-        Item,
-        VisTile
+        Player, // 0
+        Monster, // 1
+        Object, // 2
+        Missile, // 3
+        Item, // 4
+        VisTile // 5
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 0xF4)]
@@ -75,8 +75,14 @@ namespace Zutatensuppe.D2Reader.Struct
         [ExpectOffset(0x00B8)] public int DropCode;        // 0xB8
         [ExpectOffset(0x00BC)] public int __unknown10;     // 0xBC
         [ExpectOffset(0x00C0)] public int __unknown11;     // 0xC0
-        [ExpectOffset(0x00C4)] public long UnitFlags;      // 0xC4
-        // long is 0x08 long...  nothing is missing here !  :)
+        [ExpectOffset(0x00C4)] public byte UnitFlag_C4;      // 0xC4
+        [ExpectOffset(0x00C5)] public byte UnitFlag_C5;      // 0xC5
+        [ExpectOffset(0x00C6)] public byte UnitFlag_C6;      // 0xC6
+        [ExpectOffset(0x00C7)] public byte UnitFlag_C7;      // 0xC7
+        [ExpectOffset(0x00C8)] public byte UnitFlag_C8;      // 0xC8
+        [ExpectOffset(0x00C9)] public byte UnitFlag_C9;      // 0xC9
+        [ExpectOffset(0x00CA)] public byte UnitFlag_CA;      // 0xCA
+        [ExpectOffset(0x00CB)] public byte UnitFlag_CB;      // 0xCB
         [ExpectOffset(0x00CC)] public int __unknown11c;    // 0xCC
         [ExpectOffset(0x00D0)] public int __unknown12;     // 0xD0
         [ExpectOffset(0x00D4)] public int GetTickCount;    // 0xD4

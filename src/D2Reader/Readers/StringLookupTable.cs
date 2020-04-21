@@ -8,7 +8,7 @@ namespace Zutatensuppe.D2Reader.Readers
 {
     public static class StringConstants
     {
-        public const ushort SinglePlayer = 5106;
+        public const ushort SinglePlayer = 0x13F2; // 5106
 
         public const ushort Superior = 0x06BF;
 
@@ -113,6 +113,15 @@ namespace Zutatensuppe.D2Reader.Readers
             return identifierString;
         }
 
+        // the lookup of strings is done in:
+        // 1.14D:
+        // - game.524930 lookup_string - lookup string by id in given table
+        // - game.524A30 get_string_by_identifier - convenience function, used a lot (gets table by identifier and calls lookup_string)
+        // - game.525770 the only other function calling lookup_string, which looks up the identifiers:
+        //     14D0 => "K"
+        //     14D1 => "M"
+        //     14D2 => "B"
+        // 
         private string LookupStringTable(ushort identifier)
         {
             StringTable strTable = GetStringTableByIdentifier(identifier);
