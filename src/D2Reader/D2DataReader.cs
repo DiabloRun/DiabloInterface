@@ -361,19 +361,15 @@ namespace Zutatensuppe.D2Reader
                 // Make sure we are reading a player type.
                 if (client.UnitType != 0) return null;
 
-                // Get the player address from the list of units.
-                // note: previously used way to get the player was
-                // if ((long)memory.Address.PlayerUnit > 0) {
-                //     IntPtr playerAddress = reader.ReadAddress32(memory.Address.PlayerUnit, AddressingMode.Relative);
-                //     if ((long)playerAddress > 0) {
-                //         player = reader.Read<D2Unit>(playerAddress)
-                //     }
-                // }
-                DataPointer unitAddress = game.UnitLists[0][client.UnitId & 0x7F];
-                if (unitAddress.IsNull) return null;
+                // note: previously player was read from unit
+                //       address found in game.UnitLists[0][client.UnitId & 0x7F]
+                //       but this leads to a bug that wrong inventory is read sometimes
+                if ((long)memory.PlayerUnit <= 0) return null;
 
-                // Read player with player data.
-                var player = reader.Read<D2Unit>(unitAddress);
+                IntPtr playerAddress = reader.ReadAddress32(memory.PlayerUnit, AddressingMode.Relative);
+                if ((long)playerAddress <= 0) return null;
+
+                var player = reader.Read<D2Unit>(playerAddress);
                 var playerData = player.UnitData.IsNull
                     ? null
                     : reader.Read<D2PlayerData>(player.UnitData);
@@ -424,8 +420,6 @@ namespace Zutatensuppe.D2Reader
 
         void ProcessGameData()
         {
-            CreateReaders();
-
             // Make sure the game is loaded.
             var gameInfo = ReadGameInfo();
             if (gameInfo == null)
@@ -433,6 +427,8 @@ namespace Zutatensuppe.D2Reader
                 wasInTitleScreen = true;
                 return;
             }
+
+            CreateReaders();
 
             CurrentCharacter = ReadCharacterData(gameInfo);
 
