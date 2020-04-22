@@ -9,19 +9,11 @@ namespace Zutatensuppe.DiabloInterface.Business.Settings
 
     public class JsonSettingsReader : ISettingsReader
     {
-        readonly ILegacySettingsResolver resolver;
-        readonly string jsonData;
+        readonly string filename;
 
-        public JsonSettingsReader(ILegacySettingsResolver resolver, string filename)
+        public JsonSettingsReader(string filename)
         {
-            this.resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
-            jsonData = File.ReadAllText(filename);
-        }
-
-        public JsonSettingsReader(ILegacySettingsResolver resolver, string filename, Encoding encoding)
-        {
-            this.resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
-            jsonData = File.ReadAllText(filename, encoding);
+            this.filename = filename;
         }
 
         public void Close()
@@ -43,10 +35,8 @@ namespace Zutatensuppe.DiabloInterface.Business.Settings
         {
             try
             {
-                var data = JObject.Parse(jsonData);
-                var settings = data.ToObject<ApplicationSettings>();
-                var legacyObject = new JsonLegacySettingsObject(data);
-                return resolver.ResolveSettings(settings, legacyObject);
+                var jsonData = File.ReadAllText(filename);
+                return JObject.Parse(jsonData).ToObject<ApplicationSettings>();
             }
             catch (JsonException)
             {
