@@ -68,17 +68,11 @@
     <Compile Include="Services\ServerService.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Settings\ApplicationSettings.cs" />
-    <Compile Include="Settings\DefaultLegacySettingsResolver.cs" />
     <Compile Include="Settings\IApplicationStorage.cs" />
-    <Compile Include="Settings\ILegacySettingsObject.cs" />
-    <Compile Include="Settings\ILegacySettingsResolver.cs" />
     <Compile Include="Settings\ISettingsReader.cs" />
     <Compile Include="Settings\ISettingsWriter.cs" />
-    <Compile Include="Settings\JsonLegacySettingsObject.cs" />
     <Compile Include="Settings\JsonSettingsReader.cs" />
     <Compile Include="Settings\JsonSettingsWriter.cs" />
-    <Compile Include="Settings\LegacySettingsObject.cs" />
-    <Compile Include="Settings\LegacySettingsReader.cs" />
     <Compile Include="Settings\SettingsResolver.cs" />
   </ItemGroup>
   <ItemGroup>
