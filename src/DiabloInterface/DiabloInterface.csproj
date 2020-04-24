@@ -64,8 +64,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -80,31 +80,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationStorage.cs" />
-    <Compile Include="Gui\Controls\Area.cs" />
     <Compile Include="Framework\NetFrameworkVersion.cs" />
     <Compile Include="Framework\NetFrameworkVersionComparator.cs" />
     <Compile Include="Framework\NetFrameworkVersionExtension.cs" />
     <Compile Include="Gui\ControlCollectionExtension.cs" />
-    <Compile Include="Gui\Controls\AbstractLayout.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Controls\AutoSplitSettingsRow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Controls\AutoSplitSettingsRow.Designer.cs">
-      <DependentUpon>AutoSplitSettingsRow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Controls\AutoSplitTable.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Controls\AutoSplitTable.Designer.cs">
-      <DependentUpon>AutoSplitTable.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Gui\Controls\AbstractLayout.cs" />
     <Compile Include="Gui\Controls\FontComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Controls\Gem.cs" />
-    <Compile Include="Gui\Controls\HotkeyControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\Controls\RuneSettingsPage.cs">
@@ -156,12 +137,6 @@
       <DependentUpon>SettingsWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="VersionChecker.cs" />
-    <EmbeddedResource Include="Gui\Controls\AutoSplitSettingsRow.resx">
-      <DependentUpon>AutoSplitSettingsRow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Controls\AutoSplitTable.resx">
-      <DependentUpon>AutoSplitTable.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Controls\RuneSettingsPage.resx">
       <DependentUpon>RuneSettingsPage.cs</DependentUpon>
     </EmbeddedResource>

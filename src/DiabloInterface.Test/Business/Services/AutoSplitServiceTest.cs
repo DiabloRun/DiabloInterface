@@ -35,7 +35,6 @@ namespace DiabloInterface.Test.Business.Services
             var gameService = new GameServiceMock();
             AutoSplitService autoSplitService = new AutoSplitService(
                 settingsServiceMock.Object,
-                gameService,
                 new Mock<KeyService>().Object
             );
             var quests = new Quests(new List<List<Quest>>
@@ -139,7 +138,6 @@ namespace DiabloInterface.Test.Business.Services
             var gameService = new GameServiceMock();
             AutoSplitService autoSplitService = new AutoSplitService(
                 settingsServiceMock.Object,
-                gameService,
                 new Mock<KeyService>().Object
             );
 

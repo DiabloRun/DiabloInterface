@@ -1,9 +1,11 @@
 namespace Zutatensuppe.DiabloInterface
 {
     using System;
+    using System.Collections.Generic;
+    using System.IO;
     using System.Reflection;
     using System.Windows.Forms;
-
+    using Zutatensuppe.DiabloInterface.Business.Plugin;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Framework;
@@ -73,6 +75,41 @@ namespace Zutatensuppe.DiabloInterface
             logger.Info($".NET Framework: {versionName}");
         }
 
+        private static List<Assembly> LoadPlugInAssemblies()
+        {
+            DirectoryInfo dInfo = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory));
+            FileInfo[] files = dInfo.GetFiles("DiabloInterface.Plugin.*.dll");
+            List<Assembly> plugInAssemblyList = new List<Assembly>();
+
+            if (null != files)
+            {
+                foreach (FileInfo file in files)
+                {
+                    plugInAssemblyList.Add(Assembly.LoadFile(file.FullName));
+                }
+            }
+
+            return plugInAssemblyList;
+        }
+
+        static List<IPlugin> GetPlugIns(List<Assembly> assemblies, GameService gameService, ISettingsService settingsService)
+        {
+            List<Type> availableTypes = new List<Type>();
+
+            foreach (Assembly currentAssembly in assemblies)
+                availableTypes.AddRange(currentAssembly.GetTypes());
+
+            // get a list of objects that implement the IPlugin interface
+            List<Type> pluginList = availableTypes.FindAll(delegate (Type t)
+            {
+                List<Type> interfaceTypes = new List<Type>(t.GetInterfaces());
+                return interfaceTypes.Contains(typeof(IPlugin));
+            });
+
+            // convert the list of Objects to an instantiated list of IPlugins
+            return pluginList.ConvertAll<IPlugin>(delegate (Type t) { return Activator.CreateInstance(t, gameService, settingsService) as IPlugin; });
+        }
+
         static void RunApplication()
         {
             Application.EnableVisualStyles();
@@ -83,22 +120,17 @@ namespace Zutatensuppe.DiabloInterface
             {
                 CheckForApplicationUpdates(settingsService);
 
-                new CharacterStatFileWriterService(settingsService, gameService);
-                var keyService = new KeyService();
-                var autoSplitService = new AutoSplitService(settingsService, gameService, keyService);
-                var serverService = new ServerService(gameService, settingsService);
-                var httpClientService = new HttpClientService(gameService, settingsService);
+                var plugins = GetPlugIns(LoadPlugInAssemblies(), gameService, settingsService);
+
                 var mainWindow = new MainWindow(
                     settingsService,
                     gameService,
-                    autoSplitService,
-                    keyService,
-                    serverService,
-                    httpClientService
+                    plugins
                 );
                 Application.Run(mainWindow);
 
-                serverService.Stop();
+                foreach (IPlugin p in plugins)
+                    p.Dispose();
             }
         }
 

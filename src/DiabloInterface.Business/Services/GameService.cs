@@ -73,6 +73,5 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
 
         void OnDataRead(object sender, DataReadEventArgs e) =>
             DataRead?.Invoke(sender, e);
-
     }
 }

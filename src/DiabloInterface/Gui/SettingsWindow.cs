@@ -8,13 +8,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
     using System.Reflection;
     using System.Windows.Forms;
 
-    using Zutatensuppe.DiabloInterface.Business;
-    using Zutatensuppe.DiabloInterface.Business.AutoSplits;
+    using Zutatensuppe.DiabloInterface.Business.Plugin;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
     using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
-    using Zutatensuppe.DiabloInterface.Gui.Controls;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
 
     public partial class SettingsWindow : WsExCompositedForm
@@ -24,29 +22,21 @@ namespace Zutatensuppe.DiabloInterface.Gui
         static readonly string SettingsFilePath = Application.StartupPath + @"\Settings";
 
         private readonly ISettingsService settingsService;
-        private readonly ServerService serverService;
-        private readonly KeyService keyService;
-        private readonly HttpClientService httpClientService;
-        AutoSplitTable autoSplitTable;
+        private readonly List<IPlugin> plugins;
 
         bool dirty;
 
         public SettingsWindow(
             ISettingsService settingsService,
-            ServerService serverService,
-            KeyService keyService,
-            HttpClientService httpClientService
+            List<IPlugin> plugins
         ) {
             Logger.Info("Creating settings window.");
 
+            this.plugins = plugins;
             this.settingsService = settingsService;
-            this.serverService = serverService;
-            this.keyService = keyService;
-            this.httpClientService = httpClientService;
 
             RegisterServiceEventHandlers();
             InitializeComponent();
-            InitializeAutoSplitTable();
             PopulateSettingsFileList(settingsService.SettingsFileCollection);
 
             // Unregister event handlers when we are done.
@@ -57,10 +47,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             };
 
             ReloadComponentsWithCurrentSettings(settingsService.CurrentSettings);
-
-            // Loading the settings will dirty mark pretty much everything, here
-            // we just verify that nothing has actually changed yet.
-            MarkClean();
         }
 
         bool IsDirty
@@ -68,18 +54,15 @@ namespace Zutatensuppe.DiabloInterface.Gui
             get
             {
                 var settings = settingsService.CurrentSettings;
-
+                
                 return dirty
-                    || (autoSplitTable != null && autoSplitTable.IsDirty)
+                    || plugins.Any(p => p.SettingsRenderer().IsDirty())
                     || !CompareClassRuneSettings(settings)
 
                     || settings.FontName != GetFontName()
                     || settings.FontSize != (int)fontSizeNumeric.Value
                     || settings.FontSizeTitle != (int)titleFontSizeNumeric.Value
-                    || settings.CreateFiles != CreateFilesCheckBox.Checked
                     || settings.CheckUpdates != CheckUpdatesCheckBox.Checked
-                    || settings.PipeName != textBoxPipeName.Text
-                    || settings.PipeServerEnabled != chkPipeServerEnabled.Checked
                     || settings.DisplayName != chkDisplayName.Checked
                     || settings.DisplayGold != chkDisplayGold.Checked
                     || settings.DisplayDeathCounter != chkDisplayDeathCounter.Checked
@@ -90,7 +73,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     || settings.DisplayRunes != chkDisplayRunes.Checked
                     || settings.DisplayRunesHorizontal != (comboBoxRunesOrientation.SelectedIndex == 0)
                     || settings.DisplayRunesHighContrast != chkHighContrastRunes.Checked
-                    || settings.AutosplitHotkey != autoSplitHotkeyControl.Hotkey
                     || settings.DisplayDifficultyPercentages != chkDisplayDifficultyPercents.Checked
                     || settings.DisplayLayoutHorizontal != (comboBoxLayout.SelectedIndex == 0)
                     || settings.VerticalLayoutPadding != (int)numericUpDownPaddingInVerticalLayout.Value
@@ -125,10 +107,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     || settings.ColorExpansionClassic != btnColorExpansionClassic.ForeColor
 
                     || settings.ColorBackground != btnSetBackgroundColor.BackColor
-
-                    || settings.HttpClientUrl != textBoxHttpClientUrl.Text
-                    || settings.HttpClientHeaders != txtHttpClientHeaders.Text
-                    || settings.HttpClientEnabled != chkHttpClientEnabled.Checked;
+                ;
             }
         }
 
@@ -157,14 +136,27 @@ namespace Zutatensuppe.DiabloInterface.Gui
         {
             settingsService.SettingsChanged += SettingsServiceSettingsChanged;
             settingsService.SettingsCollectionChanged += SettingsServiceOnSettingsCollectionChanged;
-            serverService.StatusChanged += ServerServiceStatusChanged;
-            httpClientService.ResponseReceived += HttpClientResponseReceived;
+            foreach (IPlugin p in plugins)
+                p.Changed += PluginDataChanged;
+        }
+
+        private void PluginDataChanged(object sender, IPlugin e)
+        {
+            if (InvokeRequired)
+            {
+                Invoke((Action)(() => PluginDataChanged(sender, e)));
+                return;
+            }
+
+            e.SettingsRenderer().ApplyChanges();
         }
 
         void UnregisterServiceEventHandlers()
         {
             settingsService.SettingsChanged -= SettingsServiceSettingsChanged;
             settingsService.SettingsCollectionChanged -= SettingsServiceOnSettingsCollectionChanged;
+            foreach (IPlugin p in plugins)
+                p.Changed -= PluginDataChanged;
         }
 
         void SettingsServiceSettingsChanged(object sender, ApplicationSettingsEventArgs e)
@@ -178,40 +170,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // NOTE: This may have been due to loading settings from elsewhere. For now the
             ////     behavior will be to refresh the settings window in that case.
             ReloadComponentsWithCurrentSettings(e.Settings);
-            MarkClean();
-        }
-
-
-        void ServerServiceStatusChanged(object sender, ServerStatusEventArgs e)
-        {
-            if (InvokeRequired)
-            {
-                Invoke((Action)(() => ServerServiceStatusChanged(sender, e)));
-                return;
-            }
-
-            txtPipeServer.Text = ServerStatusText(e.ServerStatuses);
-        }
-
-        string ServerStatusText(Dictionary<string, bool> serverStatuses)
-        {
-            var txt = "";
-            foreach (KeyValuePair<string, bool> s in serverStatuses)
-            {
-                txt += s.Key + ": " + (s.Value ? "RUNNING" : "NOT RUNNING") + "\n";
-            }
-            return txt;
-        }
-
-        void HttpClientResponseReceived(object sender, string content)
-        {
-            txtHttpClientStatus.Text = content;
-        }
-
-        void InitializeAutoSplitTable()
-        {
-            autoSplitTable = new AutoSplitTable(settingsService) { Dock = DockStyle.Fill };
-            AutoSplitLayout.Controls.Add(autoSplitTable);
         }
 
         void UpdateTitle()
@@ -233,16 +191,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             titleFontSizeNumeric.Value = settings.FontSizeTitle;
             numericUpDownPaddingInVerticalLayout.Value = settings.VerticalLayoutPadding;
 
-            CreateFilesCheckBox.Checked = settings.CreateFiles;
-            EnableAutosplitCheckBox.Checked = settings.DoAutosplit;
-            autoSplitHotkeyControl.ForeColor = settings.AutosplitHotkey == Keys.None ? Color.Red : Color.Black;
-            autoSplitHotkeyControl.Hotkey = settings.AutosplitHotkey;
             CheckUpdatesCheckBox.Checked = settings.CheckUpdates;
-            textBoxPipeName.Text = settings.PipeName;
-            chkPipeServerEnabled.Checked = settings.PipeServerEnabled;
-            textBoxHttpClientUrl.Text = settings.HttpClientUrl;
-            chkHttpClientEnabled.Checked = settings.HttpClientEnabled;
-            txtHttpClientHeaders.Text = settings.HttpClientHeaders;
+
             chkDisplayName.Checked = settings.DisplayName;
             chkDisplayGold.Checked = settings.DisplayGold;
             chkDisplayDeathCounter.Checked = settings.DisplayDeathCounter;
@@ -285,15 +235,17 @@ namespace Zutatensuppe.DiabloInterface.Gui
             btnColorHardcoreSoftcore.ForeColor = settings.ColorHardcoreSoftcore;
             btnColorExpansionClassic.ForeColor = settings.ColorExpansionClassic;
 
+            foreach (IPlugin p in plugins)
+            {
+                p.SettingsRenderer().Set(settings.PluginConf(p.Name));
+                p.SettingsRenderer().ApplyChanges();
+            }
+
             SetBackgroundColor(settings.ColorBackground);
-
-            txtPipeServer.Text = ServerStatusText(serverService.ServerStatuses);
-        }
-
-        void MarkClean()
-        {
+            
+            // Loading the settings will dirty mark pretty much everything, here
+            // we just verify that nothing has actually changed yet.
             dirty = false;
-            autoSplitTable?.MarkClean();
         }
 
         private string GetFontName()
@@ -313,17 +265,12 @@ namespace Zutatensuppe.DiabloInterface.Gui
         {
             var settings = settingsService.CurrentSettings.DeepCopy();
 
-            settings.Autosplits = autoSplitTable.AutoSplits.ToList();
             settings.ClassRunes = runeSettingsPage.SettingsList ?? new List<ClassRuneSettings>();
-            settings.CreateFiles = CreateFilesCheckBox.Checked;
             settings.CheckUpdates = CheckUpdatesCheckBox.Checked;
-            settings.PipeName = textBoxPipeName.Text;
-            settings.PipeServerEnabled = chkPipeServerEnabled.Checked;
-            settings.HttpClientUrl = textBoxHttpClientUrl.Text;
-            settings.HttpClientEnabled = chkHttpClientEnabled.Checked;
-            settings.HttpClientHeaders = txtHttpClientHeaders.Text;
-            settings.DoAutosplit = EnableAutosplitCheckBox.Checked;
-            settings.AutosplitHotkey = autoSplitHotkeyControl.Hotkey;
+
+            foreach (IPlugin p in plugins)
+                settings.SetPluginConf(p.Name, p.SettingsRenderer().Get());
+
             settings.FontSize = (int)fontSizeNumeric.Value;
             settings.FontSizeTitle = (int)titleFontSizeNumeric.Value;
             settings.VerticalLayoutPadding = (int)numericUpDownPaddingInVerticalLayout.Value;
@@ -376,21 +323,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             return settings;
         }
 
-        void AddAutoSplitButton_Clicked(object sender, EventArgs e)
-        {
-            var splits = autoSplitTable.AutoSplits;
-            var factory = new AutoSplitFactory();
-
-            var row = autoSplitTable.AddAutoSplit(factory.CreateSequential(splits.LastOrDefault()));
-            if (row != null)
-            {
-                autoSplitTable.ScrollControlIntoView(row);
-            }
-
-            // Automatically enable auto splits when adding.
-            EnableAutosplitCheckBox.Checked = true;
-        }
-
         void SettingsWindowOnFormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason != CloseReason.UserClosing || !IsDirty) return;
@@ -412,11 +344,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     e.Cancel = true;
                     break;
             }
-        }
-
-        void AutoSplitTestHotkey_Click(object sender, EventArgs e)
-        {
-            keyService.TriggerHotkey(autoSplitHotkeyControl.Hotkey);
         }
 
         void SaveSettings(string filename = null)
@@ -719,11 +646,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private void comboBoxLayout_SelectedIndexChanged(object sender, EventArgs e)
         {
             comboBoxRunesOrientation.Enabled = comboBoxLayout.SelectedIndex == 0;
-        }
-
-        void AutoSplitHotkeyControlOnHotkeyChanged(object sender, Keys e)
-        {
-            autoSplitHotkeyControl.ForeColor = e == Keys.None ? Color.Red : SystemColors.WindowText;
         }
 
         private void label6_Click(object sender, EventArgs e)

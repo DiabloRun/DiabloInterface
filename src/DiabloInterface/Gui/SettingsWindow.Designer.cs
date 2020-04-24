@@ -1,4 +1,8 @@
 using System.Collections.Generic;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+using Zutatensuppe.DiabloInterface.Business.Plugin;
 using Zutatensuppe.DiabloInterface.Business.Settings;
 
 namespace Zutatensuppe.DiabloInterface.Gui
@@ -40,13 +44,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.fontSizeNumeric = new System.Windows.Forms.NumericUpDown();
             this.FontSizeLabel = new System.Windows.Forms.Label();
             this.TitleFontSizeLabel = new System.Windows.Forms.Label();
-            this.AutoSplitLayout = new System.Windows.Forms.TableLayoutPanel();
-            this.AutoSplitToolbar = new System.Windows.Forms.Panel();
-            this.autoSplitHotkeyControl = new Zutatensuppe.DiabloInterface.Gui.Controls.HotkeyControl();
-            this.AutoSplitHotkeyLabel = new System.Windows.Forms.Label();
-            this.AutoSplitTestHotkeyButton = new System.Windows.Forms.Button();
-            this.EnableAutosplitCheckBox = new System.Windows.Forms.CheckBox();
-            this.AddAutoSplitButton = new System.Windows.Forms.Button();
             this.VerticalSplitContainer = new System.Windows.Forms.TableLayoutPanel();
             this.grpConfigFiles = new System.Windows.Forms.GroupBox();
             this.lstConfigFiles = new System.Windows.Forms.ListBox();
@@ -110,24 +107,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.chkDisplayName = new System.Windows.Forms.CheckBox();
             this.tabPageSettingsRunes = new System.Windows.Forms.TabPage();
             this.runeSettingsPage = new Zutatensuppe.DiabloInterface.Gui.Controls.RuneSettingsPage();
-            this.tabPageSettingsAutosplit = new System.Windows.Forms.TabPage();
             this.tabPageSettingsMisc = new System.Windows.Forms.TabPage();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.txtHttpClientHeaders = new System.Windows.Forms.RichTextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.txtHttpClientStatus = new System.Windows.Forms.RichTextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.chkHttpClientEnabled = new System.Windows.Forms.CheckBox();
-            this.textBoxHttpClientUrl = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.groupBoxPipeServer = new System.Windows.Forms.GroupBox();
-            this.txtPipeServer = new System.Windows.Forms.RichTextBox();
-            this.lblPipeServerStatus = new System.Windows.Forms.Label();
-            this.chkPipeServerEnabled = new System.Windows.Forms.CheckBox();
-            this.textBoxPipeName = new System.Windows.Forms.TextBox();
-            this.labelPipeName = new System.Windows.Forms.Label();
-            this.DataGroup = new System.Windows.Forms.GroupBox();
-            this.CreateFilesCheckBox = new System.Windows.Forms.CheckBox();
+            this.tabPageSettingsPlugins = new System.Windows.Forms.TabPage();
             this.UpdateGroup = new System.Windows.Forms.GroupBox();
             this.CheckUpdatesButton = new System.Windows.Forms.Button();
             this.CheckUpdatesCheckBox = new System.Windows.Forms.CheckBox();
@@ -139,8 +120,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.FontGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).BeginInit();
-            this.AutoSplitLayout.SuspendLayout();
-            this.AutoSplitToolbar.SuspendLayout();
             this.VerticalSplitContainer.SuspendLayout();
             this.grpConfigFiles.SuspendLayout();
             this.ctxConfigFileList.SuspendLayout();
@@ -151,11 +130,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPaddingInVerticalLayout)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.tabPageSettingsRunes.SuspendLayout();
-            this.tabPageSettingsAutosplit.SuspendLayout();
+            this.tabPageSettingsPlugins.SuspendLayout();
             this.tabPageSettingsMisc.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.groupBoxPipeServer.SuspendLayout();
-            this.DataGroup.SuspendLayout();
             this.UpdateGroup.SuspendLayout();
             this.mainPanel.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -249,88 +225,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.TitleFontSizeLabel.Size = new System.Drawing.Size(80, 13);
             this.TitleFontSizeLabel.TabIndex = 6;
             this.TitleFontSizeLabel.Text = "Name font size:";
-            // 
-            // AutoSplitLayout
-            // 
-            this.AutoSplitLayout.ColumnCount = 1;
-            this.AutoSplitLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.AutoSplitLayout.Controls.Add(this.AutoSplitToolbar, 0, 1);
-            this.AutoSplitLayout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AutoSplitLayout.Location = new System.Drawing.Point(0, 0);
-            this.AutoSplitLayout.Margin = new System.Windows.Forms.Padding(0);
-            this.AutoSplitLayout.Name = "AutoSplitLayout";
-            this.AutoSplitLayout.RowCount = 2;
-            this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.AutoSplitLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.AutoSplitLayout.Size = new System.Drawing.Size(505, 476);
-            this.AutoSplitLayout.TabIndex = 21;
-            // 
-            // AutoSplitToolbar
-            // 
-            this.AutoSplitToolbar.AutoSize = true;
-            this.AutoSplitToolbar.Controls.Add(this.autoSplitHotkeyControl);
-            this.AutoSplitToolbar.Controls.Add(this.AutoSplitHotkeyLabel);
-            this.AutoSplitToolbar.Controls.Add(this.AutoSplitTestHotkeyButton);
-            this.AutoSplitToolbar.Controls.Add(this.EnableAutosplitCheckBox);
-            this.AutoSplitToolbar.Controls.Add(this.AddAutoSplitButton);
-            this.AutoSplitToolbar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.AutoSplitToolbar.Location = new System.Drawing.Point(0, 445);
-            this.AutoSplitToolbar.Margin = new System.Windows.Forms.Padding(0);
-            this.AutoSplitToolbar.Name = "AutoSplitToolbar";
-            this.AutoSplitToolbar.Size = new System.Drawing.Size(505, 31);
-            this.AutoSplitToolbar.TabIndex = 20;
-            // 
-            // autoSplitHotkeyControl
-            // 
-            this.autoSplitHotkeyControl.Hotkey = System.Windows.Forms.Keys.None;
-            this.autoSplitHotkeyControl.Location = new System.Drawing.Point(80, 7);
-            this.autoSplitHotkeyControl.Name = "autoSplitHotkeyControl";
-            this.autoSplitHotkeyControl.Size = new System.Drawing.Size(82, 20);
-            this.autoSplitHotkeyControl.TabIndex = 3;
-            this.autoSplitHotkeyControl.Text = "None";
-            this.autoSplitHotkeyControl.UseKeyWhitelist = true;
-            this.autoSplitHotkeyControl.HotkeyChanged += new System.EventHandler<System.Windows.Forms.Keys>(this.AutoSplitHotkeyControlOnHotkeyChanged);
-            // 
-            // AutoSplitHotkeyLabel
-            // 
-            this.AutoSplitHotkeyLabel.AutoSize = true;
-            this.AutoSplitHotkeyLabel.Location = new System.Drawing.Point(3, 10);
-            this.AutoSplitHotkeyLabel.Name = "AutoSplitHotkeyLabel";
-            this.AutoSplitHotkeyLabel.Size = new System.Drawing.Size(67, 13);
-            this.AutoSplitHotkeyLabel.TabIndex = 13;
-            this.AutoSplitHotkeyLabel.Text = "Split-Hotkey:";
-            // 
-            // AutoSplitTestHotkeyButton
-            // 
-            this.AutoSplitTestHotkeyButton.Location = new System.Drawing.Point(168, 5);
-            this.AutoSplitTestHotkeyButton.Name = "AutoSplitTestHotkeyButton";
-            this.AutoSplitTestHotkeyButton.Size = new System.Drawing.Size(75, 23);
-            this.AutoSplitTestHotkeyButton.TabIndex = 18;
-            this.AutoSplitTestHotkeyButton.Text = "Test Hotkey";
-            this.AutoSplitTestHotkeyButton.UseVisualStyleBackColor = true;
-            this.AutoSplitTestHotkeyButton.Click += new System.EventHandler(this.AutoSplitTestHotkey_Click);
-            // 
-            // EnableAutosplitCheckBox
-            // 
-            this.EnableAutosplitCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.EnableAutosplitCheckBox.AutoSize = true;
-            this.EnableAutosplitCheckBox.Location = new System.Drawing.Point(358, 9);
-            this.EnableAutosplitCheckBox.Name = "EnableAutosplitCheckBox";
-            this.EnableAutosplitCheckBox.Size = new System.Drawing.Size(59, 17);
-            this.EnableAutosplitCheckBox.TabIndex = 1;
-            this.EnableAutosplitCheckBox.Text = "Enable";
-            this.EnableAutosplitCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // AddAutoSplitButton
-            // 
-            this.AddAutoSplitButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddAutoSplitButton.Location = new System.Drawing.Point(422, 5);
-            this.AddAutoSplitButton.Name = "AddAutoSplitButton";
-            this.AddAutoSplitButton.Size = new System.Drawing.Size(79, 23);
-            this.AddAutoSplitButton.TabIndex = 11;
-            this.AddAutoSplitButton.Text = "Add Split";
-            this.AddAutoSplitButton.UseVisualStyleBackColor = true;
-            this.AddAutoSplitButton.Click += new System.EventHandler(this.AddAutoSplitButton_Clicked);
             // 
             // VerticalSplitContainer
             // 
@@ -438,8 +332,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // 
             this.tabControl1.Controls.Add(this.tabPageSettingsLayout);
             this.tabControl1.Controls.Add(this.tabPageSettingsRunes);
-            this.tabControl1.Controls.Add(this.tabPageSettingsAutosplit);
             this.tabControl1.Controls.Add(this.tabPageSettingsMisc);
+            this.tabControl1.Controls.Add(this.tabPageSettingsPlugins);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
             this.tabControl1.Name = "tabControl1";
@@ -1044,21 +938,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.runeSettingsPage.Size = new System.Drawing.Size(505, 476);
             this.runeSettingsPage.TabIndex = 0;
             // 
-            // tabPageSettingsAutosplit
-            // 
-            this.tabPageSettingsAutosplit.Controls.Add(this.AutoSplitLayout);
-            this.tabPageSettingsAutosplit.Location = new System.Drawing.Point(4, 22);
-            this.tabPageSettingsAutosplit.Name = "tabPageSettingsAutosplit";
-            this.tabPageSettingsAutosplit.Size = new System.Drawing.Size(505, 476);
-            this.tabPageSettingsAutosplit.TabIndex = 0;
-            this.tabPageSettingsAutosplit.Text = "Auto-Split";
-            this.tabPageSettingsAutosplit.UseVisualStyleBackColor = true;
-            // 
             // tabPageSettingsMisc
             // 
-            this.tabPageSettingsMisc.Controls.Add(this.groupBox3);
-            this.tabPageSettingsMisc.Controls.Add(this.groupBoxPipeServer);
-            this.tabPageSettingsMisc.Controls.Add(this.DataGroup);
             this.tabPageSettingsMisc.Controls.Add(this.UpdateGroup);
             this.tabPageSettingsMisc.Location = new System.Drawing.Point(4, 22);
             this.tabPageSettingsMisc.Name = "tabPageSettingsMisc";
@@ -1068,169 +949,24 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPageSettingsMisc.Text = "Misc";
             this.tabPageSettingsMisc.UseVisualStyleBackColor = true;
             // 
-            // groupBox3
+            // tabPageSettingsMisc
             // 
-            this.groupBox3.Controls.Add(this.txtHttpClientHeaders);
-            this.groupBox3.Controls.Add(this.label6);
-            this.groupBox3.Controls.Add(this.txtHttpClientStatus);
-            this.groupBox3.Controls.Add(this.label4);
-            this.groupBox3.Controls.Add(this.chkHttpClientEnabled);
-            this.groupBox3.Controls.Add(this.textBoxHttpClientUrl);
-            this.groupBox3.Controls.Add(this.label5);
-            this.groupBox3.Location = new System.Drawing.Point(5, 277);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(2);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox3.Size = new System.Drawing.Size(361, 194);
-            this.groupBox3.TabIndex = 20;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "HTTP Client";
-            // 
-            // txtHttpClientHeaders
-            // 
-            this.txtHttpClientHeaders.Location = new System.Drawing.Point(68, 80);
-            this.txtHttpClientHeaders.Name = "txtHttpClientHeaders";
-            this.txtHttpClientHeaders.Size = new System.Drawing.Size(288, 69);
-            this.txtHttpClientHeaders.TabIndex = 8;
-            this.txtHttpClientHeaders.Text = "";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(5, 80);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(50, 13);
-            this.label6.TabIndex = 7;
-            this.label6.Text = "Headers:";
-            // 
-            // txtHttpClientStatus
-            // 
-            this.txtHttpClientStatus.Location = new System.Drawing.Point(68, 155);
-            this.txtHttpClientStatus.Name = "txtHttpClientStatus";
-            this.txtHttpClientStatus.ReadOnly = true;
-            this.txtHttpClientStatus.Size = new System.Drawing.Size(288, 34);
-            this.txtHttpClientStatus.TabIndex = 6;
-            this.txtHttpClientStatus.Text = "";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(5, 155);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(40, 13);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "Status:";
-            // 
-            // chkHttpClientEnabled
-            // 
-            this.chkHttpClientEnabled.AutoSize = true;
-            this.chkHttpClientEnabled.Location = new System.Drawing.Point(68, 53);
-            this.chkHttpClientEnabled.Name = "chkHttpClientEnabled";
-            this.chkHttpClientEnabled.Size = new System.Drawing.Size(59, 17);
-            this.chkHttpClientEnabled.TabIndex = 3;
-            this.chkHttpClientEnabled.Text = "Enable";
-            this.chkHttpClientEnabled.UseVisualStyleBackColor = true;
-            // 
-            // textBoxHttpClientUrl
-            // 
-            this.textBoxHttpClientUrl.Location = new System.Drawing.Point(68, 24);
-            this.textBoxHttpClientUrl.Margin = new System.Windows.Forms.Padding(2);
-            this.textBoxHttpClientUrl.Name = "textBoxHttpClientUrl";
-            this.textBoxHttpClientUrl.Size = new System.Drawing.Size(288, 20);
-            this.textBoxHttpClientUrl.TabIndex = 1;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(3, 24);
-            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(32, 13);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "URL:";
-            // 
-            // groupBoxPipeServer
-            // 
-            this.groupBoxPipeServer.Controls.Add(this.txtPipeServer);
-            this.groupBoxPipeServer.Controls.Add(this.lblPipeServerStatus);
-            this.groupBoxPipeServer.Controls.Add(this.chkPipeServerEnabled);
-            this.groupBoxPipeServer.Controls.Add(this.textBoxPipeName);
-            this.groupBoxPipeServer.Controls.Add(this.labelPipeName);
-            this.groupBoxPipeServer.Location = new System.Drawing.Point(5, 140);
-            this.groupBoxPipeServer.Margin = new System.Windows.Forms.Padding(2);
-            this.groupBoxPipeServer.Name = "groupBoxPipeServer";
-            this.groupBoxPipeServer.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBoxPipeServer.Size = new System.Drawing.Size(361, 123);
-            this.groupBoxPipeServer.TabIndex = 19;
-            this.groupBoxPipeServer.TabStop = false;
-            this.groupBoxPipeServer.Text = "Pipe Server";
-            // 
-            // txtPipeServer
-            // 
-            this.txtPipeServer.Location = new System.Drawing.Point(68, 78);
-            this.txtPipeServer.Name = "txtPipeServer";
-            this.txtPipeServer.ReadOnly = true;
-            this.txtPipeServer.Size = new System.Drawing.Size(288, 34);
-            this.txtPipeServer.TabIndex = 6;
-            this.txtPipeServer.Text = "";
-            // 
-            // lblPipeServerStatus
-            // 
-            this.lblPipeServerStatus.AutoSize = true;
-            this.lblPipeServerStatus.Location = new System.Drawing.Point(5, 78);
-            this.lblPipeServerStatus.Name = "lblPipeServerStatus";
-            this.lblPipeServerStatus.Size = new System.Drawing.Size(40, 13);
-            this.lblPipeServerStatus.TabIndex = 5;
-            this.lblPipeServerStatus.Text = "Status:";
-            // 
-            // chkPipeServerEnabled
-            // 
-            this.chkPipeServerEnabled.AutoSize = true;
-            this.chkPipeServerEnabled.Location = new System.Drawing.Point(68, 53);
-            this.chkPipeServerEnabled.Name = "chkPipeServerEnabled";
-            this.chkPipeServerEnabled.Size = new System.Drawing.Size(59, 17);
-            this.chkPipeServerEnabled.TabIndex = 3;
-            this.chkPipeServerEnabled.Text = "Enable";
-            this.chkPipeServerEnabled.UseVisualStyleBackColor = true;
-            // 
-            // textBoxPipeName
-            // 
-            this.textBoxPipeName.Location = new System.Drawing.Point(68, 24);
-            this.textBoxPipeName.Margin = new System.Windows.Forms.Padding(2);
-            this.textBoxPipeName.Name = "textBoxPipeName";
-            this.textBoxPipeName.Size = new System.Drawing.Size(288, 20);
-            this.textBoxPipeName.TabIndex = 1;
-            // 
-            // labelPipeName
-            // 
-            this.labelPipeName.AutoSize = true;
-            this.labelPipeName.Location = new System.Drawing.Point(3, 24);
-            this.labelPipeName.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.labelPipeName.Name = "labelPipeName";
-            this.labelPipeName.Size = new System.Drawing.Size(62, 13);
-            this.labelPipeName.TabIndex = 0;
-            this.labelPipeName.Text = "Pipe Name:";
-            // 
-            // DataGroup
-            // 
-            this.DataGroup.Controls.Add(this.CreateFilesCheckBox);
-            this.DataGroup.Location = new System.Drawing.Point(5, 3);
-            this.DataGroup.Margin = new System.Windows.Forms.Padding(0);
-            this.DataGroup.Name = "DataGroup";
-            this.DataGroup.Size = new System.Drawing.Size(277, 43);
-            this.DataGroup.TabIndex = 17;
-            this.DataGroup.TabStop = false;
-            this.DataGroup.Text = "Files";
-            // 
-            // CreateFilesCheckBox
-            // 
-            this.CreateFilesCheckBox.AutoSize = true;
-            this.CreateFilesCheckBox.Location = new System.Drawing.Point(10, 19);
-            this.CreateFilesCheckBox.Name = "CreateFilesCheckBox";
-            this.CreateFilesCheckBox.Size = new System.Drawing.Size(78, 17);
-            this.CreateFilesCheckBox.TabIndex = 8;
-            this.CreateFilesCheckBox.Text = "Create files";
-            this.CreateFilesCheckBox.UseVisualStyleBackColor = true;
+            var floater = new FlowLayoutPanel();
+            floater.FlowDirection = FlowDirection.TopDown;
+            floater.Dock = System.Windows.Forms.DockStyle.Fill;
+            foreach (IPlugin p in plugins)
+            {
+                floater.Controls.Add(p.SettingsRenderer().Render());
+            }
+            floater.BackColor = Color.Red;
+            this.tabPageSettingsPlugins.Controls.Add(floater);
+            this.tabPageSettingsPlugins.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSettingsPlugins.Name = "tabPageSettingsPlugins";
+            this.tabPageSettingsPlugins.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageSettingsPlugins.Size = new System.Drawing.Size(505, 476);
+            this.tabPageSettingsPlugins.TabIndex = 4;
+            this.tabPageSettingsPlugins.Text = "Plugins";
+            this.tabPageSettingsPlugins.UseVisualStyleBackColor = true;
             // 
             // UpdateGroup
             // 
@@ -1342,10 +1078,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.FontGroup.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.titleFontSizeNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fontSizeNumeric)).EndInit();
-            this.AutoSplitLayout.ResumeLayout(false);
-            this.AutoSplitLayout.PerformLayout();
-            this.AutoSplitToolbar.ResumeLayout(false);
-            this.AutoSplitToolbar.PerformLayout();
             this.VerticalSplitContainer.ResumeLayout(false);
             this.grpConfigFiles.ResumeLayout(false);
             this.ctxConfigFileList.ResumeLayout(false);
@@ -1358,14 +1090,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.tabPageSettingsRunes.ResumeLayout(false);
-            this.tabPageSettingsAutosplit.ResumeLayout(false);
             this.tabPageSettingsMisc.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            this.groupBoxPipeServer.ResumeLayout(false);
-            this.groupBoxPipeServer.PerformLayout();
-            this.DataGroup.ResumeLayout(false);
-            this.DataGroup.PerformLayout();
+            this.tabPageSettingsPlugins.ResumeLayout(false);
             this.UpdateGroup.ResumeLayout(false);
             this.UpdateGroup.PerformLayout();
             this.mainPanel.ResumeLayout(false);
@@ -1379,14 +1105,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private System.Windows.Forms.GroupBox FontGroup;
         private System.Windows.Forms.Label TitleFontSizeLabel;
         private System.Windows.Forms.Label FontSizeLabel;
-        private System.Windows.Forms.Button AddAutoSplitButton;
-        private System.Windows.Forms.CheckBox EnableAutosplitCheckBox;
-        private System.Windows.Forms.Label AutoSplitHotkeyLabel;
-        private System.Windows.Forms.Button AutoSplitTestHotkeyButton;
         private System.Windows.Forms.TableLayoutPanel VerticalSplitContainer;
         private System.Windows.Forms.TableLayoutPanel HorizontalSplitContainer;
-        private System.Windows.Forms.TableLayoutPanel AutoSplitLayout;
-        private System.Windows.Forms.Panel AutoSplitToolbar;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox chkDisplayName;
         private System.Windows.Forms.CheckBox chkDisplayDeathCounter;
@@ -1398,7 +1118,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private System.Windows.Forms.NumericUpDown fontSizeNumeric;
         private System.Windows.Forms.NumericUpDown titleFontSizeNumeric;
         private Gui.Controls.FontComboBox fontComboBox;
-        private Controls.HotkeyControl autoSplitHotkeyControl;
         private System.Windows.Forms.TableLayoutPanel mainPanel;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnUndo;
@@ -1414,11 +1133,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private System.Windows.Forms.ToolStripMenuItem menuNew;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPageSettingsLayout;
-        private System.Windows.Forms.TabPage tabPageSettingsAutosplit;
         private System.Windows.Forms.TabPage tabPageSettingsRunes;
         private System.Windows.Forms.TabPage tabPageSettingsMisc;
-        private System.Windows.Forms.GroupBox DataGroup;
-        private System.Windows.Forms.CheckBox CreateFilesCheckBox;
+        private System.Windows.Forms.TabPage tabPageSettingsPlugins;
         private System.Windows.Forms.GroupBox UpdateGroup;
         private System.Windows.Forms.Button CheckUpdatesButton;
         private System.Windows.Forms.CheckBox CheckUpdatesCheckBox;
@@ -1451,12 +1168,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private System.Windows.Forms.Button btnSetGameCounterColor;
         private System.Windows.Forms.CheckBox chkShowPlayersX;
         private System.Windows.Forms.CheckBox chkShowGameCounter;
-        private System.Windows.Forms.GroupBox groupBoxPipeServer;
-        private System.Windows.Forms.TextBox textBoxPipeName;
-        private System.Windows.Forms.Label labelPipeName;
-        private System.Windows.Forms.CheckBox chkPipeServerEnabled;
-        private System.Windows.Forms.RichTextBox txtPipeServer;
-        private System.Windows.Forms.Label lblPipeServerStatus;
         private System.Windows.Forms.CheckBox checkBoxAttackerSelfDamage;
         private System.Windows.Forms.CheckBox checkBoxMonsterGold;
         private System.Windows.Forms.CheckBox checkBoxMagicFind;
@@ -1470,13 +1181,5 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private System.Windows.Forms.Button btnColorAll;
         private System.Windows.Forms.Button btnColorCharCount;
         private System.Windows.Forms.CheckBox chkDisplayCharCount;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.RichTextBox txtHttpClientHeaders;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.RichTextBox txtHttpClientStatus;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.CheckBox chkHttpClientEnabled;
-        private System.Windows.Forms.TextBox textBoxHttpClientUrl;
-        private System.Windows.Forms.Label label5;
     }
 }

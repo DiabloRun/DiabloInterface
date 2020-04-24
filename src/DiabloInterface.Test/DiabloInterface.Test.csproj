@@ -90,7 +90,7 @@
       <Project>{4DC903B9-B02C-47D3-A695-4873FA5219AD}</Project>
       <Name>DiabloInterface.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiabloInterface.Server\DiabloInterface.Server.csproj">
+    <ProjectReference Include="..\DiabloInterface.Plugin.PipeServer\DiabloInterface.Plugin.PipeServer.csproj">
       <Project>{59944b50-1a5e-4e02-b9be-0f9b499770df}</Project>
       <Name>DiabloInterface.Server</Name>
     </ProjectReference>

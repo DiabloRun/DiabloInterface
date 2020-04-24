@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Test", "Dia
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D2Reader", "D2Reader\D2Reader.csproj", "{C5F081D7-FB83-4934-908F-53CE986AB08C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Server", "DiabloInterface.Server\DiabloInterface.Server.csproj", "{59944B50-1A5E-4E02-B9BE-0F9B499770DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Plugin.PipeServer", "DiabloInterface.Plugin.PipeServer\DiabloInterface.Plugin.PipeServer.csproj", "{59944B50-1A5E-4E02-B9BE-0F9B499770DF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Core", "DiabloInterface.Core\DiabloInterface.Core.csproj", "{4DC903B9-B02C-47D3-A695-4873FA5219AD}"
 EndProject
@@ -19,6 +19,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Business", "DiabloInterface.Business\DiabloInterface.Business.csproj", "{2E429B2B-BD0A-48C3-AE99-0E292EA5D2DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Plugin.HttpClient", "DiabloInterface.Plugin.HttpClient\DiabloInterface.Plugin.HttpClient.csproj", "{17513A94-7271-422D-A34F-588B1D774987}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Plugin.Autosplits", "DiabloInterface.Plugin.Autosplits\DiabloInterface.Plugin.Autosplits.csproj", "{F00FFB11-A885-4D11-9839-42FF68092E93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Plugin.FileWriter", "DiabloInterface.Plugin.FileWriter\DiabloInterface.Plugin.FileWriter.csproj", "{C9BA823B-E8D6-4B46-BC89-7E9377BB1815}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +56,18 @@ Global
 		{2E429B2B-BD0A-48C3-AE99-0E292EA5D2DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E429B2B-BD0A-48C3-AE99-0E292EA5D2DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E429B2B-BD0A-48C3-AE99-0E292EA5D2DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17513A94-7271-422D-A34F-588B1D774987}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17513A94-7271-422D-A34F-588B1D774987}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17513A94-7271-422D-A34F-588B1D774987}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17513A94-7271-422D-A34F-588B1D774987}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F00FFB11-A885-4D11-9839-42FF68092E93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F00FFB11-A885-4D11-9839-42FF68092E93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F00FFB11-A885-4D11-9839-42FF68092E93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F00FFB11-A885-4D11-9839-42FF68092E93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9BA823B-E8D6-4B46-BC89-7E9377BB1815}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9BA823B-E8D6-4B46-BC89-7E9377BB1815}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9BA823B-E8D6-4B46-BC89-7E9377BB1815}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9BA823B-E8D6-4B46-BC89-7E9377BB1815}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

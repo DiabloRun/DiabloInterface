@@ -91,7 +91,6 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             }
 
             Logger.Info($"Saving settings at: \"{path}\".");
-            Logger.Info(settings.HttpClientUrl);
 
             using (var writer = new JsonSettingsWriter(path))
             {

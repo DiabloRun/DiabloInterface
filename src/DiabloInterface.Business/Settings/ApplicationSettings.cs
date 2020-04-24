@@ -9,30 +9,35 @@ namespace Zutatensuppe.DiabloInterface.Business.Settings
     using Newtonsoft.Json.Converters;
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Business.AutoSplits;
+    using Zutatensuppe.DiabloInterface.Business.Plugin;
 
     public class ApplicationSettings
     {
         public static ApplicationSettings Default => new ApplicationSettings();
 
-        public string FileFolder { get; set; } = "Files";
+        // Plugin settings
+        private Dictionary<string, PluginConfig> Plugins { get; set; } = new Dictionary<string, PluginConfig>();
+        public PluginConfig PluginConf(string name)
+        {
+            return Plugins.ContainsKey(name) ? Plugins[name] : new PluginConfig();
+        }
+        public PluginConfig SetPluginConf(string name, PluginConfig conf)
+        {
+            return Plugins[name] = conf;
+        }
+
+        // Update checker settings (should be plugin?)
+        public bool CheckUpdates { get; set; } = true;
+
+        // Rune settings (should be plugin?)
+        public IReadOnlyList<ClassRuneSettings> ClassRunes { get; set; } = new List<ClassRuneSettings>();
+
+        // GUI settings:
         public string FontName { get; set; } = "Courier New";
-        
+
         public int FontSize { get; set; } = 10;
         public int FontSizeTitle { get; set; } = 18;
-        public bool CreateFiles { get; set; }
-        public bool DoAutosplit { get; set; }
-        public bool CheckUpdates { get; set; } = true;
-        public string PipeName { get; set; } = "DiabloInterfacePipe";
-        public bool PipeServerEnabled { get; set; } = true;
-        public string HttpClientUrl { get; set; }
-        public bool HttpClientEnabled { get; set; } = false;
-        public string HttpClientHeaders { get; set; }
 
-        public Keys AutosplitHotkey { get; set; } = Keys.None;
-        public List<AutoSplit> Autosplits { get; set; } = new List<AutoSplit>();
-        public IReadOnlyList<ClassRuneSettings> ClassRunes { get; set; } = new List<ClassRuneSettings>();
-        
         public bool DisplayName { get; set; } = true;
         public bool DisplayLevel { get; set; } = true;
         public bool DisplayDeathCounter { get; set; } = true;
@@ -79,6 +84,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Settings
 
         public Color ColorBackground { get; set; } = Color.Black;
 
+        // Reader settings:
         public ProcessDescription[] ProcessDescriptions { get; set; } = new ProcessDescription[]
         {
             // Diablo 2

@@ -10,7 +10,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.D2Reader.Struct.Item;
-    using Zutatensuppe.DiabloInterface.Business.AutoSplits;
+    using Zutatensuppe.DiabloInterface.Business.Plugin;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Gui.Controls;
@@ -22,11 +22,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         private readonly ISettingsService settingsService;
         private readonly IGameService gameService;
-        private readonly ServerService serverService;
+        private readonly List<IPlugin> plugins;
         readonly Dictionary<GameDifficulty, QuestDebugRow[,]> questRows =
             new Dictionary<GameDifficulty, QuestDebugRow[,]>();
 
-        List<AutosplitBinding> autoSplitBindings;
         IReadOnlyDictionary<BodyLocation, string> itemStrings;
 
         Dictionary<Label, BodyLocation> locs;
@@ -36,13 +35,13 @@ namespace Zutatensuppe.DiabloInterface.Gui
         public DebugWindow(
             ISettingsService settingsService,
             IGameService gameService,
-            ServerService serverService
+            List<IPlugin> plugins
         ) {
             Logger.Info("Creating debug window.");
 
+            this.plugins = plugins;
             this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
             this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
-            this.serverService = serverService ?? throw new ArgumentNullException(nameof(serverService));
 
             RegisterServiceEventHandlers();
 
@@ -54,35 +53,40 @@ namespace Zutatensuppe.DiabloInterface.Gui
             };
 
             InitializeComponent();
-            ApplyAutoSplitSettings(settingsService.CurrentSettings.Autosplits);
+
+            foreach (IPlugin p in plugins)
+            {
+                var r = p.DebugRenderer();
+                if (r != null) r.ApplyChanges();
+            }
         }
 
         void RegisterServiceEventHandlers()
         {
             settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
             gameService.DataRead += GameServiceOnDataRead;
-            serverService.StatusChanged += ServerServiceStatusChanged;
+            foreach (IPlugin p in plugins)
+                p.Changed += PluginDataChanged;
         }
 
         void UnregisterServiceEventHandlers()
         {
             settingsService.SettingsChanged -= SettingsServiceOnSettingsChanged;
             gameService.DataRead -= GameServiceOnDataRead;
+            foreach (IPlugin p in plugins)
+                p.Changed -= PluginDataChanged;
         }
 
-        void ServerServiceStatusChanged(object sender, ServerStatusEventArgs e)
+        private void PluginDataChanged(object sender, IPlugin e)
         {
             if (InvokeRequired)
             {
-                Invoke((Action)(() => ServerServiceStatusChanged(sender, e)));
+                Invoke((Action)(() => PluginDataChanged(sender, e)));
                 return;
             }
 
-            txtPipeServer.Text = "";
-            foreach (KeyValuePair<string, bool> s in e.ServerStatuses)
-            {
-                txtPipeServer.Text += s.Key + ": " + (s.Value ? "RUNNING" :"NOT RUNNING") + "\n";
-            }
+            var r = e.DebugRenderer();
+            if (r != null) r.ApplyChanges();
         }
 
         void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
@@ -93,7 +97,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 return;
             }
 
-            ApplyAutoSplitSettings(e.Settings.Autosplits);
+            foreach (IPlugin p in plugins)
+            {
+                var r = p.DebugRenderer();
+                if (r != null) r.ApplyChanges();
+            }
         }
 
         void GameServiceOnDataRead(object sender, DataReadEventArgs e)
@@ -129,48 +137,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 {
                     // System.NullReferenceException
                 }
-            }
-        }
-
-        void ClearAutoSplitBindings()
-        {
-            if (autoSplitBindings == null)
-            {
-                autoSplitBindings = new List<AutosplitBinding>();
-            }
-
-            foreach (var binding in autoSplitBindings)
-            {
-                binding.Unbind();
-            }
-
-            autoSplitBindings.Clear();
-        }
-
-        void ApplyAutoSplitSettings(List<AutoSplit> autoSplits)
-        {
-            if (DesignMode) return;
-            // Unbinds and clears the binding list.
-            ClearAutoSplitBindings();
-
-            int y = 0;
-            autosplitPanel.Controls.Clear();
-            foreach (AutoSplit autoSplit in autoSplits)
-            {
-                Label splitLabel = new Label();
-                splitLabel.SetBounds(0, y, autosplitPanel.Bounds.Width, 16);
-                splitLabel.Text = autoSplit.Name;
-                splitLabel.ForeColor = autoSplit.IsReached ? Color.Green : Color.Red;
-
-                Action<AutoSplit> splitReached = s => splitLabel.ForeColor = Color.Green;
-                Action<AutoSplit> splitReset = s => splitLabel.ForeColor = Color.Red;
-
-                // Bind autosplit events.
-                var binding = new AutosplitBinding(autoSplit, splitReached, splitReset);
-                autoSplitBindings.Add(binding);
-
-                autosplitPanel.Controls.Add(splitLabel);
-                y += 16;
             }
         }
 
@@ -275,44 +241,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
             hoveredLabel = null;
             UpdateItemDebugInformation();
-        }
-
-        /// <summary>
-        /// Helper class for binding/unbinding AutoSplit event handlers.
-        /// </summary>
-        class AutosplitBinding
-        {
-            bool didUnbind;
-            AutoSplit autoSplit;
-            Action<AutoSplit> reachedHandler;
-            Action<AutoSplit> resetHandler;
-
-            public AutosplitBinding(AutoSplit autoSplit, Action<AutoSplit> reachedHandler, Action<AutoSplit> resetHandler)
-            {
-                this.autoSplit = autoSplit;
-                this.reachedHandler = reachedHandler;
-                this.resetHandler = resetHandler;
-
-                this.autoSplit.Reached += reachedHandler;
-                this.autoSplit.Reset += resetHandler;
-            }
-
-            ~AutosplitBinding()
-            {
-                Unbind();
-            }
-
-            /// <summary>
-            /// Unbding the autosplit handlers.
-            /// </summary>
-            public void Unbind()
-            {
-                if (didUnbind) return;
-
-                didUnbind = true;
-                autoSplit.Reached -= reachedHandler;
-                autoSplit.Reset -= resetHandler;
-            }
         }
     }
 }

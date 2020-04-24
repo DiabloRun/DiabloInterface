@@ -8,6 +8,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
     using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader.Models;
+    using Zutatensuppe.DiabloInterface.Business.Plugin;
     using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Business.Settings;
     using Zutatensuppe.DiabloInterface.Core.Logging;
@@ -20,10 +21,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         private readonly ISettingsService settingsService;
         private readonly IGameService gameService;
-        private readonly IAutoSplitService autoSplitService;
-        private readonly KeyService keyService;
-        private readonly ServerService serverService;
-        private readonly HttpClientService httpClientService;
+        private readonly List<IPlugin> plugins;
 
         Form debugWindow;
         AbstractLayout currentLayout;
@@ -31,18 +29,13 @@ namespace Zutatensuppe.DiabloInterface.Gui
         public MainWindow(
             ISettingsService settingsService,
             IGameService gameService,
-            IAutoSplitService autoSplitService,
-            KeyService keyService,
-            ServerService serverService,
-            HttpClientService httpClientService
+            List<IPlugin> plugins
         ) {
             Logger.Info("Creating main window.");
+            this.plugins = plugins;
+
             this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
             this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
-            this.autoSplitService = autoSplitService ?? throw new ArgumentNullException(nameof(autoSplitService));
-            this.keyService = keyService ?? throw new ArgumentNullException(nameof(keyService));
-            this.serverService = serverService ?? throw new ArgumentNullException(nameof(serverService));
-            this.httpClientService = httpClientService ?? throw new ArgumentNullException(nameof(httpClientService));
             
             RegisterServiceEventHandlers();
             InitializeComponent();
@@ -55,6 +48,21 @@ namespace Zutatensuppe.DiabloInterface.Gui
         {
             settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
             settingsService.SettingsCollectionChanged += SettingsServiceOnSettingsCollectionChanged;
+
+            gameService.CharacterCreated += GameService_CharacterCreated;
+            gameService.DataRead += GameService_DataRead;
+        }
+
+        private void GameService_DataRead(object sender, D2Reader.DataReadEventArgs e)
+        {
+            foreach (IPlugin p in plugins)
+                p.OnDataRead(e);
+        }
+
+        private void GameService_CharacterCreated(object sender, D2Reader.CharacterCreatedEventArgs e)
+        {
+            foreach (IPlugin p in plugins)
+                p.OnCharacterCreated(e);
         }
 
         void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
@@ -162,13 +170,14 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         void ResetMenuItemOnClick(object sender, EventArgs e)
         {
-            autoSplitService.ResetAutoSplits();
+            foreach (IPlugin p in plugins)
+                p.OnReset();
             currentLayout?.Reset();
         }
 
         void SettingsMenuItemOnClick(object sender, EventArgs e)
         {
-            using (var settingsWindow = new SettingsWindow(settingsService, serverService, keyService, httpClientService))
+            using (var settingsWindow = new SettingsWindow(settingsService, plugins))
             {
                 settingsWindow.ShowDialog();
             }
@@ -178,7 +187,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
         {
             if (debugWindow == null || debugWindow.IsDisposed)
             {
-                debugWindow = new DebugWindow(settingsService, gameService, serverService);
+                debugWindow = new DebugWindow(settingsService, gameService, plugins);
             }
 
             debugWindow.Show();
