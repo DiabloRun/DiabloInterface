@@ -1,75 +1,97 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
+using Zutatensuppe.D2Reader;
+using Zutatensuppe.D2Reader.Models;
+using Zutatensuppe.DiabloInterface.Settings;
+using Zutatensuppe.DiabloInterface.Services;
+using Zutatensuppe.DiabloInterface.Core.Logging;
+using Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Linq;
-    using System.Reflection;
-    using System.Text;
-    using System.Windows.Forms;
-    using Zutatensuppe.D2Reader;
-    using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Business.AutoSplits;
-    using Zutatensuppe.DiabloInterface.Business.Plugin;
-    using Zutatensuppe.DiabloInterface.Business.Settings;
-    using Zutatensuppe.DiabloInterface.Business.Services;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
+    public class AutosplitPluginConfig : PluginConfig
+    {
+        public bool Enabled { get { return Is("Enabled"); } set { Set("Enabled", value); } }
+        public Keys Hotkey { get { return GetKeys("Hotkey"); } set { Set("Hotkey", value); } }
+        public List<AutoSplit> Splits { get { return (List<AutoSplit>)Get("Splits"); } set { Set("Splits", value); } }
+
+        public AutosplitPluginConfig()
+        {
+            Enabled = false;
+            Hotkey = Keys.None;
+            Splits = new List<AutoSplit>();
+        }
+
+        public AutosplitPluginConfig(PluginConfig s) :this()
+        {
+            if (s != null)
+            {
+                Enabled = s.Is("Enabled");
+                Hotkey = s.GetKeys("Hotkey");
+                Splits = s.Get("Splits") as List<AutoSplit>;
+                if (Splits == null)
+                    Splits = new List<AutoSplit>();
+            }
+        }
+    }
 
     public class AutoSplitService : IPlugin
     {
         public string Name => "Autosplit";
 
-        public event EventHandler<IPlugin> Changed;
+        internal AutosplitPluginConfig Cfg { get; private set; } = new AutosplitPluginConfig();
+        
+        private ILogger Logger;
 
-        public PluginData Data { get; } = new PluginData();
+        public readonly KeyService keyService = new KeyService();
 
-        public PluginConfig Cfg { get; } = new PluginConfig(new Dictionary<string, object>()
+        private DiabloInterface di;
+
+        public AutoSplitService(DiabloInterface di)
         {
-            { "Enabled", false },
-            { "Hotkey", Keys.None },
-            { "Splits", new List<AutoSplit>() },
-        });
-
-        private bool DoAutosplit => Cfg.GetBool("Enabled");
-        private Keys AutosplitHotkey => (Keys)Cfg.Get("Hotkey");
-        internal List<AutoSplit> Autosplits => (List<AutoSplit>)Cfg.Get("Splits");
-
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
-
-        public readonly KeyService keyService;
-        public readonly ISettingsService settingsService;
-        public AutoSplitService(
-            GameService gameService,
-            ISettingsService settingsService
-        )
-        {
+            Logger = di.Logger(this);
             Logger.Info("Creating auto split service.");
-
-            this.keyService = new KeyService();
-            this.settingsService = settingsService;
-            settingsService.SettingsChanged += (object sender, ApplicationSettingsEventArgs args) =>
-            {
-                UpdateDataFromSettings(args.Settings);
-            };
-            UpdateDataFromSettings(settingsService.CurrentSettings);
+            this.di = di;
         }
 
-        private void UpdateDataFromSettings(ApplicationSettings s)
+        public void Initialize()
         {
-            Cfg.Apply(s.PluginConf("Autosplit"));
+            di.game.CharacterCreated += Game_CharacterCreated;
+            di.game.DataRead += Game_DataRead;
+            di.settings.Changed += SettingsService_Changed;
+            Init(di.settings.CurrentSettings);
+        }
 
+        private void Game_CharacterCreated(object sender, CharacterCreatedEventArgs e)
+        {
+            Logger.Info($"A new character was created. Auto splits enabled for {e.Character.Name}");
+            ResetAutoSplits();
+        }
+
+        private void Game_DataRead(object sender, DataReadEventArgs e)
+        {
+            DoAutoSplits(e);
+        }
+
+        private void SettingsService_Changed(object sender, ApplicationSettingsEventArgs e)
+        {
+            Init(e.Settings);
+        }
+
+        private void Init(ApplicationSettings s)
+        {
+            Cfg = new AutosplitPluginConfig(s.PluginConf(Name));
+            ReloadWithCurrentSettings(Cfg);
             LogAutoSplits();
         }
 
         private void LogAutoSplits()
         {
-            if (Autosplits.Count == 0)
+            if (Cfg.Splits.Count == 0)
             {
                 Logger.Info("No auto splits configured.");
                 return;
@@ -79,7 +101,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             logMessage.Append("Configured auto splits:");
 
             int i = 0;
-            foreach (var split in Autosplits)
+            foreach (var split in Cfg.Splits)
             {
                 logMessage.AppendLine();
                 logMessage.Append(AutoSplitString(i++, split));
@@ -93,11 +115,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             return $"#{i} [{s.Type}, {s.Value}, {s.Difficulty}] \"{s.Name}\"";
         }
 
-        private void GameServiceOnDataRead(object sender, DataReadEventArgs e)
-        {
-            DoAutoSplits(e);
-        }
-
         private void DoAutoSplits(DataReadEventArgs e)
         {
             // TODO: fix bug... when splits are add during the run, the last split seems to trigger again on save
@@ -108,17 +125,17 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             // add another autosplit:
             // - area (stony fields)
             // should not trigger another split automatically, but does
-            if (!DoAutosplit || !e.Character.IsAutosplitChar)
+            if (!Cfg.Enabled || !e.Character.IsAutosplitChar)
                 return;
 
             int i = 0;
-            foreach (var split in Autosplits)
+            foreach (var split in Cfg.Splits)
             {
                 if (!IsCompleteableAutoSplit(split, e))
                     continue;
 
                 split.IsReached = true;
-                keyService.TriggerHotkey(AutosplitHotkey);
+                keyService.TriggerHotkey(Cfg.Hotkey);
                 Logger.Info($"AutoSplit reached: {AutoSplitString(i++, split)}");
             }
         }
@@ -156,37 +173,15 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             }
         }
 
-        private void GameServiceOnCharacterCreated(object sender, CharacterCreatedEventArgs e)
-        {
-            Logger.Info($"A new character was created. Auto splits enabled for {e.Character.Name}");
-
-            ResetAutoSplits();
-        }
-
         public void ResetAutoSplits()
         {
-            foreach (var autoSplit in Autosplits)
+            foreach (var autoSplit in Cfg.Splits)
             {
                 autoSplit.IsReached = false;
             }
         }
 
-        public void OnSettingsChanged()
-        {
-        }
-
-        public void OnCharacterCreated(CharacterCreatedEventArgs e)
-        {
-            Logger.Info($"A new character was created. Auto splits enabled for {e.Character.Name}");
-            ResetAutoSplits();
-        }
-
-        public void OnDataRead(DataReadEventArgs e)
-        {
-            DoAutoSplits(e);
-        }
-
-        public void OnReset()
+        public void Reset()
         {
             ResetAutoSplits();
         }
@@ -209,6 +204,20 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             if (dr == null)
                 dr = new AutosplitDebugRenderer(this);
             return dr;
+        }
+
+        private void ApplyChanges()
+        {
+            if (sr != null)
+                sr.ApplyChanges();
+            if (dr != null)
+                dr.ApplyChanges();
+        }
+
+        private void ReloadWithCurrentSettings(AutosplitPluginConfig cfg)
+        {
+            if (sr != null)
+                sr.Set(cfg);
         }
     }
 
@@ -246,6 +255,19 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             groupBox2.Size = new Size(287, 124);
             groupBox2.TabStop = false;
             groupBox2.Text = "Splits";
+
+            ApplyAutoSplitSettings();
+        }
+
+        public void ApplyChanges()
+        {
+            if (groupBox2.InvokeRequired)
+            {
+                groupBox2.Invoke((Action)(() => ApplyChanges()));
+                return;
+            }
+
+            ApplyAutoSplitSettings();
         }
 
         void ClearAutoSplitBindings()
@@ -270,7 +292,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 
             int y = 0;
             autosplitPanel.Controls.Clear();
-            foreach (AutoSplit autoSplit in p.Autosplits)
+            foreach (AutoSplit autoSplit in p.Cfg.Splits)
             {
                 Label splitLabel = new Label();
                 splitLabel.SetBounds(0, y, autosplitPanel.Bounds.Width, 16);
@@ -288,25 +310,20 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
                 y += 16;
             }
         }
-
-        public void ApplyChanges()
-        {
-        }
     }
 
     class AutosplitSettingsRenderer : IPluginSettingsRenderer
     {
         private AutoSplitService p;
 
-        GroupBox pluginBox;
+        private TableLayoutPanel AutoSplitLayout;
         AutoSplitTable autoSplitTable;
         HotkeyControl autoSplitHotkeyControl;
         private Button AddAutoSplitButton;
         private CheckBox EnableAutosplitCheckBox;
         private Label AutoSplitHotkeyLabel;
         private Button AutoSplitTestHotkeyButton;
-        private Panel AutoSplitToolbar;
-        private TableLayoutPanel AutoSplitLayout;
+        private FlowLayoutPanel AutoSplitToolbar;
 
         public AutosplitSettingsRenderer(AutoSplitService p)
         {
@@ -315,62 +332,52 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 
         public Control Render()
         {
-            if (pluginBox == null || pluginBox.IsDisposed)
+            if (AutoSplitLayout == null || AutoSplitLayout.IsDisposed)
             {
                 Init();
             }
-            return pluginBox;
+            return AutoSplitLayout;
         }
 
         private void Init()
         {
             autoSplitHotkeyControl = new HotkeyControl();
             autoSplitHotkeyControl.Hotkey = Keys.None;
-            autoSplitHotkeyControl.Location = new Point(80, 7);
-            autoSplitHotkeyControl.Size = new Size(82, 20);
+            autoSplitHotkeyControl.AutoSize = true;
             autoSplitHotkeyControl.Text = "None";
             autoSplitHotkeyControl.UseKeyWhitelist = true;
             autoSplitHotkeyControl.HotkeyChanged += new EventHandler<Keys>(AutoSplitHotkeyControlOnHotkeyChanged);
 
             AutoSplitHotkeyLabel = new Label();
             AutoSplitHotkeyLabel.AutoSize = true;
-            AutoSplitHotkeyLabel.Location = new Point(3, 10);
-            AutoSplitHotkeyLabel.Size = new Size(67, 13);
             AutoSplitHotkeyLabel.Text = "Split-Hotkey:";
 
             AutoSplitTestHotkeyButton = new Button();
-            AutoSplitTestHotkeyButton.Location = new Point(168, 5);
-            AutoSplitTestHotkeyButton.Size = new Size(75, 23);
+            AutoSplitTestHotkeyButton.AutoSize = true;
             AutoSplitTestHotkeyButton.Text = "Test Hotkey";
             AutoSplitTestHotkeyButton.Click += new EventHandler(AutoSplitTestHotkey_Click);
 
             EnableAutosplitCheckBox = new CheckBox();
-            EnableAutosplitCheckBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             EnableAutosplitCheckBox.AutoSize = true;
-            EnableAutosplitCheckBox.Location = new Point(358, 9);
-            EnableAutosplitCheckBox.Size = new Size(59, 17);
             EnableAutosplitCheckBox.Text = "Enable";
 
             AddAutoSplitButton = new Button();
-            AddAutoSplitButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            AddAutoSplitButton.Location = new Point(422, 5);
-            AddAutoSplitButton.Size = new Size(79, 23);
+            AddAutoSplitButton.AutoSize = true;
             AddAutoSplitButton.Text = "Add Split";
             AddAutoSplitButton.Click += new EventHandler(AddAutoSplitButton_Clicked);
 
-            AutoSplitToolbar = new Panel();
+            AutoSplitToolbar = new FlowLayoutPanel();
+            AutoSplitToolbar.FlowDirection = FlowDirection.LeftToRight;
             AutoSplitToolbar.AutoSize = true;
-            AutoSplitToolbar.Controls.Add(autoSplitHotkeyControl);
             AutoSplitToolbar.Controls.Add(AutoSplitHotkeyLabel);
-            AutoSplitToolbar.Controls.Add(AutoSplitTestHotkeyButton);
+            AutoSplitToolbar.Controls.Add(autoSplitHotkeyControl);
             AutoSplitToolbar.Controls.Add(EnableAutosplitCheckBox);
+            AutoSplitToolbar.Controls.Add(AutoSplitTestHotkeyButton);
             AutoSplitToolbar.Controls.Add(AddAutoSplitButton);
             AutoSplitToolbar.Dock = DockStyle.Fill;
-            AutoSplitToolbar.Location = new Point(0, 445);
             AutoSplitToolbar.Margin = new Padding(0);
-            AutoSplitToolbar.Size = new Size(505, 31);
 
-            autoSplitTable = new AutoSplitTable(p.settingsService) { Dock = DockStyle.Fill };
+            autoSplitTable = new AutoSplitTable(p.Cfg) { Dock = DockStyle.Fill };
 
             AutoSplitLayout = new TableLayoutPanel();
             AutoSplitLayout.ColumnCount = 1;
@@ -381,12 +388,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             AutoSplitLayout.RowCount = 2;
             AutoSplitLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             AutoSplitLayout.RowStyles.Add(new RowStyle());
-            AutoSplitLayout.Size = new Size(505, 476);
+            AutoSplitLayout.Size = new Size(800, 476);
             AutoSplitLayout.Controls.Add(AutoSplitToolbar, 0, 1);
             AutoSplitLayout.Controls.Add(autoSplitTable);
 
-            pluginBox = new GroupBox();
-            pluginBox.Controls.Add(AutoSplitLayout);
+            Set(p.Cfg);
+            ApplyChanges();
         }
 
         void AddAutoSplitButton_Clicked(object sender, EventArgs e)
@@ -417,27 +424,32 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         public bool IsDirty()
         {
             return autoSplitTable.IsDirty
-                || p.Cfg.GetBool("Enabled") != EnableAutosplitCheckBox.Checked
-                || p.Cfg.GetKeys("Hotkey") != autoSplitHotkeyControl.Hotkey;
+                || p.Cfg.Enabled != EnableAutosplitCheckBox.Checked
+                || p.Cfg.Hotkey != autoSplitHotkeyControl.Hotkey;
         }
 
         public PluginConfig Get()
         {
-            return new PluginConfig(new Dictionary<string, object>()
-            {
-                {"Enabled", EnableAutosplitCheckBox.Checked},
-                {"Hotkey", autoSplitHotkeyControl.Hotkey },
-                {"Splits", autoSplitTable.AutoSplits.ToList()},
-            });
+            var conf = new AutosplitPluginConfig();
+            conf.Enabled = EnableAutosplitCheckBox.Checked;
+            conf.Hotkey = autoSplitHotkeyControl.Hotkey;
+            conf.Splits = autoSplitTable.AutoSplits.ToList();
+            return conf;
         }
 
-        public void Set(PluginConfig cfg)
+        internal void Set(AutosplitPluginConfig conf)
         {
-            EnableAutosplitCheckBox.Checked = cfg.GetBool("Enabled");
-            autoSplitHotkeyControl.ForeColor = cfg.GetKeys("Hotkey") == Keys.None ? Color.Red : Color.Black;
-            autoSplitHotkeyControl.Hotkey = cfg.GetKeys("Hotkey");
+            if (AutoSplitLayout.InvokeRequired)
+            {
+                AutoSplitLayout.Invoke((Action)(() => Set(conf)));
+                return;
+            }
 
-            autoSplitTable?.MarkClean();
+            EnableAutosplitCheckBox.Checked = conf.Enabled;
+            autoSplitHotkeyControl.ForeColor = conf.Hotkey == Keys.None ? Color.Red : Color.Black;
+            autoSplitHotkeyControl.Hotkey = conf.Hotkey;
+
+            autoSplitTable.Set(conf);
         }
 
         public void ApplyChanges()

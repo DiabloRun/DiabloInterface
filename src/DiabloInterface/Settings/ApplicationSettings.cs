@@ -1,30 +1,22 @@
-namespace Zutatensuppe.DiabloInterface.Business.Settings
+namespace Zutatensuppe.DiabloInterface.Settings
 {
     using System;
     using System.Collections.Generic;
     using System.Drawing;
-    using System.Windows.Forms;
-
+    using System.Runtime.Serialization;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Business.Plugin;
+    using Zutatensuppe.DiabloInterface.Plugin;
 
     public class ApplicationSettings
     {
         public static ApplicationSettings Default => new ApplicationSettings();
 
         // Plugin settings
-        private Dictionary<string, PluginConfig> Plugins { get; set; } = new Dictionary<string, PluginConfig>();
-        public PluginConfig PluginConf(string name)
-        {
-            return Plugins.ContainsKey(name) ? Plugins[name] : new PluginConfig();
-        }
-        public PluginConfig SetPluginConf(string name, PluginConfig conf)
-        {
-            return Plugins[name] = conf;
-        }
+        public Dictionary<string, PluginConfig> Plugins { get; set; } = new Dictionary<string, PluginConfig>();
+        public PluginConfig PluginConf(string type) => Plugins.ContainsKey(type) ? Plugins[type] : null;
 
         // Update checker settings (should be plugin?)
         public bool CheckUpdates { get; set; } = true;
@@ -81,7 +73,6 @@ namespace Zutatensuppe.DiabloInterface.Business.Settings
         public Color ColorAttackerSelfDamage { get; set; } = Color.Snow;
         public Color ColorHardcoreSoftcore { get; set; } = Color.Snow;
         public Color ColorExpansionClassic { get; set; } = Color.Snow;
-
         public Color ColorBackground { get; set; } = Color.Black;
 
         // Reader settings:

@@ -1,4 +1,4 @@
-namespace Zutatensuppe.DiabloInterface.Business.Services
+namespace Zutatensuppe.DiabloInterface.Services
 {
     using System;
     using System.Reflection;
@@ -8,7 +8,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
-    public class GameService : IGameService, IDisposable
+    public class GameService : IGameService
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 

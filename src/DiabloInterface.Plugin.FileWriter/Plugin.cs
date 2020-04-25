@@ -1,76 +1,81 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
+using Zutatensuppe.D2Reader;
+using Zutatensuppe.DiabloInterface.Settings;
+using Zutatensuppe.DiabloInterface.Services;
+using Zutatensuppe.DiabloInterface.Core.Logging;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Reflection;
-    using System.Windows.Forms;
-    using Zutatensuppe.D2Reader;
-    using Zutatensuppe.DiabloInterface.Business.Plugin;
-    using Zutatensuppe.DiabloInterface.Business.Settings;
-    using Zutatensuppe.DiabloInterface.Business.Services;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
 
-    public class CharacterStatFileWriterService : IPlugin
+    class FileWriterPluginConfig : PluginConfig
+    {
+        public bool Enabled { get { return Is("Enabled"); } set { Set("Enabled", value); } }
+        public string FileFolder { get { return GetString("FileFolder"); } set { Set("FileFolder", value); } }
+
+        public FileWriterPluginConfig()
+        {
+            Enabled = false;
+            FileFolder = "Files";
+        }
+
+        public FileWriterPluginConfig(PluginConfig s): this()
+        {
+            if (s != null)
+            {
+                Enabled = s.Is("Enabled");
+                FileFolder = s.GetString("FileFolder");
+            }
+        }
+    }
+
+    public class FileWriterPlugin : IPlugin
     {
         public string Name => "Filewriter";
 
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        internal FileWriterPluginConfig Cfg { get; private set; } = new FileWriterPluginConfig();
 
-        public event EventHandler<IPlugin> Changed;
+        private ILogger Logger;
 
-        public PluginData Data { get; } = new PluginData();
+        DiabloInterface di;
 
-        public PluginConfig Cfg { get; } = new PluginConfig(new Dictionary<string, object>()
+        public FileWriterPlugin(DiabloInterface di)
         {
-            { "Enabled", false },
-            { "FileFolder", "Files" },
-        });
-
-        private bool CreateFiles => Cfg.GetBool("Enabled");
-        private string FileFolder => Cfg.GetString("FileFolder");
-
-        public CharacterStatFileWriterService(ISettingsService settingsService)
-        {
+            Logger = di.Logger(this);
             Logger.Info("Creating character stat file writer service.");
-
-            settingsService.SettingsChanged += (object sender, ApplicationSettingsEventArgs args) =>
-            {
-                UpdateDataFromSettings(args.Settings);
-            };
-            UpdateDataFromSettings(settingsService.CurrentSettings);
+            this.di = di;
         }
 
-        void UpdateDataFromSettings(ApplicationSettings s)
+        public void Initialize()
         {
-            Cfg.Apply(s.PluginConf("FileWriter"));
+            di.game.DataRead += Game_DataRead;
+            di.settings.Changed += Settings_Changed;
+            Init(di.settings.CurrentSettings);
         }
 
-        public void OnSettingsChanged()
+        private void Settings_Changed(object sender, ApplicationSettingsEventArgs e)
         {
+            Init(e.Settings);
         }
 
-        public void OnCharacterCreated(CharacterCreatedEventArgs e)
+        private void Init(ApplicationSettings s)
         {
+            Cfg = new FileWriterPluginConfig(s.PluginConf(Name));
+            ReloadWithCurrentSettings(Cfg);
         }
 
-        public void OnDataRead(DataReadEventArgs e)
+        private void Game_DataRead(object sender, DataReadEventArgs e)
         {
-            if (!CreateFiles) return;
+            if (!Cfg.Enabled) return;
 
             var fileWriter = new TextFileWriter();
-            var statWriter = new CharacterStatFileWriter(fileWriter, FileFolder);
+            var statWriter = new CharacterStatFileWriter(fileWriter, Cfg.FileFolder);
             var stats = new CharacterStats(e.Character);
 
             statWriter.WriteFiles(stats);
         }
 
-        public void OnReset()
+        public void Reset()
         {
         }
 
@@ -90,16 +95,22 @@ namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
         {
             return null;
         }
+
+        private void ReloadWithCurrentSettings(FileWriterPluginConfig cfg)
+        {
+            if (r != null)
+                r.Set(cfg);
+        }
     }
 
     class FileWriterSettingsRenderer : IPluginSettingsRenderer
     {
-        private CharacterStatFileWriterService p;
+        private FileWriterPlugin p;
 
-        private GroupBox pluginBox;
+        private FlowLayoutPanel pluginBox;
         private CheckBox chkBox;
 
-        public FileWriterSettingsRenderer(CharacterStatFileWriterService p)
+        public FileWriterSettingsRenderer(FileWriterPlugin p)
         {
             this.p = p;
         }
@@ -121,26 +132,35 @@ namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
             chkBox.Size = new System.Drawing.Size(78, 17);
             chkBox.Text = "Create files";
 
-            pluginBox = new GroupBox();
+            pluginBox = new FlowLayoutPanel();
+            pluginBox.FlowDirection = FlowDirection.TopDown;
             pluginBox.Controls.Add(chkBox);
+
+            Set(p.Cfg);
+            ApplyChanges();
         }
 
         public bool IsDirty()
         {
-            return p.Cfg.GetBool("Enabled") != chkBox.Checked;
+            return p.Cfg.Enabled != chkBox.Checked;
         }
 
         public PluginConfig Get()
         {
-            return new PluginConfig(new Dictionary<string, object>()
-            {
-                {"Enabled", chkBox.Checked },
-            });
+            var conf = new FileWriterPluginConfig();
+            conf.Enabled = chkBox.Checked;
+            return conf;
         }
 
-        public void Set(PluginConfig cfg)
+        public void Set(FileWriterPluginConfig conf)
         {
-            chkBox.Checked = cfg.GetBool("Enabled");
+            if (chkBox.InvokeRequired)
+            {
+                chkBox.Invoke((Action)(() => Set(conf)));
+                return;
+            }
+
+            chkBox.Checked = conf.Enabled;
         }
 
         public void ApplyChanges()

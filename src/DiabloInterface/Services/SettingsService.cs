@@ -1,4 +1,4 @@
-namespace Zutatensuppe.DiabloInterface.Business.Services
+namespace Zutatensuppe.DiabloInterface.Services
 {
     using System;
     using System.Collections.Generic;
@@ -6,10 +6,10 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
     using System.IO;
     using System.Reflection;
 
-    using Zutatensuppe.DiabloInterface.Business.Settings;
+    using Zutatensuppe.DiabloInterface.Settings;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
-    public class SettingsService : ISettingsService, IDisposable
+    public class SettingsService : ISettingsService
     {
         const string SettingsDirectoryPath = @".\Settings";
         const string SettingsFileExtensionPattern = "*.conf";
@@ -31,9 +31,9 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             InitializeCollectionWatcher();
         }
 
-        public event EventHandler<ApplicationSettingsEventArgs> SettingsChanged;
+        public event EventHandler<ApplicationSettingsEventArgs> Changed;
 
-        public event EventHandler<SettingsCollectionEventArgs> SettingsCollectionChanged;
+        public event EventHandler<SettingsCollectionEventArgs> CollectionChanged;
 
         public ApplicationSettings CurrentSettings { get; private set; } = ApplicationSettings.Default;
 
@@ -56,26 +56,37 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             Logger.Info($"App Property Settings Path is \"{appPropertySettingsPath}\".");
 
             // TODO: LoadSettingsInternal should throw a custom Exception.
-            var settingsPath = appStorage.CurrentSettingsPath;
-            Logger.Info($"Using previous settings from: \"{settingsPath}\".");
+            var path = appStorage.CurrentSettingsPath;
 
-            var settings = LoadSettingsInternal(settingsPath);
+            Logger.Info($"Using previous settings from: \"{path}\".");
+            var settings = SettingsResolver.Load(path);
             if (settings == null)
             {
                 Logger.Info("No previous settings found. Using default.");
                 settings = ApplicationSettings.Default;
+                UpdateSettings(settings);
+                return;
             }
 
+            appStorage.CurrentSettingsPath = path;
             UpdateSettings(settings);
         }
 
         public bool LoadSettings(string path)
         {
-            var settings = LoadSettingsInternal(path);
-            if (settings == null) return false;
+            var settings = SettingsResolver.Load(path);
+            if (settings == null)
+                return false;
 
+            appStorage.CurrentSettingsPath = path;
             UpdateSettings(settings);
             return true;
+        }
+
+        void UpdateSettings(ApplicationSettings newSettings)
+        {
+            CurrentSettings = newSettings;
+            Changed?.Invoke(this, new ApplicationSettingsEventArgs(newSettings));
         }
 
         public void SaveSettings(string path, ApplicationSettings settings)
@@ -104,7 +115,8 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
 
             // FileSystemWatcher requires that the directory we want to watch exist,
             // so we have to create it here.
-            EnsureSettingsDirectoryExists();
+            if (!Directory.Exists(SettingsDirectoryPath))
+                Directory.CreateDirectory(SettingsDirectoryPath);
 
             collectionWatcher = new FileSystemWatcher(SettingsDirectoryPath);
             collectionWatcher.Created += CollectionWatcherOnNotify;
@@ -112,20 +124,6 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             collectionWatcher.Renamed += CollectionWatcherOnNotify;
 
             collectionWatcher.EnableRaisingEvents = true;
-        }
-
-        static void EnsureSettingsDirectoryExists()
-        {
-            if (!Directory.Exists(SettingsDirectoryPath))
-            {
-                Directory.CreateDirectory(SettingsDirectoryPath);
-            }
-        }
-
-        void UpdateSettings(ApplicationSettings newSettings)
-        {
-            CurrentSettings = newSettings;
-            OnSettingsChanged(new ApplicationSettingsEventArgs(newSettings));
         }
 
         void CollectionWatcherOnNotify(object sender, FileSystemEventArgs e)
@@ -146,25 +144,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Services
             }
 
             SettingsFileCollection = collection;
-            var eventArgs = new SettingsCollectionEventArgs(collection);
-            OnSettingsCollectionChanged(eventArgs);
-        }
-
-        void OnSettingsChanged(ApplicationSettingsEventArgs e) =>
-            SettingsChanged?.Invoke(this, e);
-
-        void OnSettingsCollectionChanged(SettingsCollectionEventArgs e) =>
-            SettingsCollectionChanged?.Invoke(this, e);
-
-        ApplicationSettings LoadSettingsInternal(string path)
-        {
-            var settings = SettingsResolver.Load(path);
-            if (settings != null)
-            {
-                appStorage.CurrentSettingsPath = path;
-            }
-
-            return settings;
+            CollectionChanged?.Invoke(this, new SettingsCollectionEventArgs(collection));
         }
     }
 }

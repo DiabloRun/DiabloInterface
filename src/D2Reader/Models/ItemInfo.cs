@@ -50,6 +50,15 @@ namespace Zutatensuppe.D2Reader.Models
             return Items;
         }
 
+        internal static List<ItemInfo> GetItemsByItems(D2DataReader dataReader, IEnumerable<Item> items)
+        {
+            List<ItemInfo> Items = new List<ItemInfo>();
+            dataReader.ItemAction(items, (item, player, unitReader, stringReader, inventoryReader) => {
+                Items.Add(new ItemInfo(item, player, unitReader, stringReader, inventoryReader));
+            });
+            return Items;
+        }
+
         public ItemInfo(
             Item item,
             D2Unit owner,

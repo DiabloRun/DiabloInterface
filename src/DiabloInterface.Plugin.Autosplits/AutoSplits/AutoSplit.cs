@@ -1,14 +1,15 @@
-namespace Zutatensuppe.DiabloInterface.Business.AutoSplits
+namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits
 {
     using System;
-
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
+    using System.Runtime.Serialization;
 
     using Zutatensuppe.D2Reader.Models;
 
-    public class AutoSplit
+    [Serializable]
+    public class AutoSplit : ISerializable
     {
+        internal const string DEFAULT_NAME = "Unnamed";
+
         public enum SplitType
         {
             None = -1,
@@ -52,7 +53,6 @@ namespace Zutatensuppe.DiabloInterface.Business.AutoSplits
         public event Action<AutoSplit> Reset;
 
         public short Difficulty { get; set; }
-        [JsonConverter(typeof(StringEnumConverter))]
         public SplitType Type { get; set; }
         public short Value { get; set; }
         public string Name { get; set; }
@@ -62,7 +62,6 @@ namespace Zutatensuppe.DiabloInterface.Business.AutoSplits
         /// Get or set wether the split has been reached.
         /// The Reached event is called when the split is reached.
         /// </summary>
-        [JsonIgnore]
         public bool IsReached
         {
             get { return isReached; }
@@ -87,7 +86,7 @@ namespace Zutatensuppe.DiabloInterface.Business.AutoSplits
 
         public AutoSplit()
         {
-            Name = "Unnamed";
+            Name = DEFAULT_NAME;
             Type = SplitType.None;
             Value = -1;
             Difficulty = 0;
@@ -107,6 +106,22 @@ namespace Zutatensuppe.DiabloInterface.Business.AutoSplits
             Type = type;
             Value = value;
             Difficulty = difficulty;
+        }
+
+        public AutoSplit(SerializationInfo info, StreamingContext context)
+        {
+            Name = info.GetString("Name");
+            Type = (SplitType)Enum.Parse(typeof(SplitType), info.GetString("Type"));
+            Value = info.GetInt16("Value");
+            Difficulty = info.GetInt16("Difficulty");
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Name", Name);
+            info.AddValue("Type", Enum.GetName(typeof(SplitType), Type));
+            info.AddValue("Value", Value);
+            info.AddValue("Difficulty", Difficulty);
         }
 
         public bool IsDifficultyIgnored()

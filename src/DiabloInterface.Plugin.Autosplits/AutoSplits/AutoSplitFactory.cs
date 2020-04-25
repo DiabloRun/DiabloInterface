@@ -1,4 +1,4 @@
-namespace Zutatensuppe.DiabloInterface.Business.AutoSplits
+namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits
 {
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;

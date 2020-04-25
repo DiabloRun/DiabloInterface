@@ -18,8 +18,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Business", "DiabloInterface.Business\DiabloInterface.Business.csproj", "{2E429B2B-BD0A-48C3-AE99-0E292EA5D2DA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Plugin.HttpClient", "DiabloInterface.Plugin.HttpClient\DiabloInterface.Plugin.HttpClient.csproj", "{17513A94-7271-422D-A34F-588B1D774987}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Plugin.Autosplits", "DiabloInterface.Plugin.Autosplits\DiabloInterface.Plugin.Autosplits.csproj", "{F00FFB11-A885-4D11-9839-42FF68092E93}"
@@ -52,10 +50,6 @@ Global
 		{4DC903B9-B02C-47D3-A695-4873FA5219AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DC903B9-B02C-47D3-A695-4873FA5219AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DC903B9-B02C-47D3-A695-4873FA5219AD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2E429B2B-BD0A-48C3-AE99-0E292EA5D2DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2E429B2B-BD0A-48C3-AE99-0E292EA5D2DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2E429B2B-BD0A-48C3-AE99-0E292EA5D2DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2E429B2B-BD0A-48C3-AE99-0E292EA5D2DA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{17513A94-7271-422D-A34F-588B1D774987}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{17513A94-7271-422D-A34F-588B1D774987}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17513A94-7271-422D-A34F-588B1D774987}.Release|Any CPU.ActiveCfg = Release|Any CPU

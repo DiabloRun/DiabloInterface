@@ -7,8 +7,8 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     using System.Reflection;
     using System.Windows.Forms;
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Business.Services;
-    using Zutatensuppe.DiabloInterface.Business.Settings;
+    using Zutatensuppe.DiabloInterface.Services;
+    using Zutatensuppe.DiabloInterface.Settings;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
     class HorizontalLayout : AbstractLayout
@@ -197,15 +197,13 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             };
         }
 
-        public HorizontalLayout(ISettingsService settingsService, IGameService gameService)
+        public HorizontalLayout(DiabloInterface di)
         {
-            this.settingsService = settingsService;
-            this.gameService = gameService;
-
+            this.di = di;
             RegisterServiceEventHandlers();
             InitializeComponent();
 
-            Load += (sender, e) => UpdateSettings(settingsService.CurrentSettings);
+            Load += (sender, e) => UpdateSettings(di.settings.CurrentSettings);
 
             // Clean up events when disposed because services outlive us.
             Disposed += (sender, e) => UnregisterServiceEventHandlers();

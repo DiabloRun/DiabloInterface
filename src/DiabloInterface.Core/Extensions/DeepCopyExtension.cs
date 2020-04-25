@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Core.Extensions
+namespace Zutatensuppe.DiabloInterface.Core.Extensions
 {
     using Newtonsoft.Json;
 

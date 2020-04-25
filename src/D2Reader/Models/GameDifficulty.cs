@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.D2Reader.Models
+namespace Zutatensuppe.D2Reader.Models
 {
     public enum GameDifficulty
     {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using log4net;
 using log4net.Config;
 
@@ -11,6 +11,11 @@ namespace Zutatensuppe.DiabloInterface.Core.Logging
         public Log4NetLogger(Type type)
         {
             logger = LogManager.GetLogger(type);
+        }
+
+        public Log4NetLogger(string name)
+        {
+            logger = LogManager.GetLogger(name);
         }
 
         public void Debug(object message)

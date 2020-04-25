@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Zutatensuppe.D2Reader.Models;
-using Zutatensuppe.DiabloInterface.Server.Handlers;
+using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
 {

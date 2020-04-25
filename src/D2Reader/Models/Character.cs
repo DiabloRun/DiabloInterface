@@ -179,9 +179,8 @@ namespace Zutatensuppe.D2Reader.Models
         public DateTime Created { get; set; }
 
         // TODO: use Item model for these:
-        virtual public Dictionary<BodyLocation, string> EquippedItemStrings { get; set; }
-        virtual public List<int> InventoryItemIds { get; set; }
-        
+        virtual public List<int> InventoryItemIds { get; internal set; }
+        public List<ItemInfo> Items { get; internal set; }
 
         public int RealFRW()
         {
@@ -198,9 +197,6 @@ namespace Zutatensuppe.D2Reader.Models
             ParseStats(unitReader.GetStatsMap(gameInfo.Player), gameInfo);
         }
 
-        /// <summary>
-        /// fill the player data by dictionary
-        /// </summary>
         private void ParseStats(
             Dictionary<StatIdentifier, D2Stat> data,
             D2GameInfo gameInfo

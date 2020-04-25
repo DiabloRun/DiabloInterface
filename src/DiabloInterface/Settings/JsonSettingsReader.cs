@@ -1,11 +1,8 @@
-namespace Zutatensuppe.DiabloInterface.Business.Settings
+namespace Zutatensuppe.DiabloInterface.Settings
 {
     using System;
     using System.IO;
-    using System.Text;
-
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
 
     public class JsonSettingsReader : ISettingsReader
     {
@@ -36,7 +33,7 @@ namespace Zutatensuppe.DiabloInterface.Business.Settings
             try
             {
                 var jsonData = File.ReadAllText(filename);
-                return JObject.Parse(jsonData).ToObject<ApplicationSettings>();
+                return JsonConvert.DeserializeObject<ApplicationSettings>(jsonData, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
             }
             catch (JsonException)
             {

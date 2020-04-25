@@ -239,39 +239,6 @@ namespace Zutatensuppe.D2Reader
             return inventoryReader.Filter(inventory, filter);
         }
 
-        Dictionary<BodyLocation, string> ReadEquippedItemStrings(D2Unit owner)
-        {
-            var itemStrings = new Dictionary<BodyLocation, string>();
-            foreach (Item item in GetEquippedItems(owner))
-            {
-                // TODO: check why this get stats call is needed here
-                List<D2Stat> itemStats = unitReader.GetStats(item.Unit);
-                if (itemStats.Count == 0) continue;
-
-                if (!itemStrings.ContainsKey(item.BodyLocation()))
-                {
-                    itemStrings.Add(item.BodyLocation(), ReadEquippedItemString(item, owner));
-                }
-            }
-            return itemStrings;
-        }
-
-        private string ReadEquippedItemString(Item item, D2Unit owner)
-        {
-            StringBuilder s = new StringBuilder();
-            s.Append(unitReader.GetFullItemName(item));
-            s.Append(Environment.NewLine);
-
-            List<string> magicalStrings = unitReader.GetMagicalStrings(item, owner, inventoryReader);
-            foreach (string str in magicalStrings)
-            {
-                s.Append("    ");
-                s.Append(str);
-                s.Append(Environment.NewLine);
-            }
-            return s.ToString();
-        }
-
         private List<int> ReadInventoryItemIds(D2Unit owner)
         {
             if (owner == null)
@@ -293,7 +260,7 @@ namespace Zutatensuppe.D2Reader
             return GetInventoryItemsFiltered(owner, (Item i) => slots.FindIndex(x => i.IsEquippedInSlot(x)) >= 0);
         }
 
-        public void ItemSlotAction(List<BodyLocation> slots, Action<Item, D2Unit, UnitReader, IStringLookupTable, IInventoryReader> action)
+        internal void ItemSlotAction(List<BodyLocation> slots, Action<Item, D2Unit, UnitReader, IStringLookupTable, IInventoryReader> action)
         {
             if (!ValidateGameDataReaders()) return;
 
@@ -311,6 +278,28 @@ namespace Zutatensuppe.D2Reader
                 string s = String.Join(",", from slot in slots select slot.ToString());
                 Logger.Error($"Unable to execute ItemSlotAction. {s}", e);
                 
+                unitReader.ResetCache();
+            }
+        }
+
+        internal void ItemAction(IEnumerable<Item> items, Action<Item, D2Unit, UnitReader, IStringLookupTable, IInventoryReader> action)
+        {
+            if (!ValidateGameDataReaders()) return;
+
+            var gameInfo = ReadGameInfo();
+            if (gameInfo == null) return;
+
+            try
+            {
+                foreach (Item item in items)
+                {
+                    action?.Invoke(item, gameInfo.Player, unitReader, stringReader, inventoryReader);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Unable to execute ItemAction.", e);
+
                 unitReader.ResetCache();
             }
         }
@@ -525,8 +514,8 @@ namespace Zutatensuppe.D2Reader
             if (!character.IsDead)
             {
                 character.ParseStats(unitReader, gameInfo);
-                character.EquippedItemStrings = ReadEquippedItemStrings(gameInfo.Player);
                 character.InventoryItemIds = ReadInventoryItemIds(gameInfo.Player);
+                character.Items = ItemInfo.GetItemsByItems(this, GetEquippedItems(gameInfo.Player));
             }
 
             return character;

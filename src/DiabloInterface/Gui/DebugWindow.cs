@@ -5,13 +5,12 @@ namespace Zutatensuppe.DiabloInterface.Gui
     using System.Drawing;
     using System.Linq;
     using System.Reflection;
+    using System.Text;
     using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.D2Reader.Struct.Item;
-    using Zutatensuppe.DiabloInterface.Business.Plugin;
-    using Zutatensuppe.DiabloInterface.Business.Services;
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Gui.Controls;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
@@ -20,28 +19,21 @@ namespace Zutatensuppe.DiabloInterface.Gui
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly ISettingsService settingsService;
-        private readonly IGameService gameService;
-        private readonly List<IPlugin> plugins;
+        private readonly DiabloInterface di;
         readonly Dictionary<GameDifficulty, QuestDebugRow[,]> questRows =
             new Dictionary<GameDifficulty, QuestDebugRow[,]>();
 
-        IReadOnlyDictionary<BodyLocation, string> itemStrings;
+        List<ItemInfo> items;
 
         Dictionary<Label, BodyLocation> locs;
         Label clickedLabel;
         Label hoveredLabel;
 
-        public DebugWindow(
-            ISettingsService settingsService,
-            IGameService gameService,
-            List<IPlugin> plugins
-        ) {
+        public DebugWindow(DiabloInterface di)
+        {
             Logger.Info("Creating debug window.");
 
-            this.plugins = plugins;
-            this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-            this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
+            this.di = di;
 
             RegisterServiceEventHandlers();
 
@@ -53,55 +45,16 @@ namespace Zutatensuppe.DiabloInterface.Gui
             };
 
             InitializeComponent();
-
-            foreach (IPlugin p in plugins)
-            {
-                var r = p.DebugRenderer();
-                if (r != null) r.ApplyChanges();
-            }
         }
 
         void RegisterServiceEventHandlers()
         {
-            settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
-            gameService.DataRead += GameServiceOnDataRead;
-            foreach (IPlugin p in plugins)
-                p.Changed += PluginDataChanged;
+            di.game.DataRead += GameServiceOnDataRead;
         }
 
         void UnregisterServiceEventHandlers()
         {
-            settingsService.SettingsChanged -= SettingsServiceOnSettingsChanged;
-            gameService.DataRead -= GameServiceOnDataRead;
-            foreach (IPlugin p in plugins)
-                p.Changed -= PluginDataChanged;
-        }
-
-        private void PluginDataChanged(object sender, IPlugin e)
-        {
-            if (InvokeRequired)
-            {
-                Invoke((Action)(() => PluginDataChanged(sender, e)));
-                return;
-            }
-
-            var r = e.DebugRenderer();
-            if (r != null) r.ApplyChanges();
-        }
-
-        void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
-        {
-            if (InvokeRequired)
-            {
-                Invoke((Action)(() => SettingsServiceOnSettingsChanged(sender, e)));
-                return;
-            }
-
-            foreach (IPlugin p in plugins)
-            {
-                var r = p.DebugRenderer();
-                if (r != null) r.ApplyChanges();
-            }
+            di.game.DataRead -= GameServiceOnDataRead;
         }
 
         void GameServiceOnDataRead(object sender, DataReadEventArgs e)
@@ -120,7 +73,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 UpdateQuestData(quests, difficulty);
             }
 
-            UpdateItemStats(e.Character.EquippedItemStrings);
+            UpdateItemStats(e.Character.Items);
         }
 
         void UpdateQuestData(List<Quest> quests, GameDifficulty difficulty)
@@ -192,24 +145,44 @@ namespace Zutatensuppe.DiabloInterface.Gui
             return questRows;
         }
 
-        void UpdateItemStats(IReadOnlyDictionary<BodyLocation, string> itemStrings)
+        void UpdateItemStats(List<ItemInfo> items)
         {
             if (DesignMode) return;
-            this.itemStrings = itemStrings;
+            this.items = items;
             UpdateItemDebugInformation();
         }
         
         void UpdateItemDebugInformation()
         {
             // hover has precedence vs clicked labels
-            Label l = hoveredLabel != null ? hoveredLabel : (clickedLabel != null ? clickedLabel : null);
-            if (l == null || itemStrings == null || !locs.ContainsKey(l) || !itemStrings.ContainsKey(locs[l]))
+            Label l = hoveredLabel ?? (clickedLabel ?? null);
+            if (l != null && locs.ContainsKey(l) && items != null)
             {
-                textItemDesc.Text = "";
-                return;
+                foreach (var item in items)
+                {
+                    if (item.Location == locs[l])
+                    {
+                        textItemDesc.Text = ItemString(item);
+                        return;
+                    }
+                }
             }
-            
-            textItemDesc.Text = itemStrings[locs[l]];
+
+            textItemDesc.Text = "";
+        }
+
+        private string ItemString(ItemInfo item)
+        {
+            StringBuilder s = new StringBuilder();
+            s.Append(item.ItemName);
+            s.Append(Environment.NewLine);
+            foreach (string str in item.Properties)
+            {
+                s.Append("    ");
+                s.Append(str);
+                s.Append(Environment.NewLine);
+            }
+            return s.ToString();
         }
 
         private void LabelClick(object sender, EventArgs e)

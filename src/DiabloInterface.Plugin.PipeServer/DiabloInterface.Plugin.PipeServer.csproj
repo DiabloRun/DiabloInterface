@@ -9,14 +9,15 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Zutatensuppe.DiabloInterface.Plugin.PipeServer</RootNamespace>
     <AssemblyName>DiabloInterface.Plugin.PipeServer</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\DiabloInterface\bin\Debug\Plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -30,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,14 +55,13 @@
     <Compile Include="Handlers\QuestRequestHandler.cs" />
     <Compile Include="Handlers\GameRequestHandler.cs" />
     <Compile Include="Handlers\VersionRequestHandler.cs" />
+    <Compile Include="Server\JsonStream.cs" />
     <Compile Include="Server\LegacyRequest.cs" />
     <Compile Include="Server\LegacyResponse.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Server\RequestHandlerInvalidException.cs" />
     <Compile Include="Server\RequestHandlerNullResponseException.cs" />
     <Compile Include="Server\IRequestHandler.cs" />
-    <Compile Include="JsonStreamReader.cs" />
-    <Compile Include="JsonStreamWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\Request.cs" />
     <Compile Include="Server\Response.cs" />
@@ -72,13 +72,13 @@
       <Project>{c5f081d7-fb83-4934-908f-53ce986ab08c}</Project>
       <Name>D2Reader</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiabloInterface.Business\DiabloInterface.Business.csproj">
-      <Project>{2e429b2b-bd0a-48c3-ae99-0e292ea5d2da}</Project>
-      <Name>DiabloInterface.Business</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DiabloInterface.Core\DiabloInterface.Core.csproj">
       <Project>{4dc903b9-b02c-47d3-a695-4873fa5219ad}</Project>
       <Name>DiabloInterface.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiabloInterface\DiabloInterface.csproj">
+      <Project>{25bb3310-9bd7-4234-af7d-9f7fb6870a20}</Project>
+      <Name>DiabloInterface</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

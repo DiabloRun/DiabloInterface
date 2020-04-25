@@ -6,12 +6,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
     using System.Linq;
     using System.Windows.Forms;
 
-    using Zutatensuppe.DiabloInterface.Business.AutoSplits;
-    using Zutatensuppe.DiabloInterface.Business.Services;
-    using Zutatensuppe.DiabloInterface.Business.Settings;
     using Zutatensuppe.DiabloInterface.Core.Extensions;
+    using Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits;
 
-    public partial class AutoSplitTable : UserControl
+    public class AutoSplitTable : UserControl
     {
         static string[] HeaderTitles = new string[]
         {
@@ -40,48 +38,70 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             }
         }
 
-        public IEnumerable<AutoSplit> AutoSplits
+        public IEnumerable<AutoSplit> AutoSplits => from row in Controls.OfType<AutoSplitSettingsRow>() select row.AutoSplit;
+
+        private TableLayoutPanel HeaderTable;
+        private void InitializeComponent()
         {
-            get
-            {
-                return (from row in Controls.OfType<AutoSplitSettingsRow>() select row.AutoSplit);
-            }
+            HeaderTable = new TableLayoutPanel();
+            SuspendLayout();
+
+            HeaderTable.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            HeaderTable.AutoSize = true;
+            HeaderTable.ColumnCount = 5;
+            HeaderTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            HeaderTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            HeaderTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            HeaderTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            HeaderTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 41F));
+            HeaderTable.Location = new Point(63, 3);
+            HeaderTable.Name = "HeaderTable";
+            HeaderTable.RowCount = 1;
+            HeaderTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            HeaderTable.Size = new Size(325, 68);
+            HeaderTable.TabIndex = 0;
+
+            AutoScaleDimensions = new SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(HeaderTable);
+            Name = "AutoSplitTable";
+            Size = new Size(506, 80);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
-        public AutoSplitTable(ISettingsService settingsService)
-        {
-            Layout += AutoSplitTable_Layout;
-
-            settingsService.SettingsChanged += SettingsServiceSettingsChanged;
-            InitializeComponent();
-            InitializeHeader();
-
-            // Unregister event handlers when we are done.
-            Disposed += (sender, args) =>
-            {
-                settingsService.SettingsChanged -= SettingsServiceSettingsChanged;
-            };
-
-            ReloadWithCurrentSettings(settingsService.CurrentSettings);
-        }
-
-        void SettingsServiceSettingsChanged(object sender, ApplicationSettingsEventArgs e)
+        internal void Set(AutosplitPluginConfig conf)
         {
             if (InvokeRequired)
             {
-                Invoke((Action)(() => SettingsServiceSettingsChanged(sender, e)));
+                Invoke((Action)(() => Set(conf)));
                 return;
             }
 
-            ReloadWithCurrentSettings(e.Settings);
-
+            ReloadWithCurrentSettings(conf);
             MarkClean();
         }
 
-        private void ReloadWithCurrentSettings(ApplicationSettings s)
+        internal AutoSplitTable(AutosplitPluginConfig conf)
         {
-            var settings = s.DeepCopy();
-            var splits = (List<AutoSplit>)settings.PluginConf("Autosplits").Get("Splits");
+            Layout += AutoSplitTable_Layout;
+            InitializeComponent();
+            InitializeHeader();
+            Set(conf);
+        }
+
+        void InitializeHeader()
+        {
+            foreach (var title in HeaderTitles)
+            {
+                HeaderTable.Controls.Add(new Label() { Text = title });
+            }
+        }
+
+        private void ReloadWithCurrentSettings(AutosplitPluginConfig conf)
+        {
+            var cpy = conf.DeepCopy();
+            var splits = cpy.Splits;
 
             int autosplitCount = splits == null ? 0 : splits.Count;
             int rowCount = rows.Count;
@@ -121,19 +141,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             return row;
         }
 
-        void InitializeHeader()
-        {
-            foreach (var title in HeaderTitles)
-            {
-                HeaderTable.Controls.Add(new Label() { Text = title });
-            }
-        }
-
         public void MarkClean()
         {
             if (InvokeRequired)
             {
-                // Delegate call to UI thread.
                 Invoke((Action)(() => MarkClean()));
                 return;
             }

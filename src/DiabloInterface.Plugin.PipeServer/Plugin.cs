@@ -1,66 +1,76 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Zutatensuppe.D2Reader;
-using Zutatensuppe.DiabloInterface.Business.Plugin;
-using Zutatensuppe.DiabloInterface.Business.Settings;
+using Zutatensuppe.DiabloInterface.Settings;
+using Zutatensuppe.DiabloInterface.Services;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers;
 using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 {
+    class PipeServerPluginConfig : PluginConfig
+    {
+        public bool Enabled { get { return Is("Enabled"); } set { Set("Enabled", value); } }
+        public string PipeName { get { return GetString("PipeName"); } set { Set("PipeName", value); } }
+
+        public PipeServerPluginConfig()
+        {
+            Enabled = true;
+            PipeName = "DiabloInterfacePipe";
+        }
+
+        public PipeServerPluginConfig(PluginConfig s): this()
+        {
+            if (s != null)
+            {
+                Enabled = s.Is("Enabled");
+                PipeName = s.GetString("PipeName");
+            }
+        }
+    }
+
     public class PipeServerPlugin : IPlugin
     {
         public string Name => "PipeServer";
 
-        public event EventHandler<IPlugin> Changed;
-        public PluginData Data { get; } = new PluginData(new Dictionary<string, object>()
-        {
-            { "statuses", new Dictionary<string, bool>() },
-        });
+        internal PipeServerPluginConfig Cfg { get; private set; } = new PipeServerPluginConfig();
 
-        public PluginConfig Cfg { get; } = new PluginConfig(new Dictionary<string, object>()
-        {
-            { "Enabled", true },
-            { "PipeName", "DiabloInterfacePipe"},
-        });
+        private ILogger Logger;
 
-        private bool PipeServerEnabled => Cfg.GetBool("Enabled");
-        private string PipeName => Cfg.GetString("PipeName");
-
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        private DiabloInterface di;
 
         private Dictionary<string, DiabloInterfaceServer> Servers = new Dictionary<string, DiabloInterfaceServer>();
 
-        private D2DataReader dataReader;
-
-        public Dictionary<string, bool> ServerStatuses => Servers.ToDictionary(s => s.Key, s => s.Value.Running);
-
-        public PipeServerPlugin(Business.Services.GameService gameService, Business.Services.SettingsService settingsService)
+        public PipeServerPlugin(DiabloInterface di)
         {
-            dataReader = gameService.DataReader;
-            settingsService.SettingsChanged += (object sender, Business.Services.ApplicationSettingsEventArgs args) =>
-            {
-                Init(args.Settings);
-            };
+            Logger = di.Logger(this);
+            this.di = di;
+        }
 
-            Init(settingsService.CurrentSettings);
+        public void Initialize()
+        {
+            di.settings.Changed += Settings_Changed;
+            Init(di.settings.CurrentSettings);
+        }
+
+        private void Settings_Changed(object sender, ApplicationSettingsEventArgs e)
+        {
+            Init(e.Settings);
         }
 
         private void Init(ApplicationSettings s)
         {
-            Cfg.Apply(s.PluginConf("HttpClient"));
+            Cfg = new PipeServerPluginConfig(s.PluginConf(Name));
+            ReloadWithCurrentSettings(Cfg);
 
             Stop();
-            if (PipeServerEnabled)
+            
+            if (Cfg.Enabled)
             {
-                CreateServer(PipeName);
+                CreateServer(Cfg.PipeName);
             }
         }
 
@@ -68,19 +78,17 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
         {
             Logger.Info($"Creating Server: {pipeName}");
             var pipeServer = new DiabloInterfaceServer(pipeName);
-            // todo: get d2interface version
             pipeServer.AddRequestHandler(@"version", () => new VersionRequestHandler(Assembly.GetEntryAssembly()));
-            pipeServer.AddRequestHandler(@"game", () => new GameRequestHandler(dataReader));
-            pipeServer.AddRequestHandler(@"items", () => new AllItemsRequestHandler(dataReader));
-            pipeServer.AddRequestHandler(@"items/(\w+)", () => new ItemRequestHandler(dataReader));
-            pipeServer.AddRequestHandler(@"characters/(current|active)", () => new CharacterRequestHandler(dataReader));
-            pipeServer.AddRequestHandler(@"quests/completed", () => new CompletedQuestsRequestHandler(dataReader));
-            pipeServer.AddRequestHandler(@"quests/(\d+)", () => new QuestRequestHandler(dataReader));
+            pipeServer.AddRequestHandler(@"game", () => new GameRequestHandler(di.game.DataReader));
+            pipeServer.AddRequestHandler(@"items", () => new AllItemsRequestHandler(di.game.DataReader));
+            pipeServer.AddRequestHandler(@"items/(\w+)", () => new ItemRequestHandler(di.game.DataReader));
+            pipeServer.AddRequestHandler(@"characters/(current|active)", () => new CharacterRequestHandler(di.game.DataReader));
+            pipeServer.AddRequestHandler(@"quests/completed", () => new CompletedQuestsRequestHandler(di.game.DataReader));
+            pipeServer.AddRequestHandler(@"quests/(\d+)", () => new QuestRequestHandler(di.game.DataReader));
             pipeServer.Start();
             Servers.Add(pipeName, pipeServer);
 
-            Data.Set("statuses", ServerStatuses);
-            Changed?.Invoke(this, this);
+            ApplyChanges();
         }
 
         public void Stop()
@@ -92,23 +100,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             }
             Servers.Clear();
 
-            Data.Set("statuses", ServerStatuses);
-            Changed?.Invoke(this, this);
+            ApplyChanges();
         }
 
-        public void OnSettingsChanged()
-        {
-        }
-
-        public void OnCharacterCreated(CharacterCreatedEventArgs e)
-        {
-        }
-
-        public void OnDataRead(DataReadEventArgs e)
-        {
-        }
-
-        public void OnReset()
+        public void Reset()
         {
         }
 
@@ -133,13 +128,25 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             return dr;
         }
 
+        private void ApplyChanges()
+        {
+            if (sr != null)
+                sr.ApplyChanges();
+            if (dr != null)
+                dr.ApplyChanges();
+        }
+
+        private void ReloadWithCurrentSettings(PipeServerPluginConfig cfg)
+        {
+            if (sr != null)
+                sr.Set(cfg);
+        }
+
         internal string StatusTextMsg()
         {
             var txt = "";
-            foreach (KeyValuePair<string, bool> s in (Dictionary<string, bool>)Data.Get("statuses"))
-            {
-                txt += s.Key + ": " + (s.Value ? "RUNNING" : "NOT RUNNING") + "\n";
-            }
+            foreach (var s in Servers)
+                txt += s.Key + ": " + (s.Value.Running ? "RUNNING" : "NOT RUNNING") + "\n";
             return txt;
         }
     }
@@ -182,6 +189,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
         public void ApplyChanges()
         {
+            if (grpPipeServer.InvokeRequired)
+            {
+                grpPipeServer.Invoke((Action)(() => ApplyChanges()));
+                return;
+            }
+
             txtPipeServer.Text = s.StatusTextMsg();
         }
     }
@@ -194,12 +207,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
         private RichTextBox txtPipeServer;
         private Label lblPipeServerStatus;
 
-        private GroupBox pluginBox;
+        private FlowLayoutPanel pluginBox;
 
-        private PipeServerPlugin s;
+        private PipeServerPlugin p;
         public PipeServerSettingsRenderer(PipeServerPlugin s)
         {
-            this.s = s;
+            this.p = s;
         }
 
         public Control Render()
@@ -244,44 +257,53 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             labelPipeName.Size = new Size(62, 13);
             labelPipeName.Text = "Pipe Name:";
 
-            pluginBox = new GroupBox();
+            pluginBox = new FlowLayoutPanel();
             pluginBox.Controls.Add(txtPipeServer);
             pluginBox.Controls.Add(lblPipeServerStatus);
             pluginBox.Controls.Add(chkPipeServerEnabled);
             pluginBox.Controls.Add(textBoxPipeName);
             pluginBox.Controls.Add(labelPipeName);
-            pluginBox.Location = new Point(5, 140);
-            pluginBox.Margin = new Padding(2);
-            pluginBox.Padding = new Padding(2);
-            pluginBox.Size = new Size(361, 123);
-            pluginBox.TabStop = false;
-            pluginBox.Text = "Pipe Server";
+            pluginBox.Dock = DockStyle.Fill;
+
+            Set(p.Cfg);
+            ApplyChanges();
         }
 
         public bool IsDirty()
         {
-            return s.Cfg.GetString("PipeName") != textBoxPipeName.Text
-                || s.Cfg.GetBool("Enabled") != chkPipeServerEnabled.Checked;
+            return p.Cfg.PipeName != textBoxPipeName.Text
+                || p.Cfg.Enabled != chkPipeServerEnabled.Checked;
         }
 
         public PluginConfig Get()
         {
-            return new PluginConfig(new Dictionary<string, object>()
-            {
-                {"PipeName", textBoxPipeName.Text },
-                {"Enabled", chkPipeServerEnabled.Checked },
-            });
+            var conf = new PipeServerPluginConfig();
+            conf.PipeName = textBoxPipeName.Text;
+            conf.Enabled = chkPipeServerEnabled.Checked;
+            return conf;
         }
 
-        public void Set(PluginConfig cfg)
+        public void Set(PipeServerPluginConfig conf)
         {
-            textBoxPipeName.Text = cfg.GetString("PipeName");
-            chkPipeServerEnabled.Checked = cfg.GetBool("Enabled");
+            if (pluginBox.InvokeRequired)
+            {
+                pluginBox.Invoke((Action)(() => Set(conf)));
+                return;
+            }
+
+            textBoxPipeName.Text = conf.PipeName;
+            chkPipeServerEnabled.Checked = conf.Enabled;
         }
 
         public void ApplyChanges()
         {
-            txtPipeServer.Text = s.StatusTextMsg();
+            if (pluginBox.InvokeRequired)
+            {
+                pluginBox.Invoke((Action)(() => ApplyChanges()));
+                return;
+            }
+
+            txtPipeServer.Text = p.StatusTextMsg();
         }
     }
 }

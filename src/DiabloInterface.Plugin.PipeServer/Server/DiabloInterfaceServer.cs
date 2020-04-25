@@ -1,12 +1,9 @@
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Pipes;
 using System.Reflection;
 using System.Text;
-using System.Threading;
-using Newtonsoft.Json.Converters;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
 {
@@ -125,10 +122,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
 
         private void WriteResponse(NamedPipeServerStream pipe, object response)
         {
-            var writer = new JsonStreamWriter(
-                pipe, Encoding.UTF8,
-                new IsoDateTimeConverter()
-            );
+            var writer = new JsonStreamWriter(pipe);
             writer.WriteJson(response);
             writer.Flush();
         }

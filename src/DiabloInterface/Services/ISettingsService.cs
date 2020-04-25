@@ -1,22 +1,22 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business.Services
+namespace Zutatensuppe.DiabloInterface.Services
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
 
-    using Zutatensuppe.DiabloInterface.Business.Settings;
+    using Zutatensuppe.DiabloInterface.Settings;
 
-    public interface ISettingsService
+    public interface ISettingsService: IDisposable
     {
         /// <summary>
         ///     Occurs whenever any setting have changed.
         /// </summary>
-        event EventHandler<ApplicationSettingsEventArgs> SettingsChanged;
+        event EventHandler<ApplicationSettingsEventArgs> Changed;
 
         /// <summary>
         ///     Occurs whenever a file is added or removed from the settings directory.
         /// </summary>
-        event EventHandler<SettingsCollectionEventArgs> SettingsCollectionChanged;
+        event EventHandler<SettingsCollectionEventArgs> CollectionChanged;
 
         /// <summary>
         ///     Gets the currently loaded settings.

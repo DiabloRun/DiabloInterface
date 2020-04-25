@@ -2,7 +2,7 @@ namespace Zutatensuppe.DiabloInterface
 {
     using System.Reflection;
 
-    using Zutatensuppe.DiabloInterface.Business.Settings;
+    using Zutatensuppe.DiabloInterface.Settings;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
     internal class ApplicationStorage : IApplicationStorage

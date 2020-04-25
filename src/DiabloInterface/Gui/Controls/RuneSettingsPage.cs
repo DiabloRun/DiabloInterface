@@ -10,9 +10,9 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     using Newtonsoft.Json;
 
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Business.Settings;
     using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
+    using Zutatensuppe.DiabloInterface.Settings;
 
     public partial class RuneSettingsPage : UserControl
     {

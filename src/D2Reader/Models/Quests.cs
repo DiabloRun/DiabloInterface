@@ -10,15 +10,12 @@ namespace Zutatensuppe.D2Reader.Models
     {
         List<List<Quest>> list;
 
-        public Quests()
-        {
-            this.list = new List<List<Quest>>();
-        }
-
         public Quests(List<List<Quest>> list)
         {
             this.list = list;
         }
+
+        public Quests() : this(new List<List<Quest>>()) { }
 
         public List<Quest> ByDifficulty(GameDifficulty difficulty)
         {
@@ -52,6 +49,20 @@ namespace Zutatensuppe.D2Reader.Models
             var c = ByDifficulty(difficulty);
             return c != null && c.First(quest => quest.Id == id).IsAutoSplitReached;
         }
+
+        public Dictionary<GameDifficulty, List<QuestId>> CompletedQuestIds => new Dictionary<GameDifficulty, List<QuestId>>
+        {
+            {GameDifficulty.Normal, CompletedQuestIdsByDifficulty(GameDifficulty.Normal) },
+            {GameDifficulty.Nightmare, CompletedQuestIdsByDifficulty(GameDifficulty.Nightmare) },
+            {GameDifficulty.Hell, CompletedQuestIdsByDifficulty(GameDifficulty.Hell) },
+        };
+
+        public static Dictionary<GameDifficulty, List<QuestId>> DefaultCompleteQuestIds => new Dictionary<GameDifficulty, List<QuestId>>
+        {
+            { GameDifficulty.Normal, new List<QuestId>() },
+            { GameDifficulty.Nightmare, new List<QuestId>() },
+            { GameDifficulty.Hell, new List<QuestId>() }
+        };
 
         public List<QuestId> CompletedQuestIdsByDifficulty(GameDifficulty difficulty)
         {

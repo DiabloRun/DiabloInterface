@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\DiabloInterface\bin\Debug\Plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -56,13 +56,13 @@
       <Project>{c5f081d7-fb83-4934-908f-53ce986ab08c}</Project>
       <Name>D2Reader</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiabloInterface.Business\DiabloInterface.Business.csproj">
-      <Project>{2e429b2b-bd0a-48c3-ae99-0e292ea5d2da}</Project>
-      <Name>DiabloInterface.Business</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DiabloInterface.Core\DiabloInterface.Core.csproj">
       <Project>{4dc903b9-b02c-47d3-a695-4873fa5219ad}</Project>
       <Name>DiabloInterface.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiabloInterface\DiabloInterface.csproj">
+      <Project>{25bb3310-9bd7-4234-af7d-9f7fb6870a20}</Project>
+      <Name>DiabloInterface</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

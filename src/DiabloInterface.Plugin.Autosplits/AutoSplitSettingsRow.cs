@@ -6,9 +6,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Business.AutoSplits;
+    using Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits;
 
-    public partial class AutoSplitSettingsRow : UserControl
+    public class AutoSplitSettingsRow : UserControl
     {
         static string LABEL_CHAR_LEVEL = "Level";
         static string LABEL_AREA = "Area";
@@ -36,15 +36,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         {
             public string Name;
             public int Value;
-            public Item(string name, int value)
-            {
-                Name = name; Value = value;
-            }
-            public override string ToString()
-            {
-                // Generates the text shown in the combo box
-                return Name;
-            }
+
+            // Generates the text shown in the combo box
+            public override string ToString() => Name;
         }
 
         private bool updating;
@@ -53,22 +47,99 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 
         public AutoSplit AutoSplit { get; private set; }
 
+        private TextBox txtName;
+        private ComboBox cmbType;
+        private ComboBox cmbValue;
+        private ComboBox cmbDifficulty;
+        private Button btnDelete;
+        private TableLayoutPanel tableLayoutPanel1;
+        private void InitializeComponent()
+        {
+            txtName = new TextBox();
+            cmbType = new ComboBox();
+            cmbValue = new ComboBox();
+            cmbDifficulty = new ComboBox();
+            btnDelete = new Button();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            tableLayoutPanel1.SuspendLayout();
+            SuspendLayout();
+
+            txtName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtName.Location = new System.Drawing.Point(3, 3);
+            txtName.Size = new System.Drawing.Size(169, 20);
+            txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
+
+            cmbType.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cmbType.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbType.FormattingEnabled = true;
+            cmbType.Location = new System.Drawing.Point(178, 3);
+            cmbType.Size = new System.Drawing.Size(111, 21);
+            cmbType.SelectedIndexChanged += new System.EventHandler(this.cmbType_SelectedIndexChanged);
+
+            cmbValue.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cmbValue.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbValue.DropDownWidth = 300;
+            cmbValue.FormattingEnabled = true;
+            cmbValue.Location = new System.Drawing.Point(295, 3);
+            cmbValue.Size = new System.Drawing.Size(169, 21);
+            cmbValue.SelectedIndexChanged += new System.EventHandler(this.cmbValue_SelectedIndexChanged);
+
+            cmbDifficulty.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cmbDifficulty.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbDifficulty.FormattingEnabled = true;
+            cmbDifficulty.Location = new System.Drawing.Point(470, 3);
+            cmbDifficulty.Size = new System.Drawing.Size(111, 21);
+            cmbDifficulty.SelectedIndexChanged += new System.EventHandler(this.cmbDifficulty_SelectedIndexChanged);
+
+            btnDelete.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            btnDelete.Location = new System.Drawing.Point(587, 3);
+            btnDelete.Size = new System.Drawing.Size(39, 21);
+            btnDelete.Text = "X";
+            btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+
+            tableLayoutPanel1.ColumnCount = 5;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 43F));
+            tableLayoutPanel1.Controls.Add(btnDelete, 4, 0);
+            tableLayoutPanel1.Controls.Add(txtName, 0, 0);
+            tableLayoutPanel1.Controls.Add(cmbValue, 2, 0);
+            tableLayoutPanel1.Controls.Add(cmbDifficulty, 3, 0);
+            tableLayoutPanel1.Controls.Add(cmbType, 1, 0);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            tableLayoutPanel1.RowCount = 1;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Size = new System.Drawing.Size(629, 27);
+
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(tableLayoutPanel1);
+            Margin = new Padding(0);
+            Size = new System.Drawing.Size(629, 27);
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            ResumeLayout(false);
+        }
+
         public AutoSplitSettingsRow(AutoSplit autosplit)
         {
             updating = false;
             InitializeComponent();
 
-            cmbType.Items.Add(new Item(LABEL_CHAR_LEVEL, (int)AutoSplit.SplitType.CharLevel));
-            cmbType.Items.Add(new Item(LABEL_AREA, (int)AutoSplit.SplitType.Area));
-            cmbType.Items.Add(new Item(LABEL_ITEM, (int)AutoSplit.SplitType.Item));
-            cmbType.Items.Add(new Item(LABEL_QUEST, (int)AutoSplit.SplitType.Quest));
-            cmbType.Items.Add(new Item(LABEL_SPECIAL, (int)AutoSplit.SplitType.Special));
-            cmbType.Items.Add(new Item(LABEL_GEMS, (int)AutoSplit.SplitType.Gems));
+            cmbType.Items.Add(new Item { Name = LABEL_CHAR_LEVEL, Value = (int)AutoSplit.SplitType.CharLevel });
+            cmbType.Items.Add(new Item { Name = LABEL_AREA, Value = (int)AutoSplit.SplitType.Area });
+            cmbType.Items.Add(new Item { Name = LABEL_ITEM, Value = (int)AutoSplit.SplitType.Item });
+            cmbType.Items.Add(new Item { Name = LABEL_QUEST, Value = (int)AutoSplit.SplitType.Quest });
+            cmbType.Items.Add(new Item { Name = LABEL_SPECIAL, Value = (int)AutoSplit.SplitType.Special });
+            cmbType.Items.Add(new Item { Name = LABEL_GEMS, Value = (int)AutoSplit.SplitType.Gems });
 
             cmbDifficulty.Items.Clear();
-            cmbDifficulty.Items.Add(new Item(LABEL_NORMAL, 0));
-            cmbDifficulty.Items.Add(new Item(LABEL_NIGHTMARE, 1));
-            cmbDifficulty.Items.Add(new Item(LABEL_HELL, 2));
+            cmbDifficulty.Items.Add(new Item { Name = LABEL_NORMAL, Value = 0 });
+            cmbDifficulty.Items.Add(new Item { Name = LABEL_NIGHTMARE, Value = 1 });
+            cmbDifficulty.Items.Add(new Item { Name = LABEL_HELL, Value = 2 });
 
             SetAutosplit(autosplit);
         }
@@ -79,7 +150,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             txtName.Text = autosplit.Name;
             cmbType.SelectedIndex = (int)autosplit.Type;
 
-            if (this.AutoSplit == null || autosplit.Type != this.AutoSplit.Type)
+            if (AutoSplit == null || autosplit.Type != AutoSplit.Type)
             {
                 FillComboBoxes(autosplit);
             }
@@ -96,7 +167,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
                 }
                 i++;
             }
-            this.AutoSplit = autosplit;
+            AutoSplit = autosplit;
             updating = false;
         }
 
@@ -118,53 +189,59 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
                 case AutoSplit.SplitType.CharLevel:
                     for (int i = 1; i < 100; i++)
                     {
-                        cmbValue.Items.Add(new Item($"Lvl {i}", i));
+                        cmbValue.Items.Add(new Item { Name = $"Lvl {i}", Value = i });
                     }
                     break;
                 case AutoSplit.SplitType.Area:
                     foreach (Area area in Area.getAreaList())
                     {
-                        if (area.Id > 0) cmbValue.Items.Add(new Item(area.ToString(), area.Id));
+                        cmbValue.Items.Add(new Item { Name = area.ToString(), Value = area.Id });
                     }
                     break;
                 case AutoSplit.SplitType.Item:
-                    cmbValue.Items.Add(new Item(LABEL_HORADRIC_CUBE, (int)D2Data.ItemId.HORADRIC_CUBE));
-                    cmbValue.Items.Add(new Item(LABEL_HORADRIC_SHAFT, (int)D2Data.ItemId.HORADRIC_SHAFT));
-                    cmbValue.Items.Add(new Item(LABEL_HORADRIC_AMULET, (int)D2Data.ItemId.HORADRIC_AMULET));
-                    cmbValue.Items.Add(new Item(LABEL_KHALIMS_EYE, (int)D2Data.ItemId.KHALIM_EYE));
-                    cmbValue.Items.Add(new Item(LABEL_KHALIMS_HEART, (int)D2Data.ItemId.KHALIM_HEART));
-                    cmbValue.Items.Add(new Item(LABEL_KHALIMS_BRAIN, (int)D2Data.ItemId.KHALIM_BRAIN));
+                    cmbValue.Items.Add(new Item { Name = LABEL_HORADRIC_CUBE, Value = (int)D2Data.ItemId.HORADRIC_CUBE });
+                    cmbValue.Items.Add(new Item { Name = LABEL_HORADRIC_SHAFT, Value = (int)D2Data.ItemId.HORADRIC_SHAFT });
+                    cmbValue.Items.Add(new Item { Name = LABEL_HORADRIC_AMULET, Value = (int)D2Data.ItemId.HORADRIC_AMULET });
+                    cmbValue.Items.Add(new Item { Name = LABEL_KHALIMS_EYE, Value = (int)D2Data.ItemId.KHALIM_EYE });
+                    cmbValue.Items.Add(new Item { Name = LABEL_KHALIMS_HEART, Value = (int)D2Data.ItemId.KHALIM_HEART });
+                    cmbValue.Items.Add(new Item { Name = LABEL_KHALIMS_BRAIN, Value = (int)D2Data.ItemId.KHALIM_BRAIN });
                     break;
                 case AutoSplit.SplitType.Quest:
                     foreach (QuestId questId in Enum.GetValues(typeof(QuestId)))
                     {
-                        var quest = QuestFactory.Create(questId, 0);
-                        var name = (quest.IsBossQuest ? "" : $"Act {quest.Act} - ") + quest.CommonName;
-
-                        cmbValue.Items.Add(new Item(name, (int)questId));
+                        cmbValue.Items.Add(new Item { Name = QuestName(questId), Value = (int)questId });
                     }
                     break;
                 case AutoSplit.SplitType.Special:
-                    cmbValue.Items.Add(new Item(LABEL_GAME_START, (int)AutoSplit.Special.GameStart));
-                    cmbValue.Items.Add(new Item(LABEL_CLEAR_100_PERCENT, (int)AutoSplit.Special.Clear100Percent));
-                    cmbValue.Items.Add(new Item(LABEL_CLEAR_100_PERCENT_ALL, (int)AutoSplit.Special.Clear100PercentAllDifficulties));
+                    cmbValue.Items.Add(new Item { Name = LABEL_GAME_START, Value = (int)AutoSplit.Special.GameStart });
+                    cmbValue.Items.Add(new Item { Name = LABEL_CLEAR_100_PERCENT, Value = (int)AutoSplit.Special.Clear100Percent });
+                    cmbValue.Items.Add(new Item { Name = LABEL_CLEAR_100_PERCENT_ALL, Value = (int)AutoSplit.Special.Clear100PercentAllDifficulties });
                     break;
                 case AutoSplit.SplitType.Gems:
                     foreach (Gem gem in Enum.GetValues(typeof(Gem)))
                     {
-                        var name = Regex.Replace(gem.ToString(), @"(\B[A-Z])", " $1");
-                        cmbValue.Items.Add(new Item(name, (int)gem));
+                        cmbValue.Items.Add(new Item { Name = GemName(gem), Value = (int)gem });
                     }
 
                     break;
             }
         }
 
+        private string QuestName(QuestId questId)
+        {
+            var quest = QuestFactory.Create(questId, 0);
+            return (quest.IsBossQuest ? "" : $"Act {quest.Act} - ") + quest.CommonName;
+        }
+
+        private string GemName(Gem gem)
+        {
+            return Regex.Replace(gem.ToString(), @"(\B[A-Z])", " $1");
+        }
+
         public void MarkClean()
         {
             if (InvokeRequired)
             {
-                // Delegate call to UI thread.
                 Invoke((Action)(() => MarkClean()));
                 return;
             }
@@ -176,9 +253,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             if (updating)
                 return;
 
-            ComboBox comboBox = (ComboBox)sender;
-            Item selectedItem = (Item)comboBox.SelectedItem;
-            AutoSplit.SplitType type = (AutoSplit.SplitType)selectedItem.Value;
+            var comboBox = (ComboBox)sender;
+            var selectedItem = (Item)comboBox.SelectedItem;
+            var type = (AutoSplit.SplitType)selectedItem.Value;
             if (type != AutoSplit.Type)
             {
                 AutoSplit.Type = type;
@@ -192,24 +269,17 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             if (updating)
                 return;
 
-            Item selectedValueItem = (Item)cmbValue.SelectedItem;
+            var selectedValueItem = (Item)cmbValue.SelectedItem;
             if (selectedValueItem != null)
             {
                 AutoSplit.Value = (short)selectedValueItem.Value;
-                if (AutoSplit.Name == "" || AutoSplit.Name == "Unnamed")
+                if (AutoSplit.Name == "" || AutoSplit.Name == AutoSplit.DEFAULT_NAME)
                 {
                     txtName.Text = selectedValueItem.Name;
                 }
                 if (AutoSplit.Type == AutoSplit.SplitType.Special)
                 {
-                    if (AutoSplit.Value == (int)AutoSplit.Special.Clear100Percent)
-                    {
-                        cmbDifficulty.Show();
-                    }
-                    else
-                    {
-                        cmbDifficulty.Hide();
-                    }
+                    cmbDifficulty.Visible = AutoSplit.Value == (int)AutoSplit.Special.Clear100Percent;
                 }
             }
             else
@@ -224,16 +294,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         {
             if (updating)
                 return;
-            Item selectedValueItem = (Item)cmbDifficulty.SelectedItem;
-            if (selectedValueItem != null)
-            {
-                AutoSplit.Difficulty = (short)selectedValueItem.Value;
-            }
-            else
-            {
-                AutoSplit.Difficulty = -1;
-            }
 
+            var item = (Item)cmbDifficulty.SelectedItem;
+            AutoSplit.Difficulty = (short)(item == null ? -1 : item.Value);
             IsDirty = true;
         }
 

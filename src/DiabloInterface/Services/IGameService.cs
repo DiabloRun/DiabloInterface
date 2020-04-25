@@ -1,11 +1,11 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business.Services
+namespace Zutatensuppe.DiabloInterface.Services
 {
     using System;
 
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
 
-    public interface IGameService
+    public interface IGameService: IDisposable
     {
         /// <summary>
         ///     The targeted (intended) difficulty for a run selected by the player.
@@ -13,7 +13,7 @@
         GameDifficulty TargetDifficulty { get; set; }
 
         /// <summary>
-        ///     Occurs when a new character is created at level 1.
+        ///     Occurs when a new character is created
         /// </summary>
         event EventHandler<CharacterCreatedEventArgs> CharacterCreated;
 

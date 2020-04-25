@@ -8,9 +8,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
     using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Business.Plugin;
-    using Zutatensuppe.DiabloInterface.Business.Services;
-    using Zutatensuppe.DiabloInterface.Business.Settings;
+    using Zutatensuppe.DiabloInterface.Plugin;
+    using Zutatensuppe.DiabloInterface.Services;
+    using Zutatensuppe.DiabloInterface.Settings;
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Gui.Controls;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
@@ -19,50 +19,34 @@ namespace Zutatensuppe.DiabloInterface.Gui
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly ISettingsService settingsService;
-        private readonly IGameService gameService;
-        private readonly List<IPlugin> plugins;
+        private readonly DiabloInterface di;
 
         Form debugWindow;
         AbstractLayout currentLayout;
 
         public MainWindow(
-            ISettingsService settingsService,
-            IGameService gameService,
-            List<IPlugin> plugins
+            DiabloInterface di
         ) {
             Logger.Info("Creating main window.");
-            this.plugins = plugins;
-
-            this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-            this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
+            this.di = di;
             
             RegisterServiceEventHandlers();
             InitializeComponent();
-            PopulateSetingsFileListContextMenu(settingsService.SettingsFileCollection);
+            PopulateSetingsFileListContextMenu(this.di.settings.SettingsFileCollection);
             SetTitleWithApplicationVersion();
-            ApplySettings(settingsService.CurrentSettings);
+            ApplySettings(this.di.settings.CurrentSettings);
         }
 
         void RegisterServiceEventHandlers()
         {
-            settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
-            settingsService.SettingsCollectionChanged += SettingsServiceOnSettingsCollectionChanged;
-
-            gameService.CharacterCreated += GameService_CharacterCreated;
-            gameService.DataRead += GameService_DataRead;
+            di.settings.Changed += SettingsServiceOnSettingsChanged;
+            di.settings.CollectionChanged += SettingsServiceOnSettingsCollectionChanged;
         }
 
-        private void GameService_DataRead(object sender, D2Reader.DataReadEventArgs e)
+        void UnregisterServiceEventHandlers()
         {
-            foreach (IPlugin p in plugins)
-                p.OnDataRead(e);
-        }
-
-        private void GameService_CharacterCreated(object sender, D2Reader.CharacterCreatedEventArgs e)
-        {
-            foreach (IPlugin p in plugins)
-                p.OnCharacterCreated(e);
+            di.settings.Changed -= SettingsServiceOnSettingsChanged;
+            di.settings.CollectionChanged -= SettingsServiceOnSettingsCollectionChanged;
         }
 
         void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
@@ -117,8 +101,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
         AbstractLayout CreateLayout(bool horizontal)
         {
             return horizontal
-                ? new HorizontalLayout(settingsService, gameService) as AbstractLayout
-                : new VerticalLayout(settingsService, gameService);
+                ? new HorizontalLayout(di) as AbstractLayout
+                : new VerticalLayout(di);
         }
 
         void SetTitleWithApplicationVersion()
@@ -152,7 +136,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             var fileName = ((ToolStripMenuItem)sender).Tag.ToString();
 
             // TODO: LoadSettings should throw a custom Exception with information about why this happened.
-            if (!settingsService.LoadSettings(fileName))
+            if (!di.settings.LoadSettings(fileName))
             {
                 Logger.Error($"Failed to load settings from file: {fileName}.");
                 MessageBox.Show(
@@ -170,14 +154,13 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         void ResetMenuItemOnClick(object sender, EventArgs e)
         {
-            foreach (IPlugin p in plugins)
-                p.OnReset();
+            di.plugins.Reset();
             currentLayout?.Reset();
         }
 
         void SettingsMenuItemOnClick(object sender, EventArgs e)
         {
-            using (var settingsWindow = new SettingsWindow(settingsService, plugins))
+            using (var settingsWindow = new SettingsWindow(di))
             {
                 settingsWindow.ShowDialog();
             }
@@ -187,7 +170,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
         {
             if (debugWindow == null || debugWindow.IsDisposed)
             {
-                debugWindow = new DebugWindow(settingsService, gameService, plugins);
+                debugWindow = new DebugWindow(di);
             }
 
             debugWindow.Show();
@@ -213,7 +196,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             Logger.Info($"Setting target difficulty to {difficulty}.");
 
             UncheckDifficultyMenuItems();
-            gameService.TargetDifficulty = difficulty;
+            di.game.TargetDifficulty = difficulty;
             ((ToolStripMenuItem)sender).Checked = true;
         }
 
@@ -229,12 +212,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
         {
             UnregisterServiceEventHandlers();
             base.OnFormClosing(e);
-        }
-
-        void UnregisterServiceEventHandlers()
-        {
-            settingsService.SettingsChanged -= SettingsServiceOnSettingsChanged;
-            settingsService.SettingsCollectionChanged -= SettingsServiceOnSettingsCollectionChanged;
         }
     }
 }

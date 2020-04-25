@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Business.Settings
+namespace Zutatensuppe.DiabloInterface.Settings
 {
     using System;
     using System.IO;
@@ -42,8 +42,7 @@
         public void Write(ApplicationSettings settings)
         {
             if (settings == null) return;
-
-            string jsonData = JsonConvert.SerializeObject(settings, Formatting.Indented);
+            string jsonData = JsonConvert.SerializeObject(settings, Formatting.Indented, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
             writer.Write(jsonData);
             writer.Flush();
         }

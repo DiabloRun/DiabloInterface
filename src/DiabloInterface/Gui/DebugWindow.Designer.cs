@@ -1,52 +1,29 @@
-using Zutatensuppe.DiabloInterface.Business.Plugin;
+using System.Windows.Forms;
+using Zutatensuppe.DiabloInterface.Plugin;
 
 namespace Zutatensuppe.DiabloInterface.Gui
 {
     partial class DebugWindow
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DebugWindow));
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.textItemDesc = new System.Windows.Forms.RichTextBox();
+            this.groupBox1 = new GroupBox();
+            this.tabControl1 = new TabControl();
+            this.tabPage1 = new TabPage();
+            this.tabPage2 = new TabPage();
+            this.tabPage3 = new TabPage();
+            this.label1 = new Label();
+            this.label2 = new Label();
+            this.label3 = new Label();
+            this.label4 = new Label();
+            this.label5 = new Label();
+            this.label6 = new Label();
+            this.label7 = new Label();
+            this.label8 = new Label();
+            this.label9 = new Label();
+            this.label10 = new Label();
+            this.textItemDesc = new RichTextBox();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.SuspendLayout();
@@ -66,7 +43,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Dock = DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(3, 16);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -78,7 +55,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPage1.AutoScroll = true;
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Padding = new Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(541, 510);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Normal";
@@ -89,7 +66,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPage2.AutoScroll = true;
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Padding = new Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(541, 510);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Nightmare";
@@ -100,7 +77,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.tabPage3.AutoScroll = true;
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Padding = new Padding(3);
             this.tabPage3.Size = new System.Drawing.Size(541, 510);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Hell";
@@ -257,7 +234,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             // DebugWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(875, 571);
             this.Controls.Add(this.textItemDesc);
             this.Controls.Add(this.label9);
@@ -270,13 +247,12 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            foreach (IPlugin p in plugins)
-            {
-                var r = p.DebugRenderer();
-                if (r != null) this.Controls.Add(r.Render());
-            }
+
+            foreach (Control p in di.plugins.DebugControls)
+                this.Controls.Add(p);
+
             this.Controls.Add(this.groupBox1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DebugWindow";
             this.Text = "Debug";
@@ -287,23 +263,21 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         }
 
-        #endregion
-
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.RichTextBox textItemDesc;
+        private GroupBox groupBox1;
+        private TabControl tabControl1;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
+        private TabPage tabPage3;
+        private Label label1;
+        private Label label2;
+        private Label label3;
+        private Label label4;
+        private Label label5;
+        private Label label6;
+        private Label label7;
+        private Label label8;
+        private Label label9;
+        private Label label10;
+        private RichTextBox textItemDesc;
     }
 }

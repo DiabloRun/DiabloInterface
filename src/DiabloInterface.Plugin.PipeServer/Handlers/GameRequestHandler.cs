@@ -12,7 +12,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers
 
         public GameRequestHandler(D2DataReader dataReader)
         {
-            this.dataReader = dataReader ?? throw new ArgumentNullException(nameof(dataReader));
+            this.dataReader = dataReader;
         }
 
         public Response HandleRequest(Request request, IList<string> arguments)

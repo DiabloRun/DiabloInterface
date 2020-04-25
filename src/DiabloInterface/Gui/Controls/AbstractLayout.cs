@@ -9,8 +9,8 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Business.Services;
-    using Zutatensuppe.DiabloInterface.Business.Settings;
+    using Zutatensuppe.DiabloInterface.Services;
+    using Zutatensuppe.DiabloInterface.Settings;
     using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
@@ -39,8 +39,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        protected ISettingsService settingsService;
-        protected IGameService gameService;
+        protected DiabloInterface di;
 
         protected Dictionary<string, Def> def = new Dictionary<string, Def>();
 
@@ -72,17 +71,16 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         protected void RegisterServiceEventHandlers()
         {
-            settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
-            gameService.CharacterCreated += GameServiceOnCharacterCreated;
-            gameService.DataRead += GameServiceOnDataRead;
+            di.settings.Changed += SettingsServiceOnSettingsChanged;
+            di.game.CharacterCreated += GameServiceOnCharacterCreated;
+            di.game.DataRead += GameServiceOnDataRead;
         }
 
         protected void UnregisterServiceEventHandlers()
         {
-            settingsService.SettingsChanged -= SettingsServiceOnSettingsChanged;
-
-            gameService.CharacterCreated -= GameServiceOnCharacterCreated;
-            gameService.DataRead -= GameServiceOnDataRead;
+            di.settings.Changed -= SettingsServiceOnSettingsChanged;
+            di.game.CharacterCreated -= GameServiceOnCharacterCreated;
+            di.game.DataRead -= GameServiceOnDataRead;
         }
 
         void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
@@ -150,10 +148,10 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         void UpdateClassRuneList(CharacterClass characterClass)
         {
-            var settings = settingsService.CurrentSettings;
+            var settings = di.settings.CurrentSettings;
             if (!settings.DisplayRunes) return;
 
-            var targetDifficulty = gameService.TargetDifficulty;
+            var targetDifficulty = di.game.TargetDifficulty;
             var isCharacterClassChanged = activeCharacterClass == null || activeCharacterClass != characterClass;
             var isGameDifficultyChanged = activeDifficulty != targetDifficulty;
 
@@ -189,7 +187,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         /// <returns>The rune settings.</returns>
         ClassRuneSettings GetMostSpecificRuneSettings(CharacterClass characterClass, GameDifficulty targetDifficulty)
         {
-            IEnumerable<ClassRuneSettings> runeClassSettings = settingsService.CurrentSettings.ClassRunes.ToList();
+            IEnumerable<ClassRuneSettings> runeClassSettings = di.settings.CurrentSettings.ClassRunes.ToList();
             return runeClassSettings.FirstOrDefault(rs => rs.Class == characterClass && rs.Difficulty == targetDifficulty)
                 ?? runeClassSettings.FirstOrDefault(rs => rs.Class == characterClass && rs.Difficulty == null)
                 ?? runeClassSettings.FirstOrDefault(rs => rs.Class == null && rs.Difficulty == targetDifficulty)

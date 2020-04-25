@@ -1,4 +1,4 @@
-namespace Zutatensuppe.DiabloInterface.Business.Settings
+namespace Zutatensuppe.DiabloInterface.Settings
 {
     using System;
     using System.Collections.Generic;
