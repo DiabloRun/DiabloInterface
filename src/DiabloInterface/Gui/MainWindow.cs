@@ -4,36 +4,34 @@ namespace Zutatensuppe.DiabloInterface.Gui
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Reflection;
     using System.Windows.Forms;
 
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Plugin;
     using Zutatensuppe.DiabloInterface.Services;
     using Zutatensuppe.DiabloInterface.Settings;
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Gui.Controls;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
 
-    public partial class MainWindow : WsExCompositedForm
+    public class MainWindow : WsExCompositedForm
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
-
+        private readonly ILogger Logger;
         private readonly DiabloInterface di;
 
-        Form debugWindow;
-        AbstractLayout currentLayout;
+        private ToolStripMenuItem loadConfigMenuItem;
+        private Form debugWindow;
+        private AbstractLayout layout;
 
-        public MainWindow(
-            DiabloInterface di
-        ) {
-            Logger.Info("Creating main window.");
+        public MainWindow(DiabloInterface di)
+        {
             this.di = di;
             
+            Logger = di.Logger(this);
+            Logger.Info("Creating main window.");
+
             RegisterServiceEventHandlers();
             InitializeComponent();
             PopulateSetingsFileListContextMenu(this.di.settings.SettingsFileCollection);
-            SetTitleWithApplicationVersion();
             ApplySettings(this.di.settings.CurrentSettings);
         }
 
@@ -71,70 +69,111 @@ namespace Zutatensuppe.DiabloInterface.Gui
             PopulateSetingsFileListContextMenu(e.Collection);
         }
 
-        void ApplySettings(ApplicationSettings settings)
+        private void InitializeComponent()
         {
-            ApplyLayoutChanges(settings);
-        }
-
-        void ApplyLayoutChanges(ApplicationSettings settings)
-        {
-            var isHorizontal = currentLayout is HorizontalLayout;
-            if (isHorizontal != settings.DisplayLayoutHorizontal || currentLayout == null)
+            var difficultyItem = new ToolStripMenuItem();
+            foreach (GameDifficulty diff in Enum.GetValues(typeof(GameDifficulty)))
             {
-                UpdateLayoutView(settings);
+                var item = new ToolStripMenuItem();
+                item.Checked = difficultyItem.DropDownItems.Count == 0;
+                item.Text = Enum.GetName(typeof(GameDifficulty), diff);
+                item.Click += (object s, EventArgs e) => GameDifficultyClick(s, diff);
+                difficultyItem.DropDownItems.Add(item);
             }
+            difficultyItem.Text = "Difficulty";
+
+            var settingsItem = new ToolStripMenuItem();
+            settingsItem.Image = Properties.Resources.wrench_orange;
+            settingsItem.ShortcutKeys = Keys.Control | Keys.U;
+            settingsItem.Text = "Settings";
+            settingsItem.Click += new EventHandler(SettingsMenuItemOnClick);
+
+            var resetItem = new ToolStripMenuItem();
+            resetItem.Image = Properties.Resources.arrow_refresh;
+            resetItem.ShortcutKeys = Keys.Control | Keys.R;
+            resetItem.Text = "Reset";
+            resetItem.Click += new EventHandler(ResetMenuItemOnClick);
+
+            var debugItem = new ToolStripMenuItem();
+            debugItem.Image = Properties.Resources.bug;
+            debugItem.Text = "Debug";
+            debugItem.Click += new EventHandler(DebugMenuItemOnClick);
+
+            var exitItem = new ToolStripMenuItem();
+            exitItem.Image = Properties.Resources.cross;
+            exitItem.Text = "Exit";
+            exitItem.Click += new EventHandler(ExitMenuItemOnClick);
+
+            loadConfigMenuItem = new ToolStripMenuItem();
+            loadConfigMenuItem.Text = "Load Config";
+
+            var contextMenu = new ContextMenuStrip();
+            contextMenu.Items.AddRange(new ToolStripItem[] {
+                difficultyItem,
+                settingsItem,
+                loadConfigMenuItem,
+                resetItem,
+                debugItem,
+                exitItem
+            });
+
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            BackColor = System.Drawing.Color.Black;
+            ClientSize = new System.Drawing.Size(730, 514);
+            ContextMenuStrip = contextMenu;
+            Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 238);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Text = $@"Diablo Interface v{Application.ProductVersion}";
         }
 
-        void UpdateLayoutView(ApplicationSettings settings)
+        void ApplySettings(ApplicationSettings s)
         {
-            var nextLayout = CreateLayout(settings.DisplayLayoutHorizontal);
-            if (currentLayout != null)
+            // nothing to do if correct layout already
+            if (layout is HorizontalLayout && s.DisplayLayoutHorizontal)
+                return;
+
+            // remove old layout
+            if (layout != null)
             {
-                Controls.Remove(currentLayout);
-                currentLayout.Dispose();
-                currentLayout = null;
+                Controls.Remove(layout);
+                layout.Dispose();
+                layout = null;
             }
-            Controls.Add(nextLayout);
-            currentLayout = nextLayout;
-        }
 
-        AbstractLayout CreateLayout(bool horizontal)
-        {
-            return horizontal
+            // create new layout
+            var nextLayout = s.DisplayLayoutHorizontal
                 ? new HorizontalLayout(di) as AbstractLayout
                 : new VerticalLayout(di);
-        }
-
-        void SetTitleWithApplicationVersion()
-        {
-            Text = $@"Diablo Interface v{Application.ProductVersion}";
-            Update();
+            Controls.Add(nextLayout);
+            layout = nextLayout;
         }
 
         void PopulateSetingsFileListContextMenu(IEnumerable<FileInfo> settingsFileCollection)
         {
+            var items = settingsFileCollection.Select(CreateSettingsToolStripMenuItem).ToArray();
+
             loadConfigMenuItem.DropDownItems.Clear();
-            IEnumerable<ToolStripItem> items = settingsFileCollection.Select(CreateSettingsToolStripMenuItem);
-            loadConfigMenuItem.DropDownItems.AddRange(items.ToArray());
+            loadConfigMenuItem.DropDownItems.AddRange(items);
         }
 
-        ToolStripMenuItem CreateSettingsToolStripMenuItem(FileInfo fileInfo)
+        ToolStripMenuItem CreateSettingsToolStripMenuItem(FileInfo f)
         {
-            var item = new ToolStripMenuItem
-            {
-                Text = Path.GetFileNameWithoutExtension(fileInfo.Name),
-                Tag = fileInfo.FullName
-            };
-
-            item.Click += LoadConfigFile;
-
+            var item = new ToolStripMenuItem();
+            item.Text = Path.GetFileNameWithoutExtension(f.Name);
+            item.Click += (object s, EventArgs e) => LoadConfigFile(s, f.FullName);
             return item;
         }
 
-        void LoadConfigFile(object sender, EventArgs e)
+        void LoadConfigFile(object sender, string fileName)
         {
-            var fileName = ((ToolStripMenuItem)sender).Tag.ToString();
-
             // TODO: LoadSettings should throw a custom Exception with information about why this happened.
             if (!di.settings.LoadSettings(fileName))
             {
@@ -143,7 +182,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     $@"Failed to load settings.{Environment.NewLine}See the error log for more details.",
                     @"Settings Error",
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    MessageBoxIcon.Error
+                );
             }
         }
 
@@ -155,57 +195,33 @@ namespace Zutatensuppe.DiabloInterface.Gui
         void ResetMenuItemOnClick(object sender, EventArgs e)
         {
             di.plugins.Reset();
-            currentLayout?.Reset();
+            layout?.Reset();
         }
 
         void SettingsMenuItemOnClick(object sender, EventArgs e)
         {
             using (var settingsWindow = new SettingsWindow(di))
-            {
                 settingsWindow.ShowDialog();
-            }
         }
 
         void DebugMenuItemOnClick(object sender, EventArgs e)
         {
             if (debugWindow == null || debugWindow.IsDisposed)
-            {
                 debugWindow = new DebugWindow(di);
-            }
 
             debugWindow.Show();
-        }
-
-        void DifficultyNormalToolStripMenuItemOnClick(object sender, EventArgs e)
-        {
-            GameDifficultyClick(sender, GameDifficulty.Normal);
-        }
-
-        void NightmareToolStripMenuItemOnClick(object sender, EventArgs e)
-        {
-            GameDifficultyClick(sender, GameDifficulty.Nightmare);
-        }
-
-        void HellToolStripMenuItemOnClick(object sender, EventArgs e)
-        {
-            GameDifficultyClick(sender, GameDifficulty.Hell);
         }
 
         void GameDifficultyClick(object sender, GameDifficulty difficulty)
         {
             Logger.Info($"Setting target difficulty to {difficulty}.");
 
-            UncheckDifficultyMenuItems();
-            di.game.TargetDifficulty = difficulty;
-            ((ToolStripMenuItem)sender).Checked = true;
-        }
+            var clicked = (ToolStripMenuItem)sender;
+            var parent = (ToolStripMenuItem)clicked.OwnerItem;
+            foreach (ToolStripMenuItem item in parent.DropDownItems)
+                item.Checked = item == clicked;
 
-        void UncheckDifficultyMenuItems()
-        {
-            foreach (ToolStripMenuItem item in difficultyToolStripMenuItem.DropDownItems)
-            {
-                item.Checked = false;
-            }
+            di.game.TargetDifficulty = difficulty;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

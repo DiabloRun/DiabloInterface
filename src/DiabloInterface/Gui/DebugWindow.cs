@@ -1,33 +1,35 @@
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
+
+using Zutatensuppe.D2Reader;
+using Zutatensuppe.D2Reader.Models;
+using Zutatensuppe.D2Reader.Struct.Item;
+using Zutatensuppe.DiabloInterface.Core.Logging;
+using Zutatensuppe.DiabloInterface.Gui.Controls;
+using Zutatensuppe.DiabloInterface.Gui.Forms;
+
 namespace Zutatensuppe.DiabloInterface.Gui
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Linq;
-    using System.Reflection;
-    using System.Text;
-    using System.Windows.Forms;
-
-    using Zutatensuppe.D2Reader;
-    using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.D2Reader.Struct.Item;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
-    using Zutatensuppe.DiabloInterface.Gui.Controls;
-    using Zutatensuppe.DiabloInterface.Gui.Forms;
-
-    public partial class DebugWindow : WsExCompositedForm
+    public class DebugWindow : WsExCompositedForm
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly DiabloInterface di;
+
         readonly Dictionary<GameDifficulty, QuestDebugRow[,]> questRows =
             new Dictionary<GameDifficulty, QuestDebugRow[,]>();
 
         List<ItemInfo> items;
 
-        Dictionary<Label, BodyLocation> locs;
         Label clickedLabel;
         Label hoveredLabel;
+
+        private Dictionary<Label, BodyLocation> locs;
+        private RichTextBox textItemDesc;
 
         public DebugWindow(DiabloInterface di)
         {
@@ -45,6 +47,117 @@ namespace Zutatensuppe.DiabloInterface.Gui
             };
 
             InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            SuspendLayout();
+
+            TabPage itemsTab()
+            {
+                Color bg = Color.FromArgb(64, 64, 64);
+                Color fg = Color.Aquamarine;
+                Label l(Point loc, Size s, string text)
+                {
+                    var label = new Label();
+                    label.BackColor = bg;
+                    label.ForeColor = fg;
+                    label.Location = loc;
+                    label.Size = s;
+                    label.Text = text;
+                    label.TextAlign = ContentAlignment.MiddleCenter;
+                    label.Click += new EventHandler(LabelClick);
+                    label.MouseEnter += new EventHandler(LabelMouseEnter);
+                    label.MouseLeave += new EventHandler(LabelMouseLeave);
+                    return label;
+                }
+
+                locs = new Dictionary<Label, BodyLocation>
+                {
+                    {l(new Point(80, 0), new Size(40, 40), "Head"), BodyLocation.Head},
+                    {l(new Point(130, 20), new Size(20, 20), "A"), BodyLocation.Amulet},
+                    {l(new Point(160, 40), new Size(40, 80), "Right Arm"), BodyLocation.PrimaryRight},
+                    {l(new Point(0, 40), new Size(40, 80), "Left Arm"), BodyLocation.PrimaryLeft},
+                    {l(new Point(80, 50), new Size(40, 60), "Body"), BodyLocation.BodyArmor},
+                    {l(new Point(50, 130), new Size(20, 20), "L"), BodyLocation.RingLeft},
+                    {l(new Point(130, 130), new Size(20, 20), "R"), BodyLocation.RingRight},
+                    {l(new Point(0, 130), new Size(40, 40), "Gloves"), BodyLocation.Gloves},
+                    {l(new Point(80, 130), new Size(40, 20), "Belt"), BodyLocation.Belt},
+                    {l(new Point(160, 130), new Size(40, 40), "Boots"), BodyLocation.Boots},
+                };
+
+                textItemDesc = new RichTextBox();
+                textItemDesc.Location = new Point(0, 180);
+                textItemDesc.Size = new Size(200, 180);
+                textItemDesc.Text = "";
+
+                var itemsPanel = new TabPage();
+                itemsPanel.Text = "Items";
+                itemsPanel.Controls.Add(textItemDesc);
+                foreach (var p in locs)
+                    itemsPanel.Controls.Add(p.Key);
+                return itemsPanel;
+            }
+
+            TabPage questsTab()
+            {
+                TabPage tabpage(GameDifficulty difficulty)
+                {
+                    var t = new TabPage();
+                    t.AutoScroll = true;
+                    t.Text = Enum.GetName(typeof(GameDifficulty), difficulty);
+                    questRows[difficulty] = CreateQuestRow(t);
+                    return t;
+                }
+
+                var tabControl1 = new TabControl();
+                tabControl1.Controls.Add(tabpage(GameDifficulty.Normal));
+                tabControl1.Controls.Add(tabpage(GameDifficulty.Nightmare));
+                tabControl1.Controls.Add(tabpage(GameDifficulty.Hell));
+                tabControl1.Dock = DockStyle.Fill;
+                tabControl1.Location = new Point(3, 16);
+                tabControl1.SelectedIndex = 0;
+                tabControl1.Size = new Size(549, 536);
+                foreach (TabPage c in tabControl1.Controls)
+                {
+                    c.UseVisualStyleBackColor = true;
+                    c.Dock = DockStyle.Fill;
+                }
+
+                var quests = new TabPage();
+                quests.Controls.Add(tabControl1);
+                quests.Text = "Quest-Bits";
+                return quests;
+            }
+
+            var tabs = new TabControl();
+            tabs.Dock = DockStyle.Fill;
+            tabs.Controls.Add(itemsTab());
+            tabs.Controls.Add(questsTab());
+            foreach (var pa in di.plugins.DebugControls)
+            {
+                var tp = new TabPage();
+                tp.Controls.Add(pa.Value);
+                tp.Text = pa.Key;
+                tabs.Controls.Add(tp);
+            }
+
+            foreach (TabPage c in tabs.Controls)
+            {
+                c.UseVisualStyleBackColor = true;
+                c.Dock = DockStyle.Fill;
+            }
+
+            Controls.Add(tabs);
+
+            AutoScaleDimensions = new SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(875, 571);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(DebugWindow));
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            Text = "Debug";
+            ResumeLayout(false);
         }
 
         void RegisterServiceEventHandlers()
@@ -65,22 +178,22 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 return;
             }
 
-            foreach (GameDifficulty difficulty in Enum.GetValues(typeof(GameDifficulty)))
-            {
-                var quests = e.Quests.ByDifficulty(difficulty);
-                if (quests == null) continue;
-
-                UpdateQuestData(quests, difficulty);
-            }
+            UpdateQuestData(e.Quests, GameDifficulty.Normal);
+            UpdateQuestData(e.Quests, GameDifficulty.Nightmare);
+            UpdateQuestData(e.Quests, GameDifficulty.Hell);
 
             UpdateItemStats(e.Character.Items);
         }
 
-        void UpdateQuestData(List<Quest> quests, GameDifficulty difficulty)
+        void UpdateQuestData(Quests quests, GameDifficulty difficulty)
         {
+            var q = quests.ByDifficulty(difficulty);
+            if (q == null)
+                return;
+
             QuestDebugRow[,] rows = questRows[difficulty];
 
-            foreach (var quest in quests)
+            foreach (var quest in q)
             {
                 try
                 {
@@ -88,42 +201,16 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 }
                 catch (NullReferenceException)
                 {
-                    // System.NullReferenceException
                 }
             }
         }
 
-        void DebugWindow_Load(object sender, EventArgs e)
-        {
-            if (DesignMode) return;
-
-            questRows[GameDifficulty.Normal] = CreateQuestRow(tabPage1);
-            questRows[GameDifficulty.Nightmare] = CreateQuestRow(tabPage2);
-            questRows[GameDifficulty.Hell] = CreateQuestRow(tabPage3);
-
-            locs = new Dictionary<Label, BodyLocation>
-            {
-                {label1, BodyLocation.Head},
-                {label10, BodyLocation.Amulet},
-                {label3, BodyLocation.PrimaryRight},
-                {label2, BodyLocation.PrimaryLeft},
-                {label4, BodyLocation.BodyArmor},
-                {label7, BodyLocation.RingLeft},
-                {label8, BodyLocation.RingRight},
-                {label5, BodyLocation.Gloves},
-                {label6, BodyLocation.Belt},
-                {label9, BodyLocation.Boots}
-            };
-        }
-
-        static QuestDebugRow[,] CreateQuestRow(TabPage tabPage)
+        static QuestDebugRow[,] CreateQuestRow(Control tabPage)
         {
             var questRows = new QuestDebugRow[5, 6];
-
             for (int actIndex = 0; actIndex < 5; actIndex++)
             {
                 int y = actIndex * 100 - (actIndex > 3 ? 3 * 16 : 0);
-
                 tabPage.Controls.Add(new Label
                 {
                     Text = "Act " + (actIndex + 1),
@@ -137,17 +224,14 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     var row = new QuestDebugRow(quest);
                     row.Location = new Point(60, y + (questIndex * 16));
                     tabPage.Controls.Add(row);
-
                     questRows[actIndex, questIndex] = row;
                 }
             }
-
             return questRows;
         }
 
         void UpdateItemStats(List<ItemInfo> items)
         {
-            if (DesignMode) return;
             this.items = items;
             UpdateItemDebugInformation();
         }
@@ -155,7 +239,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
         void UpdateItemDebugInformation()
         {
             // hover has precedence vs clicked labels
-            Label l = hoveredLabel ?? (clickedLabel ?? null);
+            Label l = hoveredLabel ?? clickedLabel ?? null;
             if (l != null && locs.ContainsKey(l) && items != null)
             {
                 foreach (var item in items)
@@ -209,9 +293,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private void LabelMouseLeave(object sender, EventArgs e)
         {
             if (hoveredLabel != sender)
-            {
                 return;
-            }
+
             hoveredLabel = null;
             UpdateItemDebugInformation();
         }

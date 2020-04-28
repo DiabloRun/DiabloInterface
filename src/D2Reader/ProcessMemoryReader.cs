@@ -1,13 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text;
+
+using Zutatensuppe.D2Reader.Struct;
+
 namespace Zutatensuppe.D2Reader
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Runtime.InteropServices;
-    using System.Text;
-
-    using Zutatensuppe.D2Reader.Struct;
-
     public struct Pointer
     {
         public IntPtr Base;

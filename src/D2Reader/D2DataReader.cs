@@ -63,7 +63,7 @@ namespace Zutatensuppe.D2Reader
         IProcessMemoryReader reader;
         IInventoryReader inventoryReader;
         UnitReader unitReader;
-        IStringLookupTable stringReader;
+        IStringReader stringReader;
         ISkillReader skillReader;
         GameMemoryTable memory;
 
@@ -221,7 +221,7 @@ namespace Zutatensuppe.D2Reader
 
         void CreateReaders()
         {
-            stringReader = new StringLookupTable(reader, memory);
+            stringReader = new StringReader(reader, memory);
             skillReader = new SkillReader(reader, memory);
 
             // note: readers need to be recreated everytime before read.. at least unitReader
@@ -260,7 +260,7 @@ namespace Zutatensuppe.D2Reader
             return GetInventoryItemsFiltered(owner, (Item i) => slots.FindIndex(x => i.IsEquippedInSlot(x)) >= 0);
         }
 
-        internal void ItemSlotAction(List<BodyLocation> slots, Action<Item, D2Unit, UnitReader, IStringLookupTable, IInventoryReader> action)
+        internal void ItemSlotAction(List<BodyLocation> slots, Action<Item, D2Unit, UnitReader, IStringReader, IInventoryReader> action)
         {
             if (!ValidateGameDataReaders()) return;
 
@@ -282,7 +282,7 @@ namespace Zutatensuppe.D2Reader
             }
         }
 
-        internal void ItemAction(IEnumerable<Item> items, Action<Item, D2Unit, UnitReader, IStringLookupTable, IInventoryReader> action)
+        internal void ItemAction(IEnumerable<Item> items, Action<Item, D2Unit, UnitReader, IStringReader, IInventoryReader> action)
         {
             if (!ValidateGameDataReaders()) return;
 
@@ -339,7 +339,7 @@ namespace Zutatensuppe.D2Reader
             }
         }
 
-        D2GameInfo ReadGameInfo()
+        GameInfo ReadGameInfo()
         {
             try
             {
@@ -370,7 +370,7 @@ namespace Zutatensuppe.D2Reader
                     ? null
                     : reader.Read<D2PlayerData>(tmpPlayer.UnitData);
 
-                return new D2GameInfo(game, client, player, playerData);
+                return new GameInfo(game, client, player, playerData);
             }
             catch (ProcessMemoryReadException)
             {
@@ -439,7 +439,7 @@ namespace Zutatensuppe.D2Reader
             ));
         }
 
-        Game ReadGameData(D2GameInfo gameInfo)
+        Game ReadGameData(GameInfo gameInfo)
         {
             var g = new Game();
             g.Area = reader.ReadByte(memory.Area, AddressingMode.Relative);
@@ -450,7 +450,7 @@ namespace Zutatensuppe.D2Reader
             return g;
         }
 
-        Quests ReadQuests(D2GameInfo gameInfo) => new Quests((
+        Quests ReadQuests(GameInfo gameInfo) => new Quests((
             from address in gameInfo.PlayerData.Quests
             where !address.IsNull
             select ReadQuestBuffer(address) into questBuffer
@@ -479,7 +479,7 @@ namespace Zutatensuppe.D2Reader
             return characters[name];
         }
 
-        Character ReadCharacterData(D2GameInfo gameInfo)
+        Character ReadCharacterData(GameInfo gameInfo)
         {
             Character character = CharacterByName(gameInfo.PlayerData.PlayerName);
 
@@ -488,16 +488,16 @@ namespace Zutatensuppe.D2Reader
                 // A brand new character has been started.
                 // The extra wasInTitleScreen check prevents DI from splitting
                 // when it was started AFTER Diablo 2, but the char is still a new char
-                if (Character.IsNewChar(gameInfo.Player, unitReader, inventoryReader, skillReader))
+                if (Character.DetermineIfNewChar(gameInfo.Player, unitReader, inventoryReader, skillReader))
                 {
-                    // disable IsAutosplitChar from the other chars created so far
+                    // disable IsNewChar from the other chars created so far
                     foreach (var pair in characters)
-                        pair.Value.IsAutosplitChar = false;
+                        pair.Value.IsNewChar = false;
 
                     Logger.Info($"A new chararacter was created: {character.Name}");
                     charCount++;
                     character.Deaths = 0;
-                    character.IsAutosplitChar = true;
+                    character.IsNewChar = true;
                     ActiveCharacter = character;
                     OnCharacterCreated(new CharacterCreatedEventArgs(character));
                 }

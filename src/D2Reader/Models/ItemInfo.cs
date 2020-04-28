@@ -63,7 +63,7 @@ namespace Zutatensuppe.D2Reader.Models
             Item item,
             D2Unit owner,
             UnitReader unitReader,
-            IStringLookupTable stringReader,
+            IStringReader stringReader,
             IInventoryReader inventoryReader
         )
         {

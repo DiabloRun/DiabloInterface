@@ -159,15 +159,14 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             this.s = s;
         }
 
-        private GroupBox grpPipeServer;
         private RichTextBox txtPipeServer;
         public Control Render()
         {
-            if (grpPipeServer == null || grpPipeServer.IsDisposed)
+            if (txtPipeServer == null || txtPipeServer.IsDisposed)
             {
                 Init();
             }
-            return grpPipeServer;
+            return txtPipeServer;
         }
 
         private void Init()
@@ -178,20 +177,14 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             txtPipeServer.TabIndex = 0;
             txtPipeServer.Text = "";
 
-            grpPipeServer = new GroupBox();
-            grpPipeServer.Controls.Add(this.txtPipeServer);
-            grpPipeServer.Location = new Point(579, 471);
-            grpPipeServer.Size = new Size(284, 88);
-            grpPipeServer.TabIndex = 15;
-            grpPipeServer.TabStop = false;
-            grpPipeServer.Text = "Pipe Server";
+            ApplyChanges();
         }
 
         public void ApplyChanges()
         {
-            if (grpPipeServer.InvokeRequired)
+            if (txtPipeServer.InvokeRequired)
             {
-                grpPipeServer.Invoke((Action)(() => ApplyChanges()));
+                txtPipeServer.Invoke((Action)(() => ApplyChanges()));
                 return;
             }
 

@@ -66,7 +66,7 @@ namespace Zutatensuppe.D2Reader.Readers
         Polish,
     }
 
-    public class StringLookupTable: IStringLookupTable
+    public class StringReader: IStringReader
     {
         IProcessMemoryReader reader;
         GameMemoryTable memory;
@@ -75,7 +75,7 @@ namespace Zutatensuppe.D2Reader.Readers
 
         public Language Language { get; }
 
-        public StringLookupTable(IProcessMemoryReader reader, GameMemoryTable memory)
+        public StringReader(IProcessMemoryReader reader, GameMemoryTable memory)
         {
             this.reader = reader;
             this.memory = memory;

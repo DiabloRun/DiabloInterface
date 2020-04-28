@@ -92,9 +92,6 @@
     <Compile Include="Gui\Controls\RuneSettingsPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\Controls\RuneSettingsPage.Designer.cs">
-      <DependentUpon>RuneSettingsPage.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Forms\SimpleSaveDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -113,22 +110,13 @@
     <Compile Include="Gui\DebugWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Gui\DebugWindow.Designer.cs">
-      <DependentUpon>DebugWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\MainWindow.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Gui\MainWindow.Designer.cs">
-      <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Controls\QuestDebugRow.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Controls\RuneDisplayElement.cs" />
-    <Compile Include="Gui\Controls\RuneDisplayElement.Designer.cs">
-      <DependentUpon>RuneDisplayElement.cs</DependentUpon>
-    </Compile>
     <Compile Include="Plugin\IPlugin.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -148,9 +136,6 @@
     <Compile Include="Settings\JsonSettingsWriter.cs" />
     <Compile Include="Settings\SettingsResolver.cs" />
     <Compile Include="VersionChecker.cs" />
-    <EmbeddedResource Include="Gui\Controls\RuneSettingsPage.resx">
-      <DependentUpon>RuneSettingsPage.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Gui\Forms\SimpleSaveDialog.resx">
       <DependentUpon>SimpleSaveDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -159,9 +144,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Controls\RuneDisplayElement.resx">
-      <DependentUpon>RuneDisplayElement.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

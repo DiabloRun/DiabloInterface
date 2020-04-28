@@ -125,7 +125,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             // add another autosplit:
             // - area (stony fields)
             // should not trigger another split automatically, but does
-            if (!Cfg.Enabled || !e.Character.IsAutosplitChar)
+            if (!Cfg.Enabled || !e.Character.IsNewChar)
                 return;
 
             int i = 0;
@@ -138,6 +138,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
                 keyService.TriggerHotkey(Cfg.Hotkey);
                 Logger.Info($"AutoSplit reached: {AutoSplitString(i++, split)}");
             }
+            ApplyChanges();
         }
 
         private bool IsCompleteableAutoSplit(AutoSplit split, DataReadEventArgs args)
@@ -153,7 +154,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
                         case (int)AutoSplit.Special.GameStart:
                             return true;
                         case (int)AutoSplit.Special.Clear100Percent:
-                            return args.Quests.DifficultyCompleted(args.Game.Difficulty);
+                            return args.Quests.DifficultyFullyCompleted(args.Game.Difficulty);
                         case (int)AutoSplit.Special.Clear100PercentAllDifficulties:
                             return args.Quests.FullyCompleted();
                         default:
@@ -179,6 +180,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             {
                 autoSplit.IsReached = false;
             }
+            ApplyChanges();
         }
 
         public void Reset()
@@ -230,15 +232,14 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         }
 
         private Panel autosplitPanel;
-        private GroupBox groupBox2;
         List<AutosplitBinding> autoSplitBindings;
         public Control Render()
         {
-            if (groupBox2 == null || groupBox2.IsDisposed)
+            if (autosplitPanel == null || autosplitPanel.IsDisposed)
             {
                 Init();
             }
-            return groupBox2;
+            return autosplitPanel;
         }
 
         private void Init()
@@ -249,44 +250,17 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             autosplitPanel.Location = new Point(3, 16);
             autosplitPanel.Size = new Size(281, 105);
 
-            groupBox2 = new GroupBox();
-            groupBox2.Controls.Add(autosplitPanel);
-            groupBox2.Location = new Point(576, 4);
-            groupBox2.Size = new Size(287, 124);
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Splits";
-
-            ApplyAutoSplitSettings();
+            ApplyChanges();
         }
 
         public void ApplyChanges()
         {
-            if (groupBox2.InvokeRequired)
+            if (autosplitPanel.InvokeRequired)
             {
-                groupBox2.Invoke((Action)(() => ApplyChanges()));
+                autosplitPanel.Invoke((Action)(() => ApplyChanges()));
                 return;
             }
 
-            ApplyAutoSplitSettings();
-        }
-
-        void ClearAutoSplitBindings()
-        {
-            if (autoSplitBindings == null)
-            {
-                autoSplitBindings = new List<AutosplitBinding>();
-            }
-
-            foreach (var binding in autoSplitBindings)
-            {
-                binding.Unbind();
-            }
-
-            autoSplitBindings.Clear();
-        }
-
-        void ApplyAutoSplitSettings()
-        {
             // Unbinds and clears the binding list.
             ClearAutoSplitBindings();
 
@@ -309,6 +283,21 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
                 autosplitPanel.Controls.Add(splitLabel);
                 y += 16;
             }
+        }
+
+        void ClearAutoSplitBindings()
+        {
+            if (autoSplitBindings == null)
+            {
+                autoSplitBindings = new List<AutosplitBinding>();
+            }
+
+            foreach (var binding in autoSplitBindings)
+            {
+                binding.Unbind();
+            }
+
+            autoSplitBindings.Clear();
         }
     }
 

@@ -275,9 +275,9 @@ namespace Zutatensuppe.DiabloInterface.Gui
             grpConfigFiles.Size = new System.Drawing.Size(169, 502);
             grpConfigFiles.Text = "Config Files";
 
-            this.tabControl1.Controls.Add(this.tabPageSettingsLayout);
-            this.tabControl1.Controls.Add(this.tabPageSettingsRunes);
-            this.tabControl1.Controls.Add(this.tabPageSettingsMisc);
+            tabControl1.Controls.Add(tabPageSettingsLayout);
+            tabControl1.Controls.Add(tabPageSettingsRunes);
+            tabControl1.Controls.Add(tabPageSettingsMisc);
 
             foreach (var p in di.plugins.SettingsControls)
             {
@@ -285,80 +285,82 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 c.Controls.Add(p.Value);
                 c.Dock = DockStyle.Fill;
                 c.Text = p.Key;
-                this.tabControl1.Controls.Add(c);
+                tabControl1.Controls.Add(c);
             }
 
-            this.tabControl1.Dock = DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(3, 3);
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(513, 502);
+            tabControl1.Dock = DockStyle.Fill;
+            tabControl1.Location = new Point(3, 3);
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(513, 502);
+            foreach (TabPage c in tabControl1.Controls)
+                c.UseVisualStyleBackColor = true;
 
-            this.HorizontalSplitContainer.ColumnCount = 1;
-            this.HorizontalSplitContainer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            this.HorizontalSplitContainer.Controls.Add(this.tabControl1, 0, 0);
-            this.HorizontalSplitContainer.Dock = DockStyle.Fill;
-            this.HorizontalSplitContainer.Location = new System.Drawing.Point(175, 0);
-            this.HorizontalSplitContainer.Margin = new Padding(0);
-            this.HorizontalSplitContainer.RowCount = 2;
-            this.HorizontalSplitContainer.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            this.HorizontalSplitContainer.RowStyles.Add(new RowStyle());
-            this.HorizontalSplitContainer.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            this.HorizontalSplitContainer.Size = new System.Drawing.Size(519, 508);
+            HorizontalSplitContainer.ColumnCount = 1;
+            HorizontalSplitContainer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            HorizontalSplitContainer.Controls.Add(this.tabControl1, 0, 0);
+            HorizontalSplitContainer.Dock = DockStyle.Fill;
+            HorizontalSplitContainer.Location = new System.Drawing.Point(175, 0);
+            HorizontalSplitContainer.Margin = new Padding(0);
+            HorizontalSplitContainer.RowCount = 2;
+            HorizontalSplitContainer.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            HorizontalSplitContainer.RowStyles.Add(new RowStyle());
+            HorizontalSplitContainer.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            HorizontalSplitContainer.Size = new System.Drawing.Size(519, 508);
 
-            this.VerticalSplitContainer.ColumnCount = 2;
-            this.VerticalSplitContainer.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 175F));
-            this.VerticalSplitContainer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            this.VerticalSplitContainer.Controls.Add(this.grpConfigFiles, 0, 0);
-            this.VerticalSplitContainer.Controls.Add(this.HorizontalSplitContainer, 1, 0);
-            this.VerticalSplitContainer.Dock = DockStyle.Fill;
-            this.VerticalSplitContainer.Location = new System.Drawing.Point(0, 0);
-            this.VerticalSplitContainer.Margin = new Padding(0);
-            this.VerticalSplitContainer.RowCount = 1;
-            this.VerticalSplitContainer.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            this.VerticalSplitContainer.Size = new System.Drawing.Size(694, 508);
+            VerticalSplitContainer.ColumnCount = 2;
+            VerticalSplitContainer.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 175F));
+            VerticalSplitContainer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            VerticalSplitContainer.Controls.Add(this.grpConfigFiles, 0, 0);
+            VerticalSplitContainer.Controls.Add(this.HorizontalSplitContainer, 1, 0);
+            VerticalSplitContainer.Dock = DockStyle.Fill;
+            VerticalSplitContainer.Location = new System.Drawing.Point(0, 0);
+            VerticalSplitContainer.Margin = new Padding(0);
+            VerticalSplitContainer.RowCount = 1;
+            VerticalSplitContainer.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            VerticalSplitContainer.Size = new System.Drawing.Size(694, 508);
 
-            this.lstConfigFiles.ContextMenuStrip = this.ctxConfigFileList;
-            this.lstConfigFiles.Dock = DockStyle.Fill;
-            this.lstConfigFiles.FormattingEnabled = true;
-            this.lstConfigFiles.Location = new System.Drawing.Point(3, 16);
-            this.lstConfigFiles.Size = new System.Drawing.Size(163, 483);
-            this.lstConfigFiles.MouseDoubleClick += new MouseEventHandler(this.lstConfigFiles_MouseDoubleClick);
-            this.lstConfigFiles.MouseUp += new MouseEventHandler(this.lstConfigFiles_MouseUp);
+            lstConfigFiles.ContextMenuStrip = this.ctxConfigFileList;
+            lstConfigFiles.Dock = DockStyle.Fill;
+            lstConfigFiles.FormattingEnabled = true;
+            lstConfigFiles.Location = new System.Drawing.Point(3, 16);
+            lstConfigFiles.Size = new System.Drawing.Size(163, 483);
+            lstConfigFiles.MouseDoubleClick += new MouseEventHandler(this.lstConfigFiles_MouseDoubleClick);
+            lstConfigFiles.MouseUp += new MouseEventHandler(this.lstConfigFiles_MouseUp);
 
-            this.ctxConfigFileList.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.ctxConfigFileList.Items.AddRange(new ToolStripItem[] {
-            this.menuNew,
-            this.menuLoad,
-            this.renameToolStripMenuItem,
-            this.menuClone,
-            this.menuDelete});
-            this.ctxConfigFileList.Size = new System.Drawing.Size(118, 114);
+            ctxConfigFileList.ImageScalingSize = new System.Drawing.Size(20, 20);
+            ctxConfigFileList.Items.AddRange(new ToolStripItem[] {
+            menuNew,
+            menuLoad,
+            renameToolStripMenuItem,
+            menuClone,
+            menuDelete});
+            ctxConfigFileList.Size = new System.Drawing.Size(118, 114);
 
-            this.menuNew.Size = new System.Drawing.Size(117, 22);
-            this.menuNew.Text = "New";
-            this.menuNew.Click += new System.EventHandler(this.menuNew_Click);
+            menuNew.Size = new System.Drawing.Size(117, 22);
+            menuNew.Text = "New";
+            menuNew.Click += new System.EventHandler(this.menuNew_Click);
 
-            this.menuLoad.Size = new System.Drawing.Size(117, 22);
-            this.menuLoad.Text = "Load";
-            this.menuLoad.Click += new System.EventHandler(this.menuLoad_Click);
+            menuLoad.Size = new System.Drawing.Size(117, 22);
+            menuLoad.Text = "Load";
+            menuLoad.Click += new System.EventHandler(this.menuLoad_Click);
 
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
-            this.renameToolStripMenuItem.Text = "Rename";
-            this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
+            renameToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            renameToolStripMenuItem.Text = "Rename";
+            renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
 
-            this.menuClone.Size = new System.Drawing.Size(117, 22);
-            this.menuClone.Text = "Clone";
-            this.menuClone.Click += new System.EventHandler(this.menuClone_Click);
+            menuClone.Size = new Size(117, 22);
+            menuClone.Text = "Clone";
+            menuClone.Click += new EventHandler(this.menuClone_Click);
 
-            this.menuDelete.Size = new System.Drawing.Size(117, 22);
-            this.menuDelete.Text = "Delete";
-            this.menuDelete.Click += new System.EventHandler(this.menuDelete_Click);
+            menuDelete.Size = new Size(117, 22);
+            menuDelete.Text = "Delete";
+            menuDelete.Click += new EventHandler(this.menuDelete_Click);
 
-            this.tabPageSettingsLayout.Controls.Add(this.groupBox2);
-            this.tabPageSettingsLayout.Controls.Add(this.FontGroup);
-            this.tabPageSettingsLayout.Controls.Add(this.groupBox1);
-            this.tabPageSettingsLayout.Dock = DockStyle.Fill;
-            this.tabPageSettingsLayout.Text = "Layout";
+            tabPageSettingsLayout.Controls.Add(this.groupBox2);
+            tabPageSettingsLayout.Controls.Add(this.FontGroup);
+            tabPageSettingsLayout.Controls.Add(this.groupBox1);
+            tabPageSettingsLayout.Dock = DockStyle.Fill;
+            tabPageSettingsLayout.Text = "Layout";
 
             this.groupBox2.Controls.Add(this.numericUpDownPaddingInVerticalLayout);
             this.groupBox2.Controls.Add(this.label3);

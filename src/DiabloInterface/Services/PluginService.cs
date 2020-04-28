@@ -21,6 +21,7 @@ namespace Zutatensuppe.DiabloInterface.Services
 
         public Dictionary<string, PluginConfig> EditedSettings => plugins.ToDictionary(s => s.Name, s => s.SettingsRenderer().Get());
         public bool EditedSettingsDirty => plugins.Any(p => p.SettingsRenderer().IsDirty());
+
         public Dictionary<string, Control> SettingsControls
         {
             get
@@ -35,13 +36,15 @@ namespace Zutatensuppe.DiabloInterface.Services
             }
         }
 
-        public IEnumerable<Control> DebugControls { get
+        public Dictionary<string, Control> DebugControls
+        {
+            get
             {
-                var l = new List<Control>();
+                var l = new Dictionary<string, Control>();
                 foreach (IPlugin p in plugins)
                 {
                     var r = p.DebugRenderer();
-                    if (r != null) l.Add(r.Render());
+                    if (r != null) l.Add(p.Name, r.Render());
                 }
                 return l;
             }

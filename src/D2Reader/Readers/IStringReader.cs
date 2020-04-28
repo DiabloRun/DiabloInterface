@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
-    public interface IStringLookupTable
+    public interface IStringReader
     {
         Language Language { get; }
 

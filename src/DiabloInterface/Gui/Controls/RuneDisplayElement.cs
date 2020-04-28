@@ -1,4 +1,4 @@
-﻿namespace Zutatensuppe.DiabloInterface.Gui.Controls
+namespace Zutatensuppe.DiabloInterface.Gui.Controls
 {
     using System;
     using System.Drawing;
@@ -23,7 +23,7 @@
         }
     }
 
-    public partial class RuneDisplayElement : UserControl
+    public class RuneDisplayElement : UserControl
     {
         // Size of rune images (width and height are same).
         const int RuneSize = 28;
@@ -35,36 +35,44 @@
         Bitmap image;
         Bitmap imageRed;
 
-        public RuneDisplayElement(Rune rune)
-        {
-            Initialize(rune);
+        private PictureBox pictureBox1;
 
-            Disposed += OnDisposed;
-        }
+        public event EventHandler<EventArgs> RemoveButtonClicked;
+
+        public RuneDisplayElement(Rune rune) : this(rune, false, true, true) { }
 
         public RuneDisplayElement(Rune rune, bool highContrast, bool removable, bool haveRune)
         {
-            Initialize(rune, highContrast, removable, haveRune);
-
-            Disposed += OnDisposed;
-        }
-
-        public event EventHandler<EventArgs> RemoveButtonClicked; 
-
-        void Initialize(Rune rune, bool highContrast = false, bool removable = true, bool haveRune = true)
-        {
-            InitializeComponent();
-
-            this.Rune = rune;
-
-            using (Bitmap sprite = (highContrast ? Properties.Resources.runes_high_contrast : Properties.Resources.runes))
+            Rune = rune;
+            using (Bitmap sprite = highContrast ? Properties.Resources.runes_high_contrast : Properties.Resources.runes)
             {
                 image = sprite.Clone(new Rectangle(0, (int)Rune * RuneSize, RuneSize, RuneSize), sprite.PixelFormat);
                 imageRed = sprite.Clone(new Rectangle(RuneSize, (int)Rune * RuneSize, RuneSize, RuneSize), sprite.PixelFormat);
             }
-            Width = RuneSize * (removable?2:1); // twice as wide if removable, cause of remove button
+
+            pictureBox1 = new PictureBox();
+            pictureBox1.Location = new Point(0, 0);
+            pictureBox1.Margin = new Padding(0);
+            pictureBox1.Size = new Size(RuneSize, RuneSize);
 
             SetHaveRune(haveRune);
+
+            Controls.Add(pictureBox1);
+
+            if (removable)
+            {
+                var btnRemove = new Button();
+                btnRemove.Location = new Point(36, 3);
+                btnRemove.Size = new Size(17, 23);
+                btnRemove.Text = "X";
+                btnRemove.Click += (object s, EventArgs e) => RemoveButtonClicked?.Invoke(this, e);
+                Controls.Add(btnRemove);
+            }
+
+            // twice as wide if removable, cause of remove button
+            Size = new Size(RuneSize * (removable ? 2 : 1), RuneSize);
+
+            Disposed += OnDisposed;
         }
 
         void OnDisposed(object sender, EventArgs eventArgs)
@@ -75,15 +83,10 @@
             imageRed?.Dispose();
         }
 
-        public void SetHaveRune(bool haveRune)
+        internal void SetHaveRune(bool haveRune)
         {
             this.haveRune = haveRune;
-            pictureBox1.BackgroundImage = (haveRune ? image : imageRed);
-        }
-
-        void RemoveButtonOnClick(object sender, EventArgs e)
-        {
-            RemoveButtonClicked?.Invoke(this, e);
+            pictureBox1.BackgroundImage = haveRune ? image : imageRed;
         }
     }
 }

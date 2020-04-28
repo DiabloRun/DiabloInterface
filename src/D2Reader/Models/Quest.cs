@@ -51,11 +51,11 @@ namespace Zutatensuppe.D2Reader.Models
         /// <summary>
         /// Gets whether this quest should count as completed towards 100% completion.
         /// </summary>
-        public bool IsCompleted => (CompletionBits & details.CompletionBitMask) != 0;
+        public bool IsFullyCompleted => (CompletionBits & details.FullCompletionBitMask) != 0;
 
         /// <summary>
         /// Gets whether this quest should count as completed for the auto splitter.
         /// </summary>
-        public bool IsAutoSplitReached => (CompletionBits & details.AutoSplitBitMask) != 0;
+        public bool IsCompleted => (CompletionBits & details.CompletionBitMask) != 0;
     }
 }
