@@ -416,57 +416,48 @@ namespace DiabloInterface.Plugin.HttpClient
 
         private void Init()
         {
-            txtHttpClientHeaders = new RichTextBox();
-            txtHttpClientHeaders.Location = new Point(68, 80);
-            txtHttpClientHeaders.Size = new Size(288, 69);
-            txtHttpClientHeaders.Text = "";
-
             label6 = new Label();
             label6.AutoSize = true;
-            label6.Location = new Point(5, 80);
             label6.Size = new Size(50, 13);
             label6.Text = "Headers:";
 
-            txtHttpClientStatus = new RichTextBox();
-            txtHttpClientStatus.Location = new Point(68, 155);
-            txtHttpClientStatus.ReadOnly = true;
-            txtHttpClientStatus.Size = new Size(288, 34);
-            txtHttpClientStatus.Text = "";
-
-            label4 = new Label();
-            label4.AutoSize = true;
-            label4.Location = new Point(5, 155);
-            label4.Size = new Size(40, 13);
-            label4.Text = "Status:";
-
-            chkHttpClientEnabled = new CheckBox();
-            chkHttpClientEnabled.AutoSize = true;
-            chkHttpClientEnabled.Location = new Point(68, 53);
-            chkHttpClientEnabled.Size = new Size(59, 17);
-            chkHttpClientEnabled.Text = "Enable";
-
-            textBoxHttpClientUrl = new TextBox();
-            textBoxHttpClientUrl.Location = new Point(68, 24);
-            textBoxHttpClientUrl.Margin = new Padding(2);
-            textBoxHttpClientUrl.Size = new Size(288, 20);
-            textBoxHttpClientUrl.TabIndex = 1;
+            txtHttpClientHeaders = new RichTextBox();
+            txtHttpClientHeaders.Size = new Size(288, 69);
+            txtHttpClientHeaders.Text = "";
 
             label5 = new Label();
             label5.AutoSize = true;
-            label5.Location = new Point(3, 24);
-            label5.Margin = new Padding(2, 0, 2, 0);
-            label5.Size = new Size(32, 13);
+            label5.Size = new Size(288, 13);
             label5.Text = "URL:";
+
+            textBoxHttpClientUrl = new TextBox();
+            textBoxHttpClientUrl.Size = new Size(288, 20);
+            textBoxHttpClientUrl.TabIndex = 1;
+
+            chkHttpClientEnabled = new CheckBox();
+            chkHttpClientEnabled.AutoSize = true;
+            chkHttpClientEnabled.Size = new Size(288, 17);
+            chkHttpClientEnabled.Text = "Enable";
+
+            label4 = new Label();
+            label4.AutoSize = true;
+            label4.Size = new Size(288, 13);
+            label4.Text = "Status:";
+
+            txtHttpClientStatus = new RichTextBox();
+            txtHttpClientStatus.ReadOnly = true;
+            txtHttpClientStatus.Size = new Size(288, 100);
+            txtHttpClientStatus.Text = "";
 
             pluginBox = new FlowLayoutPanel();
             pluginBox.FlowDirection = FlowDirection.TopDown;
-            pluginBox.Controls.Add(txtHttpClientHeaders);
-            pluginBox.Controls.Add(label6);
-            pluginBox.Controls.Add(txtHttpClientStatus);
-            pluginBox.Controls.Add(label4);
-            pluginBox.Controls.Add(chkHttpClientEnabled);
-            pluginBox.Controls.Add(textBoxHttpClientUrl);
             pluginBox.Controls.Add(label5);
+            pluginBox.Controls.Add(textBoxHttpClientUrl);
+            pluginBox.Controls.Add(label6);
+            pluginBox.Controls.Add(txtHttpClientHeaders);
+            pluginBox.Controls.Add(chkHttpClientEnabled);
+            pluginBox.Controls.Add(label4);
+            pluginBox.Controls.Add(txtHttpClientStatus);
             pluginBox.Dock = DockStyle.Fill;
 
             Set(p.Cfg);

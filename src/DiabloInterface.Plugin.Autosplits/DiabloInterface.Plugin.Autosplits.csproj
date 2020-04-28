@@ -68,14 +68,17 @@
     <ProjectReference Include="..\D2Reader\D2Reader.csproj">
       <Project>{C5F081D7-FB83-4934-908F-53CE986AB08C}</Project>
       <Name>D2Reader</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\DiabloInterface.Core\DiabloInterface.Core.csproj">
       <Project>{4dc903b9-b02c-47d3-a695-4873fa5219ad}</Project>
       <Name>DiabloInterface.Core</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\DiabloInterface\DiabloInterface.csproj">
       <Project>{25bb3310-9bd7-4234-af7d-9f7fb6870a20}</Project>
       <Name>DiabloInterface</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

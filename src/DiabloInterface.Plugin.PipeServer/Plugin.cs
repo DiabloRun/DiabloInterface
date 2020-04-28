@@ -219,43 +219,39 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
         private void Init()
         {
-            txtPipeServer = new RichTextBox();
-            lblPipeServerStatus = new Label();
-            chkPipeServerEnabled = new CheckBox();
-            textBoxPipeName = new TextBox();
-            labelPipeName = new Label();
 
-            txtPipeServer.Location = new Point(68, 78);
+            labelPipeName = new Label();
+            labelPipeName.AutoSize = true;
+            labelPipeName.Margin = new Padding(2);
+            labelPipeName.Size = new Size(288, 20);
+            labelPipeName.Text = "Pipe Name:";
+
+            textBoxPipeName = new TextBox();
+            textBoxPipeName.Margin = new Padding(2);
+            textBoxPipeName.Size = new Size(288, 20);
+
+            chkPipeServerEnabled = new CheckBox();
+            chkPipeServerEnabled.AutoSize = true;
+            chkPipeServerEnabled.Size = new Size(288, 20);
+            chkPipeServerEnabled.Text = "Enable";
+
+            lblPipeServerStatus = new Label();
+            lblPipeServerStatus.AutoSize = true;
+            lblPipeServerStatus.Size = new Size(288, 20);
+            lblPipeServerStatus.Text = "Status:";
+
+            txtPipeServer = new RichTextBox();
             txtPipeServer.ReadOnly = true;
             txtPipeServer.Size = new Size(288, 34);
             txtPipeServer.Text = "";
 
-            lblPipeServerStatus.AutoSize = true;
-            lblPipeServerStatus.Location = new Point(5, 78);
-            lblPipeServerStatus.Size = new Size(40, 13);
-            lblPipeServerStatus.Text = "Status:";
-
-            chkPipeServerEnabled.AutoSize = true;
-            chkPipeServerEnabled.Location = new Point(68, 53);
-            chkPipeServerEnabled.Size = new Size(59, 17);
-            chkPipeServerEnabled.Text = "Enable";
-
-            textBoxPipeName.Location = new Point(68, 24);
-            textBoxPipeName.Margin = new Padding(2);
-            textBoxPipeName.Size = new Size(288, 20);
-
-            labelPipeName.AutoSize = true;
-            labelPipeName.Location = new Point(3, 24);
-            labelPipeName.Margin = new Padding(2, 0, 2, 0);
-            labelPipeName.Size = new Size(62, 13);
-            labelPipeName.Text = "Pipe Name:";
-
             pluginBox = new FlowLayoutPanel();
-            pluginBox.Controls.Add(txtPipeServer);
-            pluginBox.Controls.Add(lblPipeServerStatus);
-            pluginBox.Controls.Add(chkPipeServerEnabled);
-            pluginBox.Controls.Add(textBoxPipeName);
+            pluginBox.FlowDirection = FlowDirection.TopDown;
             pluginBox.Controls.Add(labelPipeName);
+            pluginBox.Controls.Add(textBoxPipeName);
+            pluginBox.Controls.Add(chkPipeServerEnabled);
+            pluginBox.Controls.Add(lblPipeServerStatus);
+            pluginBox.Controls.Add(txtPipeServer);
             pluginBox.Dock = DockStyle.Fill;
 
             Set(p.Cfg);

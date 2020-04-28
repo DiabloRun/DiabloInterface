@@ -37,7 +37,9 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.CSharp">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
@@ -55,14 +57,17 @@
     <ProjectReference Include="..\D2Reader\D2Reader.csproj">
       <Project>{c5f081d7-fb83-4934-908f-53ce986ab08c}</Project>
       <Name>D2Reader</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\DiabloInterface.Core\DiabloInterface.Core.csproj">
       <Project>{4dc903b9-b02c-47d3-a695-4873fa5219ad}</Project>
       <Name>DiabloInterface.Core</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\DiabloInterface\DiabloInterface.csproj">
       <Project>{25bb3310-9bd7-4234-af7d-9f7fb6870a20}</Project>
       <Name>DiabloInterface</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

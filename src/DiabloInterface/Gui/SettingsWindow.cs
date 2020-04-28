@@ -678,7 +678,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
             this.UpdateGroup.Controls.Add(this.CheckUpdatesButton);
             this.UpdateGroup.Controls.Add(this.CheckUpdatesCheckBox);
-            this.UpdateGroup.Location = new System.Drawing.Point(5, 56);
+            this.UpdateGroup.Location = new System.Drawing.Point(0, 0);
             this.UpdateGroup.Margin = new Padding(0);
             this.UpdateGroup.Size = new System.Drawing.Size(277, 70);
             this.UpdateGroup.Text = "Updates";

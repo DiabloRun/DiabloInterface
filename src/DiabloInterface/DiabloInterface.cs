@@ -35,8 +35,11 @@ namespace Zutatensuppe.DiabloInterface
 
         private static List<Type> GetPlugIns()
         {
-            DirectoryInfo dInfo = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "Plugins"));
-            FileInfo[] files = dInfo.GetFiles("DiabloInterface.Plugin.*.dll");
+            var PluginDir = Path.Combine(Environment.CurrentDirectory, "Plugins");
+            if (!Directory.Exists(PluginDir))
+                Directory.CreateDirectory(PluginDir);
+            DirectoryInfo dInfo = new DirectoryInfo(PluginDir);
+            FileInfo[] files = dInfo.GetFiles("*.dll");
             List<Type> types = new List<Type>();
             foreach (FileInfo file in files)
                 types.AddRange(Assembly.LoadFile(file.FullName).GetTypes());
