@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DiabloInterface.Test</RootNamespace>
     <AssemblyName>DiabloInterface.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -16,6 +16,7 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -81,10 +82,6 @@
     <ProjectReference Include="..\D2Reader\D2Reader.csproj">
       <Project>{c5f081d7-fb83-4934-908f-53ce986ab08c}</Project>
       <Name>D2Reader</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DiabloInterface.Business\DiabloInterface.Business.csproj">
-      <Project>{2E429B2B-BD0A-48C3-AE99-0E292EA5D2DA}</Project>
-      <Name>DiabloInterface.Business</Name>
     </ProjectReference>
     <ProjectReference Include="..\DiabloInterface.Core\DiabloInterface.Core.csproj">
       <Project>{4DC903B9-B02C-47D3-A695-4873FA5219AD}</Project>

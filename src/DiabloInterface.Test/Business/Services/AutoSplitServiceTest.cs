@@ -9,9 +9,8 @@ using System.Threading.Tasks;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct.Item;
-using Zutatensuppe.DiabloInterface.Business.AutoSplits;
-using Zutatensuppe.DiabloInterface.Business.Services;
-using Zutatensuppe.DiabloInterface.Business.Settings;
+using Zutatensuppe.DiabloInterface.Services;
+using Zutatensuppe.DiabloInterface.Settings;
 
 namespace DiabloInterface.Test.Business.Services
 {
@@ -46,7 +45,7 @@ namespace DiabloInterface.Test.Business.Services
             
             var characterMock = new Mock<Character>();
             characterMock.SetupGet(x => x.Level).Returns(9);
-            characterMock.SetupGet(x => x.IsAutosplitChar).Returns(true);
+            characterMock.SetupGet(x => x.IsNewChar).Returns(true);
             characterMock.SetupGet(x => x.EquippedItemStrings).Returns(new Dictionary<BodyLocation, string>());
             characterMock.SetupGet(x => x.InventoryItemIds).Returns(new List<int>());
 
@@ -168,7 +167,7 @@ namespace DiabloInterface.Test.Business.Services
 
             var characterMock = new Mock<Character>();
             characterMock.SetupGet(x => x.Level).Returns(9);
-            characterMock.SetupGet(x => x.IsAutosplitChar).Returns(true);
+            characterMock.SetupGet(x => x.IsNewChar).Returns(true);
             characterMock.SetupGet(x => x.EquippedItemStrings).Returns(itemStrings);
             characterMock.SetupGet(x => x.InventoryItemIds).Returns(itemsIds);
 

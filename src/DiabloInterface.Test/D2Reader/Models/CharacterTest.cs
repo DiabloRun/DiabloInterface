@@ -25,7 +25,7 @@ namespace DiabloInterface.Test.D2Reader.Models
 
             var processMemoryReader = new Mock<IProcessMemoryReader>();
             var gameMemoryTable = new GameMemoryTable();
-            var stringReader = new Mock<IStringLookupTable>().Object;
+            var stringReader = new Mock<IStringReader>().Object;
 
             var statsList = new D2StatListEx();
             statsList.BaseStats = new D2StatArray();
@@ -107,17 +107,17 @@ namespace DiabloInterface.Test.D2Reader.Models
 
             var unitReader = new UnitReader(processMemoryReader.Object, gameMemoryTable, stringReader, skillReader.Object);
 
-            Assert.AreEqual(true, Character.IsNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
 
             lvlStat.Value = 2;
-            Assert.AreEqual(false, Character.IsNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(false, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
             lvlStat.Value = 1;
-            Assert.AreEqual(true, Character.IsNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
 
             xpStat.Value = 1;
-            Assert.AreEqual(false, Character.IsNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(false, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
             xpStat.Value = 0;
-            Assert.AreEqual(true, Character.IsNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
 
             inventoryReader
                 .Setup(x => x.EnumerateInventoryForward(
@@ -134,26 +134,26 @@ namespace DiabloInterface.Test.D2Reader.Models
                     new Item { Unit = new D2Unit { eClass = 0x24b } },
                 });
 
-            Assert.AreEqual(false, Character.IsNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(false, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
             inventoryReader
                 .Setup(x => x.EnumerateInventoryForward(
                     It.Is<D2Unit>(p => p.Equals(unit))
                 ))
                 .Returns(startingItems);
-            Assert.AreEqual(true, Character.IsNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
 
             var skillRaiseSkeleton = new D2Skill();
             skillData.Add(skillRaiseSkeleton, new D2SkillData { SkillId = (uint)Skill.RAISE_SKELETON });
-            Assert.AreEqual(false, Character.IsNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(false, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
             skillData.Remove(skillRaiseSkeleton);
-            Assert.AreEqual(true, Character.IsNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
 
             statsList.FullStats.Length = 0;
-            Assert.AreEqual(false, Character.IsNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(false, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
             statsList.FullStats.Length = 5;
-            Assert.AreEqual(true, Character.IsNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
             statsList.FullStats.Length = 1;
-            Assert.AreEqual(true, Character.IsNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
         }
     }
 }
