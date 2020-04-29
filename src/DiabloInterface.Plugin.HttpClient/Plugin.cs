@@ -10,8 +10,6 @@ using Zutatensuppe.D2Reader;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.DiabloInterface.Plugin;
-using Zutatensuppe.DiabloInterface.Services;
-using Zutatensuppe.DiabloInterface.Settings;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using Newtonsoft.Json;
 
@@ -19,9 +17,9 @@ namespace DiabloInterface.Plugin.HttpClient
 {
     class HttpClientPluginConfig : PluginConfig
     {
-        public bool Enabled { get { return Is("Enabled"); } set { Set("Enabled", value); } }
-        public string Url { get { return GetString("Url"); } set { Set("Url", value); } }
-        public string Headers { get { return GetString("Headers"); } set { Set("Headers", value); } }
+        public bool Enabled { get { return GetBool("Enabled"); } set { SetBool("Enabled", value); } }
+        public string Url { get { return GetString("Url"); } set { SetString("Url", value); } }
+        public string Headers { get { return GetString("Headers"); } set { SetString("Headers", value); } }
 
         public HttpClientPluginConfig()
         {
@@ -34,7 +32,7 @@ namespace DiabloInterface.Plugin.HttpClient
         {
             if (s != null)
             {
-                Enabled = s.Is("Enabled");
+                Enabled = s.GetBool("Enabled");
                 Url = s.GetString("Url");
                 Headers = s.GetString("Headers");
             }
@@ -45,7 +43,22 @@ namespace DiabloInterface.Plugin.HttpClient
     {
         public string Name => "HttpClient";
 
-        internal HttpClientPluginConfig Cfg { get; private set; } = new HttpClientPluginConfig();
+        internal HttpClientPluginConfig config { get; private set; } = new HttpClientPluginConfig();
+
+        public PluginConfig Config { get => config; set {
+            config = new HttpClientPluginConfig(value);
+            ApplyConfig();
+
+            Logger.Info(config.Url);
+
+            Stop();
+            if (config.Enabled)
+                CreateServer(config.Url, config.Headers);
+        }}
+
+        internal Dictionary<Type, Type> RendererMap => new Dictionary<Type, Type> {
+            {typeof(IPluginSettingsRenderer), typeof(HttpClientSettingsRenderer)},
+        };
 
         private ILogger Logger;
 
@@ -103,27 +116,7 @@ namespace DiabloInterface.Plugin.HttpClient
         public void Initialize()
         {
             di.game.DataRead += Game_DataRead;
-            di.settings.Changed += Settings_Changed;
-            Init(di.settings.CurrentSettings);
-        }
-
-        private void Settings_Changed(object sender, ApplicationSettingsEventArgs e)
-        {
-            Init(e.Settings);
-        }
-
-        private void Init(ApplicationSettings s)
-        {
-            Cfg = new HttpClientPluginConfig(s.PluginConf(Name));
-            ReloadWithCurrentSettings(Cfg);
-
-            Logger.Info(Cfg.Url);
-
-            Stop();
-            if (Cfg.Enabled)
-            {
-                CreateServer(Cfg.Url, Cfg.Headers);
-            }
+            Config = di.settings.CurrentSettings.PluginConf(Name);
         }
 
         private void CreateServer(string url, string headers)
@@ -361,29 +354,27 @@ namespace DiabloInterface.Plugin.HttpClient
         {
         }
 
-        HttpClientSettingsRenderer r;
-        public IPluginSettingsRenderer SettingsRenderer()
-        {
-            if (r == null)
-                r = new HttpClientSettingsRenderer(this);
-            return r;
-        }
-
-        public IPluginDebugRenderer DebugRenderer()
-        {
-            return null;
-        }
-
+        Dictionary<Type, IPluginRenderer> renderers = new Dictionary<Type, IPluginRenderer>();
         private void ApplyChanges()
         {
-            if (r != null)
-                r.ApplyChanges();
+            foreach (var p in renderers)
+                p.Value.ApplyChanges();
         }
 
-        private void ReloadWithCurrentSettings(HttpClientPluginConfig cfg)
+        private void ApplyConfig()
         {
-            if (r != null)
-                r.Set(cfg);
+            foreach (var p in renderers)
+                p.Value.ApplyConfig();
+        }
+
+        public T GetRenderer<T>() where T : IPluginRenderer
+        {
+            var type = typeof(T);
+            if (!RendererMap.ContainsKey(type))
+                return default(T);
+            if (!renderers.ContainsKey(type))
+                renderers[type] = (T)Activator.CreateInstance(RendererMap[type], this);
+            return (T)renderers[type];
         }
     }
 
@@ -408,9 +399,7 @@ namespace DiabloInterface.Plugin.HttpClient
         public Control Render()
         {
             if (pluginBox == null || pluginBox.IsDisposed)
-            {
                 Init();
-            }
             return pluginBox;
         }
 
@@ -460,18 +449,18 @@ namespace DiabloInterface.Plugin.HttpClient
             pluginBox.Controls.Add(txtHttpClientStatus);
             pluginBox.Dock = DockStyle.Fill;
 
-            Set(p.Cfg);
+            ApplyConfig();
             ApplyChanges();
         }
 
         public bool IsDirty()
         {
-            return p.Cfg.Url != textBoxHttpClientUrl.Text
-                || p.Cfg.Headers != txtHttpClientHeaders.Text
-                || p.Cfg.Enabled != chkHttpClientEnabled.Checked;
+            return p.config.Url != textBoxHttpClientUrl.Text
+                || p.config.Headers != txtHttpClientHeaders.Text
+                || p.config.Enabled != chkHttpClientEnabled.Checked;
         }
 
-        public PluginConfig Get()
+        public PluginConfig GetEditedConfig()
         {
             var conf = new HttpClientPluginConfig();
             conf.Enabled = chkHttpClientEnabled.Checked;
@@ -480,27 +469,15 @@ namespace DiabloInterface.Plugin.HttpClient
             return conf;
         }
 
-        public void Set(HttpClientPluginConfig conf)
+        public void ApplyConfig()
         {
-            if (pluginBox.InvokeRequired)
-            {
-                pluginBox.Invoke((Action)(() => Set(conf)));
-                return;
-            }
-
-            textBoxHttpClientUrl.Text = conf.Url;
-            chkHttpClientEnabled.Checked = conf.Enabled;
-            txtHttpClientHeaders.Text = conf.Headers;
+            textBoxHttpClientUrl.Text = p.config.Url;
+            chkHttpClientEnabled.Checked = p.config.Enabled;
+            txtHttpClientHeaders.Text = p.config.Headers;
         }
 
         public void ApplyChanges()
         {
-            if (pluginBox.InvokeRequired)
-            {
-                pluginBox.Invoke((Action)(() => ApplyChanges()));
-                return;
-            }
-
             txtHttpClientStatus.Text = p.content;
         }
     }

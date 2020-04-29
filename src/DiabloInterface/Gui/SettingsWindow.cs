@@ -279,7 +279,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             tabControl1.Controls.Add(tabPageSettingsRunes);
             tabControl1.Controls.Add(tabPageSettingsMisc);
 
-            foreach (var p in di.plugins.SettingsControls)
+            foreach (var p in di.plugins.Controls<IPluginSettingsRenderer>())
             {
                 var c = new TabPage();
                 c.Controls.Add(p.Value);
@@ -861,7 +861,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 return;
             }
 
-            e.SettingsRenderer().ApplyChanges();
+            e.GetRenderer<IPluginSettingsRenderer>().ApplyChanges();
         }
 
         void UnregisterServiceEventHandlers()

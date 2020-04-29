@@ -21,17 +21,11 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             Keys.Scroll
         };
 
-        /// <summary>
-        /// Called when the hotkey has been changed, might be None.
-        /// </summary>
-        public event EventHandler<Keys> HotkeyChanged;
+        public event EventHandler<Hotkey> HotkeyChanged;
 
-        Keys hotkey = Keys.None;
+        Hotkey hotkey = new Hotkey();
 
-        /// <summary>
-        /// Get or set the hotkey assigned.
-        /// </summary>
-        public Keys Hotkey
+        public Hotkey Value
         {
             get
             {
@@ -53,7 +47,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         /// <summary>
         /// Determines whether a hotkey is assigned or not.
         /// </summary>
-        public bool HasHotkey { get { return hotkey != Keys.None; } }
+        public bool HasHotkey { get { return hotkey.ToKeys() != Keys.None; } }
 
         public HotkeyControl()
         {
@@ -67,10 +61,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         void HotkeyControl_TextChanged(object sender, EventArgs e)
         {
             // This handles cut/paste from context menues.
-            if (Text != GetHotkeyString())
-            {
-                Text = GetHotkeyString();
-            }
+            if (Text != hotkey.ToString())
+                Text = hotkey.ToString();
         }
 
         void HotkeyControl_MouseUp(object sender, MouseEventArgs e)
@@ -84,9 +76,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
                 // Hotkey = Keys.MButton; not working with InputSimulator, so not valid hotkey
                 return;
             else if (e.Button == MouseButtons.XButton1)
-                Hotkey = Keys.XButton1;
+                Value = new Hotkey(Keys.XButton1);
             else if (e.Button == MouseButtons.XButton2)
-                Hotkey = Keys.XButton2;
+                Value = new Hotkey(Keys.XButton2);
         }
 
         void HotkeyControl_KeyPress(object sender, KeyPressEventArgs e)
@@ -122,7 +114,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             }
             else
             {
-                Hotkey = e.KeyCode | e.Modifiers;
+                Value = new Hotkey(e.KeyCode | e.Modifiers);
             }
         }
 
@@ -139,46 +131,19 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             else return false;
         }
 
-        /// <summary>
-        /// Unsets the hotkey.
-        /// </summary>
         public void ResetHotkey()
         {
-            Hotkey = Keys.None;
+            Value = new Hotkey();
         }
 
-        /// <summary>
-        /// Invokes the hotkey changed event.
-        /// </summary>
         protected void OnHotkeyChanged()
         {
-            var hotkeyEvent = HotkeyChanged;
-            if (hotkeyEvent != null)
-            {
-                hotkeyEvent(this, Hotkey);
-            }
-        }
-
-        /// <summary>
-        /// Get the hotkey in string form.
-        /// </summary>
-        /// <returns></returns>
-        public string GetHotkeyString()
-        {
-            StringBuilder sb = new StringBuilder();
-            if (Hotkey.HasFlag(Keys.Control))
-                sb.Append("Ctrl+");
-            if (Hotkey.HasFlag(Keys.Shift))
-                sb.Append("Shift+");
-            if (Hotkey.HasFlag(Keys.Alt))
-                sb.Append("Alt+");
-            sb.Append(Hotkey & Keys.KeyCode);
-            return sb.ToString();
+            HotkeyChanged?.Invoke(this, Value);
         }
 
         void UpdateDisplay()
         {
-            Text = GetHotkeyString();
+            Text = hotkey.ToString();
         }
     }
 }

@@ -57,6 +57,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gem.cs" />
+    <Compile Include="Hotkey.cs" />
     <Compile Include="HotkeyControl.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -14,40 +14,34 @@ namespace Zutatensuppe.DiabloInterface.Services
 
         internal static PluginService Create(List<Type> list, DiabloInterface di)
         {
-            var s = new PluginService();
+            var s = new PluginService(di);
             s.plugins = list.ConvertAll((Type t) => Activator.CreateInstance(t, di) as IPlugin);
             return s;
         }
 
-        public Dictionary<string, PluginConfig> EditedSettings => plugins.ToDictionary(s => s.Name, s => s.SettingsRenderer().Get());
-        public bool EditedSettingsDirty => plugins.Any(p => p.SettingsRenderer().IsDirty());
-
-        public Dictionary<string, Control> SettingsControls
+        PluginService(DiabloInterface di)
         {
-            get
-            {
-                var l = new Dictionary<string, Control>();
-                foreach (IPlugin p in plugins)
-                {
-                    var r = p.SettingsRenderer();
-                    if (r != null) l.Add(p.Name, r.Render());
-                }
-                return l;
-            }
+            di.settings.Changed += Settings_Changed;
         }
 
-        public Dictionary<string, Control> DebugControls
+        private void Settings_Changed(object sender, ApplicationSettingsEventArgs e)
         {
-            get
+            foreach (IPlugin p in plugins)
+                p.Config = e.Settings.PluginConf(p.Name);
+        }
+
+        public Dictionary<string, PluginConfig> EditedSettings => plugins.ToDictionary(s => s.Name, s => s.GetRenderer<IPluginSettingsRenderer>().GetEditedConfig());
+        public bool EditedSettingsDirty => plugins.Any(s => s.GetRenderer<IPluginSettingsRenderer>().IsDirty());
+
+        public Dictionary<string, Control> Controls<T>() where T : IPluginRenderer
+        {
+            var l = new Dictionary<string, Control>();
+            foreach (IPlugin p in plugins)
             {
-                var l = new Dictionary<string, Control>();
-                foreach (IPlugin p in plugins)
-                {
-                    var r = p.DebugRenderer();
-                    if (r != null) l.Add(p.Name, r.Render());
-                }
-                return l;
+                var r = p.GetRenderer<T>();
+                if (r != null) l.Add(p.Name, r.Render());
             }
+            return l;
         }
 
         public void Initialize()

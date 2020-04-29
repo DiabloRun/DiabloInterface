@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using Zutatensuppe.DiabloInterface.Settings;
-using Zutatensuppe.DiabloInterface.Services;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers;
 using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server;
@@ -13,8 +11,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 {
     class PipeServerPluginConfig : PluginConfig
     {
-        public bool Enabled { get { return Is("Enabled"); } set { Set("Enabled", value); } }
-        public string PipeName { get { return GetString("PipeName"); } set { Set("PipeName", value); } }
+        public bool Enabled { get { return GetBool("Enabled"); } set { SetBool("Enabled", value); } }
+        public string PipeName { get { return GetString("PipeName"); } set { SetString("PipeName", value); } }
 
         public PipeServerPluginConfig()
         {
@@ -26,7 +24,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
         {
             if (s != null)
             {
-                Enabled = s.Is("Enabled");
+                Enabled = s.GetBool("Enabled");
                 PipeName = s.GetString("PipeName");
             }
         }
@@ -36,7 +34,22 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
     {
         public string Name => "PipeServer";
 
-        internal PipeServerPluginConfig Cfg { get; private set; } = new PipeServerPluginConfig();
+        internal PipeServerPluginConfig config { get; private set; } = new PipeServerPluginConfig();
+
+        public PluginConfig Config { get => config; set {
+            config = new PipeServerPluginConfig(value);
+            ApplyConfig();
+            
+            Stop();
+
+            if (config.Enabled)
+                CreateServer(config.PipeName);
+        }}
+
+        internal Dictionary<Type, Type> RendererMap => new Dictionary<Type, Type> {
+            {typeof(IPluginSettingsRenderer), typeof(PipeServerSettingsRenderer)},
+            {typeof(IPluginDebugRenderer), typeof(PipeServerDebugRenderer)},
+        };
 
         private ILogger Logger;
 
@@ -52,28 +65,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
         public void Initialize()
         {
-            di.settings.Changed += Settings_Changed;
-            Init(di.settings.CurrentSettings);
+            Config = di.settings.CurrentSettings.PluginConf(Name);
         }
-
-        private void Settings_Changed(object sender, ApplicationSettingsEventArgs e)
-        {
-            Init(e.Settings);
-        }
-
-        private void Init(ApplicationSettings s)
-        {
-            Cfg = new PipeServerPluginConfig(s.PluginConf(Name));
-            ReloadWithCurrentSettings(Cfg);
-
-            Stop();
-            
-            if (Cfg.Enabled)
-            {
-                CreateServer(Cfg.PipeName);
-            }
-        }
-
+        
         private void CreateServer(string pipeName)
         {
             Logger.Info($"Creating Server: {pipeName}");
@@ -91,13 +85,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             ApplyChanges();
         }
 
-        public void Stop()
+        private void Stop()
         {
             Logger.Info("Stopping all Servers");
             foreach (KeyValuePair<string, DiabloInterfaceServer> s in Servers)
-            {
                 s.Value.Stop();
-            }
+
             Servers.Clear();
 
             ApplyChanges();
@@ -112,42 +105,35 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             Stop();
         }
 
-        PipeServerSettingsRenderer sr;
-        public IPluginSettingsRenderer SettingsRenderer()
-        {
-            if (sr == null)
-                sr = new PipeServerSettingsRenderer(this);
-            return sr;
-        }
-
-        PipeServerDebugRenderer dr;
-        public IPluginDebugRenderer DebugRenderer()
-        {
-            if (dr == null)
-                dr = new PipeServerDebugRenderer(this);
-            return dr;
-        }
-
-        private void ApplyChanges()
-        {
-            if (sr != null)
-                sr.ApplyChanges();
-            if (dr != null)
-                dr.ApplyChanges();
-        }
-
-        private void ReloadWithCurrentSettings(PipeServerPluginConfig cfg)
-        {
-            if (sr != null)
-                sr.Set(cfg);
-        }
-
         internal string StatusTextMsg()
         {
             var txt = "";
             foreach (var s in Servers)
                 txt += s.Key + ": " + (s.Value.Running ? "RUNNING" : "NOT RUNNING") + "\n";
             return txt;
+        }
+        
+        Dictionary<Type, IPluginRenderer> renderers = new Dictionary<Type, IPluginRenderer>();
+        private void ApplyChanges()
+        {
+            foreach (var p in renderers)
+                p.Value.ApplyChanges();
+        }
+
+        private void ApplyConfig()
+        {
+            foreach (var p in renderers)
+                p.Value.ApplyConfig();
+        }
+
+        public T GetRenderer<T>() where T : IPluginRenderer
+        {
+            var type = typeof(T);
+            if (!RendererMap.ContainsKey(type))
+                return default(T);
+            if (!renderers.ContainsKey(type))
+                renderers[type] = (T)Activator.CreateInstance(RendererMap[type], this);
+            return (T)renderers[type];
         }
     }
 
@@ -163,9 +149,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
         public Control Render()
         {
             if (txtPipeServer == null || txtPipeServer.IsDisposed)
-            {
                 Init();
-            }
             return txtPipeServer;
         }
 
@@ -177,17 +161,16 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             txtPipeServer.TabIndex = 0;
             txtPipeServer.Text = "";
 
+            ApplyConfig();
             ApplyChanges();
+        }
+
+        public void ApplyConfig()
+        {
         }
 
         public void ApplyChanges()
         {
-            if (txtPipeServer.InvokeRequired)
-            {
-                txtPipeServer.Invoke((Action)(() => ApplyChanges()));
-                return;
-            }
-
             txtPipeServer.Text = s.StatusTextMsg();
         }
     }
@@ -211,15 +194,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
         public Control Render()
         {
             if (pluginBox == null || pluginBox.IsDisposed)
-            {
                 Init();
-            }
             return pluginBox;
         }
 
         private void Init()
         {
-
             labelPipeName = new Label();
             labelPipeName.AutoSize = true;
             labelPipeName.Margin = new Padding(2);
@@ -254,17 +234,17 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             pluginBox.Controls.Add(txtPipeServer);
             pluginBox.Dock = DockStyle.Fill;
 
-            Set(p.Cfg);
+            ApplyConfig();
             ApplyChanges();
         }
 
         public bool IsDirty()
         {
-            return p.Cfg.PipeName != textBoxPipeName.Text
-                || p.Cfg.Enabled != chkPipeServerEnabled.Checked;
+            return p.config.PipeName != textBoxPipeName.Text
+                || p.config.Enabled != chkPipeServerEnabled.Checked;
         }
 
-        public PluginConfig Get()
+        public PluginConfig GetEditedConfig()
         {
             var conf = new PipeServerPluginConfig();
             conf.PipeName = textBoxPipeName.Text;
@@ -272,26 +252,14 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             return conf;
         }
 
-        public void Set(PipeServerPluginConfig conf)
+        public void ApplyConfig()
         {
-            if (pluginBox.InvokeRequired)
-            {
-                pluginBox.Invoke((Action)(() => Set(conf)));
-                return;
-            }
-
-            textBoxPipeName.Text = conf.PipeName;
-            chkPipeServerEnabled.Checked = conf.Enabled;
+            textBoxPipeName.Text = p.config.PipeName;
+            chkPipeServerEnabled.Checked = p.config.Enabled;
         }
 
         public void ApplyChanges()
         {
-            if (pluginBox.InvokeRequired)
-            {
-                pluginBox.Invoke((Action)(() => ApplyChanges()));
-                return;
-            }
-
             txtPipeServer.Text = p.StatusTextMsg();
         }
     }

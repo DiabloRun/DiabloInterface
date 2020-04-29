@@ -11,6 +11,7 @@ using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Gui.Controls;
 using Zutatensuppe.DiabloInterface.Gui.Forms;
+using Zutatensuppe.DiabloInterface.Plugin;
 
 namespace Zutatensuppe.DiabloInterface.Gui
 {
@@ -134,7 +135,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             tabs.Dock = DockStyle.Fill;
             tabs.Controls.Add(itemsTab());
             tabs.Controls.Add(questsTab());
-            foreach (var pa in di.plugins.DebugControls)
+            foreach (var pa in di.plugins.Controls<IPluginDebugRenderer>())
             {
                 var tp = new TabPage();
                 tp.Controls.Add(pa.Value);

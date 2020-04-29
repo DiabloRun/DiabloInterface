@@ -2,10 +2,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct.Item;
@@ -45,7 +41,7 @@ namespace DiabloInterface.Plugin.Autosplits.Test
             diabloInterface.settings = settings.Object;
             diabloInterface.game = gameService;
 
-            var autoSplitService = new AutoSplitService(diabloInterface);
+            var autoSplitService = new AutosplitPlugin(diabloInterface);
             autoSplitService.Initialize();
 
             var quests = new Quests(new List<List<Quest>>
@@ -157,7 +153,7 @@ namespace DiabloInterface.Plugin.Autosplits.Test
             diabloInterface.settings = settings.Object;
             diabloInterface.game = gameService;
 
-            var autoSplitService = new AutoSplitService(diabloInterface);
+            var autoSplitService = new AutosplitPlugin(diabloInterface);
             autoSplitService.Initialize();
 
             var normalQuests = new List<Quest>() {
