@@ -1,15 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WindowsInput;
 using WindowsInput.Native;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 
-namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
+namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys
 {
     public class KeyService
     {

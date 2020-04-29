@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct;
-using Zutatensuppe.D2Reader.Struct.Item;
 
 namespace Zutatensuppe.D2Reader.Readers
 {

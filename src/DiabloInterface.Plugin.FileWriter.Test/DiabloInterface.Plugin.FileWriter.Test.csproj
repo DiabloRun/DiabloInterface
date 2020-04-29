@@ -44,10 +44,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CharacterStatsMock.cs" />
-    <Compile Include="StatFileWriterTest.cs" />
+    <Compile Include="Writer\CharacterStatsMock.cs" />
+    <Compile Include="Writer\CharacterStatFileWriterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TextFileWriterMock.cs" />
+    <Compile Include="Writer\TextFileWriterMock.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

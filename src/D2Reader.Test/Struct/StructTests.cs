@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Zutatensuppe.D2Reader.Struct;
 
-namespace DiabloInterface.D2Reader.Test.Struct
+namespace Zutatensuppe.DiabloInterface.D2Reader.Test.Struct
 {
     [TestClass]
     public class StructTests

@@ -1,4 +1,4 @@
-namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
+namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits
 {
     using System;
     using System.Collections.Generic;
@@ -7,7 +7,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
     using System.Windows.Forms;
 
     using Zutatensuppe.DiabloInterface.Core.Extensions;
-    using Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits;
 
     public class AutoSplitTable : UserControl
     {
@@ -70,7 +69,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             PerformLayout();
         }
 
-        internal void Set(AutosplitPluginConfig conf)
+        internal void Set(Config conf)
         {
             if (InvokeRequired)
             {
@@ -82,7 +81,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             MarkClean();
         }
 
-        internal AutoSplitTable(AutosplitPluginConfig conf)
+        internal AutoSplitTable(Config conf)
         {
             Layout += AutoSplitTable_Layout;
             InitializeComponent();
@@ -98,7 +97,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             }
         }
 
-        private void ReloadWithCurrentSettings(AutosplitPluginConfig conf)
+        private void ReloadWithCurrentSettings(Config conf)
         {
             var cpy = conf.DeepCopy();
             var splits = cpy.Splits;

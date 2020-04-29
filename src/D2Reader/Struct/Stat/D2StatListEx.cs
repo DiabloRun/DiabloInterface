@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 
 namespace Zutatensuppe.D2Reader.Struct.Stat
 {
-
     [Flags]
     public enum StatListFlag : uint
     {

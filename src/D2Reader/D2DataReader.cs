@@ -1,19 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+
+using Zutatensuppe.D2Reader.Models;
+using Zutatensuppe.D2Reader.Readers;
+using Zutatensuppe.D2Reader.Struct;
+using Zutatensuppe.D2Reader.Struct.Item;
+using Zutatensuppe.DiabloInterface.Core.Logging;
+
 namespace Zutatensuppe.D2Reader
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using System.Text;
-    using System.Threading;
-
-    using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.D2Reader.Readers;
-    using Zutatensuppe.D2Reader.Struct;
-    using Zutatensuppe.D2Reader.Struct.Item;
-    using Zutatensuppe.D2Reader.Struct.Stat;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
-
     public class CharacterCreatedEventArgs : EventArgs
     {
         public CharacterCreatedEventArgs(Character character)

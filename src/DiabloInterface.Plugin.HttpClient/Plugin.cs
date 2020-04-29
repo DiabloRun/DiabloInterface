@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct.Item;
@@ -15,38 +13,14 @@ using Newtonsoft.Json;
 
 namespace DiabloInterface.Plugin.HttpClient
 {
-    class HttpClientPluginConfig : PluginConfig
-    {
-        public bool Enabled { get { return GetBool("Enabled"); } set { SetBool("Enabled", value); } }
-        public string Url { get { return GetString("Url"); } set { SetString("Url", value); } }
-        public string Headers { get { return GetString("Headers"); } set { SetString("Headers", value); } }
-
-        public HttpClientPluginConfig()
-        {
-            Enabled = false;
-            Url = "";
-            Headers = "";
-        }
-
-        public HttpClientPluginConfig(PluginConfig s): this()
-        {
-            if (s != null)
-            {
-                Enabled = s.GetBool("Enabled");
-                Url = s.GetString("Url");
-                Headers = s.GetString("Headers");
-            }
-        }
-    }
-
-    public class HttpClientPlugin : IPlugin
+    public class Plugin : IPlugin
     {
         public string Name => "HttpClient";
 
-        internal HttpClientPluginConfig config { get; private set; } = new HttpClientPluginConfig();
+        internal Config config { get; private set; } = new Config();
 
         public PluginConfig Config { get => config; set {
-            config = new HttpClientPluginConfig(value);
+            config = new Config(value);
             ApplyConfig();
 
             Logger.Info(config.Url);
@@ -57,7 +31,7 @@ namespace DiabloInterface.Plugin.HttpClient
         }}
 
         internal Dictionary<Type, Type> RendererMap => new Dictionary<Type, Type> {
-            {typeof(IPluginSettingsRenderer), typeof(HttpClientSettingsRenderer)},
+            {typeof(IPluginSettingsRenderer), typeof(SettingsRenderer)},
         };
 
         private ILogger Logger;
@@ -107,7 +81,7 @@ namespace DiabloInterface.Plugin.HttpClient
             "MagicFind"
         };
 
-        public HttpClientPlugin(Zutatensuppe.DiabloInterface.DiabloInterface di)
+        public Plugin(Zutatensuppe.DiabloInterface.DiabloInterface di)
         {
             Logger = di.Logger(this);
             this.di = di;
@@ -375,110 +349,6 @@ namespace DiabloInterface.Plugin.HttpClient
             if (!renderers.ContainsKey(type))
                 renderers[type] = (T)Activator.CreateInstance(RendererMap[type], this);
             return (T)renderers[type];
-        }
-    }
-
-    class HttpClientSettingsRenderer : IPluginSettingsRenderer
-    {
-        private HttpClientPlugin p;
-
-        private FlowLayoutPanel pluginBox;
-        private RichTextBox txtHttpClientHeaders;
-        private Label label6;
-        private RichTextBox txtHttpClientStatus;
-        private Label label4;
-        private CheckBox chkHttpClientEnabled;
-        private TextBox textBoxHttpClientUrl;
-        private Label label5;
-
-        public HttpClientSettingsRenderer(HttpClientPlugin p)
-        {
-            this.p = p;
-        }
-
-        public Control Render()
-        {
-            if (pluginBox == null || pluginBox.IsDisposed)
-                Init();
-            return pluginBox;
-        }
-
-        private void Init()
-        {
-            label6 = new Label();
-            label6.AutoSize = true;
-            label6.Size = new Size(50, 13);
-            label6.Text = "Headers:";
-
-            txtHttpClientHeaders = new RichTextBox();
-            txtHttpClientHeaders.Size = new Size(288, 69);
-            txtHttpClientHeaders.Text = "";
-
-            label5 = new Label();
-            label5.AutoSize = true;
-            label5.Size = new Size(288, 13);
-            label5.Text = "URL:";
-
-            textBoxHttpClientUrl = new TextBox();
-            textBoxHttpClientUrl.Size = new Size(288, 20);
-            textBoxHttpClientUrl.TabIndex = 1;
-
-            chkHttpClientEnabled = new CheckBox();
-            chkHttpClientEnabled.AutoSize = true;
-            chkHttpClientEnabled.Size = new Size(288, 17);
-            chkHttpClientEnabled.Text = "Enable";
-
-            label4 = new Label();
-            label4.AutoSize = true;
-            label4.Size = new Size(288, 13);
-            label4.Text = "Status:";
-
-            txtHttpClientStatus = new RichTextBox();
-            txtHttpClientStatus.ReadOnly = true;
-            txtHttpClientStatus.Size = new Size(288, 100);
-            txtHttpClientStatus.Text = "";
-
-            pluginBox = new FlowLayoutPanel();
-            pluginBox.FlowDirection = FlowDirection.TopDown;
-            pluginBox.Controls.Add(label5);
-            pluginBox.Controls.Add(textBoxHttpClientUrl);
-            pluginBox.Controls.Add(label6);
-            pluginBox.Controls.Add(txtHttpClientHeaders);
-            pluginBox.Controls.Add(chkHttpClientEnabled);
-            pluginBox.Controls.Add(label4);
-            pluginBox.Controls.Add(txtHttpClientStatus);
-            pluginBox.Dock = DockStyle.Fill;
-
-            ApplyConfig();
-            ApplyChanges();
-        }
-
-        public bool IsDirty()
-        {
-            return p.config.Url != textBoxHttpClientUrl.Text
-                || p.config.Headers != txtHttpClientHeaders.Text
-                || p.config.Enabled != chkHttpClientEnabled.Checked;
-        }
-
-        public PluginConfig GetEditedConfig()
-        {
-            var conf = new HttpClientPluginConfig();
-            conf.Enabled = chkHttpClientEnabled.Checked;
-            conf.Url = textBoxHttpClientUrl.Text;
-            conf.Headers = txtHttpClientHeaders.Text;
-            return conf;
-        }
-
-        public void ApplyConfig()
-        {
-            textBoxHttpClientUrl.Text = p.config.Url;
-            chkHttpClientEnabled.Checked = p.config.Enabled;
-            txtHttpClientHeaders.Text = p.config.Headers;
-        }
-
-        public void ApplyChanges()
-        {
-            txtHttpClientStatus.Text = p.content;
         }
     }
 }

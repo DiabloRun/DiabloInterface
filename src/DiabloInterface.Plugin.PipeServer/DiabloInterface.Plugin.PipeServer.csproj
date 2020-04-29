@@ -48,6 +48,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cache.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="DebugRenderer.cs" />
     <Compile Include="Server\DiabloInterfaceServer.cs" />
     <Compile Include="Handlers\AllItemsRequestHandler.cs" />
     <Compile Include="Handlers\CharacterRequestHandler.cs" />
@@ -67,6 +69,7 @@
     <Compile Include="Server\Request.cs" />
     <Compile Include="Server\Response.cs" />
     <Compile Include="Server\RequestProcessor.cs" />
+    <Compile Include="SettingsRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\D2Reader\D2Reader.csproj">

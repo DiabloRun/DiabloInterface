@@ -1,4 +1,4 @@
-namespace DiabloInterface.Core.Extensions.Test
+namespace Zutatensuppe.DiabloInterface.Core.Extensions.Test
 {
     using System;
 

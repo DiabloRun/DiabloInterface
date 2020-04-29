@@ -1,8 +1,7 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
 namespace Zutatensuppe.D2Reader.Struct.Item.Modifier
 {
-
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct D2ItemModifier
     {

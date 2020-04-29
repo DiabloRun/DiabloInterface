@@ -1,6 +1,4 @@
-using Zutatensuppe.DiabloInterface.Plugin.FileWriter;
-
-namespace DiabloInterface.Plugin.FileWriter.Test
+namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter.Writer.Test
 {
     internal class CharacterStatsMock : ICharacterStats
     {

@@ -1,52 +1,31 @@
 using System;
-using System.Windows.Forms;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using System.Collections.Generic;
+using Zutatensuppe.DiabloInterface.Plugin.FileWriter.Writer;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
 {
-    class FileWriterPluginConfig : PluginConfig
-    {
-        public bool Enabled { get { return GetBool("Enabled"); } set { SetBool("Enabled", value); } }
-        public string FileFolder { get { return GetString("FileFolder"); } set { SetString("FileFolder", value); } }
-
-        public FileWriterPluginConfig()
-        {
-            Enabled = false;
-            FileFolder = "Files";
-        }
-
-        public FileWriterPluginConfig(PluginConfig s): this()
-        {
-            if (s != null)
-            {
-                Enabled = s.GetBool("Enabled");
-                FileFolder = s.GetString("FileFolder");
-            }
-        }
-    }
-
-    public class FileWriterPlugin : IPlugin
+    public class Plugin : IPlugin
     {
         public string Name => "Filewriter";
 
-        internal FileWriterPluginConfig config { get; private set; } = new FileWriterPluginConfig();
+        internal Config config { get; private set; } = new Config();
 
         public PluginConfig Config { get => config; set {
-            config = new FileWriterPluginConfig(value);
+            config = new Config(value);
             ApplyConfig();
         }}
 
         internal Dictionary<Type, Type> RendererMap => new Dictionary<Type, Type> {
-            {typeof(IPluginSettingsRenderer), typeof(FileWriterSettingsRenderer)},
+            {typeof(IPluginSettingsRenderer), typeof(SettingsRenderer)},
         };
 
         private ILogger Logger;
 
         DiabloInterface di;
 
-        public FileWriterPlugin(DiabloInterface di)
+        public Plugin(DiabloInterface di)
         {
             Logger = di.Logger(this);
             Logger.Info("Creating character stat file writer service.");
@@ -99,63 +78,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
             if (!renderers.ContainsKey(type))
                 renderers[type] = (T)Activator.CreateInstance(RendererMap[type], this);
             return (T)renderers[type];
-        }
-    }
-
-    class FileWriterSettingsRenderer : IPluginSettingsRenderer
-    {
-        private FileWriterPlugin p;
-
-        private FlowLayoutPanel pluginBox;
-        private CheckBox chkBox;
-
-        public FileWriterSettingsRenderer(FileWriterPlugin p)
-        {
-            this.p = p;
-        }
-
-        public Control Render()
-        {
-            if (pluginBox == null || pluginBox.IsDisposed)
-                Init();
-            return pluginBox;
-        }
-
-        private void Init()
-        {
-            chkBox = new CheckBox();
-            chkBox.AutoSize = true;
-            chkBox.Location = new System.Drawing.Point(10, 19);
-            chkBox.Size = new System.Drawing.Size(78, 17);
-            chkBox.Text = "Create files";
-
-            pluginBox = new FlowLayoutPanel();
-            pluginBox.FlowDirection = FlowDirection.TopDown;
-            pluginBox.Controls.Add(chkBox);
-
-            ApplyConfig();
-            ApplyChanges();
-        }
-
-        public void ApplyConfig()
-        {
-            chkBox.Checked = p.config.Enabled;
-        }
-
-        public void ApplyChanges()
-        {
-        }
-
-        public bool IsDirty()
-        {
-            return p.config.Enabled != chkBox.Checked;
-        }
-
-        public PluginConfig GetEditedConfig()
-        {
-            var conf = new FileWriterPluginConfig();
-            conf.Enabled = chkBox.Checked;
-            return conf;
         }
     }
 }

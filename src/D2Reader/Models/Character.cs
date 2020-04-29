@@ -1,17 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Zutatensuppe.D2Reader.Readers;
+using Zutatensuppe.D2Reader.Struct;
+using Zutatensuppe.D2Reader.Struct.Item;
+using Zutatensuppe.D2Reader.Struct.Skill;
+using Zutatensuppe.D2Reader.Struct.Stat;
+using Zutatensuppe.DiabloInterface.Core;
+using Zutatensuppe.DiabloInterface.Core.Logging;
+
 namespace Zutatensuppe.D2Reader.Models
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using Zutatensuppe.D2Reader.Readers;
-    using Zutatensuppe.D2Reader.Struct;
-    using Zutatensuppe.D2Reader.Struct.Item;
-    using Zutatensuppe.D2Reader.Struct.Skill;
-    using Zutatensuppe.D2Reader.Struct.Stat;
-    using Zutatensuppe.DiabloInterface.Core;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
-
     public class Character
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);

@@ -58,9 +58,9 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoSplitServiceTest.cs" />
+    <Compile Include="PluginTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="HotkeyTest.cs" />
+    <Compile Include="Hotkeys\HotkeyTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

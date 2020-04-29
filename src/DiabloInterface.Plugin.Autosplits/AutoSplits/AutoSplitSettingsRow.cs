@@ -1,4 +1,4 @@
-namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
+namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits
 {
     using System;
     using System.Text.RegularExpressions;
@@ -6,7 +6,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits;
+    using Zutatensuppe.DiabloInterface.Plugin.Autosplits.Data;
 
     public class AutoSplitSettingsRow : UserControl
     {

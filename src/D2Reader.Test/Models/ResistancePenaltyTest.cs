@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct;
 
-namespace DiabloInterface.D2Reader.Test.Models
+namespace Zutatensuppe.DiabloInterface.D2Reader.Test.Models
 {
     [TestClass]
     public class ResistancePenaltyTest

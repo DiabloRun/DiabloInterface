@@ -1,12 +1,9 @@
-namespace DiabloInterface.Test.Business.IO
+using System.Collections.Generic;
+using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter.Writer.Test
 {
-    using System.Collections.Generic;
-    using System.IO;
-    using DiabloInterface.Plugin.FileWriter.Test;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-    using Zutatensuppe.DiabloInterface.Plugin.FileWriter;
-
     [TestClass]
     public class StatFileWriterTest
     {

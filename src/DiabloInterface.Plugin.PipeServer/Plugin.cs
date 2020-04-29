@@ -9,35 +9,14 @@ using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 {
-    class PipeServerPluginConfig : PluginConfig
-    {
-        public bool Enabled { get { return GetBool("Enabled"); } set { SetBool("Enabled", value); } }
-        public string PipeName { get { return GetString("PipeName"); } set { SetString("PipeName", value); } }
-
-        public PipeServerPluginConfig()
-        {
-            Enabled = true;
-            PipeName = "DiabloInterfacePipe";
-        }
-
-        public PipeServerPluginConfig(PluginConfig s): this()
-        {
-            if (s != null)
-            {
-                Enabled = s.GetBool("Enabled");
-                PipeName = s.GetString("PipeName");
-            }
-        }
-    }
-
-    public class PipeServerPlugin : IPlugin
+    public class Plugin : IPlugin
     {
         public string Name => "PipeServer";
 
-        internal PipeServerPluginConfig config { get; private set; } = new PipeServerPluginConfig();
+        internal Config config { get; private set; } = new Config();
 
         public PluginConfig Config { get => config; set {
-            config = new PipeServerPluginConfig(value);
+            config = new Config(value);
             ApplyConfig();
             
             Stop();
@@ -47,8 +26,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
         }}
 
         internal Dictionary<Type, Type> RendererMap => new Dictionary<Type, Type> {
-            {typeof(IPluginSettingsRenderer), typeof(PipeServerSettingsRenderer)},
-            {typeof(IPluginDebugRenderer), typeof(PipeServerDebugRenderer)},
+            {typeof(IPluginSettingsRenderer), typeof(SettingsRenderer)},
+            {typeof(IPluginDebugRenderer), typeof(DebugRenderer)},
         };
 
         private ILogger Logger;
@@ -57,7 +36,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
         private Dictionary<string, DiabloInterfaceServer> Servers = new Dictionary<string, DiabloInterfaceServer>();
 
-        public PipeServerPlugin(DiabloInterface di)
+        public Plugin(DiabloInterface di)
         {
             Logger = di.Logger(this);
             this.di = di;
@@ -134,133 +113,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             if (!renderers.ContainsKey(type))
                 renderers[type] = (T)Activator.CreateInstance(RendererMap[type], this);
             return (T)renderers[type];
-        }
-    }
-
-    class PipeServerDebugRenderer : IPluginDebugRenderer
-    {
-        PipeServerPlugin s;
-        public PipeServerDebugRenderer(PipeServerPlugin s)
-        {
-            this.s = s;
-        }
-
-        private RichTextBox txtPipeServer;
-        public Control Render()
-        {
-            if (txtPipeServer == null || txtPipeServer.IsDisposed)
-                Init();
-            return txtPipeServer;
-        }
-
-        private void Init()
-        {
-            txtPipeServer = new RichTextBox();
-            txtPipeServer.Location = new Point(6, 19);
-            txtPipeServer.Size = new Size(272, 62);
-            txtPipeServer.TabIndex = 0;
-            txtPipeServer.Text = "";
-
-            ApplyConfig();
-            ApplyChanges();
-        }
-
-        public void ApplyConfig()
-        {
-        }
-
-        public void ApplyChanges()
-        {
-            txtPipeServer.Text = s.StatusTextMsg();
-        }
-    }
-
-    class PipeServerSettingsRenderer : IPluginSettingsRenderer
-    {
-        private TextBox textBoxPipeName;
-        private Label labelPipeName;
-        private CheckBox chkPipeServerEnabled;
-        private RichTextBox txtPipeServer;
-        private Label lblPipeServerStatus;
-
-        private FlowLayoutPanel pluginBox;
-
-        private PipeServerPlugin p;
-        public PipeServerSettingsRenderer(PipeServerPlugin s)
-        {
-            this.p = s;
-        }
-
-        public Control Render()
-        {
-            if (pluginBox == null || pluginBox.IsDisposed)
-                Init();
-            return pluginBox;
-        }
-
-        private void Init()
-        {
-            labelPipeName = new Label();
-            labelPipeName.AutoSize = true;
-            labelPipeName.Margin = new Padding(2);
-            labelPipeName.Size = new Size(288, 20);
-            labelPipeName.Text = "Pipe Name:";
-
-            textBoxPipeName = new TextBox();
-            textBoxPipeName.Margin = new Padding(2);
-            textBoxPipeName.Size = new Size(288, 20);
-
-            chkPipeServerEnabled = new CheckBox();
-            chkPipeServerEnabled.AutoSize = true;
-            chkPipeServerEnabled.Size = new Size(288, 20);
-            chkPipeServerEnabled.Text = "Enable";
-
-            lblPipeServerStatus = new Label();
-            lblPipeServerStatus.AutoSize = true;
-            lblPipeServerStatus.Size = new Size(288, 20);
-            lblPipeServerStatus.Text = "Status:";
-
-            txtPipeServer = new RichTextBox();
-            txtPipeServer.ReadOnly = true;
-            txtPipeServer.Size = new Size(288, 34);
-            txtPipeServer.Text = "";
-
-            pluginBox = new FlowLayoutPanel();
-            pluginBox.FlowDirection = FlowDirection.TopDown;
-            pluginBox.Controls.Add(labelPipeName);
-            pluginBox.Controls.Add(textBoxPipeName);
-            pluginBox.Controls.Add(chkPipeServerEnabled);
-            pluginBox.Controls.Add(lblPipeServerStatus);
-            pluginBox.Controls.Add(txtPipeServer);
-            pluginBox.Dock = DockStyle.Fill;
-
-            ApplyConfig();
-            ApplyChanges();
-        }
-
-        public bool IsDirty()
-        {
-            return p.config.PipeName != textBoxPipeName.Text
-                || p.config.Enabled != chkPipeServerEnabled.Checked;
-        }
-
-        public PluginConfig GetEditedConfig()
-        {
-            var conf = new PipeServerPluginConfig();
-            conf.PipeName = textBoxPipeName.Text;
-            conf.Enabled = chkPipeServerEnabled.Checked;
-            return conf;
-        }
-
-        public void ApplyConfig()
-        {
-            textBoxPipeName.Text = p.config.PipeName;
-            chkPipeServerEnabled.Checked = p.config.Enabled;
-        }
-
-        public void ApplyChanges()
-        {
-            txtPipeServer.Text = p.StatusTextMsg();
         }
     }
 }

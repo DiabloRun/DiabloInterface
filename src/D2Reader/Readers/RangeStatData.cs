@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
-
     class RangeStatDamage
     {
         public int min;

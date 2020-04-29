@@ -1,4 +1,3 @@
-
 namespace Zutatensuppe.D2Reader.Struct.Skill
 {
     // when a value for a skill is read, this is used in a switch case to determine, 

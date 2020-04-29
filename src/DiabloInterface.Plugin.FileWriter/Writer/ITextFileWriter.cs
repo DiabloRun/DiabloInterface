@@ -1,4 +1,4 @@
-namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
+namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter.Writer
 {
     public interface ITextFileWriter
     {

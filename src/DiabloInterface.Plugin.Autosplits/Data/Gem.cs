@@ -1,4 +1,4 @@
-namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
+namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Data
 {
     internal enum Gem
     {

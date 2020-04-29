@@ -1,57 +1,29 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Windows.Forms;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits;
+using Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys;
 
 [assembly: InternalsVisibleTo("DiabloInterface.Plugin.Autosplits.Test")]
 namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 {
-    class AutosplitPluginConfig : PluginConfig
-    {
-        public bool Enabled { get { return GetBool("Enabled"); } set { SetBool("Enabled", value); } }
-        public Hotkey Hotkey { get { return new Hotkey(GetString("Hotkey")); } set { SetString("Hotkey", value.ToString()); } }
-        public List<AutoSplit> Splits { get { return (List<AutoSplit>)GetObject("Splits"); } set { SetObject("Splits", value); } }
-
-        internal AutosplitPluginConfig()
-        {
-            Enabled = false;
-            Hotkey = new Hotkey();
-            Splits = new List<AutoSplit>();
-        }
-
-        public AutosplitPluginConfig(PluginConfig s) :this()
-        {
-            if (s != null)
-            {
-                Enabled = s.GetBool("Enabled");
-                Hotkey = new Hotkey(s.GetString("Hotkey"));
-                Splits = s.GetObject("Splits") as List<AutoSplit>;
-                if (Splits == null)
-                    Splits = new List<AutoSplit>();
-            }
-        }
-    }
-
-    public class AutosplitPlugin : IPlugin
+    public class Plugin : IPlugin
     {
         public string Name => "Autosplit";
 
-        internal AutosplitPluginConfig config { get; private set; } = new AutosplitPluginConfig();
+        internal Config config { get; private set; } = new Config();
 
         internal Dictionary<Type, Type> RendererMap => new Dictionary<Type, Type> {
-            {typeof(IPluginSettingsRenderer), typeof(AutosplitSettingsRenderer)},
-            {typeof(IPluginDebugRenderer), typeof(AutosplitDebugRenderer)},
+            {typeof(IPluginSettingsRenderer), typeof(SettingsRenderer)},
+            {typeof(IPluginDebugRenderer), typeof(DebugRenderer)},
         };
 
         public PluginConfig Config { get => config; set {
-            config = new AutosplitPluginConfig(value);
+            config = new Config(value);
             ApplyConfig();
             LogAutoSplits();
         }}
@@ -62,7 +34,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 
         private DiabloInterface di;
 
-        public AutosplitPlugin(DiabloInterface di)
+        public Plugin(DiabloInterface di)
         {
             Logger = di.Logger(this);
             Logger.Info("Creating auto split service.");
@@ -208,256 +180,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             if (!renderers.ContainsKey(type))
                 renderers[type] = (T)Activator.CreateInstance(RendererMap[type], this);
             return (T)renderers[type];
-        }
-    }
-
-    class AutosplitDebugRenderer : IPluginDebugRenderer
-    {
-        private AutosplitPlugin p;
-        public AutosplitDebugRenderer(AutosplitPlugin p)
-        {
-            this.p = p;
-        }
-
-        private Panel autosplitPanel;
-        List<AutosplitBinding> autoSplitBindings;
-        public Control Render()
-        {
-            if (autosplitPanel == null || autosplitPanel.IsDisposed)
-                Init();
-            return autosplitPanel;
-        }
-
-        private void Init()
-        {
-            autosplitPanel = new Panel();
-            autosplitPanel.AutoScroll = true;
-            autosplitPanel.Dock = DockStyle.Fill;
-            autosplitPanel.Location = new Point(3, 16);
-            autosplitPanel.Size = new Size(281, 105);
-
-            ApplyConfig();
-            ApplyChanges();
-        }
-
-        public void ApplyConfig()
-        {
-        }
-
-        public void ApplyChanges()
-        {
-            // Unbinds and clears the binding list.
-            ClearAutoSplitBindings();
-
-            int y = 0;
-            autosplitPanel.Controls.Clear();
-            foreach (AutoSplit autoSplit in p.config.Splits)
-            {
-                Label splitLabel = new Label();
-                splitLabel.SetBounds(0, y, autosplitPanel.Bounds.Width, 16);
-                splitLabel.Text = autoSplit.Name;
-                splitLabel.ForeColor = autoSplit.IsReached ? Color.Green : Color.Red;
-
-                Action<AutoSplit> splitReached = s => splitLabel.ForeColor = Color.Green;
-                Action<AutoSplit> splitReset = s => splitLabel.ForeColor = Color.Red;
-
-                // Bind autosplit events.
-                var binding = new AutosplitBinding(autoSplit, splitReached, splitReset);
-                autoSplitBindings.Add(binding);
-
-                autosplitPanel.Controls.Add(splitLabel);
-                y += 16;
-            }
-        }
-
-        void ClearAutoSplitBindings()
-        {
-            if (autoSplitBindings == null)
-            {
-                autoSplitBindings = new List<AutosplitBinding>();
-            }
-
-            foreach (var binding in autoSplitBindings)
-            {
-                binding.Unbind();
-            }
-
-            autoSplitBindings.Clear();
-        }
-    }
-
-    class AutosplitSettingsRenderer : IPluginSettingsRenderer
-    {
-        private AutosplitPlugin p;
-
-        private TableLayoutPanel AutoSplitLayout;
-        AutoSplitTable autoSplitTable;
-        HotkeyControl autoSplitHotkeyControl;
-        private Button AddAutoSplitButton;
-        private CheckBox EnableAutosplitCheckBox;
-        private Label AutoSplitHotkeyLabel;
-        private Button AutoSplitTestHotkeyButton;
-        private FlowLayoutPanel AutoSplitToolbar;
-
-        public AutosplitSettingsRenderer(AutosplitPlugin p)
-        {
-            this.p = p;
-        }
-
-        public Control Render()
-        {
-            if (AutoSplitLayout == null || AutoSplitLayout.IsDisposed)
-                Init();
-            return AutoSplitLayout;
-        }
-
-        private void Init()
-        {
-            autoSplitHotkeyControl = new HotkeyControl();
-            autoSplitHotkeyControl.Value = new Hotkey();
-            autoSplitHotkeyControl.AutoSize = true;
-            autoSplitHotkeyControl.Text = "None";
-            autoSplitHotkeyControl.UseKeyWhitelist = true;
-            autoSplitHotkeyControl.HotkeyChanged += new EventHandler<Hotkey>(AutoSplitHotkeyControlOnHotkeyChanged);
-
-            AutoSplitHotkeyLabel = new Label();
-            AutoSplitHotkeyLabel.AutoSize = true;
-            AutoSplitHotkeyLabel.Text = "Split-Hotkey:";
-
-            AutoSplitTestHotkeyButton = new Button();
-            AutoSplitTestHotkeyButton.AutoSize = true;
-            AutoSplitTestHotkeyButton.Text = "Test Hotkey";
-            AutoSplitTestHotkeyButton.Click += new EventHandler(AutoSplitTestHotkey_Click);
-
-            EnableAutosplitCheckBox = new CheckBox();
-            EnableAutosplitCheckBox.AutoSize = true;
-            EnableAutosplitCheckBox.Text = "Enable";
-
-            AddAutoSplitButton = new Button();
-            AddAutoSplitButton.AutoSize = true;
-            AddAutoSplitButton.Text = "Add Split";
-            AddAutoSplitButton.Click += new EventHandler(AddAutoSplitButton_Clicked);
-
-            AutoSplitToolbar = new FlowLayoutPanel();
-            AutoSplitToolbar.FlowDirection = FlowDirection.LeftToRight;
-            AutoSplitToolbar.AutoSize = true;
-            AutoSplitToolbar.Controls.Add(AutoSplitHotkeyLabel);
-            AutoSplitToolbar.Controls.Add(autoSplitHotkeyControl);
-            AutoSplitToolbar.Controls.Add(EnableAutosplitCheckBox);
-            AutoSplitToolbar.Controls.Add(AutoSplitTestHotkeyButton);
-            AutoSplitToolbar.Controls.Add(AddAutoSplitButton);
-            AutoSplitToolbar.Dock = DockStyle.Fill;
-            AutoSplitToolbar.Margin = new Padding(0);
-
-            autoSplitTable = new AutoSplitTable(p.config) { Dock = DockStyle.Fill };
-
-            AutoSplitLayout = new TableLayoutPanel();
-            AutoSplitLayout.ColumnCount = 1;
-            AutoSplitLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            AutoSplitLayout.Dock = DockStyle.Fill;
-            AutoSplitLayout.Location = new Point(0, 0);
-            AutoSplitLayout.Margin = new Padding(0);
-            AutoSplitLayout.RowCount = 2;
-            AutoSplitLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            AutoSplitLayout.RowStyles.Add(new RowStyle());
-            AutoSplitLayout.Size = new Size(800, 476);
-            AutoSplitLayout.Controls.Add(AutoSplitToolbar, 0, 1);
-            AutoSplitLayout.Controls.Add(autoSplitTable);
-
-            ApplyConfig();
-            ApplyChanges();
-        }
-
-        public void ApplyConfig()
-        {
-            EnableAutosplitCheckBox.Checked = p.config.Enabled;
-            autoSplitHotkeyControl.ForeColor = p.config.Hotkey.ToKeys() == Keys.None ? Color.Red : Color.Black;
-            autoSplitHotkeyControl.Value = p.config.Hotkey;
-            autoSplitTable.Set(p.config);
-        }
-
-        public void ApplyChanges()
-        {
-        }
-
-        void AddAutoSplitButton_Clicked(object sender, EventArgs e)
-        {
-            var splits = autoSplitTable.AutoSplits;
-            var factory = new AutoSplitFactory();
-
-            var row = autoSplitTable.AddAutoSplit(factory.CreateSequential(splits.LastOrDefault()));
-            if (row != null)
-            {
-                autoSplitTable.ScrollControlIntoView(row);
-            }
-
-            // Automatically enable auto splits when adding.
-            EnableAutosplitCheckBox.Checked = true;
-        }
-
-        void AutoSplitTestHotkey_Click(object sender, EventArgs e)
-        {
-            p.keyService.TriggerHotkey(autoSplitHotkeyControl.Value.ToKeys());
-        }
-
-        void AutoSplitHotkeyControlOnHotkeyChanged(object sender, Hotkey e)
-        {
-            autoSplitHotkeyControl.ForeColor = e.ToKeys() == Keys.None ? Color.Red : SystemColors.WindowText;
-        }
-
-        public bool IsDirty()
-        {
-            return autoSplitTable.IsDirty
-                || p.config.Enabled != EnableAutosplitCheckBox.Checked
-                || p.config.Hotkey.ToKeys() != autoSplitHotkeyControl.Value.ToKeys();
-        }
-
-        public PluginConfig GetEditedConfig()
-        {
-            var conf = new AutosplitPluginConfig();
-            conf.Enabled = EnableAutosplitCheckBox.Checked;
-            conf.Hotkey = autoSplitHotkeyControl.Value;
-            conf.Splits = autoSplitTable.AutoSplits.ToList();
-            return conf;
-        }
-    }
-
-    class AutosplitBinding
-    {
-        bool didUnbind;
-        AutoSplit autoSplit;
-        Action<AutoSplit> reachedHandler;
-        Action<AutoSplit> resetHandler;
-
-        public AutosplitBinding(
-            AutoSplit autoSplit,
-            Action<AutoSplit> reachedHandler,
-            Action<AutoSplit> resetHandler
-        )
-        {
-            this.autoSplit = autoSplit;
-            this.reachedHandler = reachedHandler;
-            this.resetHandler = resetHandler;
-
-            this.autoSplit.Reached += reachedHandler;
-            this.autoSplit.Reset += resetHandler;
-        }
-
-        ~AutosplitBinding()
-        {
-            Unbind();
-        }
-
-        /// <summary>
-        /// Unbding the autosplit handlers.
-        /// </summary>
-        public void Unbind()
-        {
-            if (didUnbind) return;
-
-            didUnbind = true;
-            autoSplit.Reached -= reachedHandler;
-            autoSplit.Reset -= resetHandler;
         }
     }
 }

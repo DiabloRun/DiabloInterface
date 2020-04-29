@@ -1,4 +1,3 @@
-
 namespace Zutatensuppe.D2Reader
 {
     public class D2Data

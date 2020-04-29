@@ -5,15 +5,14 @@ using System.Collections.Generic;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct.Item;
-using Zutatensuppe.DiabloInterface.Plugin.Autosplits;
 using Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits;
 using Zutatensuppe.DiabloInterface.Services;
 using Zutatensuppe.DiabloInterface.Settings;
 
-namespace DiabloInterface.Plugin.Autosplits.Test
+namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
 {
     [TestClass]
-    public class AutoSplitServiceTest
+    public class PluginTest
     {
         [TestMethod]
         public void ShouldNotSplitIfDisabled()
@@ -25,7 +24,7 @@ namespace DiabloInterface.Plugin.Autosplits.Test
                 (short)GameDifficulty.Normal
             );
 
-            var cfg = new AutosplitPluginConfig();
+            var cfg = new Config();
             cfg.Enabled = false;
             cfg.Splits = new List<AutoSplit>();
             cfg.Splits.Add(split);
@@ -41,7 +40,7 @@ namespace DiabloInterface.Plugin.Autosplits.Test
             diabloInterface.settings = settings.Object;
             diabloInterface.game = gameService;
 
-            var autoSplitService = new AutosplitPlugin(diabloInterface);
+            var autoSplitService = new Zutatensuppe.DiabloInterface.Plugin.Autosplits.Plugin(diabloInterface);
             autoSplitService.Initialize();
 
             var quests = new Quests(new List<List<Quest>>
@@ -130,7 +129,7 @@ namespace DiabloInterface.Plugin.Autosplits.Test
                 (short)GameDifficulty.Normal
             );
 
-            var cfg = new AutosplitPluginConfig();
+            var cfg = new Config();
             cfg.Enabled = true;
             cfg.Splits = new List<AutoSplit>();
             cfg.Splits.Add(splitOnGameStart);
@@ -153,7 +152,7 @@ namespace DiabloInterface.Plugin.Autosplits.Test
             diabloInterface.settings = settings.Object;
             diabloInterface.game = gameService;
 
-            var autoSplitService = new AutosplitPlugin(diabloInterface);
+            var autoSplitService = new Zutatensuppe.DiabloInterface.Plugin.Autosplits.Plugin(diabloInterface);
             autoSplitService.Initialize();
 
             var normalQuests = new List<Quest>() {

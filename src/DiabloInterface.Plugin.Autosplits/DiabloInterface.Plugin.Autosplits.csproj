@@ -47,23 +47,26 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Area.cs" />
-    <Compile Include="AutoSplitSettingsRow.cs">
+    <Compile Include="Data\Area.cs" />
+    <Compile Include="AutoSplits\AutoSplitSettingsRow.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="AutoSplits\AutoSplit.cs" />
     <Compile Include="AutoSplits\AutoSplitFactory.cs" />
-    <Compile Include="AutoSplitTable.cs">
+    <Compile Include="AutoSplits\AutoSplitTable.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gem.cs" />
-    <Compile Include="Hotkey.cs" />
-    <Compile Include="HotkeyControl.cs">
+    <Compile Include="Config.cs" />
+    <Compile Include="DebugRenderer.cs" />
+    <Compile Include="Data\Gem.cs" />
+    <Compile Include="Hotkeys\Hotkey.cs" />
+    <Compile Include="Hotkeys\HotkeyControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="KeyService.cs" />
+    <Compile Include="Hotkeys\KeyService.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SettingsRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\D2Reader\D2Reader.csproj">

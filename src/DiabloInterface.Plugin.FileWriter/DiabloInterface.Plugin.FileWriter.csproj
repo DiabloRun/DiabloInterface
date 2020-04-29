@@ -45,13 +45,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CharacterStatFileWriter.cs" />
-    <Compile Include="CharacterStats.cs" />
-    <Compile Include="ICharacterStats.cs" />
-    <Compile Include="ITextFileWriter.cs" />
+    <Compile Include="Writer\CharacterStatFileWriter.cs" />
+    <Compile Include="Writer\CharacterStats.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Writer\ICharacterStats.cs" />
+    <Compile Include="Writer\ITextFileWriter.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TextFileWriter.cs" />
+    <Compile Include="SettingsRenderer.cs" />
+    <Compile Include="Writer\TextFileWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\D2Reader\D2Reader.csproj">

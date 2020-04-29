@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
+namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys
 {
     public class Hotkey
     {

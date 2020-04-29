@@ -1,9 +1,7 @@
-using System;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Zutatensuppe.DiabloInterface.Plugin.Autosplits;
 
-namespace DiabloInterface.Plugin.Autosplits.Test
+namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys.Test
 {
     [TestClass]
     public class HotkeyTest

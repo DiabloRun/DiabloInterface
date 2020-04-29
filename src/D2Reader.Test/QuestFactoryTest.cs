@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.D2Reader.Models;
 
-namespace DiabloInterface.D2Reader.Test
+namespace Zutatensuppe.DiabloInterface.D2Reader.Test
 {
     [TestClass]
     public class QuestFactoryTest
