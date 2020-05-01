@@ -18,34 +18,18 @@ namespace Zutatensuppe.DiabloInterface
         {
             var appStorage = new ApplicationStorage();
             var settings = new SettingsService(appStorage);
+            var pluginDir = Path.Combine(Environment.CurrentDirectory, "Plugins");
+
             var di = new DiabloInterface();
             di.game = new GameService(settings);
             di.settings = settings;
-            di.plugins = PluginService.Create(GetPlugIns(), di);
+            di.plugins = new PluginService(di, pluginDir);
 
             // is dependant on di.plugins being there
             di.settings.LoadSettingsFromPreviousSession();
 
-            if (di.settings.CurrentSettings.CheckUpdates)
-                VersionChecker.AutomaticallyCheckForUpdate();
-
             di.plugins.Initialize();
             return di;
-        }
-
-        private static List<Type> GetPlugIns()
-        {
-            var PluginDir = Path.Combine(Environment.CurrentDirectory, "Plugins");
-            if (!Directory.Exists(PluginDir))
-                Directory.CreateDirectory(PluginDir);
-            DirectoryInfo dInfo = new DirectoryInfo(PluginDir);
-            FileInfo[] files = dInfo.GetFiles("*.dll");
-            List<Type> types = new List<Type>();
-            foreach (FileInfo file in files)
-                types.AddRange(Assembly.LoadFile(file.FullName).GetTypes());
-            return types
-                .FindAll((Type t) => new List<Type>(t.GetInterfaces())
-                .Contains(typeof(IPlugin)));
         }
 
         public ILogger Logger(object obj)

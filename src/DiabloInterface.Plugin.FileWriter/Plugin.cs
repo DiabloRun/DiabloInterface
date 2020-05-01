@@ -25,17 +25,14 @@ namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
 
         DiabloInterface di;
 
-        public Plugin(DiabloInterface di)
+        public void Initialize(DiabloInterface di)
         {
             Logger = di.Logger(this);
             Logger.Info("Creating character stat file writer service.");
             this.di = di;
-        }
 
-        public void Initialize()
-        {
-            di.game.DataRead += Game_DataRead;
             Config = di.settings.CurrentSettings.PluginConf(Name);
+            di.game.DataRead += Game_DataRead;
         }
 
         private void Game_DataRead(object sender, DataReadEventArgs e)

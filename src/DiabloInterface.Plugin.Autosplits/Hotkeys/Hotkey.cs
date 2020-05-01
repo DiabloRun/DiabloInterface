@@ -1,10 +1,12 @@
 using System;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Windows.Forms;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys
 {
-    public class Hotkey
+    [Serializable]
+    public class Hotkey : ISerializable
     {
         private Keys hotkey { get; set; } = Keys.None;
 
@@ -12,24 +14,41 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys
         {
         }
 
+        public Hotkey(SerializationInfo info, StreamingContext context)
+        {
+            this.hotkey = parse(info.GetString("Keys"));
+        }
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Keys", ToString());
+        }
+
         public Hotkey(string hotkey)
         {
-            foreach (var k in hotkey.Split('+'))
-            {
-                switch (k)
-                {
-                    case "Ctrl": this.hotkey |= Keys.Control; break;
-                    case "Shift": this.hotkey |= Keys.Shift; break;
-                    case "Alt": this.hotkey |= Keys.Alt; break;
-                    case "": break;
-                    default: this.hotkey |= (Keys)Enum.Parse(typeof(Keys), k); break;
-                }
-            }
+            this.hotkey = parse(hotkey);
         }
 
         public Hotkey(Keys hotkey)
         {
             this.hotkey = hotkey;
+        }
+
+        private Keys parse(string hotkey)
+        {
+            Keys hk = Keys.None;
+            foreach (var k in hotkey.Split('+'))
+            {
+                switch (k)
+                {
+                    case "Ctrl": hk |= Keys.Control; break;
+                    case "Shift": hk |= Keys.Shift; break;
+                    case "Alt": hk |= Keys.Alt; break;
+                    case "": break;
+                    default: hk |= (Keys)Enum.Parse(typeof(Keys), k); break;
+                }
+            }
+            return hk;
         }
 
         public Keys ToKeys()

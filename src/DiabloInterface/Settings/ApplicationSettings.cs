@@ -18,9 +18,6 @@ namespace Zutatensuppe.DiabloInterface.Settings
         public Dictionary<string, PluginConfig> Plugins { get; set; } = new Dictionary<string, PluginConfig>();
         virtual public PluginConfig PluginConf(string type) => Plugins.ContainsKey(type) ? Plugins[type] : null;
 
-        // Update checker settings (should be plugin?)
-        public bool CheckUpdates { get; set; } = true;
-
         // Rune settings (should be plugin?)
         public IReadOnlyList<ClassRuneSettings> ClassRunes { get; set; } = new List<ClassRuneSettings>();
 

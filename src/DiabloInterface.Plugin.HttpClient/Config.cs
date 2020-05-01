@@ -1,6 +1,4 @@
-using Zutatensuppe.DiabloInterface.Plugin;
-
-namespace DiabloInterface.Plugin.HttpClient
+namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 {
     class Config : PluginConfig
     {

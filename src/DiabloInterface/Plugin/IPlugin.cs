@@ -6,7 +6,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin
 
         PluginConfig Config { get; set; }
 
-        void Initialize();
+        void Initialize(DiabloInterface di);
 
         void Reset();
 

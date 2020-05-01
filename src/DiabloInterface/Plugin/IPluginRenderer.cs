@@ -4,7 +4,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin
 {
     public interface IPluginRenderer
     {
-        Control Render();
+        Control CreateControl();
 
         // update controls with current data
         void ApplyChanges();

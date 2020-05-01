@@ -36,12 +36,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
 
             var gameService = new GameServiceMock();
 
-            var diabloInterface = new Zutatensuppe.DiabloInterface.DiabloInterface();
+            var diabloInterface = new DiabloInterface();
             diabloInterface.settings = settings.Object;
             diabloInterface.game = gameService;
 
-            var autoSplitService = new Zutatensuppe.DiabloInterface.Plugin.Autosplits.Plugin(diabloInterface);
-            autoSplitService.Initialize();
+            var autoSplitService = new Plugin();
+            autoSplitService.Initialize(diabloInterface);
 
             var quests = new Quests(new List<List<Quest>>
             {
@@ -148,12 +148,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
 
             var gameService = new GameServiceMock();
 
-            var diabloInterface = new Zutatensuppe.DiabloInterface.DiabloInterface();
+            var diabloInterface = new DiabloInterface();
             diabloInterface.settings = settings.Object;
             diabloInterface.game = gameService;
 
-            var autoSplitService = new Zutatensuppe.DiabloInterface.Plugin.Autosplits.Plugin(diabloInterface);
-            autoSplitService.Initialize();
+            var autoSplitService = new Plugin();
+            autoSplitService.Initialize(diabloInterface);
 
             var normalQuests = new List<Quest>() {
                 QuestFactory.Create(QuestId.DenOfEvil, 0),

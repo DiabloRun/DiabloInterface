@@ -100,21 +100,19 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys
                 return;
             }
 
+            if (e.KeyCode == Keys.Escape || e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back)
+            {
+                ResetHotkey();
+                return;
+            }
+
             // Check key whitelist if wanted.
             if (UseKeyWhitelist && !IsKeyWhitelisted(e.KeyCode))
             {
                 return;
             }
 
-            // Reset hotkeys.
-            if (e.KeyCode == Keys.Escape || e.KeyCode == Keys.Delete)
-            {
-                ResetHotkey();
-            }
-            else
-            {
-                Value = new Hotkey(e.KeyCode | e.Modifiers);
-            }
+            Value = new Hotkey(e.KeyCode | e.Modifiers);
         }
 
         bool IsKeyWhitelisted(Keys keyCode)

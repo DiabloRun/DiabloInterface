@@ -8,31 +8,20 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 {
     class DebugRenderer : IPluginDebugRenderer
     {
-        private Plugin p;
-        public DebugRenderer(Plugin p)
+        private Plugin plugin;
+        private Panel control;
+        List<AutosplitBinding> bindings = new List<AutosplitBinding>();
+
+        public DebugRenderer(Plugin plugin)
         {
-            this.p = p;
+            this.plugin = plugin;
         }
 
-        private Panel autosplitPanel;
-        List<AutosplitBinding> autoSplitBindings;
-        public Control Render()
+        public Control CreateControl()
         {
-            if (autosplitPanel == null || autosplitPanel.IsDisposed)
-                Init();
-            return autosplitPanel;
-        }
-
-        private void Init()
-        {
-            autosplitPanel = new Panel();
-            autosplitPanel.AutoScroll = true;
-            autosplitPanel.Dock = DockStyle.Fill;
-            autosplitPanel.Location = new Point(3, 16);
-            autosplitPanel.Size = new Size(281, 105);
-
-            ApplyConfig();
-            ApplyChanges();
+            control = new Panel();
+            control.Dock = DockStyle.Fill;
+            return control;
         }
 
         public void ApplyConfig()
@@ -42,42 +31,34 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         public void ApplyChanges()
         {
             // Unbinds and clears the binding list.
-            ClearAutoSplitBindings();
+            foreach (var binding in bindings)
+                binding.Unbind();
+            bindings.Clear();
 
             int y = 0;
-            autosplitPanel.Controls.Clear();
-            foreach (AutoSplit autoSplit in p.config.Splits)
+            int height = 16;
+            Color colorOn = Color.Green;
+            Color colorOff = Color.Red;
+            control.Controls.Clear();
+            foreach (AutoSplit autoSplit in plugin.config.Splits)
             {
-                Label splitLabel = new Label();
-                splitLabel.SetBounds(0, y, autosplitPanel.Bounds.Width, 16);
-                splitLabel.Text = autoSplit.Name;
-                splitLabel.ForeColor = autoSplit.IsReached ? Color.Green : Color.Red;
-
-                Action<AutoSplit> splitReached = s => splitLabel.ForeColor = Color.Green;
-                Action<AutoSplit> splitReset = s => splitLabel.ForeColor = Color.Red;
+                var label = new Label();
+                label.SetBounds(0, y, control.Bounds.Width, height);
+                label.Text = autoSplit.Name;
+                label.ForeColor = autoSplit.IsReached ? colorOn : colorOff;
 
                 // Bind autosplit events.
-                var binding = new AutosplitBinding(autoSplit, splitReached, splitReset);
-                autoSplitBindings.Add(binding);
+                bindings.Add(new AutosplitBinding(
+                    autoSplit,
+                    // reached
+                    s => label.ForeColor = colorOn,
+                    // reset
+                    s => label.ForeColor = colorOff
+                ));
 
-                autosplitPanel.Controls.Add(splitLabel);
-                y += 16;
+                control.Controls.Add(label);
+                y += height;
             }
-        }
-
-        void ClearAutoSplitBindings()
-        {
-            if (autoSplitBindings == null)
-            {
-                autoSplitBindings = new List<AutosplitBinding>();
-            }
-
-            foreach (var binding in autoSplitBindings)
-            {
-                binding.Unbind();
-            }
-
-            autoSplitBindings.Clear();
         }
     }
 
@@ -106,10 +87,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         {
             Unbind();
         }
-
-        /// <summary>
-        /// Unbding the autosplit handlers.
-        /// </summary>
         public void Unbind()
         {
             if (didUnbind) return;

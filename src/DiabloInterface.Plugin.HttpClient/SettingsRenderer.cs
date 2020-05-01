@@ -1,15 +1,12 @@
-using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Zutatensuppe.DiabloInterface.Plugin;
 
-namespace DiabloInterface.Plugin.HttpClient
+namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 {
     class SettingsRenderer : IPluginSettingsRenderer
     {
-        private Plugin p;
-
-        private FlowLayoutPanel pluginBox;
+        private Plugin plugin;
+        private FlowLayoutPanel control;
         private RichTextBox txtHttpClientHeaders;
         private Label label6;
         private RichTextBox txtHttpClientStatus;
@@ -18,19 +15,12 @@ namespace DiabloInterface.Plugin.HttpClient
         private TextBox textBoxHttpClientUrl;
         private Label label5;
 
-        public SettingsRenderer(Plugin p)
+        public SettingsRenderer(Plugin plugin)
         {
-            this.p = p;
+            this.plugin = plugin;
         }
 
-        public Control Render()
-        {
-            if (pluginBox == null || pluginBox.IsDisposed)
-                Init();
-            return pluginBox;
-        }
-
-        private void Init()
+        public Control CreateControl()
         {
             label6 = new Label();
             label6.AutoSize = true;
@@ -65,26 +55,24 @@ namespace DiabloInterface.Plugin.HttpClient
             txtHttpClientStatus.Size = new Size(288, 100);
             txtHttpClientStatus.Text = "";
 
-            pluginBox = new FlowLayoutPanel();
-            pluginBox.FlowDirection = FlowDirection.TopDown;
-            pluginBox.Controls.Add(label5);
-            pluginBox.Controls.Add(textBoxHttpClientUrl);
-            pluginBox.Controls.Add(label6);
-            pluginBox.Controls.Add(txtHttpClientHeaders);
-            pluginBox.Controls.Add(chkHttpClientEnabled);
-            pluginBox.Controls.Add(label4);
-            pluginBox.Controls.Add(txtHttpClientStatus);
-            pluginBox.Dock = DockStyle.Fill;
-
-            ApplyConfig();
-            ApplyChanges();
+            control = new FlowLayoutPanel();
+            control.FlowDirection = FlowDirection.TopDown;
+            control.Controls.Add(label5);
+            control.Controls.Add(textBoxHttpClientUrl);
+            control.Controls.Add(label6);
+            control.Controls.Add(txtHttpClientHeaders);
+            control.Controls.Add(chkHttpClientEnabled);
+            control.Controls.Add(label4);
+            control.Controls.Add(txtHttpClientStatus);
+            control.Dock = DockStyle.Fill;
+            return control;
         }
 
         public bool IsDirty()
         {
-            return p.config.Url != textBoxHttpClientUrl.Text
-                || p.config.Headers != txtHttpClientHeaders.Text
-                || p.config.Enabled != chkHttpClientEnabled.Checked;
+            return plugin.config.Url != textBoxHttpClientUrl.Text
+                || plugin.config.Headers != txtHttpClientHeaders.Text
+                || plugin.config.Enabled != chkHttpClientEnabled.Checked;
         }
 
         public PluginConfig GetEditedConfig()
@@ -98,14 +86,14 @@ namespace DiabloInterface.Plugin.HttpClient
 
         public void ApplyConfig()
         {
-            textBoxHttpClientUrl.Text = p.config.Url;
-            chkHttpClientEnabled.Checked = p.config.Enabled;
-            txtHttpClientHeaders.Text = p.config.Headers;
+            textBoxHttpClientUrl.Text = plugin.config.Url;
+            chkHttpClientEnabled.Checked = plugin.config.Enabled;
+            txtHttpClientHeaders.Text = plugin.config.Headers;
         }
 
         public void ApplyChanges()
         {
-            txtHttpClientStatus.Text = p.content;
+            txtHttpClientStatus.Text = plugin.content;
         }
     }
 }

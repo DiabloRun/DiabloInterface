@@ -1,65 +1,59 @@
-using Zutatensuppe.DiabloInterface.Core.Logging;
 using System;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Zutatensuppe.DiabloInterface.Core.Logging;
 
-namespace Zutatensuppe.DiabloInterface
+namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 {
+    internal class VersionCheckerResult
+    {
+        internal string updateUrl;
+        internal string question;
+        internal string title;
+        internal string target;
+    }
+
     internal class VersionChecker
     {
         const string ReleasesUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases";
         const string ReleasesLatestUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases/latest";
 
-        public static void ManuallyCheckForUpdate()
+        private ILogger Logger;
+
+        internal VersionChecker()
         {
-            CheckForUpdate(true);
+            Logger = LogServiceLocator.Get(typeof(VersionChecker));
         }
 
-        public static void AutomaticallyCheckForUpdate()
-        {
-            CheckForUpdate(false);
-        }
-
-        private static void CheckForUpdate(bool userTriggered)
+        internal VersionCheckerResult CheckForUpdate(string lastFoundVersion, bool userTriggered)
         {
             string updateUrl = GetUpdateUrl();
 
+            var r = new VersionCheckerResult();
             if (updateUrl != null)
             {
-                string lastFoundVersion = Properties.Settings.Default.LastFoundVersion;
                 if (updateUrl != lastFoundVersion || userTriggered)
                 {
-                    Properties.Settings.Default.LastFoundVersion = updateUrl;
-                    Properties.Settings.Default.Save();
-
-                    if (MessageBox.Show(@"A new version of DiabloInterface is available. Go to download page now?", @"New version available",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                        MessageBoxDefaultButton.Button1) == DialogResult.Yes)
-                    {
-                        System.Diagnostics.Process.Start(updateUrl);
-                    }
+                    r.updateUrl = updateUrl;
+                    r.question = @"A new version of DiabloInterface is available. Go to download page now?";
+                    r.title = @"New version available";
+                    r.target = updateUrl;
                 }
-
-            }
-            else if (userTriggered)
+            } else if (userTriggered)
             {
-                if (MessageBox.Show(@"No new version is available, but there might be a pre-release. Go to releases overview now?", @"No new version available",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                    MessageBoxDefaultButton.Button1) == DialogResult.Yes)
-                {
-                    System.Diagnostics.Process.Start(ReleasesUrl);
-                }
+                r.question = @"No new version is available, but there might be a pre-release. Go to releases overview now?";
+                r.title = @"No new version available";
+                r.target = ReleasesUrl;
             }
+            return r;
         }
 
-        static string GetUpdateUrl()
+        string GetUpdateUrl()
         {
             Match verMatch = Regex.Match(Application.ProductVersion, @"^(\d+)\.(\d+)\.(\d+)(?:\.PR\.(\d+))?$");
             if (!verMatch.Success)
-            {
                 return null;
-            }
 
             string location;
 
@@ -82,61 +76,44 @@ namespace Zutatensuppe.DiabloInterface
             }
             catch (WebException e)
             {
-                LogServiceLocator.Get(typeof(VersionChecker)).Error("Failed to retrieve latest release from Url", e);
+                Logger.Error("Failed to retrieve latest release from Url", e);
                 return null;
             }
 
             Match tagMatch = Regex.Match(location, @"/releases/tag/v(\d+)\.(\d+)\.(\d+)$");
             if (!tagMatch.Success)
-            {
                 return null;
-            }
 
             // version compare.
-
             int major = Convert.ToInt32(verMatch.Groups[1].Value);
             int majorNew = Convert.ToInt32(tagMatch.Groups[1].Value);
             if (majorNew > major)
-            {
                 return location;
-            }
 
             if (majorNew < major)
-            {
                 return null;
-            }
 
             int minor = Convert.ToInt32(verMatch.Groups[2].Value);
             int minorNew = Convert.ToInt32(tagMatch.Groups[2].Value);
             if (minorNew > minor)
-            {
                 return location;
-            }
 
             if (minorNew < minor)
-            {
                 return null;
-            }
 
             int patch = Convert.ToInt32(verMatch.Groups[3].Value);
             int patchNew = Convert.ToInt32(tagMatch.Groups[3].Value);
             if (patchNew > patch)
-            {
                 return location;
-            }
 
             if (patchNew < patch)
-            {
                 return null;
-            }
 
             try
             {
                 int pre = Convert.ToInt32(verMatch.Groups[4].Value);
                 if (pre > 0)
-                {
                     return location;
-                }
             }
             catch
             {

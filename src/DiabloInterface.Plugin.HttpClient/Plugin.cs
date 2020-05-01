@@ -7,11 +7,10 @@ using System.Threading.Tasks;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct.Item;
-using Zutatensuppe.DiabloInterface.Plugin;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using Newtonsoft.Json;
 
-namespace DiabloInterface.Plugin.HttpClient
+namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 {
     public class Plugin : IPlugin
     {
@@ -36,7 +35,7 @@ namespace DiabloInterface.Plugin.HttpClient
 
         private ILogger Logger;
 
-        private Zutatensuppe.DiabloInterface.DiabloInterface di;
+        private DiabloInterface di;
 
         private static readonly System.Net.Http.HttpClient Client = new System.Net.Http.HttpClient();
         private bool SendingData = false;
@@ -51,7 +50,7 @@ namespace DiabloInterface.Plugin.HttpClient
             Quests = Quests.DefaultCompleteQuestIds,
         };
         
-        private List<string> BodyProperties = new List<String>()
+        private List<string> BodyProperties = new List<string>()
         {
             "Area",
             "Difficulty",
@@ -80,17 +79,13 @@ namespace DiabloInterface.Plugin.HttpClient
             "IncreasedAttackSpeed",
             "MagicFind"
         };
-
-        public Plugin(Zutatensuppe.DiabloInterface.DiabloInterface di)
+        
+        public void Initialize(DiabloInterface di)
         {
             Logger = di.Logger(this);
             this.di = di;
-        }
-
-        public void Initialize()
-        {
-            di.game.DataRead += Game_DataRead;
             Config = di.settings.CurrentSettings.PluginConf(Name);
+            di.game.DataRead += Game_DataRead;
         }
 
         private void CreateServer(string url, string headers)

@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace Zutatensuppe.DiabloInterface.Plugin
 {
     [Serializable]
-    abstract public class PluginConfig : ISerializable
+    public class PluginConfig : ISerializable
     {
         protected readonly Dictionary<string, object> dict = new Dictionary<string, object>();
 

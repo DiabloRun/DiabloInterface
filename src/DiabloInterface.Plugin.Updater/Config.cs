@@ -1,14 +1,12 @@
-namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
+namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 {
     class Config : PluginConfig
     {
         public bool Enabled { get { return GetBool("Enabled"); } set { SetBool("Enabled", value); } }
-        public string PipeName { get { return GetString("PipeName"); } set { SetString("PipeName", value); } }
 
         public Config()
         {
             Enabled = true;
-            PipeName = "DiabloInterfacePipe";
         }
 
         public Config(PluginConfig s) : this()
@@ -16,7 +14,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             if (s != null)
             {
                 Enabled = s.GetBool("Enabled");
-                PipeName = s.GetString("PipeName");
             }
         }
     }

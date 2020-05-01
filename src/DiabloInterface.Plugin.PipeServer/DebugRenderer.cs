@@ -5,30 +5,20 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 {
     class DebugRenderer : IPluginDebugRenderer
     {
-        Plugin s;
-        public DebugRenderer(Plugin s)
+        private Plugin plugin;
+        private RichTextBox control;
+
+        public DebugRenderer(Plugin plugin)
         {
-            this.s = s;
+            this.plugin = plugin;
         }
 
-        private RichTextBox txtPipeServer;
-        public Control Render()
+        public Control CreateControl()
         {
-            if (txtPipeServer == null || txtPipeServer.IsDisposed)
-                Init();
-            return txtPipeServer;
-        }
-
-        private void Init()
-        {
-            txtPipeServer = new RichTextBox();
-            txtPipeServer.Location = new Point(6, 19);
-            txtPipeServer.Size = new Size(272, 62);
-            txtPipeServer.TabIndex = 0;
-            txtPipeServer.Text = "";
-
-            ApplyConfig();
-            ApplyChanges();
+            control = new RichTextBox();
+            control.Size = new Size(272, 62);
+            control.Text = "";
+            return control;
         }
 
         public void ApplyConfig()
@@ -37,7 +27,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
         public void ApplyChanges()
         {
-            txtPipeServer.Text = s.StatusTextMsg();
+            control.Text = plugin.StatusTextMsg();
         }
     }
 }

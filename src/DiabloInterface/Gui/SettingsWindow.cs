@@ -58,10 +58,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private TabControl tabControl1;
         private TabPage tabPageSettingsLayout;
         private TabPage tabPageSettingsRunes;
-        private TabPage tabPageSettingsMisc;
-        private GroupBox UpdateGroup;
-        private Button CheckUpdatesButton;
-        private CheckBox CheckUpdatesCheckBox;
         private Button btnSetLevelColor;
         private Button btnSetFireResColor;
         private Button btnSetDeathsColor;
@@ -195,10 +191,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             chkDisplayName = new CheckBox();
             tabPageSettingsRunes = new TabPage();
             runeSettingsPage = new Zutatensuppe.DiabloInterface.Gui.Controls.RuneSettingsPage();
-            tabPageSettingsMisc = new TabPage();
-            UpdateGroup = new GroupBox();
-            CheckUpdatesButton = new Button();
-            CheckUpdatesCheckBox = new CheckBox();
             mainPanel = new TableLayoutPanel();
             panel1 = new Panel();
             btnSaveAs = new Button();
@@ -215,8 +207,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPaddingInVerticalLayout)).BeginInit();
             groupBox1.SuspendLayout();
             tabPageSettingsRunes.SuspendLayout();
-            tabPageSettingsMisc.SuspendLayout();
-            UpdateGroup.SuspendLayout();
             mainPanel.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -277,9 +267,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
             tabControl1.Controls.Add(tabPageSettingsLayout);
             tabControl1.Controls.Add(tabPageSettingsRunes);
-            tabControl1.Controls.Add(tabPageSettingsMisc);
 
-            foreach (var p in di.plugins.Controls<IPluginSettingsRenderer>())
+            foreach (var p in di.plugins.CreateControls<IPluginSettingsRenderer>())
             {
                 var c = new TabPage();
                 c.Controls.Add(p.Value);
@@ -671,29 +660,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.runeSettingsPage.SettingsList = (IReadOnlyList<ClassRuneSettings>)resources.GetObject("runeSettingsPage.SettingsList");
             this.runeSettingsPage.Size = new System.Drawing.Size(505, 476);
 
-            this.tabPageSettingsMisc.Controls.Add(this.UpdateGroup);
-            this.tabPageSettingsMisc.Dock = DockStyle.Fill;
-            this.tabPageSettingsMisc.TabIndex = 3;
-            this.tabPageSettingsMisc.Text = "Misc";
-
-            this.UpdateGroup.Controls.Add(this.CheckUpdatesButton);
-            this.UpdateGroup.Controls.Add(this.CheckUpdatesCheckBox);
-            this.UpdateGroup.Location = new System.Drawing.Point(0, 0);
-            this.UpdateGroup.Margin = new Padding(0);
-            this.UpdateGroup.Size = new System.Drawing.Size(277, 70);
-            this.UpdateGroup.Text = "Updates";
-
-            this.CheckUpdatesButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            this.CheckUpdatesButton.Location = new System.Drawing.Point(6, 42);
-            this.CheckUpdatesButton.Size = new System.Drawing.Size(265, 23);
-            this.CheckUpdatesButton.Text = "Check for updates now";
-            this.CheckUpdatesButton.Click += new System.EventHandler(this.CheckUpdatesButton_Click);
-
-            this.CheckUpdatesCheckBox.AutoSize = true;
-            this.CheckUpdatesCheckBox.Location = new System.Drawing.Point(10, 19);
-            this.CheckUpdatesCheckBox.Size = new System.Drawing.Size(148, 17);
-            this.CheckUpdatesCheckBox.Text = "Check for updates at start";
-
             this.mainPanel.ColumnCount = 1;
             this.mainPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             this.mainPanel.Controls.Add(this.VerticalSplitContainer, 0, 0);
@@ -756,9 +722,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.tabPageSettingsRunes.ResumeLayout(false);
-            this.tabPageSettingsMisc.ResumeLayout(false);
-            this.UpdateGroup.ResumeLayout(false);
-            this.UpdateGroup.PerformLayout();
             this.mainPanel.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -777,7 +740,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     || settings.FontName != GetFontName()
                     || settings.FontSize != (int)fontSizeNumeric.Value
                     || settings.FontSizeTitle != (int)titleFontSizeNumeric.Value
-                    || settings.CheckUpdates != CheckUpdatesCheckBox.Checked
                     || settings.DisplayName != chkDisplayName.Checked
                     || settings.DisplayGold != chkDisplayGold.Checked
                     || settings.DisplayDeathCounter != chkDisplayDeathCounter.Checked
@@ -902,8 +864,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             titleFontSizeNumeric.Value = settings.FontSizeTitle;
             numericUpDownPaddingInVerticalLayout.Value = settings.VerticalLayoutPadding;
 
-            CheckUpdatesCheckBox.Checked = settings.CheckUpdates;
-
             chkDisplayName.Checked = settings.DisplayName;
             chkDisplayGold.Checked = settings.DisplayGold;
             chkDisplayDeathCounter.Checked = settings.DisplayDeathCounter;
@@ -971,9 +931,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             var settings = di.settings.CurrentSettings.DeepCopy();
 
             settings.ClassRunes = runeSettingsPage.SettingsList ?? new List<ClassRuneSettings>();
-            settings.CheckUpdates = CheckUpdatesCheckBox.Checked;
 
-            foreach (var p in di.plugins.EditedSettings)
+            foreach (var p in di.plugins.GetEditedConfigs)
                 settings.Plugins[p.Key] = p.Value;
 
             settings.FontSize = (int)fontSizeNumeric.Value;
@@ -1080,11 +1039,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     SaveSettings(Path.Combine(SettingsFilePath, saveDialog.NewFileName) + ".conf");
                 }
             }
-        }
-
-        private void CheckUpdatesButton_Click(object sender, EventArgs e)
-        {
-            VersionChecker.ManuallyCheckForUpdate();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

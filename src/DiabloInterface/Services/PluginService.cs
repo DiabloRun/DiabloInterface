@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 using System.Windows.Forms;
+using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Plugin;
 
 namespace Zutatensuppe.DiabloInterface.Services
@@ -12,34 +13,57 @@ namespace Zutatensuppe.DiabloInterface.Services
     {
         private List<IPlugin> plugins;
 
-        internal static PluginService Create(List<Type> list, DiabloInterface di)
+        private ILogger Logger;
+
+        private DiabloInterface di;
+
+        public PluginService(DiabloInterface di, string pluginDir)
         {
-            var s = new PluginService(di);
-            s.plugins = list.ConvertAll((Type t) => Activator.CreateInstance(t, di) as IPlugin);
-            return s;
+            Logger = di.Logger(this);
+            this.di = di;
+
+            if (!Directory.Exists(pluginDir))
+                Directory.CreateDirectory(pluginDir);
+            List<Type> types = new List<Type>();
+            foreach (FileInfo file in new DirectoryInfo(pluginDir).GetFiles("*.dll"))
+            {
+                try
+                {
+                    var assembly = Assembly.LoadFile(file.FullName);
+                    types.AddRange(assembly.GetTypes());
+                } catch (Exception e)
+                {
+                    Logger.Error($"Plugin not loaded {file.FullName} {e.Message}");
+                }
+            }
+            plugins = types
+                .FindAll((Type t) => new List<Type>(t.GetInterfaces())
+                .Contains(typeof(IPlugin)))
+                .ConvertAll((Type t) => Activator.CreateInstance(t) as IPlugin);
         }
 
-        PluginService(DiabloInterface di)
-        {
-            di.settings.Changed += Settings_Changed;
-        }
+        public Dictionary<string, PluginConfig> GetEditedConfigs => plugins
+            .Select(s => new KeyValuePair<string, IPluginSettingsRenderer>(s.Name, s.GetRenderer<IPluginSettingsRenderer>()))
+            .Where(s => s.Value != null)
+            .ToDictionary(s => s.Key, s => s.Value.GetEditedConfig());
 
-        private void Settings_Changed(object sender, ApplicationSettingsEventArgs e)
-        {
-            foreach (IPlugin p in plugins)
-                p.Config = e.Settings.PluginConf(p.Name);
-        }
+        public bool EditedSettingsDirty => plugins
+            .Select(s => s.GetRenderer<IPluginSettingsRenderer>())
+            .Where(r => r != null)
+            .Any(r => r.IsDirty());
 
-        public Dictionary<string, PluginConfig> EditedSettings => plugins.ToDictionary(s => s.Name, s => s.GetRenderer<IPluginSettingsRenderer>().GetEditedConfig());
-        public bool EditedSettingsDirty => plugins.Any(s => s.GetRenderer<IPluginSettingsRenderer>().IsDirty());
-
-        public Dictionary<string, Control> Controls<T>() where T : IPluginRenderer
+        public Dictionary<string, Control> CreateControls<T>() where T : IPluginRenderer
         {
             var l = new Dictionary<string, Control>();
             foreach (IPlugin p in plugins)
             {
                 var r = p.GetRenderer<T>();
-                if (r != null) l.Add(p.Name, r.Render());
+                if (r != null)
+                {
+                    l.Add(p.Name, r.CreateControl());
+                    r.ApplyConfig();
+                    r.ApplyChanges();
+                }
             }
             return l;
         }
@@ -47,7 +71,15 @@ namespace Zutatensuppe.DiabloInterface.Services
         public void Initialize()
         {
             foreach (IPlugin p in plugins)
-                p.Initialize();
+                p.Initialize(di);
+
+            di.settings.Changed += Settings_Changed;
+        }
+
+        private void Settings_Changed(object sender, ApplicationSettingsEventArgs e)
+        {
+            foreach (IPlugin p in plugins)
+                p.Config = e.Settings.PluginConf(p.Name);
         }
 
         public void Reset()

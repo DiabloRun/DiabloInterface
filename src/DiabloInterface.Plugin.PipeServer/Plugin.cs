@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Reflection;
-using System.Windows.Forms;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers;
 using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server;
@@ -36,14 +34,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
         private Dictionary<string, DiabloInterfaceServer> Servers = new Dictionary<string, DiabloInterfaceServer>();
 
-        public Plugin(DiabloInterface di)
+        public void Initialize(DiabloInterface di)
         {
             Logger = di.Logger(this);
             this.di = di;
-        }
-
-        public void Initialize()
-        {
             Config = di.settings.CurrentSettings.PluginConf(Name);
         }
         

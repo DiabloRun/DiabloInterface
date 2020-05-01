@@ -5,37 +5,25 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 {
     class SettingsRenderer : IPluginSettingsRenderer
     {
+        private Plugin plugin;
+        private FlowLayoutPanel control;
         private TextBox textBoxPipeName;
-        private Label labelPipeName;
         private CheckBox chkPipeServerEnabled;
         private RichTextBox txtPipeServer;
-        private Label lblPipeServerStatus;
 
-        private FlowLayoutPanel pluginBox;
-
-        private Plugin p;
-        public SettingsRenderer(Plugin s)
+        public SettingsRenderer(Plugin plugin)
         {
-            this.p = s;
+            this.plugin = plugin;
         }
 
-        public Control Render()
+        public Control CreateControl()
         {
-            if (pluginBox == null || pluginBox.IsDisposed)
-                Init();
-            return pluginBox;
-        }
-
-        private void Init()
-        {
-            labelPipeName = new Label();
+            var labelPipeName = new Label();
             labelPipeName.AutoSize = true;
-            labelPipeName.Margin = new Padding(2);
             labelPipeName.Size = new Size(288, 20);
             labelPipeName.Text = "Pipe Name:";
 
             textBoxPipeName = new TextBox();
-            textBoxPipeName.Margin = new Padding(2);
             textBoxPipeName.Size = new Size(288, 20);
 
             chkPipeServerEnabled = new CheckBox();
@@ -43,7 +31,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             chkPipeServerEnabled.Size = new Size(288, 20);
             chkPipeServerEnabled.Text = "Enable";
 
-            lblPipeServerStatus = new Label();
+            var lblPipeServerStatus = new Label();
             lblPipeServerStatus.AutoSize = true;
             lblPipeServerStatus.Size = new Size(288, 20);
             lblPipeServerStatus.Text = "Status:";
@@ -53,23 +41,21 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             txtPipeServer.Size = new Size(288, 34);
             txtPipeServer.Text = "";
 
-            pluginBox = new FlowLayoutPanel();
-            pluginBox.FlowDirection = FlowDirection.TopDown;
-            pluginBox.Controls.Add(labelPipeName);
-            pluginBox.Controls.Add(textBoxPipeName);
-            pluginBox.Controls.Add(chkPipeServerEnabled);
-            pluginBox.Controls.Add(lblPipeServerStatus);
-            pluginBox.Controls.Add(txtPipeServer);
-            pluginBox.Dock = DockStyle.Fill;
-
-            ApplyConfig();
-            ApplyChanges();
+            control = new FlowLayoutPanel();
+            control.FlowDirection = FlowDirection.TopDown;
+            control.Controls.Add(labelPipeName);
+            control.Controls.Add(textBoxPipeName);
+            control.Controls.Add(chkPipeServerEnabled);
+            control.Controls.Add(lblPipeServerStatus);
+            control.Controls.Add(txtPipeServer);
+            control.Dock = DockStyle.Fill;
+            return control;
         }
 
         public bool IsDirty()
         {
-            return p.config.PipeName != textBoxPipeName.Text
-                || p.config.Enabled != chkPipeServerEnabled.Checked;
+            return plugin.config.PipeName != textBoxPipeName.Text
+                || plugin.config.Enabled != chkPipeServerEnabled.Checked;
         }
 
         public PluginConfig GetEditedConfig()
@@ -82,13 +68,13 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
         public void ApplyConfig()
         {
-            textBoxPipeName.Text = p.config.PipeName;
-            chkPipeServerEnabled.Checked = p.config.Enabled;
+            textBoxPipeName.Text = plugin.config.PipeName;
+            chkPipeServerEnabled.Checked = plugin.config.Enabled;
         }
 
         public void ApplyChanges()
         {
-            txtPipeServer.Text = p.StatusTextMsg();
+            txtPipeServer.Text = plugin.StatusTextMsg();
         }
     }
 }

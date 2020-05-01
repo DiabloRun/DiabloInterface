@@ -111,22 +111,22 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     return t;
                 }
 
-                var tabControl1 = new TabControl();
-                tabControl1.Controls.Add(tabpage(GameDifficulty.Normal));
-                tabControl1.Controls.Add(tabpage(GameDifficulty.Nightmare));
-                tabControl1.Controls.Add(tabpage(GameDifficulty.Hell));
-                tabControl1.Dock = DockStyle.Fill;
-                tabControl1.Location = new Point(3, 16);
-                tabControl1.SelectedIndex = 0;
-                tabControl1.Size = new Size(549, 536);
-                foreach (TabPage c in tabControl1.Controls)
+                var questTabs = new TabControl();
+                questTabs.Controls.Add(tabpage(GameDifficulty.Normal));
+                questTabs.Controls.Add(tabpage(GameDifficulty.Nightmare));
+                questTabs.Controls.Add(tabpage(GameDifficulty.Hell));
+                questTabs.Dock = DockStyle.Fill;
+                questTabs.Location = new Point(3, 16);
+                questTabs.SelectedIndex = 0;
+                questTabs.Size = new Size(549, 536);
+                foreach (TabPage c in questTabs.Controls)
                 {
                     c.UseVisualStyleBackColor = true;
                     c.Dock = DockStyle.Fill;
                 }
 
                 var quests = new TabPage();
-                quests.Controls.Add(tabControl1);
+                quests.Controls.Add(questTabs);
                 quests.Text = "Quest-Bits";
                 return quests;
             }
@@ -135,11 +135,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
             tabs.Dock = DockStyle.Fill;
             tabs.Controls.Add(itemsTab());
             tabs.Controls.Add(questsTab());
-            foreach (var pa in di.plugins.Controls<IPluginDebugRenderer>())
+            foreach (var p in di.plugins.CreateControls<IPluginDebugRenderer>())
             {
                 var tp = new TabPage();
-                tp.Controls.Add(pa.Value);
-                tp.Text = pa.Key;
+                tp.Controls.Add(p.Value);
+                tp.Text = p.Key;
                 tabs.Controls.Add(tp);
             }
 

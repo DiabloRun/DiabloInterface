@@ -137,7 +137,6 @@
     <Compile Include="Settings\JsonSettingsReader.cs" />
     <Compile Include="Settings\JsonSettingsWriter.cs" />
     <Compile Include="Settings\SettingsResolver.cs" />
-    <Compile Include="VersionChecker.cs" />
     <EmbeddedResource Include="Gui\Forms\SimpleSaveDialog.resx">
       <DependentUpon>SimpleSaveDialog.cs</DependentUpon>
     </EmbeddedResource>

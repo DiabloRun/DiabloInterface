@@ -4,42 +4,26 @@ namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
 {
     class SettingsRenderer : IPluginSettingsRenderer
     {
-        private Plugin p;
+        private Plugin plugin;
+        private CheckBox control;
 
-        private FlowLayoutPanel pluginBox;
-        private CheckBox chkBox;
-
-        public SettingsRenderer(Plugin p)
+        public SettingsRenderer(Plugin plugin)
         {
-            this.p = p;
+            this.plugin = plugin;
         }
 
-        public Control Render()
+        public Control CreateControl()
         {
-            if (pluginBox == null || pluginBox.IsDisposed)
-                Init();
-            return pluginBox;
-        }
-
-        private void Init()
-        {
-            chkBox = new CheckBox();
-            chkBox.AutoSize = true;
-            chkBox.Location = new System.Drawing.Point(10, 19);
-            chkBox.Size = new System.Drawing.Size(78, 17);
-            chkBox.Text = "Create files";
-
-            pluginBox = new FlowLayoutPanel();
-            pluginBox.FlowDirection = FlowDirection.TopDown;
-            pluginBox.Controls.Add(chkBox);
-
-            ApplyConfig();
-            ApplyChanges();
+            control = new CheckBox();
+            control.AutoSize = true;
+            control.Size = new System.Drawing.Size(78, 17);
+            control.Text = "Create files";
+            return control;
         }
 
         public void ApplyConfig()
         {
-            chkBox.Checked = p.config.Enabled;
+            control.Checked = plugin.config.Enabled;
         }
 
         public void ApplyChanges()
@@ -48,13 +32,13 @@ namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
 
         public bool IsDirty()
         {
-            return p.config.Enabled != chkBox.Checked;
+            return plugin.config.Enabled != control.Checked;
         }
 
         public PluginConfig GetEditedConfig()
         {
             var conf = new Config();
-            conf.Enabled = chkBox.Checked;
+            conf.Enabled = control.Checked;
             return conf;
         }
     }
