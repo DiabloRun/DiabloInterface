@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using Zutatensuppe.DiabloInterface.Core.Logging;
-using Zutatensuppe.DiabloInterface.Plugin;
 using Zutatensuppe.DiabloInterface.Services;
 
 namespace Zutatensuppe.DiabloInterface
@@ -30,11 +26,6 @@ namespace Zutatensuppe.DiabloInterface
 
             di.plugins.Initialize();
             return di;
-        }
-
-        public ILogger Logger(object obj)
-        {
-            return LogServiceLocator.Get(obj.GetType());
         }
 
         public void Dispose()

@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
@@ -16,14 +17,14 @@ namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
         {
             control = new CheckBox();
             control.AutoSize = true;
-            control.Size = new System.Drawing.Size(78, 17);
+            control.Size = new Size(78, 17);
             control.Text = "Create files";
             return control;
         }
 
         public void ApplyConfig()
         {
-            control.Checked = plugin.config.Enabled;
+            control.Checked = plugin.Config.Enabled;
         }
 
         public void ApplyChanges()
@@ -32,10 +33,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
 
         public bool IsDirty()
         {
-            return plugin.config.Enabled != control.Checked;
+            return plugin.Config.Enabled != control.Checked;
         }
 
-        public PluginConfig GetEditedConfig()
+        public IPluginConfig GetEditedConfig()
         {
             var conf = new Config();
             conf.Enabled = control.Checked;

@@ -1,8 +1,8 @@
-﻿namespace Zutatensuppe.DiabloInterface.Core.Extensions
-{
-    using System;
-    using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
+namespace Zutatensuppe.DiabloInterface.Core.Extensions
+{
     public static class EnumerableExtensions
     {
         public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)
@@ -11,9 +11,7 @@
             if (action == null) throw new ArgumentNullException(nameof(action));
 
             foreach (var item in items)
-            {
                 action(item);
-            }
         }
     }
 }

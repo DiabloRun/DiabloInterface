@@ -11,15 +11,14 @@ namespace Zutatensuppe.DiabloInterface.Services
 {
     public class PluginService : IDisposable
     {
-        private List<IPlugin> plugins;
+        private ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private ILogger Logger;
+        private List<IPlugin> plugins;
 
         private DiabloInterface di;
 
         public PluginService(DiabloInterface di, string pluginDir)
         {
-            Logger = di.Logger(this);
             this.di = di;
 
             if (!Directory.Exists(pluginDir))
@@ -42,7 +41,7 @@ namespace Zutatensuppe.DiabloInterface.Services
                 .ConvertAll((Type t) => Activator.CreateInstance(t) as IPlugin);
         }
 
-        public Dictionary<string, PluginConfig> GetEditedConfigs => plugins
+        public Dictionary<string, IPluginConfig> GetEditedConfigs => plugins
             .Select(s => new KeyValuePair<string, IPluginSettingsRenderer>(s.Name, s.GetRenderer<IPluginSettingsRenderer>()))
             .Where(s => s.Value != null)
             .ToDictionary(s => s.Key, s => s.Value.GetEditedConfig());
@@ -79,7 +78,7 @@ namespace Zutatensuppe.DiabloInterface.Services
         private void Settings_Changed(object sender, ApplicationSettingsEventArgs e)
         {
             foreach (IPlugin p in plugins)
-                p.Config = e.Settings.PluginConf(p.Name);
+                p.SetConfig(e.Settings.PluginConf(p.Name));
         }
 
         public void Reset()

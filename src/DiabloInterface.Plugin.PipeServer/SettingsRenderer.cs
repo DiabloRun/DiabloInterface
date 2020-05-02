@@ -54,11 +54,11 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
         public bool IsDirty()
         {
-            return plugin.config.PipeName != textBoxPipeName.Text
-                || plugin.config.Enabled != chkPipeServerEnabled.Checked;
+            return plugin.Config.PipeName != textBoxPipeName.Text
+                || plugin.Config.Enabled != chkPipeServerEnabled.Checked;
         }
 
-        public PluginConfig GetEditedConfig()
+        public IPluginConfig GetEditedConfig()
         {
             var conf = new Config();
             conf.PipeName = textBoxPipeName.Text;
@@ -68,8 +68,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
         public void ApplyConfig()
         {
-            textBoxPipeName.Text = plugin.config.PipeName;
-            chkPipeServerEnabled.Checked = plugin.config.Enabled;
+            textBoxPipeName.Text = plugin.Config.PipeName;
+            chkPipeServerEnabled.Checked = plugin.Config.Enabled;
         }
 
         public void ApplyChanges()

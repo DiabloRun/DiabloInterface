@@ -4,7 +4,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin
     {
         string Name { get; }
 
-        PluginConfig Config { get; set; }
+        void SetConfig(IPluginConfig config);
 
         void Initialize(DiabloInterface di);
 

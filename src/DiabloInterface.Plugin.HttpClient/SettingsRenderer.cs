@@ -70,12 +70,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
         public bool IsDirty()
         {
-            return plugin.config.Url != textBoxHttpClientUrl.Text
-                || plugin.config.Headers != txtHttpClientHeaders.Text
-                || plugin.config.Enabled != chkHttpClientEnabled.Checked;
+            return plugin.Config.Url != textBoxHttpClientUrl.Text
+                || plugin.Config.Headers != txtHttpClientHeaders.Text
+                || plugin.Config.Enabled != chkHttpClientEnabled.Checked;
         }
 
-        public PluginConfig GetEditedConfig()
+        public IPluginConfig GetEditedConfig()
         {
             var conf = new Config();
             conf.Enabled = chkHttpClientEnabled.Checked;
@@ -86,9 +86,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
         public void ApplyConfig()
         {
-            textBoxHttpClientUrl.Text = plugin.config.Url;
-            chkHttpClientEnabled.Checked = plugin.config.Enabled;
-            txtHttpClientHeaders.Text = plugin.config.Headers;
+            textBoxHttpClientUrl.Text = plugin.Config.Url;
+            chkHttpClientEnabled.Checked = plugin.Config.Enabled;
+            txtHttpClientHeaders.Text = plugin.Config.Headers;
         }
 
         public void ApplyChanges()

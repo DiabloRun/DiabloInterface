@@ -92,7 +92,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             AutoSplitToolbar.Dock = DockStyle.Fill;
             AutoSplitToolbar.Margin = new Padding(0);
 
-            autoSplitTable = new AutoSplitTable(plugin.config) { Dock = DockStyle.Fill };
+            autoSplitTable = new AutoSplitTable(plugin.Config) { Dock = DockStyle.Fill };
 
             control = new TableLayoutPanel();
             control.ColumnCount = 1;
@@ -113,12 +113,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 
         public void ApplyConfig()
         {
-            EnabledCheckbox.Checked = plugin.config.Enabled;
-            autoSplitHotkeyControl.ForeColor = plugin.config.Hotkey.ToKeys() == Keys.None ? Color.Red : Color.Black;
-            autoSplitHotkeyControl.Value = plugin.config.Hotkey;
-            autoSplitResetHotkeyControl.ForeColor = plugin.config.ResetHotkey.ToKeys() == Keys.None ? Color.Red : Color.Black;
-            autoSplitResetHotkeyControl.Value = plugin.config.ResetHotkey;
-            autoSplitTable.Set(plugin.config);
+            EnabledCheckbox.Checked = plugin.Config.Enabled;
+            autoSplitHotkeyControl.ForeColor = plugin.Config.Hotkey.ToKeys() == Keys.None ? Color.Red : Color.Black;
+            autoSplitHotkeyControl.Value = plugin.Config.Hotkey;
+            autoSplitResetHotkeyControl.ForeColor = plugin.Config.ResetHotkey.ToKeys() == Keys.None ? Color.Red : Color.Black;
+            autoSplitResetHotkeyControl.Value = plugin.Config.ResetHotkey;
+            autoSplitTable.Set(plugin.Config);
         }
 
         public void ApplyChanges()
@@ -161,13 +161,13 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         public bool IsDirty()
         {
             return autoSplitTable.IsDirty
-                || plugin.config.Enabled != EnabledCheckbox.Checked
-                || plugin.config.Hotkey.ToKeys() != autoSplitHotkeyControl.Value.ToKeys()
-                || plugin.config.ResetHotkey.ToKeys() != autoSplitResetHotkeyControl.Value.ToKeys()
+                || plugin.Config.Enabled != EnabledCheckbox.Checked
+                || plugin.Config.Hotkey.ToKeys() != autoSplitHotkeyControl.Value.ToKeys()
+                || plugin.Config.ResetHotkey.ToKeys() != autoSplitResetHotkeyControl.Value.ToKeys()
             ;
         }
 
-        public PluginConfig GetEditedConfig()
+        public IPluginConfig GetEditedConfig()
         {
             var conf = new Config();
             conf.Enabled = EnabledCheckbox.Checked;

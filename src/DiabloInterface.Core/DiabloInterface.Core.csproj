@@ -49,7 +49,6 @@
   <ItemGroup>
     <Compile Include="Extensions\DeepCopyExtension.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
-    <Compile Include="Extensions\EnumFlagExtension.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\Log4NetLogger.cs" />
     <Compile Include="Logging\LogServiceLocator.cs" />

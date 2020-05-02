@@ -1,60 +1,38 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 {
-    public class Plugin : IPlugin
+    public class Plugin : BasePlugin
     {
-        public string Name => "Updater";
+        public override string Name => "Updater";
 
         private readonly string VersionFile = "last_found_version.txt";
+
         private VersionChecker versionChecker;
 
-        internal Config config { get; private set; } = new Config();
+        internal Config Config { get; private set; } = new Config();
 
-        internal Dictionary<Type, Type> RendererMap => new Dictionary<Type, Type> {
-            {typeof(IPluginSettingsRenderer), typeof(SettingsRenderer)},
-        };
+        protected override Type SettingsRendererType => typeof(SettingsRenderer);
 
-        public PluginConfig Config { get => config; set { config = new Config(value); } }
+        public override void SetConfig(IPluginConfig c)
+        {
+            Config = c as Config;
+        }
 
-        public void Dispose()
+        public override void Dispose()
         {
         }
 
-        Dictionary<Type, IPluginRenderer> renderers = new Dictionary<Type, IPluginRenderer>();
-        private void ApplyChanges()
-        {
-            foreach (var p in renderers)
-                p.Value.ApplyChanges();
-        }
-
-        private void ApplyConfig()
-        {
-            foreach (var p in renderers)
-                p.Value.ApplyConfig();
-        }
-
-        public T GetRenderer<T>() where T : IPluginRenderer
-        {
-            var type = typeof(T);
-            if (!RendererMap.ContainsKey(type))
-                return default(T);
-            if (!renderers.ContainsKey(type))
-                renderers[type] = (T)Activator.CreateInstance(RendererMap[type], this);
-            return (T)renderers[type];
-        }
-
-        public void Initialize(DiabloInterface di)
+        public override void Initialize(DiabloInterface di)
         {
             versionChecker = new VersionChecker();
-            Config = di.settings.CurrentSettings.PluginConf(Name);
+            SetConfig(di.settings.CurrentSettings.PluginConf(Name));
             AutomaticallyCheckVersion();
         }
 
-        public void Reset()
+        public override void Reset()
         {
         }
 
@@ -72,7 +50,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 
         internal void AutomaticallyCheckVersion()
         {
-            if (!config.Enabled) return;
+            if (!Config.Enabled) return;
 
             var r = versionChecker.CheckForUpdate(LastFoundVersion, false);
             LastFoundVersion = r.updateUrl;

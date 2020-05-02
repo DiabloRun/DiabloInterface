@@ -40,7 +40,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             Color colorOn = Color.Green;
             Color colorOff = Color.Red;
             control.Controls.Clear();
-            foreach (AutoSplit autoSplit in plugin.config.Splits)
+            foreach (AutoSplit autoSplit in plugin.Config.Splits)
             {
                 var label = new Label();
                 label.SetBounds(0, y, control.Bounds.Width, height);

@@ -3,7 +3,6 @@ namespace Zutatensuppe.DiabloInterface.Settings
     using System;
     using System.Collections.Generic;
     using System.Drawing;
-    using System.Runtime.Serialization;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using Zutatensuppe.D2Reader;
@@ -15,8 +14,8 @@ namespace Zutatensuppe.DiabloInterface.Settings
         public static ApplicationSettings Default => new ApplicationSettings();
 
         // Plugin settings
-        public Dictionary<string, PluginConfig> Plugins { get; set; } = new Dictionary<string, PluginConfig>();
-        virtual public PluginConfig PluginConf(string type) => Plugins.ContainsKey(type) ? Plugins[type] : null;
+        public Dictionary<string, IPluginConfig> Plugins { get; set; } = new Dictionary<string, IPluginConfig>();
+        virtual public IPluginConfig PluginConf(string type) => Plugins.ContainsKey(type) ? Plugins[type] : null;
 
         // Rune settings (should be plugin?)
         public IReadOnlyList<ClassRuneSettings> ClassRunes { get; set; } = new List<ClassRuneSettings>();

@@ -7,42 +7,27 @@ using System.Threading.Tasks;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct.Item;
-using Zutatensuppe.DiabloInterface.Core.Logging;
 using Newtonsoft.Json;
+using Zutatensuppe.DiabloInterface.Core.Logging;
+using System.Reflection;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 {
-    public class Plugin : IPlugin
+    public class Plugin : BasePlugin
     {
-        public string Name => "HttpClient";
+        protected readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        internal Config config { get; private set; } = new Config();
+        public override string Name => "HttpClient";
 
-        public PluginConfig Config { get => config; set {
-            config = new Config(value);
-            ApplyConfig();
-
-            Logger.Info(config.Url);
-
-            Stop();
-            if (config.Enabled)
-                CreateServer(config.Url, config.Headers);
-        }}
-
-        internal Dictionary<Type, Type> RendererMap => new Dictionary<Type, Type> {
-            {typeof(IPluginSettingsRenderer), typeof(SettingsRenderer)},
-        };
-
-        private ILogger Logger;
-
-        private DiabloInterface di;
+        protected override Type SettingsRendererType => typeof(SettingsRenderer);
 
         private static readonly System.Net.Http.HttpClient Client = new System.Net.Http.HttpClient();
+
         private bool SendingData = false;
-        private string Url;
-        private string Headers;
 
         internal string content;
+
+        internal Config Config { get; private set; } = new Config();
 
         private RequestBody PrevData = new RequestBody()
         {
@@ -50,7 +35,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             Quests = Quests.DefaultCompleteQuestIds,
         };
         
-        private List<string> BodyProperties = new List<string>()
+        private readonly List<string> BodyProperties = new List<string>()
         {
             "Area",
             "Difficulty",
@@ -79,20 +64,22 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             "IncreasedAttackSpeed",
             "MagicFind"
         };
-        
-        public void Initialize(DiabloInterface di)
+
+        public override void SetConfig(IPluginConfig c)
         {
-            Logger = di.Logger(this);
-            this.di = di;
-            Config = di.settings.CurrentSettings.PluginConf(Name);
-            di.game.DataRead += Game_DataRead;
+            Config = c as Config;
+            ApplyConfig();
+
+            if (Config.Enabled)
+                Logger.Info($"HTTP client enabled: {Config.Url}");
+            else
+                Logger.Info("HTTP client disabled");
         }
 
-        private void CreateServer(string url, string headers)
+        public override void Initialize(DiabloInterface di)
         {
-            Logger.Info($"Creating HTTP CLIENT: {url}");
-            Url = url;
-            Headers = headers;
+            SetConfig(di.settings.CurrentSettings.PluginConf(Name));
+            di.game.DataRead += Game_DataRead;
         }
 
         private class RequestBody
@@ -168,7 +155,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             var noChanges = true;
             var diff = new RequestBody()
             {
-                Headers = Headers,
+                Headers = Config.Headers,
                 Name = newData.Name,
                 RemovedItems = new List<BodyLocation>(),
                 AddedItems = new List<ItemInfo>(),
@@ -244,7 +231,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
             try
             {
-                var response = await Client.PostAsync(Url, new StringContent(json, Encoding.UTF8, "application/json"));
+                var response = await Client.PostAsync(Config.Url, new StringContent(json, Encoding.UTF8, "application/json"));
                 content = await response.Content.ReadAsStringAsync();
             }
             catch (HttpRequestException)
@@ -260,10 +247,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
         private void Game_DataRead(object sender, DataReadEventArgs e)
         {
-            if (SendingData)
-            {
-                return;
-            }
+            if (!Config.Enabled) return;
+
+            if (SendingData) return;
 
             var newData = new RequestBody()
             {
@@ -309,41 +295,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             PrevData = newData;
         }
 
-        public void Stop()
-        {
-            Logger.Info("Stopping HTTP client");
-        }
-
-        public void Reset()
+        public override void Reset()
         {
         }
 
-
-        public void Dispose()
+        public override void Dispose()
         {
-        }
-
-        Dictionary<Type, IPluginRenderer> renderers = new Dictionary<Type, IPluginRenderer>();
-        private void ApplyChanges()
-        {
-            foreach (var p in renderers)
-                p.Value.ApplyChanges();
-        }
-
-        private void ApplyConfig()
-        {
-            foreach (var p in renderers)
-                p.Value.ApplyConfig();
-        }
-
-        public T GetRenderer<T>() where T : IPluginRenderer
-        {
-            var type = typeof(T);
-            if (!RendererMap.ContainsKey(type))
-                return default(T);
-            if (!renderers.ContainsKey(type))
-                renderers[type] = (T)Activator.CreateInstance(RendererMap[type], this);
-            return (T)renderers[type];
         }
     }
 }

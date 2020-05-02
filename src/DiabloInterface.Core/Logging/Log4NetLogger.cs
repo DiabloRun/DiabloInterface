@@ -8,69 +8,21 @@ namespace Zutatensuppe.DiabloInterface.Core.Logging
     {
         readonly ILog logger;
 
-        public Log4NetLogger(Type type)
-        {
-            logger = LogManager.GetLogger(type);
-        }
+        public Log4NetLogger(Type type) => logger = LogManager.GetLogger(type);
+        public Log4NetLogger(string name) => logger = LogManager.GetLogger(name);
 
-        public Log4NetLogger(string name)
-        {
-            logger = LogManager.GetLogger(name);
-        }
+        public void Debug(object message) => logger.Debug(message);
+        public void Info(object message) => logger.Info(message);
+        public void Warn(object message) => logger.Warn(message);
+        public void Error(object message) => logger.Error(message);
+        public void Fatal(object message) => logger.Fatal(message);
 
-        public void Debug(object message)
-        {
-            logger.Debug(message);
-        }
+        public void Debug(object message, Exception e) => logger.Debug(message, e);
+        public void Info(object message, Exception e) => logger.Info(message, e);
+        public void Warn(object message, Exception e) => logger.Warn(message, e);
+        public void Error(object message, Exception e) => logger.Error(message, e);
+        public void Fatal(object message, Exception e) => logger.Fatal(message, e);
 
-        public void Info(object message)
-        {
-            logger.Info(message);
-        }
-
-        public void Warn(object message)
-        {
-            logger.Warn(message);
-        }
-
-        public void Error(object message)
-        {
-            logger.Error(message);
-        }
-
-        public void Fatal(object message)
-        {
-            logger.Fatal(message);
-        }
-
-        public void Debug(object message, Exception e)
-        {
-            logger.Debug(message, e);
-        }
-
-        public void Info(object message, Exception e)
-        {
-            logger.Info(message, e);
-        }
-
-        public void Warn(object message, Exception e)
-        {
-            logger.Warn(message, e);
-        }
-
-        public void Error(object message, Exception e)
-        {
-            logger.Error(message, e);
-        }
-
-        public void Fatal(object message, Exception e)
-        {
-            logger.Fatal(message, e);
-        }
-
-        public static void Initialize()
-        {
-            XmlConfigurator.Configure();
-        }
+        public static void Initialize() => XmlConfigurator.Configure();
     }
 }

@@ -7,38 +7,39 @@ using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 {
-    public class Plugin : IPlugin
+    public class Plugin : BasePlugin
     {
-        public string Name => "PipeServer";
+        protected readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        internal Config config { get; private set; } = new Config();
+        public override string Name => "PipeServer";
 
-        public PluginConfig Config { get => config; set {
-            config = new Config(value);
-            ApplyConfig();
-            
-            Stop();
+        internal Config Config { get; private set; } = new Config();
 
-            if (config.Enabled)
-                CreateServer(config.PipeName);
-        }}
+        protected override Type SettingsRendererType => typeof(SettingsRenderer);
 
-        internal Dictionary<Type, Type> RendererMap => new Dictionary<Type, Type> {
-            {typeof(IPluginSettingsRenderer), typeof(SettingsRenderer)},
-            {typeof(IPluginDebugRenderer), typeof(DebugRenderer)},
-        };
-
-        private ILogger Logger;
+        protected override Type DebugRendererType => typeof(DebugRenderer);
 
         private DiabloInterface di;
 
         private Dictionary<string, DiabloInterfaceServer> Servers = new Dictionary<string, DiabloInterfaceServer>();
 
-        public void Initialize(DiabloInterface di)
+        public override void SetConfig(IPluginConfig c)
         {
-            Logger = di.Logger(this);
+            Config = c as Config;
+            ApplyConfig();
+
+            Stop();
+
+            ApplyChanges();
+
+            if (Config.Enabled)
+                CreateServer(Config.PipeName);
+        }
+
+        public override void Initialize(DiabloInterface di)
+        {
             this.di = di;
-            Config = di.settings.CurrentSettings.PluginConf(Name);
+            SetConfig(di.settings.CurrentSettings.PluginConf(Name));
         }
         
         private void CreateServer(string pipeName)
@@ -65,15 +66,13 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
                 s.Value.Stop();
 
             Servers.Clear();
-
-            ApplyChanges();
         }
 
-        public void Reset()
+        public override void Reset()
         {
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Stop();
         }
@@ -84,29 +83,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             foreach (var s in Servers)
                 txt += s.Key + ": " + (s.Value.Running ? "RUNNING" : "NOT RUNNING") + "\n";
             return txt;
-        }
-        
-        Dictionary<Type, IPluginRenderer> renderers = new Dictionary<Type, IPluginRenderer>();
-        private void ApplyChanges()
-        {
-            foreach (var p in renderers)
-                p.Value.ApplyChanges();
-        }
-
-        private void ApplyConfig()
-        {
-            foreach (var p in renderers)
-                p.Value.ApplyConfig();
-        }
-
-        public T GetRenderer<T>() where T : IPluginRenderer
-        {
-            var type = typeof(T);
-            if (!RendererMap.ContainsKey(type))
-                return default(T);
-            if (!renderers.ContainsKey(type))
-                renderers[type] = (T)Activator.CreateInstance(RendererMap[type], this);
-            return (T)renderers[type];
         }
     }
 }

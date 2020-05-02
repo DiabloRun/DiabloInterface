@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Zutatensuppe.D2Reader;
@@ -11,59 +11,55 @@ using Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys;
 [assembly: InternalsVisibleTo("DiabloInterface.Plugin.Autosplits.Test")]
 namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 {
-    public class Plugin : IPlugin
+    public class Plugin : BasePlugin
     {
-        public string Name => "Autosplit";
+        protected readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        internal Config config { get; private set; } = new Config();
+        public override string Name => "Autosplit";
 
-        internal Dictionary<Type, Type> RendererMap => new Dictionary<Type, Type> {
-            {typeof(IPluginSettingsRenderer), typeof(SettingsRenderer)},
-            {typeof(IPluginDebugRenderer), typeof(DebugRenderer)},
-        };
+        protected override Type SettingsRendererType => typeof(SettingsRenderer);
 
-        public PluginConfig Config { get => config; set {
-            config = new Config(value);
-            ApplyConfig();
-            LogAutoSplits();
-        }}
+        protected override Type DebugRendererType => typeof(DebugRenderer);
 
-        private ILogger Logger;
+        internal Config Config { get; private set; } = new Config();
 
         public readonly KeyService keyService = new KeyService();
 
-        private DiabloInterface di;
-
-        public void Initialize(DiabloInterface di)
+        public override void SetConfig(IPluginConfig c)
         {
-            Logger = di.Logger(this);
-            Logger.Info("Creating auto split service.");
-            this.di = di;
+            Config = c as Config;
+            ApplyConfig();
+            LogAutoSplits();
+        }
 
-            Config = di.settings.CurrentSettings.PluginConf(Name);
+        public override void Initialize(DiabloInterface di)
+        {
+            Logger.Info("Creating auto split service.");
+
+            SetConfig(di.settings.CurrentSettings.PluginConf(Name));
             di.game.CharacterCreated += Game_CharacterCreated;
             di.game.DataRead += Game_DataRead;
         }
 
         private void Game_CharacterCreated(object sender, CharacterCreatedEventArgs e)
         {
+            if (!Config.Enabled) return;
+
             Logger.Info($"A new character was created. Auto splits enabled for {e.Character.Name}");
             ResetAutoSplits();
-
-            if (config.Enabled)
-            {
-                keyService.TriggerHotkey(config.ResetHotkey.ToKeys());
-            }
+            keyService.TriggerHotkey(Config.ResetHotkey.ToKeys());
         }
 
         private void Game_DataRead(object sender, DataReadEventArgs e)
         {
+            if (!Config.Enabled) return;
+
             DoAutoSplits(e);
         }
 
         private void LogAutoSplits()
         {
-            if (config.Splits.Count == 0)
+            if (Config.Splits.Count == 0)
             {
                 Logger.Info("No auto splits configured.");
                 return;
@@ -73,7 +69,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             logMessage.Append("Configured auto splits:");
 
             int i = 0;
-            foreach (var split in config.Splits)
+            foreach (var split in Config.Splits)
             {
                 logMessage.AppendLine();
                 logMessage.Append(AutoSplitString(i++, split));
@@ -94,17 +90,17 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             // add another autosplit:
             // - area (stony fields)
             // should not trigger another split automatically, but does
-            if (!config.Enabled || !e.Character.IsNewChar)
+            if (!e.Character.IsNewChar)
                 return;
 
             int i = 0;
-            foreach (var split in config.Splits)
+            foreach (var split in Config.Splits)
             {
                 if (!IsCompleteableAutoSplit(split, e))
                     continue;
 
                 split.IsReached = true;
-                keyService.TriggerHotkey(config.Hotkey.ToKeys());
+                keyService.TriggerHotkey(Config.Hotkey.ToKeys());
                 Logger.Info($"AutoSplit reached: {AutoSplitString(i++, split)}");
             }
             ApplyChanges();
@@ -145,43 +141,19 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 
         public void ResetAutoSplits()
         {
-            foreach (var autoSplit in config.Splits)
-            {
+            foreach (var autoSplit in Config.Splits)
                 autoSplit.IsReached = false;
-            }
+
             ApplyChanges();
         }
 
-        public void Reset()
+        public override void Reset()
         {
             ResetAutoSplits();
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
-        }
-
-        Dictionary<Type, IPluginRenderer> renderers = new Dictionary<Type, IPluginRenderer>();
-        private void ApplyChanges()
-        {
-            foreach (var p in renderers)
-                p.Value.ApplyChanges();
-        }
-
-        private void ApplyConfig()
-        {
-            foreach (var p in renderers)
-                p.Value.ApplyConfig();
-        }
-
-        public T GetRenderer<T>() where T : IPluginRenderer
-        {
-            var type = typeof(T);
-            if (!RendererMap.ContainsKey(type))
-                return default(T);
-            if (!renderers.ContainsKey(type))
-                renderers[type] = (T)Activator.CreateInstance(RendererMap[type], this);
-            return (T)renderers[type];
         }
     }
 }

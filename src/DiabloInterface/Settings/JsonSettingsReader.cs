@@ -33,7 +33,10 @@ namespace Zutatensuppe.DiabloInterface.Settings
             try
             {
                 var jsonData = File.ReadAllText(filename);
-                return JsonConvert.DeserializeObject<ApplicationSettings>(jsonData, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+                return JsonConvert.DeserializeObject<ApplicationSettings>(
+                    jsonData,
+                    new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto }
+                );
             }
             catch (JsonException)
             {

@@ -1,80 +1,52 @@
 using System;
+using System.Reflection;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.DiabloInterface.Core.Logging;
-using System.Collections.Generic;
 using Zutatensuppe.DiabloInterface.Plugin.FileWriter.Writer;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
 {
-    public class Plugin : IPlugin
+    public class Plugin : BasePlugin
     {
-        public string Name => "Filewriter";
+        protected readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        internal Config config { get; private set; } = new Config();
+        public override string Name => "Filewriter";
 
-        public PluginConfig Config { get => config; set {
-            config = new Config(value);
-            ApplyConfig();
-        }}
+        internal Config Config { get; private set; } = new Config();
 
-        internal Dictionary<Type, Type> RendererMap => new Dictionary<Type, Type> {
-            {typeof(IPluginSettingsRenderer), typeof(SettingsRenderer)},
-        };
+        protected override Type SettingsRendererType => typeof(SettingsRenderer);
 
-        private ILogger Logger;
-
-        DiabloInterface di;
-
-        public void Initialize(DiabloInterface di)
+        public override void SetConfig(IPluginConfig c)
         {
-            Logger = di.Logger(this);
-            Logger.Info("Creating character stat file writer service.");
-            this.di = di;
+            Config = c as Config;
+            ApplyConfig();
+        }
 
-            Config = di.settings.CurrentSettings.PluginConf(Name);
+        public override void Initialize(DiabloInterface di)
+        {
+            Logger.Info("Creating character stat file writer service.");
+
+            SetConfig(di.settings.CurrentSettings.PluginConf(Name));
             di.game.DataRead += Game_DataRead;
         }
 
         private void Game_DataRead(object sender, DataReadEventArgs e)
         {
-            if (!config.Enabled) return;
+            if (!Config.Enabled) return;
 
             var fileWriter = new TextFileWriter();
-            var statWriter = new CharacterStatFileWriter(fileWriter, config.FileFolder);
+            var statWriter = new CharacterStatFileWriter(fileWriter, Config.FileFolder);
             var stats = new CharacterStats(e.Character);
 
             statWriter.WriteFiles(stats);
         }
 
-        public void Reset()
+        public override void Reset()
         {
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
-        }
-        
-        Dictionary<Type, IPluginRenderer> renderers = new Dictionary<Type, IPluginRenderer>();
-        private void ApplyChanges()
-        {
-            foreach (var p in renderers)
-                p.Value.ApplyChanges();
-        }
-
-        private void ApplyConfig()
-        {
-            foreach (var p in renderers)
-                p.Value.ApplyConfig();
-        }
-
-        public T GetRenderer<T>() where T : IPluginRenderer
-        {
-            var type = typeof(T);
-            if (!RendererMap.ContainsKey(type))
-                return default(T);
-            if (!renderers.ContainsKey(type))
-                renderers[type] = (T)Activator.CreateInstance(RendererMap[type], this);
-            return (T)renderers[type];
         }
     }
 }

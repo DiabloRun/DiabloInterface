@@ -16,7 +16,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin
     public interface IPluginSettingsRenderer : IPluginRenderer
     {
         bool IsDirty();
-        PluginConfig GetEditedConfig();
+        IPluginConfig GetEditedConfig();
     }
 
     public interface IPluginDebugRenderer : IPluginRenderer

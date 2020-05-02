@@ -1,16 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Zutatensuppe.DiabloInterface.Core.Logging;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 {
     public class Cache
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
         public long Miss { get; private set; } = 0;
         public long Hit { get; private set; } = 0;
 
@@ -28,7 +22,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
         {
             if (!cache.ContainsKey(key))
             {
-                // Logger.Info($"Cache miss {key}");
                 Miss++;
                 return null;
             }
@@ -36,13 +29,11 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             CacheEntry entry = cache[key];
             if (DateTime.Now.CompareTo(entry.expires) >= 0)
             {
-                // Logger.Info($"Cache expired {key}");
                 Miss++;
                 cache.Remove(key);
                 return null;
             }
 
-            // Logger.Info($"Cache hit {key}");
             Hit++;
             return entry.value;
         }

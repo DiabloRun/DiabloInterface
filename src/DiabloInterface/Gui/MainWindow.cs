@@ -1,21 +1,22 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+
+using Zutatensuppe.D2Reader.Models;
+using Zutatensuppe.DiabloInterface.Services;
+using Zutatensuppe.DiabloInterface.Settings;
+using Zutatensuppe.DiabloInterface.Core.Logging;
+using Zutatensuppe.DiabloInterface.Gui.Controls;
+using Zutatensuppe.DiabloInterface.Gui.Forms;
+using System.Reflection;
+
 namespace Zutatensuppe.DiabloInterface.Gui
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Windows.Forms;
-
-    using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Services;
-    using Zutatensuppe.DiabloInterface.Settings;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
-    using Zutatensuppe.DiabloInterface.Gui.Controls;
-    using Zutatensuppe.DiabloInterface.Gui.Forms;
-
     public class MainWindow : WsExCompositedForm
     {
-        private readonly ILogger Logger;
+        private readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly DiabloInterface di;
 
         private ToolStripMenuItem loadConfigMenuItem;
@@ -26,7 +27,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
         {
             this.di = di;
             
-            Logger = di.Logger(this);
             Logger.Info("Creating main window.");
 
             RegisterServiceEventHandlers();
