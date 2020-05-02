@@ -21,19 +21,11 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
             Config = c as Config;
         }
 
-        public override void Dispose()
-        {
-        }
-
         public override void Initialize(DiabloInterface di)
         {
             versionChecker = new VersionChecker();
             SetConfig(di.settings.CurrentSettings.PluginConf(Name));
             AutomaticallyCheckVersion();
-        }
-
-        public override void Reset()
-        {
         }
 
         internal string LastFoundVersion {

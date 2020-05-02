@@ -11,8 +11,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin
         public abstract string Name { get; }
         public abstract void SetConfig(IPluginConfig config);
         public abstract void Initialize(DiabloInterface di);
-        public abstract void Reset();
-        public abstract void Dispose();
+        public virtual void Reset() { }
+        public virtual void Dispose() { }
 
         Dictionary<Type, IPluginRenderer> renderers = new Dictionary<Type, IPluginRenderer>();
         protected void ApplyChanges()

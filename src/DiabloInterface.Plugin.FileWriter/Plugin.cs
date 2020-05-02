@@ -40,13 +40,5 @@ namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
 
             statWriter.WriteFiles(stats);
         }
-
-        public override void Reset()
-        {
-        }
-
-        public override void Dispose()
-        {
-        }
     }
 }

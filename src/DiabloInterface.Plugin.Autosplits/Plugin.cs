@@ -151,9 +151,5 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         {
             ResetAutoSplits();
         }
-
-        public override void Dispose()
-        {
-        }
     }
 }

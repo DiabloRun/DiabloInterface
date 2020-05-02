@@ -294,13 +294,5 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
             PrevData = newData;
         }
-
-        public override void Reset()
-        {
-        }
-
-        public override void Dispose()
-        {
-        }
     }
 }

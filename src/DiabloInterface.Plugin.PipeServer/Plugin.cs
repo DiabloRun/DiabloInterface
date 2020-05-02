@@ -68,10 +68,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             Servers.Clear();
         }
 
-        public override void Reset()
-        {
-        }
-
         public override void Dispose()
         {
             Stop();
