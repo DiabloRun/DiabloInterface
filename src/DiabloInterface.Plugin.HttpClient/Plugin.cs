@@ -15,7 +15,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 {
     public class Plugin : BasePlugin
     {
-        protected readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
         public override string Name => "HttpClient";
 

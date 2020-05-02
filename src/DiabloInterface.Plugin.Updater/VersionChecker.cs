@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Zutatensuppe.DiabloInterface.Core.Logging;
@@ -16,15 +17,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 
     internal class VersionChecker
     {
+        private readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+
         const string ReleasesUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases";
         const string ReleasesLatestUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases/latest";
-
-        private ILogger Logger;
-
-        internal VersionChecker()
-        {
-            Logger = LogServiceLocator.Get(typeof(VersionChecker));
-        }
 
         internal VersionCheckerResult CheckForUpdate(string lastFoundVersion, bool userTriggered)
         {

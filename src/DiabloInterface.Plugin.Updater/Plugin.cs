@@ -10,7 +10,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 
         private readonly string VersionFile = "last_found_version.txt";
 
-        private VersionChecker versionChecker;
+        private VersionChecker versionChecker = new VersionChecker();
 
         internal Config Config { get; private set; } = new Config();
 
@@ -23,12 +23,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 
         public override void Initialize(DiabloInterface di)
         {
-            versionChecker = new VersionChecker();
             SetConfig(di.settings.CurrentSettings.PluginConf(Name));
             AutomaticallyCheckVersion();
         }
 
-        internal string LastFoundVersion {
+        private string LastFoundVersion
+        {
             get => File.Exists(VersionFile) ? File.ReadAllText(VersionFile) : null;
             set { if (value != null) { File.WriteAllText(VersionFile, value); } }
         }
@@ -40,7 +40,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
             Ask(r);
         }
 
-        internal void AutomaticallyCheckVersion()
+        private void AutomaticallyCheckVersion()
         {
             if (!Config.Enabled) return;
 
