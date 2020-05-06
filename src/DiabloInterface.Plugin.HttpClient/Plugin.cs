@@ -19,7 +19,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
         public override string Name => "HttpClient";
 
-        protected override Type SettingsRendererType => typeof(SettingsRenderer);
+        protected override Type ConfigEditRendererType => typeof(ConfigEditRenderer);
 
         private static readonly System.Net.Http.HttpClient Client = new System.Net.Http.HttpClient();
 
@@ -78,7 +78,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
         public override void Initialize(DiabloInterface di)
         {
-            SetConfig(di.settings.CurrentSettings.PluginConf(Name));
+            SetConfig(di.configService.CurrentConfig.PluginConf(Name));
             di.game.DataRead += Game_DataRead;
         }
 

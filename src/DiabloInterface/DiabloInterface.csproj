@@ -95,9 +95,6 @@
     <Compile Include="Gui\Forms\SimpleSaveDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Gui\Forms\SimpleSaveDialog.Designer.cs">
-      <DependentUpon>SimpleSaveDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Controls\HorizontalLayout.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -123,30 +120,15 @@
     <Compile Include="Plugin\BasePlugin.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Gui\SettingsWindow.cs">
+    <Compile Include="Gui\ConfigWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Services\GameService.cs" />
     <Compile Include="Services\IGameService.cs" />
-    <Compile Include="Services\ISettingsService.cs" />
+    <Compile Include="Services\IConfigService.cs" />
     <Compile Include="Services\PluginService.cs" />
-    <Compile Include="Services\SettingsService.cs" />
-    <Compile Include="Settings\ApplicationSettings.cs" />
-    <Compile Include="Settings\IApplicationStorage.cs" />
-    <Compile Include="Settings\ISettingsReader.cs" />
-    <Compile Include="Settings\ISettingsWriter.cs" />
-    <Compile Include="Settings\JsonSettingsReader.cs" />
-    <Compile Include="Settings\JsonSettingsWriter.cs" />
-    <Compile Include="Settings\SettingsResolver.cs" />
-    <EmbeddedResource Include="Gui\Forms\SimpleSaveDialog.resx">
-      <DependentUpon>SimpleSaveDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\DebugWindow.resx">
-      <DependentUpon>DebugWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\MainWindow.resx">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-    </EmbeddedResource>
+    <Compile Include="Services\ConfigService.cs" />
+    <Compile Include="ApplicationConfig.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -157,10 +139,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Gui\SettingsWindow.resx">
-      <DependentUpon>SettingsWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <None Include="App.manifest">
       <SubType>Designer</SubType>
     </None>

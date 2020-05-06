@@ -14,7 +14,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
 
         internal Config Config { get; private set; } = new Config();
 
-        protected override Type SettingsRendererType => typeof(SettingsRenderer);
+        protected override Type ConfigEditRendererType => typeof(ConfigEditRenderer);
 
         public override void SetConfig(IPluginConfig c)
         {
@@ -26,7 +26,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
         {
             Logger.Info("Creating character stat file writer service.");
 
-            SetConfig(di.settings.CurrentSettings.PluginConf(Name));
+            SetConfig(di.configService.CurrentConfig.PluginConf(Name));
             di.game.DataRead += Game_DataRead;
         }
 

@@ -7,7 +7,6 @@ using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits;
 using Zutatensuppe.DiabloInterface.Services;
-using Zutatensuppe.DiabloInterface.Settings;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
 {
@@ -29,15 +28,15 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
             cfg.Splits = new List<AutoSplit>();
             cfg.Splits.Add(split);
 
-            var appSettings = new Mock<ApplicationSettings>();
-            appSettings.Setup(x => x.PluginConf(It.IsAny<string>())).Returns(cfg);
-            var settings = new Mock<ISettingsService>();
-            settings.SetupGet(x => x.CurrentSettings).Returns(appSettings.Object);
+            var config = new Mock<ApplicationConfig>();
+            config.Setup(x => x.PluginConf(It.IsAny<string>())).Returns(cfg);
+            var configService = new Mock<IConfigService>();
+            configService.SetupGet(x => x.CurrentConfig).Returns(config.Object);
 
             var gameService = new GameServiceMock();
 
             var diabloInterface = new DiabloInterface();
-            diabloInterface.settings = settings.Object;
+            diabloInterface.configService = configService.Object;
             diabloInterface.game = gameService;
 
             var autoSplitService = new Plugin();
@@ -141,15 +140,15 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
             cfg.Splits.Add(splitOnGem1);
             cfg.Splits.Add(splitOnQuest81);
 
-            var appSettings = new Mock<ApplicationSettings>();
-            appSettings.Setup(x => x.PluginConf(It.IsAny<string>())).Returns(cfg);
-            var settings = new Mock<ISettingsService>();
-            settings.SetupGet(x => x.CurrentSettings).Returns(appSettings.Object);
+            var config = new Mock<ApplicationConfig>();
+            config.Setup(x => x.PluginConf(It.IsAny<string>())).Returns(cfg);
+            var configService = new Mock<IConfigService>();
+            configService.SetupGet(x => x.CurrentConfig).Returns(config.Object);
 
             var gameService = new GameServiceMock();
 
             var diabloInterface = new DiabloInterface();
-            diabloInterface.settings = settings.Object;
+            diabloInterface.configService = configService.Object;
             diabloInterface.game = gameService;
 
             var autoSplitService = new Plugin();
@@ -268,6 +267,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
         public event EventHandler<DataReadEventArgs> DataRead;
 
         public void Dispose()
+        {
+        }
+
+        public void Initialize()
         {
         }
 

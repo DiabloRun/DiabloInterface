@@ -42,12 +42,12 @@ namespace Zutatensuppe.DiabloInterface.Services
         }
 
         public Dictionary<string, IPluginConfig> GetEditedConfigs => plugins
-            .Select(s => new KeyValuePair<string, IPluginSettingsRenderer>(s.Name, s.GetRenderer<IPluginSettingsRenderer>()))
+            .Select(s => new KeyValuePair<string, IPluginConfigEditRenderer>(s.Name, s.GetRenderer<IPluginConfigEditRenderer>()))
             .Where(s => s.Value != null)
             .ToDictionary(s => s.Key, s => s.Value.GetEditedConfig());
 
-        public bool EditedSettingsDirty => plugins
-            .Select(s => s.GetRenderer<IPluginSettingsRenderer>())
+        public bool EditedConfigsDirty => plugins
+            .Select(s => s.GetRenderer<IPluginConfigEditRenderer>())
             .Where(r => r != null)
             .Any(r => r.IsDirty());
 
@@ -67,30 +67,32 @@ namespace Zutatensuppe.DiabloInterface.Services
             return l;
         }
 
-        public void Initialize()
-        {
-            foreach (IPlugin p in plugins)
-                p.Initialize(di);
-
-            di.settings.Changed += Settings_Changed;
-        }
-
-        private void Settings_Changed(object sender, ApplicationSettingsEventArgs e)
-        {
-            foreach (IPlugin p in plugins)
-                p.SetConfig(e.Settings.PluginConf(p.Name));
-        }
-
         public void Reset()
         {
             foreach (IPlugin p in plugins)
                 p.Reset();
         }
 
-        public void Dispose()
+        public void Initialize()
         {
             foreach (IPlugin p in plugins)
+                p.Initialize(di);
+
+            di.configService.Changed += ConfigChanged;
+        }
+
+        public void Dispose()
+        {
+            di.configService.Changed -= ConfigChanged;
+
+            foreach (IPlugin p in plugins)
                 p.Dispose();
+        }
+
+        private void ConfigChanged(object sender, ApplicationConfigEventArgs e)
+        {
+            foreach (IPlugin p in plugins)
+                p.SetConfig(e.Config.PluginConf(p.Name));
         }
     }
 }

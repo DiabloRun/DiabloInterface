@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 {
-    class SettingsRenderer : IPluginSettingsRenderer
+    class ConfigEditRenderer : IPluginConfigEditRenderer
     {
         private Plugin plugin;
         private FlowLayoutPanel control;
@@ -11,7 +11,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
         private CheckBox chkPipeServerEnabled;
         private RichTextBox txtPipeServer;
 
-        public SettingsRenderer(Plugin plugin)
+        public ConfigEditRenderer(Plugin plugin)
         {
             this.plugin = plugin;
         }

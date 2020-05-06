@@ -5,7 +5,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin
 {
     public abstract class BasePlugin : IPlugin
     {
-        protected virtual Type SettingsRendererType { get; } = null;
+        protected virtual Type ConfigEditRendererType { get; } = null;
         protected virtual Type DebugRendererType { get; } = null;
         
         public abstract string Name { get; }
@@ -28,7 +28,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin
         }
 
         private Dictionary<Type, Type> RendererMap => new Dictionary<Type, Type> {
-            {typeof(IPluginSettingsRenderer), SettingsRendererType},
+            {typeof(IPluginConfigEditRenderer), ConfigEditRendererType},
             {typeof(IPluginDebugRenderer), DebugRendererType},
         };
 

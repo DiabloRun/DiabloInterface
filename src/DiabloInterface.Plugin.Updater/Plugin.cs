@@ -14,7 +14,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 
         internal Config Config { get; private set; } = new Config();
 
-        protected override Type SettingsRendererType => typeof(SettingsRenderer);
+        protected override Type ConfigEditRendererType => typeof(ConfigEditRenderer);
 
         public override void SetConfig(IPluginConfig c)
         {
@@ -23,7 +23,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 
         public override void Initialize(DiabloInterface di)
         {
-            SetConfig(di.settings.CurrentSettings.PluginConf(Name));
+            SetConfig(di.configService.CurrentConfig.PluginConf(Name));
             AutomaticallyCheckVersion();
         }
 

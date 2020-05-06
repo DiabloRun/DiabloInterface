@@ -155,8 +155,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(875, 571);
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            var resources = new System.ComponentModel.ComponentResourceManager(typeof(DebugWindow));
-            Icon = (Icon)resources.GetObject("$this.Icon");
+            Icon = Properties.Resources.di;
             Text = "Debug";
             ResumeLayout(false);
         }

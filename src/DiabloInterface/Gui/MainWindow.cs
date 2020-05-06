@@ -6,7 +6,6 @@ using System.Windows.Forms;
 
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.DiabloInterface.Services;
-using Zutatensuppe.DiabloInterface.Settings;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Gui.Controls;
 using Zutatensuppe.DiabloInterface.Gui.Forms;
@@ -31,42 +30,42 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
             RegisterServiceEventHandlers();
             InitializeComponent();
-            PopulateSetingsFileListContextMenu(this.di.settings.SettingsFileCollection);
-            ApplySettings(this.di.settings.CurrentSettings);
+            PopulateConfigFileListContextMenu(this.di.configService.ConfigFileCollection);
+            ApplyConfig(this.di.configService.CurrentConfig);
         }
 
         void RegisterServiceEventHandlers()
         {
-            di.settings.Changed += SettingsServiceOnSettingsChanged;
-            di.settings.CollectionChanged += SettingsServiceOnSettingsCollectionChanged;
+            di.configService.Changed += ConfigChanged;
+            di.configService.CollectionChanged += ConfigCollectionChanged;
         }
 
         void UnregisterServiceEventHandlers()
         {
-            di.settings.Changed -= SettingsServiceOnSettingsChanged;
-            di.settings.CollectionChanged -= SettingsServiceOnSettingsCollectionChanged;
+            di.configService.Changed -= ConfigChanged;
+            di.configService.CollectionChanged -= ConfigCollectionChanged;
         }
 
-        void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
+        void ConfigChanged(object sender, ApplicationConfigEventArgs e)
         {
             if (InvokeRequired)
             {
-                Invoke((Action)(() => SettingsServiceOnSettingsChanged(sender, e)));
+                Invoke((Action)(() => ConfigChanged(sender, e)));
                 return;
             }
 
-            ApplySettings(e.Settings);
+            ApplyConfig(e.Config);
         }
 
-        void SettingsServiceOnSettingsCollectionChanged(object sender, SettingsCollectionEventArgs e)
+        void ConfigCollectionChanged(object sender, ConfigCollectionEventArgs e)
         {
             if (InvokeRequired)
             {
-                Invoke((Action)(() => SettingsServiceOnSettingsCollectionChanged(sender, e)));
+                Invoke((Action)(() => ConfigCollectionChanged(sender, e)));
                 return;
             }
 
-            PopulateSetingsFileListContextMenu(e.Collection);
+            PopulateConfigFileListContextMenu(e.Collection);
         }
 
         private void InitializeComponent()
@@ -82,11 +81,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
             difficultyItem.Text = "Difficulty";
 
-            var settingsItem = new ToolStripMenuItem();
-            settingsItem.Image = Properties.Resources.wrench_orange;
-            settingsItem.ShortcutKeys = Keys.Control | Keys.U;
-            settingsItem.Text = "Settings";
-            settingsItem.Click += new EventHandler(SettingsMenuItemOnClick);
+            var configItem = new ToolStripMenuItem();
+            configItem.Image = Properties.Resources.wrench_orange;
+            configItem.ShortcutKeys = Keys.Control | Keys.U;
+            configItem.Text = "Config";
+            configItem.Click += new EventHandler(ConfigMenuItemOnClick);
 
             var resetItem = new ToolStripMenuItem();
             resetItem.Image = Properties.Resources.arrow_refresh;
@@ -110,7 +109,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             var contextMenu = new ContextMenuStrip();
             contextMenu.Items.AddRange(new ToolStripItem[] {
                 difficultyItem,
-                settingsItem,
+                configItem,
                 loadConfigMenuItem,
                 resetItem,
                 debugItem,
@@ -127,17 +126,16 @@ namespace Zutatensuppe.DiabloInterface.Gui
             Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 238);
             FormBorderStyle = FormBorderStyle.FixedSingle;
 
-            var resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Icon = Properties.Resources.di;
             MaximizeBox = false;
             MinimizeBox = false;
-            Text = $@"Diablo Interface v{Application.ProductVersion}";
+            Text = $@"DiabloInterface v{Application.ProductVersion}";
         }
 
-        void ApplySettings(ApplicationSettings s)
+        void ApplyConfig(ApplicationConfig config)
         {
             // nothing to do if correct layout already
-            if (layout is HorizontalLayout && s.DisplayLayoutHorizontal)
+            if (layout is HorizontalLayout && config.DisplayLayoutHorizontal)
                 return;
 
             // remove old layout
@@ -149,22 +147,22 @@ namespace Zutatensuppe.DiabloInterface.Gui
             }
 
             // create new layout
-            var nextLayout = s.DisplayLayoutHorizontal
+            var nextLayout = config.DisplayLayoutHorizontal
                 ? new HorizontalLayout(di) as AbstractLayout
                 : new VerticalLayout(di);
             Controls.Add(nextLayout);
             layout = nextLayout;
         }
 
-        void PopulateSetingsFileListContextMenu(IEnumerable<FileInfo> settingsFileCollection)
+        void PopulateConfigFileListContextMenu(IEnumerable<FileInfo> configFileCollection)
         {
-            var items = settingsFileCollection.Select(CreateSettingsToolStripMenuItem).ToArray();
+            var items = configFileCollection.Select(CreateConfigToolStripMenuItem).ToArray();
 
             loadConfigMenuItem.DropDownItems.Clear();
             loadConfigMenuItem.DropDownItems.AddRange(items);
         }
 
-        ToolStripMenuItem CreateSettingsToolStripMenuItem(FileInfo f)
+        ToolStripMenuItem CreateConfigToolStripMenuItem(FileInfo f)
         {
             var item = new ToolStripMenuItem();
             item.Text = Path.GetFileNameWithoutExtension(f.Name);
@@ -175,12 +173,12 @@ namespace Zutatensuppe.DiabloInterface.Gui
         void LoadConfigFile(object sender, string fileName)
         {
             // TODO: LoadSettings should throw a custom Exception with information about why this happened.
-            if (!di.settings.LoadSettings(fileName))
+            if (!di.configService.Load(fileName))
             {
-                Logger.Error($"Failed to load settings from file: {fileName}.");
+                Logger.Error($"Failed to load config from file: {fileName}.");
                 MessageBox.Show(
-                    $@"Failed to load settings.{Environment.NewLine}See the error log for more details.",
-                    @"Settings Error",
+                    $@"Failed to load config.{Environment.NewLine}See the error log for more details.",
+                    @"Config Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
                 );
@@ -198,10 +196,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             layout?.Reset();
         }
 
-        void SettingsMenuItemOnClick(object sender, EventArgs e)
+        void ConfigMenuItemOnClick(object sender, EventArgs e)
         {
-            using (var settingsWindow = new SettingsWindow(di))
-                settingsWindow.ShowDialog();
+            using (var window = new ConfigWindow(di))
+                window.ShowDialog();
         }
 
         void DebugMenuItemOnClick(object sender, EventArgs e)

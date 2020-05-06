@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 {
-    class SettingsRenderer : IPluginSettingsRenderer
+    class ConfigEditRenderer : IPluginConfigEditRenderer
     {
         private Plugin plugin;
         private FlowLayoutPanel control;
@@ -15,7 +15,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
         private TextBox textBoxHttpClientUrl;
         private Label label5;
 
-        public SettingsRenderer(Plugin plugin)
+        public ConfigEditRenderer(Plugin plugin)
         {
             this.plugin = plugin;
         }

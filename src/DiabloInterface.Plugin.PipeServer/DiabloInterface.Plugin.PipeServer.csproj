@@ -69,7 +69,7 @@
     <Compile Include="Server\Request.cs" />
     <Compile Include="Server\Response.cs" />
     <Compile Include="Server\RequestProcessor.cs" />
-    <Compile Include="SettingsRenderer.cs" />
+    <Compile Include="ConfigEditRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\D2Reader\D2Reader.csproj">

@@ -7,6 +7,8 @@ namespace Zutatensuppe.DiabloInterface.Services
 
     public interface IGameService: IDisposable
     {
+        void Initialize();
+
         /// <summary>
         ///     The targeted (intended) difficulty for a run selected by the player.
         /// </summary>

@@ -10,7 +10,6 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Services;
-    using Zutatensuppe.DiabloInterface.Settings;
     using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
@@ -18,10 +17,10 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     {
         public string name;
         public string maxString;
-        public Func<ApplicationSettings, Tuple<bool, Color, int>> settings;
+        public Func<ApplicationConfig, Tuple<bool, Color, int>> settings;
         public Label[] labels;
         public Dictionary<Label, string> defaults;
-        public Def(string name, string maxString, Func<ApplicationSettings, Tuple<bool, Color, int>> settings, string[] labels)
+        public Def(string name, string maxString, Func<ApplicationConfig, Tuple<bool, Color, int>> settings, string[] labels)
         {
             this.name = name;
             this.maxString = maxString;
@@ -51,7 +50,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         protected abstract Panel RuneLayoutPanel { get; }
 
-        protected void Add(string nam, string maxStr, Func<ApplicationSettings, Tuple<bool, Color, int>> s, params string[] names)
+        protected void Add(string nam, string maxStr, Func<ApplicationConfig, Tuple<bool, Color, int>> s, params string[] names)
         {
             def.Add(nam, new Def(nam, maxStr, s, names));
         }
@@ -71,19 +70,19 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         protected void RegisterServiceEventHandlers()
         {
-            di.settings.Changed += SettingsServiceOnSettingsChanged;
+            di.configService.Changed += SettingsServiceOnSettingsChanged;
             di.game.CharacterCreated += GameServiceOnCharacterCreated;
             di.game.DataRead += GameServiceOnDataRead;
         }
 
         protected void UnregisterServiceEventHandlers()
         {
-            di.settings.Changed -= SettingsServiceOnSettingsChanged;
+            di.configService.Changed -= SettingsServiceOnSettingsChanged;
             di.game.CharacterCreated -= GameServiceOnCharacterCreated;
             di.game.DataRead -= GameServiceOnDataRead;
         }
 
-        void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
+        void SettingsServiceOnSettingsChanged(object sender, ApplicationConfigEventArgs e)
         {
             if (InvokeRequired)
             {
@@ -93,7 +92,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
             activeCharacterClass = null;
 
-            UpdateSettings(e.Settings);
+            UpdateConfig(e.Config);
         }
 
         void GameServiceOnCharacterCreated(object sender, CharacterCreatedEventArgs e)
@@ -142,14 +141,14 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             }
         }
 
-        abstract protected void UpdateSettings(ApplicationSettings settings);
+        abstract protected void UpdateConfig(ApplicationConfig config);
 
         abstract protected void UpdateLabels(Character player, Quests quests, Game game);
 
         void UpdateClassRuneList(CharacterClass characterClass)
         {
-            var settings = di.settings.CurrentSettings;
-            if (!settings.DisplayRunes) return;
+            var config = di.configService.CurrentConfig;
+            if (!config.DisplayRunes) return;
 
             var targetDifficulty = di.game.TargetDifficulty;
             var isCharacterClassChanged = activeCharacterClass == null || activeCharacterClass != characterClass;
@@ -161,13 +160,13 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             Logger.Info("Loading rune list.");
             
             var runeSettings = GetMostSpecificRuneSettings(characterClass, targetDifficulty);
-            UpdateRuneList(settings, runeSettings?.Runes?.ToList());
+            UpdateRuneList(config, runeSettings?.Runes?.ToList());
 
             activeDifficulty = targetDifficulty;
             activeCharacterClass = characterClass;
         }
 
-        void UpdateRuneList(ApplicationSettings settings, IReadOnlyList<Rune> runes)
+        void UpdateRuneList(ApplicationConfig config, IReadOnlyList<Rune> runes)
         {
             var panel = RuneLayoutPanel;
             if (panel == null) return;
@@ -175,7 +174,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             panel.Controls.ClearAndDispose();
             panel.Visible = runes?.Count > 0;
             runes?.ForEach(rune => panel.Controls.Add(
-                new RuneDisplayElement(rune, settings.DisplayRunesHighContrast, false, false)));
+                new RuneDisplayElement(rune, config.DisplayRunesHighContrast, false, false)));
         }
 
         /// <summary>
@@ -187,7 +186,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         /// <returns>The rune settings.</returns>
         ClassRuneSettings GetMostSpecificRuneSettings(CharacterClass characterClass, GameDifficulty targetDifficulty)
         {
-            IEnumerable<ClassRuneSettings> runeClassSettings = di.settings.CurrentSettings.ClassRunes.ToList();
+            IEnumerable<ClassRuneSettings> runeClassSettings = di.configService.CurrentConfig.ClassRunes.ToList();
             return runeClassSettings.FirstOrDefault(rs => rs.Class == characterClass && rs.Difficulty == targetDifficulty)
                 ?? runeClassSettings.FirstOrDefault(rs => rs.Class == characterClass && rs.Difficulty == null)
                 ?? runeClassSettings.FirstOrDefault(rs => rs.Class == null && rs.Difficulty == targetDifficulty)

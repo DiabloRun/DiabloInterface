@@ -7,7 +7,7 @@ using Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 {
-    class SettingsRenderer : IPluginSettingsRenderer
+    class ConfigEditRenderer : IPluginConfigEditRenderer
     {
         private Plugin plugin;
 
@@ -24,7 +24,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         private FlowLayoutPanel AutoSplitToolbar;
         private FlowLayoutPanel AutoSplitToolbar2;
 
-        public SettingsRenderer(Plugin plugin)
+        public ConfigEditRenderer(Plugin plugin)
         {
             this.plugin = plugin;
         }

@@ -4,14 +4,14 @@ using System.Windows.Forms;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 {
-    class SettingsRenderer : IPluginSettingsRenderer
+    class ConfigEditRenderer : IPluginConfigEditRenderer
     {
         private GroupBox control;
         private CheckBox chkEnabled;
 
         Plugin plugin;
 
-        public SettingsRenderer(Plugin plugin)
+        public ConfigEditRenderer(Plugin plugin)
         {
             this.plugin = plugin;
         }

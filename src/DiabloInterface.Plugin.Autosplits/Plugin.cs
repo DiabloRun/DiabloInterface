@@ -17,7 +17,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 
         public override string Name => "Autosplit";
 
-        protected override Type SettingsRendererType => typeof(SettingsRenderer);
+        protected override Type ConfigEditRendererType => typeof(ConfigEditRenderer);
 
         protected override Type DebugRendererType => typeof(DebugRenderer);
 
@@ -36,7 +36,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         {
             Logger.Info("Creating auto split service.");
 
-            SetConfig(di.settings.CurrentSettings.PluginConf(Name));
+            SetConfig(di.configService.CurrentConfig.PluginConf(Name));
             di.game.CharacterCreated += Game_CharacterCreated;
             di.game.DataRead += Game_DataRead;
         }

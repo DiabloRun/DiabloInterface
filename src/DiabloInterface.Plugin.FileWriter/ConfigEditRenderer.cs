@@ -3,12 +3,12 @@ using System.Windows.Forms;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
 {
-    class SettingsRenderer : IPluginSettingsRenderer
+    class ConfigEditRenderer : IPluginConfigEditRenderer
     {
         private Plugin plugin;
         private CheckBox control;
 
-        public SettingsRenderer(Plugin plugin)
+        public ConfigEditRenderer(Plugin plugin)
         {
             this.plugin = plugin;
         }

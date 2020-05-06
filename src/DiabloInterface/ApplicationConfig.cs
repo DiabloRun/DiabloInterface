@@ -1,4 +1,4 @@
-namespace Zutatensuppe.DiabloInterface.Settings
+namespace Zutatensuppe.DiabloInterface
 {
     using System;
     using System.Collections.Generic;
@@ -9,9 +9,9 @@ namespace Zutatensuppe.DiabloInterface.Settings
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Plugin;
 
-    public class ApplicationSettings
+    public class ApplicationConfig
     {
-        public static ApplicationSettings Default => new ApplicationSettings();
+        public static ApplicationConfig Default => new ApplicationConfig();
 
         // Plugin settings
         public Dictionary<string, IPluginConfig> Plugins { get; set; } = new Dictionary<string, IPluginConfig>();

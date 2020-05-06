@@ -15,13 +15,20 @@ namespace Zutatensuppe.DiabloInterface.Services
         bool isDisposed;
         public D2DataReader DataReader { get; private set; }
 
-        public GameService(ISettingsService settingsService)
+        private DiabloInterface di;
+
+        public GameService(DiabloInterface di)
+        {
+            this.di = di;
+        }
+
+        public void Initialize()
         {
             Logger.Info("Initializing game service.");
 
             DataReader = new D2DataReader(
                 new GameMemoryTableFactory(),
-                settingsService.CurrentSettings.ProcessDescriptions
+                di.configService.CurrentConfig.ProcessDescriptions
             );
             DataReader.CharacterCreated += OnCharacterCreated;
             DataReader.DataRead += OnDataRead;

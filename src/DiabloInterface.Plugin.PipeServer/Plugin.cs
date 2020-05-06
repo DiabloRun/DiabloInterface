@@ -15,7 +15,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
         internal Config Config { get; private set; } = new Config();
 
-        protected override Type SettingsRendererType => typeof(SettingsRenderer);
+        protected override Type ConfigEditRendererType => typeof(ConfigEditRenderer);
 
         protected override Type DebugRendererType => typeof(DebugRenderer);
 
@@ -39,22 +39,22 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
         public override void Initialize(DiabloInterface di)
         {
             this.di = di;
-            SetConfig(di.settings.CurrentSettings.PluginConf(Name));
+            SetConfig(di.configService.CurrentConfig.PluginConf(Name));
         }
         
         private void CreateServer(string pipeName)
         {
             Logger.Info($"Creating Server: {pipeName}");
-            var pipeServer = new DiabloInterfaceServer(pipeName);
-            pipeServer.AddRequestHandler(@"version", () => new VersionRequestHandler(Assembly.GetEntryAssembly()));
-            pipeServer.AddRequestHandler(@"game", () => new GameRequestHandler(di.game.DataReader));
-            pipeServer.AddRequestHandler(@"items", () => new AllItemsRequestHandler(di.game.DataReader));
-            pipeServer.AddRequestHandler(@"items/(\w+)", () => new ItemRequestHandler(di.game.DataReader));
-            pipeServer.AddRequestHandler(@"characters/(current|active)", () => new CharacterRequestHandler(di.game.DataReader));
-            pipeServer.AddRequestHandler(@"quests/completed", () => new CompletedQuestsRequestHandler(di.game.DataReader));
-            pipeServer.AddRequestHandler(@"quests/(\d+)", () => new QuestRequestHandler(di.game.DataReader));
-            pipeServer.Start();
-            Servers.Add(pipeName, pipeServer);
+            var s = new DiabloInterfaceServer(pipeName);
+            s.AddRequestHandler(@"version", () => new VersionRequestHandler(Assembly.GetEntryAssembly()));
+            s.AddRequestHandler(@"game", () => new GameRequestHandler(di.game.DataReader));
+            s.AddRequestHandler(@"items", () => new AllItemsRequestHandler(di.game.DataReader));
+            s.AddRequestHandler(@"items/(\w+)", () => new ItemRequestHandler(di.game.DataReader));
+            s.AddRequestHandler(@"characters/(current|active)", () => new CharacterRequestHandler(di.game.DataReader));
+            s.AddRequestHandler(@"quests/completed", () => new CompletedQuestsRequestHandler(di.game.DataReader));
+            s.AddRequestHandler(@"quests/(\d+)", () => new QuestRequestHandler(di.game.DataReader));
+            s.Start();
+            Servers.Add(pipeName, s);
 
             ApplyChanges();
         }
@@ -62,8 +62,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
         private void Stop()
         {
             Logger.Info("Stopping all Servers");
-            foreach (KeyValuePair<string, DiabloInterfaceServer> s in Servers)
-                s.Value.Stop();
+            foreach (var s in Servers.Values)
+                s.Stop();
 
             Servers.Clear();
         }
@@ -76,8 +76,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
         internal string StatusTextMsg()
         {
             var txt = "";
-            foreach (var s in Servers)
-                txt += s.Key + ": " + (s.Value.Running ? "RUNNING" : "NOT RUNNING") + "\n";
+            foreach (var pair in Servers)
+                txt += pair.Key + ": " + (pair.Value.Running ? "RUNNING" : "NOT RUNNING") + "\n";
             return txt;
         }
     }

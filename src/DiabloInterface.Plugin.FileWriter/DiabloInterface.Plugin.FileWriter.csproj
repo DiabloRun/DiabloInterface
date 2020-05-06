@@ -52,7 +52,7 @@
     <Compile Include="Writer\ITextFileWriter.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SettingsRenderer.cs" />
+    <Compile Include="ConfigEditRenderer.cs" />
     <Compile Include="Writer\TextFileWriter.cs" />
   </ItemGroup>
   <ItemGroup>
