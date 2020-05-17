@@ -18,7 +18,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
 
         public override void SetConfig(IPluginConfig c)
         {
-            Config = c as Config;
+            Config = c == null ? new Config() : c as Config;
             ApplyConfig();
         }
 

@@ -67,7 +67,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
         public override void SetConfig(IPluginConfig c)
         {
-            Config = c as Config;
+            Config = c == null ? new Config() : c as Config;
             ApplyConfig();
 
             if (Config.Enabled)
