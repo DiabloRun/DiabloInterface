@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
-
     class RangeStatDamage
     {
         public int min;
@@ -25,7 +24,7 @@ namespace Zutatensuppe.D2Reader.Readers
             return min != 0 && max != 0;
         }
 
-        public string ToString(IStringLookupTable stringLookupTable)
+        public string ToString(IStringReader stringLookupTable)
         {
             if (min == max)
             {
@@ -37,7 +36,7 @@ namespace Zutatensuppe.D2Reader.Readers
             return _toString(stringLookupTable, new object[] { min, max }, differStringId);
         }
 
-        protected string _toString(IStringLookupTable stringLookupTable, object[] args, ushort stringId)
+        protected string _toString(IStringReader stringLookupTable, object[] args, ushort stringId)
         {
             string format = stringLookupTable.ConvertCFormatString(
                 stringLookupTable.GetString(stringId),
@@ -61,7 +60,7 @@ namespace Zutatensuppe.D2Reader.Readers
         {
         }
 
-        public new string ToString(IStringLookupTable stringLookupTable)
+        public new string ToString(IStringReader stringLookupTable)
         {
             int min = CalculatedDamage(this.min);
             int max = CalculatedDamage(this.max);
@@ -105,9 +104,9 @@ namespace Zutatensuppe.D2Reader.Readers
         private bool IsDamageMaxSecondary;
         private bool HasHandledDamageRange;
 
-        private IStringLookupTable stringReader;
+        private IStringReader stringReader;
 
-        public RangeStatData(IStringLookupTable reader, List<D2Stat> stats)
+        public RangeStatData(IStringReader reader, List<D2Stat> stats)
         {
             stringReader = reader;
 

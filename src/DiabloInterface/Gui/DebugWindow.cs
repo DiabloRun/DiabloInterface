@@ -1,48 +1,42 @@
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
+
+using Zutatensuppe.D2Reader;
+using Zutatensuppe.D2Reader.Models;
+using Zutatensuppe.D2Reader.Struct.Item;
+using Zutatensuppe.DiabloInterface.Core.Logging;
+using Zutatensuppe.DiabloInterface.Gui.Controls;
+using Zutatensuppe.DiabloInterface.Gui.Forms;
+using Zutatensuppe.DiabloInterface.Plugin;
+
 namespace Zutatensuppe.DiabloInterface.Gui
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Linq;
-    using System.Reflection;
-    using System.Windows.Forms;
-
-    using Zutatensuppe.D2Reader;
-    using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.D2Reader.Struct.Item;
-    using Zutatensuppe.DiabloInterface.Business.AutoSplits;
-    using Zutatensuppe.DiabloInterface.Business.Services;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
-    using Zutatensuppe.DiabloInterface.Gui.Controls;
-    using Zutatensuppe.DiabloInterface.Gui.Forms;
-
-    public partial class DebugWindow : WsExCompositedForm
+    public class DebugWindow : WsExCompositedForm
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly ISettingsService settingsService;
-        private readonly IGameService gameService;
-        private readonly ServerService serverService;
+        private readonly DiabloInterface di;
+
         readonly Dictionary<GameDifficulty, QuestDebugRow[,]> questRows =
             new Dictionary<GameDifficulty, QuestDebugRow[,]>();
 
-        List<AutosplitBinding> autoSplitBindings;
-        IReadOnlyDictionary<BodyLocation, string> itemStrings;
+        List<ItemInfo> items;
 
-        Dictionary<Label, BodyLocation> locs;
         Label clickedLabel;
         Label hoveredLabel;
 
-        public DebugWindow(
-            ISettingsService settingsService,
-            IGameService gameService,
-            ServerService serverService
-        ) {
+        private Dictionary<Label, BodyLocation> locs;
+        private RichTextBox textItemDesc;
+
+        public DebugWindow(DiabloInterface di)
+        {
             Logger.Info("Creating debug window.");
 
-            this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-            this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
-            this.serverService = serverService ?? throw new ArgumentNullException(nameof(serverService));
+            this.di = di;
 
             RegisterServiceEventHandlers();
 
@@ -54,46 +48,126 @@ namespace Zutatensuppe.DiabloInterface.Gui
             };
 
             InitializeComponent();
-            ApplyAutoSplitSettings(settingsService.CurrentSettings.Autosplits);
+        }
+
+        private void InitializeComponent()
+        {
+            SuspendLayout();
+
+            TabPage itemsTab()
+            {
+                Color bg = Color.FromArgb(64, 64, 64);
+                Color fg = Color.Aquamarine;
+                Label l(Point loc, Size s, string text)
+                {
+                    var label = new Label();
+                    label.BackColor = bg;
+                    label.ForeColor = fg;
+                    label.Location = loc;
+                    label.Size = s;
+                    label.Text = text;
+                    label.TextAlign = ContentAlignment.MiddleCenter;
+                    label.Click += new EventHandler(LabelClick);
+                    label.MouseEnter += new EventHandler(LabelMouseEnter);
+                    label.MouseLeave += new EventHandler(LabelMouseLeave);
+                    return label;
+                }
+
+                locs = new Dictionary<Label, BodyLocation>
+                {
+                    {l(new Point(80, 0), new Size(40, 40), "Head"), BodyLocation.Head},
+                    {l(new Point(130, 20), new Size(20, 20), "A"), BodyLocation.Amulet},
+                    {l(new Point(160, 40), new Size(40, 80), "Right Arm"), BodyLocation.PrimaryRight},
+                    {l(new Point(0, 40), new Size(40, 80), "Left Arm"), BodyLocation.PrimaryLeft},
+                    {l(new Point(80, 50), new Size(40, 60), "Body"), BodyLocation.BodyArmor},
+                    {l(new Point(50, 130), new Size(20, 20), "L"), BodyLocation.RingLeft},
+                    {l(new Point(130, 130), new Size(20, 20), "R"), BodyLocation.RingRight},
+                    {l(new Point(0, 130), new Size(40, 40), "Gloves"), BodyLocation.Gloves},
+                    {l(new Point(80, 130), new Size(40, 20), "Belt"), BodyLocation.Belt},
+                    {l(new Point(160, 130), new Size(40, 40), "Boots"), BodyLocation.Boots},
+                };
+
+                textItemDesc = new RichTextBox();
+                textItemDesc.Location = new Point(0, 180);
+                textItemDesc.Size = new Size(200, 180);
+                textItemDesc.Text = "";
+
+                var itemsPanel = new TabPage();
+                itemsPanel.Text = "Items";
+                itemsPanel.Controls.Add(textItemDesc);
+                foreach (var p in locs)
+                    itemsPanel.Controls.Add(p.Key);
+                return itemsPanel;
+            }
+
+            TabPage questsTab()
+            {
+                TabPage tabpage(GameDifficulty difficulty)
+                {
+                    var t = new TabPage();
+                    t.AutoScroll = true;
+                    t.Text = Enum.GetName(typeof(GameDifficulty), difficulty);
+                    questRows[difficulty] = CreateQuestRow(t);
+                    return t;
+                }
+
+                var questTabs = new TabControl();
+                questTabs.Controls.Add(tabpage(GameDifficulty.Normal));
+                questTabs.Controls.Add(tabpage(GameDifficulty.Nightmare));
+                questTabs.Controls.Add(tabpage(GameDifficulty.Hell));
+                questTabs.Dock = DockStyle.Fill;
+                questTabs.Location = new Point(3, 16);
+                questTabs.SelectedIndex = 0;
+                questTabs.Size = new Size(549, 536);
+                foreach (TabPage c in questTabs.Controls)
+                {
+                    c.UseVisualStyleBackColor = true;
+                    c.Dock = DockStyle.Fill;
+                }
+
+                var quests = new TabPage();
+                quests.Controls.Add(questTabs);
+                quests.Text = "Quest-Bits";
+                return quests;
+            }
+
+            var tabs = new TabControl();
+            tabs.Dock = DockStyle.Fill;
+            tabs.Controls.Add(itemsTab());
+            tabs.Controls.Add(questsTab());
+            foreach (var p in di.plugins.CreateControls<IPluginDebugRenderer>())
+            {
+                var tp = new TabPage();
+                tp.Controls.Add(p.Value);
+                tp.Text = p.Key;
+                tabs.Controls.Add(tp);
+            }
+
+            foreach (TabPage c in tabs.Controls)
+            {
+                c.UseVisualStyleBackColor = true;
+                c.Dock = DockStyle.Fill;
+            }
+
+            Controls.Add(tabs);
+
+            AutoScaleDimensions = new SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(875, 571);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            Icon = Properties.Resources.di;
+            Text = "Debug";
+            ResumeLayout(false);
         }
 
         void RegisterServiceEventHandlers()
         {
-            settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
-            gameService.DataRead += GameServiceOnDataRead;
-            serverService.StatusChanged += ServerServiceStatusChanged;
+            di.game.DataRead += GameServiceOnDataRead;
         }
 
         void UnregisterServiceEventHandlers()
         {
-            settingsService.SettingsChanged -= SettingsServiceOnSettingsChanged;
-            gameService.DataRead -= GameServiceOnDataRead;
-        }
-
-        void ServerServiceStatusChanged(object sender, ServerStatusEventArgs e)
-        {
-            if (InvokeRequired)
-            {
-                Invoke((Action)(() => ServerServiceStatusChanged(sender, e)));
-                return;
-            }
-
-            txtPipeServer.Text = "";
-            foreach (KeyValuePair<string, bool> s in e.ServerStatuses)
-            {
-                txtPipeServer.Text += s.Key + ": " + (s.Value ? "RUNNING" :"NOT RUNNING") + "\n";
-            }
-        }
-
-        void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
-        {
-            if (InvokeRequired)
-            {
-                Invoke((Action)(() => SettingsServiceOnSettingsChanged(sender, e)));
-                return;
-            }
-
-            ApplyAutoSplitSettings(e.Settings.Autosplits);
+            di.game.DataRead -= GameServiceOnDataRead;
         }
 
         void GameServiceOnDataRead(object sender, DataReadEventArgs e)
@@ -104,22 +178,22 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 return;
             }
 
-            foreach (GameDifficulty difficulty in Enum.GetValues(typeof(GameDifficulty)))
-            {
-                var quests = e.Quests.ByDifficulty(difficulty);
-                if (quests == null) continue;
+            UpdateQuestData(e.Quests, GameDifficulty.Normal);
+            UpdateQuestData(e.Quests, GameDifficulty.Nightmare);
+            UpdateQuestData(e.Quests, GameDifficulty.Hell);
 
-                UpdateQuestData(quests, difficulty);
-            }
-
-            UpdateItemStats(e.Character.EquippedItemStrings);
+            UpdateItemStats(e.Character.Items);
         }
 
-        void UpdateQuestData(List<Quest> quests, GameDifficulty difficulty)
+        void UpdateQuestData(Quests quests, GameDifficulty difficulty)
         {
+            var q = quests.ByDifficulty(difficulty);
+            if (q == null)
+                return;
+
             QuestDebugRow[,] rows = questRows[difficulty];
 
-            foreach (var quest in quests)
+            foreach (var quest in q)
             {
                 try
                 {
@@ -127,84 +201,16 @@ namespace Zutatensuppe.DiabloInterface.Gui
                 }
                 catch (NullReferenceException)
                 {
-                    // System.NullReferenceException
                 }
             }
         }
 
-        void ClearAutoSplitBindings()
-        {
-            if (autoSplitBindings == null)
-            {
-                autoSplitBindings = new List<AutosplitBinding>();
-            }
-
-            foreach (var binding in autoSplitBindings)
-            {
-                binding.Unbind();
-            }
-
-            autoSplitBindings.Clear();
-        }
-
-        void ApplyAutoSplitSettings(List<AutoSplit> autoSplits)
-        {
-            if (DesignMode) return;
-            // Unbinds and clears the binding list.
-            ClearAutoSplitBindings();
-
-            int y = 0;
-            autosplitPanel.Controls.Clear();
-            foreach (AutoSplit autoSplit in autoSplits)
-            {
-                Label splitLabel = new Label();
-                splitLabel.SetBounds(0, y, autosplitPanel.Bounds.Width, 16);
-                splitLabel.Text = autoSplit.Name;
-                splitLabel.ForeColor = autoSplit.IsReached ? Color.Green : Color.Red;
-
-                Action<AutoSplit> splitReached = s => splitLabel.ForeColor = Color.Green;
-                Action<AutoSplit> splitReset = s => splitLabel.ForeColor = Color.Red;
-
-                // Bind autosplit events.
-                var binding = new AutosplitBinding(autoSplit, splitReached, splitReset);
-                autoSplitBindings.Add(binding);
-
-                autosplitPanel.Controls.Add(splitLabel);
-                y += 16;
-            }
-        }
-
-        void DebugWindow_Load(object sender, EventArgs e)
-        {
-            if (DesignMode) return;
-
-            questRows[GameDifficulty.Normal] = CreateQuestRow(tabPage1);
-            questRows[GameDifficulty.Nightmare] = CreateQuestRow(tabPage2);
-            questRows[GameDifficulty.Hell] = CreateQuestRow(tabPage3);
-
-            locs = new Dictionary<Label, BodyLocation>
-            {
-                {label1, BodyLocation.Head},
-                {label10, BodyLocation.Amulet},
-                {label3, BodyLocation.PrimaryRight},
-                {label2, BodyLocation.PrimaryLeft},
-                {label4, BodyLocation.BodyArmor},
-                {label7, BodyLocation.RingLeft},
-                {label8, BodyLocation.RingRight},
-                {label5, BodyLocation.Gloves},
-                {label6, BodyLocation.Belt},
-                {label9, BodyLocation.Boots}
-            };
-        }
-
-        static QuestDebugRow[,] CreateQuestRow(TabPage tabPage)
+        static QuestDebugRow[,] CreateQuestRow(Control tabPage)
         {
             var questRows = new QuestDebugRow[5, 6];
-
             for (int actIndex = 0; actIndex < 5; actIndex++)
             {
                 int y = actIndex * 100 - (actIndex > 3 ? 3 * 16 : 0);
-
                 tabPage.Controls.Add(new Label
                 {
                     Text = "Act " + (actIndex + 1),
@@ -218,32 +224,49 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     var row = new QuestDebugRow(quest);
                     row.Location = new Point(60, y + (questIndex * 16));
                     tabPage.Controls.Add(row);
-
                     questRows[actIndex, questIndex] = row;
                 }
             }
-
             return questRows;
         }
 
-        void UpdateItemStats(IReadOnlyDictionary<BodyLocation, string> itemStrings)
+        void UpdateItemStats(List<ItemInfo> items)
         {
-            if (DesignMode) return;
-            this.itemStrings = itemStrings;
+            this.items = items;
             UpdateItemDebugInformation();
         }
         
         void UpdateItemDebugInformation()
         {
             // hover has precedence vs clicked labels
-            Label l = hoveredLabel != null ? hoveredLabel : (clickedLabel != null ? clickedLabel : null);
-            if (l == null || itemStrings == null || !locs.ContainsKey(l) || !itemStrings.ContainsKey(locs[l]))
+            Label l = hoveredLabel ?? clickedLabel ?? null;
+            if (l != null && locs.ContainsKey(l) && items != null)
             {
-                textItemDesc.Text = "";
-                return;
+                foreach (var item in items)
+                {
+                    if (item.Location == locs[l])
+                    {
+                        textItemDesc.Text = ItemString(item);
+                        return;
+                    }
+                }
             }
-            
-            textItemDesc.Text = itemStrings[locs[l]];
+
+            textItemDesc.Text = "";
+        }
+
+        private string ItemString(ItemInfo item)
+        {
+            StringBuilder s = new StringBuilder();
+            s.Append(item.ItemName);
+            s.Append(Environment.NewLine);
+            foreach (string str in item.Properties)
+            {
+                s.Append("    ");
+                s.Append(str);
+                s.Append(Environment.NewLine);
+            }
+            return s.ToString();
         }
 
         private void LabelClick(object sender, EventArgs e)
@@ -270,49 +293,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private void LabelMouseLeave(object sender, EventArgs e)
         {
             if (hoveredLabel != sender)
-            {
                 return;
-            }
+
             hoveredLabel = null;
             UpdateItemDebugInformation();
-        }
-
-        /// <summary>
-        /// Helper class for binding/unbinding AutoSplit event handlers.
-        /// </summary>
-        class AutosplitBinding
-        {
-            bool didUnbind;
-            AutoSplit autoSplit;
-            Action<AutoSplit> reachedHandler;
-            Action<AutoSplit> resetHandler;
-
-            public AutosplitBinding(AutoSplit autoSplit, Action<AutoSplit> reachedHandler, Action<AutoSplit> resetHandler)
-            {
-                this.autoSplit = autoSplit;
-                this.reachedHandler = reachedHandler;
-                this.resetHandler = resetHandler;
-
-                this.autoSplit.Reached += reachedHandler;
-                this.autoSplit.Reset += resetHandler;
-            }
-
-            ~AutosplitBinding()
-            {
-                Unbind();
-            }
-
-            /// <summary>
-            /// Unbding the autosplit handlers.
-            /// </summary>
-            public void Unbind()
-            {
-                if (didUnbind) return;
-
-                didUnbind = true;
-                autoSplit.Reached -= reachedHandler;
-                autoSplit.Reset -= resetHandler;
-            }
         }
     }
 }

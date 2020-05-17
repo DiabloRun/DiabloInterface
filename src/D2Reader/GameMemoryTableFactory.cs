@@ -1,11 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Text;
+using Zutatensuppe.DiabloInterface.Core.Logging;
+
 namespace Zutatensuppe.D2Reader
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Reflection;
-    using System.Text;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
-
     public interface IGameMemoryTableFactory
     {
         GameMemoryTable CreateForVersion(string versionString, Dictionary<string, IntPtr> moduleBaseAddresses);
@@ -24,8 +24,8 @@ namespace Zutatensuppe.D2Reader
 
     public class ModuleNotLoadedException : Exception
     {
-        public String ModuleName;
-        public ModuleNotLoadedException(String moduleName) :
+        public string ModuleName;
+        public ModuleNotLoadedException(string moduleName) :
             base(string.Format("Failed to create memory table, module not loaded {0}", moduleName))
         {
             ModuleName = moduleName;

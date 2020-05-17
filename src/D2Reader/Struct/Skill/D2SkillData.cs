@@ -5,7 +5,6 @@ using UInt8 = System.Byte;
 
 namespace Zutatensuppe.D2Reader.Struct.Skill
 {
-
     enum PetType
     {
         unknown0 = 0,
@@ -27,7 +26,6 @@ namespace Zutatensuppe.D2Reader.Struct.Skill
         unknown16 = 16,
         TRAP_WAKE_OF_FIRE = 17, // 0x11
     }
-
 
     [Flags]
     public enum SkillFlags : ulong

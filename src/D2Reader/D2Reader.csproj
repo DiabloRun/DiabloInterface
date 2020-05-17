@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Zutatensuppe.D2Reader</RootNamespace>
     <AssemblyName>D2Reader</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,7 +44,7 @@
     <Compile Include="Models\Character.cs" />
     <Compile Include="D2Data.cs" />
     <Compile Include="D2DataReader.cs" />
-    <Compile Include="D2GameInfo.cs" />
+    <Compile Include="Models\GameInfo.cs" />
     <Compile Include="GameMemoryTable.cs" />
     <Compile Include="IProcessMemoryReader.cs" />
     <Compile Include="Models\CharacterClass.cs" />
@@ -64,11 +65,11 @@
     <Compile Include="Readers\IInventoryReader.cs" />
     <Compile Include="Readers\InventoryReader.cs" />
     <Compile Include="Readers\ISkillReader.cs" />
-    <Compile Include="Readers\IStringLookupTable.cs" />
+    <Compile Include="Readers\IStringReader.cs" />
     <Compile Include="Readers\UnitReader.cs" />
     <Compile Include="Readers\RangeStatData.cs" />
     <Compile Include="Readers\SkillReader.cs" />
-    <Compile Include="Readers\StringLookupTable.cs" />
+    <Compile Include="Readers\StringReader.cs" />
     <Compile Include="Struct\D2CharacterClassSkillIconStruct.cs" />
     <Compile Include="Struct\D2CharacterItemInfo.cs" />
     <Compile Include="Struct\D2CharacterStats.cs" />

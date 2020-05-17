@@ -1,17 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Zutatensuppe.D2Reader.Readers;
+using Zutatensuppe.D2Reader.Struct;
+using Zutatensuppe.D2Reader.Struct.Item;
+using Zutatensuppe.D2Reader.Struct.Skill;
+using Zutatensuppe.D2Reader.Struct.Stat;
+using Zutatensuppe.DiabloInterface.Core;
+using Zutatensuppe.DiabloInterface.Core.Logging;
+
 namespace Zutatensuppe.D2Reader.Models
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using Zutatensuppe.D2Reader.Readers;
-    using Zutatensuppe.D2Reader.Struct;
-    using Zutatensuppe.D2Reader.Struct.Item;
-    using Zutatensuppe.D2Reader.Struct.Skill;
-    using Zutatensuppe.D2Reader.Struct.Stat;
-    using Zutatensuppe.DiabloInterface.Core;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
-
     public class Character
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
@@ -141,7 +141,7 @@ namespace Zutatensuppe.D2Reader.Models
         public bool IsHardcore { get; internal set; }
         public bool IsExpansion { get; internal set; }
 
-        virtual public bool IsAutosplitChar { get; internal set; }
+        virtual public bool IsNewChar { get; internal set; }
 
         virtual public int Level { get; private set; }
         public int Experience { get; private set; }
@@ -179,9 +179,8 @@ namespace Zutatensuppe.D2Reader.Models
         public DateTime Created { get; set; }
 
         // TODO: use Item model for these:
-        virtual public Dictionary<BodyLocation, string> EquippedItemStrings { get; set; }
-        virtual public List<int> InventoryItemIds { get; set; }
-        
+        virtual public List<int> InventoryItemIds { get; internal set; }
+        public List<ItemInfo> Items { get; internal set; }
 
         public int RealFRW()
         {
@@ -193,17 +192,14 @@ namespace Zutatensuppe.D2Reader.Models
             return IncreasedAttackSpeed + (AttackRate - 100);
         }
 
-        internal void ParseStats(UnitReader unitReader, D2GameInfo gameInfo)
+        internal void ParseStats(UnitReader unitReader, GameInfo gameInfo)
         {
             ParseStats(unitReader.GetStatsMap(gameInfo.Player), gameInfo);
         }
 
-        /// <summary>
-        /// fill the player data by dictionary
-        /// </summary>
         private void ParseStats(
             Dictionary<StatIdentifier, D2Stat> data,
-            D2GameInfo gameInfo
+            GameInfo gameInfo
         ) {
             CharClass = (CharacterClass)gameInfo.Player.eClass;
 
@@ -267,7 +263,7 @@ namespace Zutatensuppe.D2Reader.Models
             }
         }
 
-        public static bool IsNewChar(
+        public static bool DetermineIfNewChar(
             D2Unit unit,
             UnitReader unitReader,
             IInventoryReader inventoryReader,

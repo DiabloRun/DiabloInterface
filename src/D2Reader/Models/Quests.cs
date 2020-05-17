@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Zutatensuppe.D2Reader.Models
 {
@@ -10,15 +7,12 @@ namespace Zutatensuppe.D2Reader.Models
     {
         List<List<Quest>> list;
 
-        public Quests()
-        {
-            this.list = new List<List<Quest>>();
-        }
-
         public Quests(List<List<Quest>> list)
         {
             this.list = list;
         }
+
+        public Quests() : this(new List<List<Quest>>()) { }
 
         public List<Quest> ByDifficulty(GameDifficulty difficulty)
         {
@@ -30,30 +24,44 @@ namespace Zutatensuppe.D2Reader.Models
             var c = ByDifficulty(difficulty);
             if (c == null) return 0;
 
-            var completed = c.Sum(quest => quest.IsCompleted ? 1 : 0);
-            return c.Count == 0 ? 1 : (completed / (float)c.Count);
+            var fullyCompleted = c.Sum(quest => quest.IsFullyCompleted ? 1 : 0);
+            return c.Count == 0 ? 1 : (fullyCompleted / (float)c.Count);
         }
 
         public bool FullyCompleted()
         {
-            return DifficultyCompleted(GameDifficulty.Normal)
-                && DifficultyCompleted(GameDifficulty.Nightmare)
-                && DifficultyCompleted(GameDifficulty.Hell);
+            return DifficultyFullyCompleted(GameDifficulty.Normal)
+                && DifficultyFullyCompleted(GameDifficulty.Nightmare)
+                && DifficultyFullyCompleted(GameDifficulty.Hell);
         }
 
-        public bool DifficultyCompleted(GameDifficulty difficulty)
+        public bool DifficultyFullyCompleted(GameDifficulty difficulty)
         {
             var c = ByDifficulty(difficulty);
-            return c != null && c.All(quest => quest.IsCompleted);
+            return c != null && c.All(quest => quest.IsFullyCompleted);
         }
 
         public bool QuestCompleted(GameDifficulty difficulty, QuestId id)
         {
             var c = ByDifficulty(difficulty);
-            return c != null && c.First(quest => quest.Id == id).IsAutoSplitReached;
+            return c != null && c.First(quest => quest.Id == id).IsCompleted;
         }
 
-        public List<QuestId> CompletedQuestIdsByDifficulty(GameDifficulty difficulty)
+        public Dictionary<GameDifficulty, List<QuestId>> CompletedQuestIds => new Dictionary<GameDifficulty, List<QuestId>>
+        {
+            {GameDifficulty.Normal, FullyCompletedQuestIdsByDifficulty(GameDifficulty.Normal) },
+            {GameDifficulty.Nightmare, FullyCompletedQuestIdsByDifficulty(GameDifficulty.Nightmare) },
+            {GameDifficulty.Hell, FullyCompletedQuestIdsByDifficulty(GameDifficulty.Hell) },
+        };
+
+        public static Dictionary<GameDifficulty, List<QuestId>> DefaultCompleteQuestIds => new Dictionary<GameDifficulty, List<QuestId>>
+        {
+            { GameDifficulty.Normal, new List<QuestId>() },
+            { GameDifficulty.Nightmare, new List<QuestId>() },
+            { GameDifficulty.Hell, new List<QuestId>() }
+        };
+
+        private List<QuestId> FullyCompletedQuestIdsByDifficulty(GameDifficulty difficulty)
         {
             List<QuestId> completedIds = new List<QuestId>();
             List<Quest> quests = ByDifficulty(difficulty);
@@ -63,7 +71,7 @@ namespace Zutatensuppe.D2Reader.Models
 
             foreach (Quest quest in quests)
             {
-                if (quest.IsCompleted)
+                if (quest.IsFullyCompleted)
                 {
                     completedIds.Add(quest.Id);
                 }

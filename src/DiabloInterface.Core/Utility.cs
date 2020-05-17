@@ -1,4 +1,5 @@
 using System;
+
 namespace Zutatensuppe.DiabloInterface.Core
 {
     public class Utility

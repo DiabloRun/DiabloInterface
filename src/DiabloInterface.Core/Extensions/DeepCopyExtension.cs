@@ -1,22 +1,22 @@
-﻿namespace Zutatensuppe.DiabloInterface.Core.Extensions
-{
-    using Newtonsoft.Json;
+using Newtonsoft.Json;
 
+namespace Zutatensuppe.DiabloInterface.Core.Extensions
+{
     public static class DeepCopyExtension
     {
         public static T DeepCopy<T>(this T source)
         {
             if (ReferenceEquals(source, null))
-            {
                 return default(T);
-            }
 
             var settings = new JsonSerializerSettings
             {
-                ObjectCreationHandling = ObjectCreationHandling.Replace
+                ObjectCreationHandling = ObjectCreationHandling.Replace,
+                TypeNameHandling = TypeNameHandling.Auto,
             };
 
-            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(source), settings);
+            var serialized = JsonConvert.SerializeObject(source, settings);
+            return JsonConvert.DeserializeObject<T>(serialized, settings);
         }
     }
 }

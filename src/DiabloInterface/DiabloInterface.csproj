@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Zutatensuppe.DiabloInterface</RootNamespace>
     <AssemblyName>DiabloInterface</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -64,8 +64,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -80,44 +80,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationStorage.cs" />
-    <Compile Include="Gui\Controls\Area.cs" />
+    <Compile Include="DiabloInterface.cs" />
     <Compile Include="Framework\NetFrameworkVersion.cs" />
     <Compile Include="Framework\NetFrameworkVersionComparator.cs" />
     <Compile Include="Framework\NetFrameworkVersionExtension.cs" />
     <Compile Include="Gui\ControlCollectionExtension.cs" />
-    <Compile Include="Gui\Controls\AbstractLayout.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Controls\AutoSplitSettingsRow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Controls\AutoSplitSettingsRow.Designer.cs">
-      <DependentUpon>AutoSplitSettingsRow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Gui\Controls\AutoSplitTable.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Gui\Controls\AutoSplitTable.Designer.cs">
-      <DependentUpon>AutoSplitTable.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Gui\Controls\AbstractLayout.cs" />
     <Compile Include="Gui\Controls\FontComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Gui\Controls\Gem.cs" />
-    <Compile Include="Gui\Controls\HotkeyControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Gui\Controls\RuneSettingsPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Gui\Controls\RuneSettingsPage.Designer.cs">
-      <DependentUpon>RuneSettingsPage.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\Forms\SimpleSaveDialog.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Gui\Forms\SimpleSaveDialog.Designer.cs">
-      <DependentUpon>SimpleSaveDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Controls\HorizontalLayout.cs">
       <SubType>UserControl</SubType>
@@ -131,52 +107,28 @@
     <Compile Include="Gui\DebugWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Gui\DebugWindow.Designer.cs">
-      <DependentUpon>DebugWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="Gui\MainWindow.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Gui\MainWindow.Designer.cs">
-      <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\Controls\QuestDebugRow.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Controls\RuneDisplayElement.cs" />
-    <Compile Include="Gui\Controls\RuneDisplayElement.Designer.cs">
-      <DependentUpon>RuneDisplayElement.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Plugin\IPlugin.cs" />
+    <Compile Include="Plugin\IPluginConfig.cs" />
+    <Compile Include="Plugin\IPluginRenderer.cs" />
+    <Compile Include="Plugin\BasePlugin.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Gui\SettingsWindow.cs">
+    <Compile Include="Gui\ConfigWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Gui\SettingsWindow.Designer.cs">
-      <DependentUpon>SettingsWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="VersionChecker.cs" />
-    <EmbeddedResource Include="Gui\Controls\AutoSplitSettingsRow.resx">
-      <DependentUpon>AutoSplitSettingsRow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Controls\AutoSplitTable.resx">
-      <DependentUpon>AutoSplitTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Controls\RuneSettingsPage.resx">
-      <DependentUpon>RuneSettingsPage.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Forms\SimpleSaveDialog.resx">
-      <DependentUpon>SimpleSaveDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\DebugWindow.resx">
-      <DependentUpon>DebugWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\MainWindow.resx">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Gui\Controls\RuneDisplayElement.resx">
-      <DependentUpon>RuneDisplayElement.cs</DependentUpon>
-    </EmbeddedResource>
+    <Compile Include="Services\GameService.cs" />
+    <Compile Include="Services\IGameService.cs" />
+    <Compile Include="Services\IConfigService.cs" />
+    <Compile Include="Services\PluginService.cs" />
+    <Compile Include="Services\ConfigService.cs" />
+    <Compile Include="ApplicationConfig.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -187,9 +139,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Gui\SettingsWindow.resx">
-      <DependentUpon>SettingsWindow.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="App.manifest">
       <SubType>Designer</SubType>
     </None>
@@ -238,10 +187,6 @@
     <ProjectReference Include="..\D2Reader\D2Reader.csproj">
       <Project>{c5f081d7-fb83-4934-908f-53ce986ab08c}</Project>
       <Name>D2Reader</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DiabloInterface.Business\DiabloInterface.Business.csproj">
-      <Project>{2e429b2b-bd0a-48c3-ae99-0e292ea5d2da}</Project>
-      <Name>DiabloInterface.Business</Name>
     </ProjectReference>
     <ProjectReference Include="..\DiabloInterface.Core\DiabloInterface.Core.csproj">
       <Project>{4dc903b9-b02c-47d3-a695-4873fa5219ad}</Project>

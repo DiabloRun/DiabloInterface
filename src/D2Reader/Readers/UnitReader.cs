@@ -4,12 +4,12 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Reflection;
 using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.D2Reader.Struct.Item.Modifier;
 using Zutatensuppe.D2Reader.Struct.Stat;
 using Zutatensuppe.D2Reader.Struct.Skill;
 using Zutatensuppe.DiabloInterface.Core.Logging;
-using System.Reflection;
 using Zutatensuppe.D2Reader.Models;
 
 namespace Zutatensuppe.D2Reader.Readers
@@ -30,7 +30,7 @@ namespace Zutatensuppe.D2Reader.Readers
         readonly ModifierTable rareModifiers;
 
         private IProcessMemoryReader reader;
-        private IStringLookupTable stringReader;
+        private IStringReader stringReader;
         private ISkillReader skillReader;
 
         readonly ushort[] opNestings;
@@ -38,7 +38,7 @@ namespace Zutatensuppe.D2Reader.Readers
         public UnitReader(
             IProcessMemoryReader reader,
             GameMemoryTable memory,
-            IStringLookupTable stringReader,
+            IStringReader stringReader,
             ISkillReader skillReader
         ) {
             this.reader = reader;

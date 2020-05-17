@@ -10,7 +10,6 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     using Newtonsoft.Json;
 
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Business.Settings;
     using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
 
@@ -23,12 +22,242 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             Logger.Info("Initializing rune settings page.");
 
             InitializeComponent();
-            InitializeComboBoxes();
+
+            InitializeCharacterClassComboBox();
+            InitializeDifficultyComboBox();
+            InitializeRuneComboBox();
+            InitializeRunewordComboBox();
         }
+
+        private SplitContainer splitContainer1;
+        private GroupBox classSettingsGroupBox;
+        private ListBox characterListBox;
+        private FlowLayoutPanel runeFlowLayout;
+        private ComboBox runeComboBox;
+        private Button runeButton;
+        private Label difficultyLabel;
+        private Label classLabel;
+        private ComboBox difficultyComboBox;
+        private ComboBox characterClassComboBox;
+        private GroupBox runesGroupBox;
+        private GroupBox runeListEditBox;
+        private Button deleteSettingsButton;
+        private Button addSettingsButton;
+        private TableLayoutPanel tableLayoutPanel1;
+        private ComboBox runewordComboBox;
+        private Button runewordButton;
 
         ClassRuneSettings currentSettings;
 
         IReadOnlyList<ClassRuneSettings> settingsList;
+
+        private void InitializeComponent()
+        {
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.classSettingsGroupBox = new System.Windows.Forms.GroupBox();
+            this.deleteSettingsButton = new System.Windows.Forms.Button();
+            this.addSettingsButton = new System.Windows.Forms.Button();
+            this.characterListBox = new System.Windows.Forms.ListBox();
+            this.runesGroupBox = new System.Windows.Forms.GroupBox();
+            this.runeFlowLayout = new System.Windows.Forms.FlowLayoutPanel();
+            this.runeListEditBox = new System.Windows.Forms.GroupBox();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.difficultyComboBox = new System.Windows.Forms.ComboBox();
+            this.characterClassComboBox = new System.Windows.Forms.ComboBox();
+            this.classLabel = new System.Windows.Forms.Label();
+            this.difficultyLabel = new System.Windows.Forms.Label();
+            this.runeComboBox = new System.Windows.Forms.ComboBox();
+            this.runeButton = new System.Windows.Forms.Button();
+            this.runewordComboBox = new System.Windows.Forms.ComboBox();
+            this.runewordButton = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            this.classSettingsGroupBox.SuspendLayout();
+            this.runesGroupBox.SuspendLayout();
+            this.runeListEditBox.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.classSettingsGroupBox);
+            this.splitContainer1.Panel1MinSize = 140;
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.runesGroupBox);
+            this.splitContainer1.Panel2.Controls.Add(this.runeListEditBox);
+            this.splitContainer1.Panel2MinSize = 200;
+            this.splitContainer1.Size = new System.Drawing.Size(497, 440);
+            this.splitContainer1.SplitterDistance = 149;
+            // 
+            // classSettingsGroupBox
+            // 
+            this.classSettingsGroupBox.Controls.Add(this.deleteSettingsButton);
+            this.classSettingsGroupBox.Controls.Add(this.addSettingsButton);
+            this.classSettingsGroupBox.Controls.Add(this.characterListBox);
+            this.classSettingsGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.classSettingsGroupBox.Location = new System.Drawing.Point(0, 0);
+            this.classSettingsGroupBox.MinimumSize = new System.Drawing.Size(140, 0);
+            this.classSettingsGroupBox.Size = new System.Drawing.Size(149, 440);
+            this.classSettingsGroupBox.Text = "Class Settings";
+            // 
+            // deleteSettingsButton
+            // 
+            this.deleteSettingsButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            this.deleteSettingsButton.Location = new System.Drawing.Point(31, 414);
+            this.deleteSettingsButton.Size = new System.Drawing.Size(59, 23);
+            this.deleteSettingsButton.Text = "Remove";
+            this.deleteSettingsButton.Click += new System.EventHandler(this.DeleteSettingsButtonOnClick);
+            // 
+            // addSettingsButton
+            // 
+            this.addSettingsButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            this.addSettingsButton.Location = new System.Drawing.Point(96, 414);
+            this.addSettingsButton.Size = new System.Drawing.Size(50, 23);
+            this.addSettingsButton.Text = "Add";
+            this.addSettingsButton.Click += new System.EventHandler(this.AddSettingsButtonOnClick);
+            // 
+            // characterListBox
+            // 
+            this.characterListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            this.characterListBox.FormattingEnabled = true;
+            this.characterListBox.Location = new System.Drawing.Point(3, 16);
+            this.characterListBox.Size = new System.Drawing.Size(143, 394);
+            this.characterListBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.CharacterListBoxOnMouseDoubleClick);
+            // 
+            // runesGroupBox
+            // 
+            this.runesGroupBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            this.runesGroupBox.Controls.Add(this.runeFlowLayout);
+            this.runesGroupBox.Location = new System.Drawing.Point(3, 3);
+            this.runesGroupBox.Size = new System.Drawing.Size(337, 313);
+            this.runesGroupBox.Text = "Runes";
+            // 
+            // runeFlowLayout
+            // 
+            this.runeFlowLayout.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.runeFlowLayout.Location = new System.Drawing.Point(3, 16);
+            this.runeFlowLayout.Size = new System.Drawing.Size(331, 294);
+            // 
+            // runeListEditBox
+            // 
+            this.runeListEditBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            this.runeListEditBox.Controls.Add(this.tableLayoutPanel1);
+            this.runeListEditBox.Controls.Add(this.runeComboBox);
+            this.runeListEditBox.Controls.Add(this.runeButton);
+            this.runeListEditBox.Controls.Add(this.runewordComboBox);
+            this.runeListEditBox.Controls.Add(this.runewordButton);
+            this.runeListEditBox.Location = new System.Drawing.Point(3, 322);
+            this.runeListEditBox.Size = new System.Drawing.Size(337, 115);
+            this.runeListEditBox.Text = "Edit";
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.difficultyComboBox, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.characterClassComboBox, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.classLabel, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.difficultyLabel, 1, 0);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 14);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 14F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(331, 38);
+            // 
+            // difficultyComboBox
+            // 
+            this.difficultyComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            this.difficultyComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.difficultyComboBox.FormattingEnabled = true;
+            this.difficultyComboBox.Location = new System.Drawing.Point(168, 17);
+            this.difficultyComboBox.Size = new System.Drawing.Size(160, 21);
+            this.difficultyComboBox.SelectedValueChanged += new System.EventHandler(this.DifficultyComboBoxOnSelectedValueChanged);
+            // 
+            // characterClassComboBox
+            // 
+            this.characterClassComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            this.characterClassComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.characterClassComboBox.FormattingEnabled = true;
+            this.characterClassComboBox.Location = new System.Drawing.Point(3, 17);
+            this.characterClassComboBox.Size = new System.Drawing.Size(159, 21);
+            this.characterClassComboBox.SelectedValueChanged += new System.EventHandler(this.CharacterClassComboBoxOnSelectedValueChanged);
+            // 
+            // classLabel
+            // 
+            this.classLabel.AutoSize = true;
+            this.classLabel.Location = new System.Drawing.Point(3, 0);
+            this.classLabel.Size = new System.Drawing.Size(32, 13);
+            this.classLabel.Text = "Class";
+            // 
+            // difficultyLabel
+            // 
+            this.difficultyLabel.AutoSize = true;
+            this.difficultyLabel.Location = new System.Drawing.Point(168, 0);
+            this.difficultyLabel.Size = new System.Drawing.Size(47, 13);
+            this.difficultyLabel.Text = "Difficulty";
+            // 
+            // runeComboBox
+            // 
+            this.runeComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            this.runeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.runeComboBox.FormattingEnabled = true;
+            this.runeComboBox.Location = new System.Drawing.Point(6, 57);
+            this.runeComboBox.Size = new System.Drawing.Size(229, 21);
+            // 
+            // runeButton
+            // 
+            this.runeButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            this.runeButton.Location = new System.Drawing.Point(241, 55);
+            this.runeButton.Size = new System.Drawing.Size(90, 23);
+            this.runeButton.Text = "Add";
+            this.runeButton.Click += new System.EventHandler(this.RuneButtonOnClick);
+            // 
+            // runewordComboBox
+            // 
+            this.runewordComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            this.runewordComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.runewordComboBox.FormattingEnabled = true;
+            this.runewordComboBox.Location = new System.Drawing.Point(6, 86);
+            this.runewordComboBox.Size = new System.Drawing.Size(229, 21);
+            // 
+            // runewordButton
+            // 
+            this.runewordButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            this.runewordButton.Location = new System.Drawing.Point(241, 84);
+            this.runewordButton.Size = new System.Drawing.Size(90, 23);
+            this.runewordButton.Text = "Add";
+            this.runewordButton.Click += new System.EventHandler(this.RunewordButtonOnClick);
+            // 
+            // RuneSettingsPage
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.splitContainer1);
+            this.Name = "RuneSettingsPage";
+            this.Size = new System.Drawing.Size(497, 440);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.classSettingsGroupBox.ResumeLayout(false);
+            this.runesGroupBox.ResumeLayout(false);
+            this.runeListEditBox.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
+            this.ResumeLayout(false);
+        }
 
         public IReadOnlyList<ClassRuneSettings> SettingsList
         {
@@ -91,14 +320,6 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 runeFlowLayout.Controls.ClearAndDispose();
                 currentSettings.Runes.ForEach(AddRune);
             }
-        }
-
-        void InitializeComboBoxes()
-        {
-            InitializeCharacterClassComboBox();
-            InitializeDifficultyComboBox();
-            InitializeRuneComboBox();
-            InitializeRunewordComboBox();
         }
 
         void InitializeCharacterClassComboBox()
@@ -219,7 +440,8 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
             if (comboBox.SelectedIndex == 0)
                 currentSettings.Class = null;
-            else currentSettings.Class = (CharacterClass)comboBox.SelectedItem;
+            else
+                currentSettings.Class = (CharacterClass)comboBox.SelectedItem;
 
             RefreshSettingsItemText(currentSettings);
         }
@@ -232,7 +454,8 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
             if (comboBox.SelectedIndex == 0)
                 currentSettings.Difficulty = null;
-            else currentSettings.Difficulty = (GameDifficulty)comboBox.SelectedItem;
+            else
+                currentSettings.Difficulty = (GameDifficulty)comboBox.SelectedItem;
 
             RefreshSettingsItemText(currentSettings);
         }

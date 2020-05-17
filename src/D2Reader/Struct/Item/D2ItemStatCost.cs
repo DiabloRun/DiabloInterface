@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 
 using UInt8 = System.Byte;
 
 namespace Zutatensuppe.D2Reader.Struct.Item
 {
-
     // indexes seen in ASM: (indexes in globalData.ItemStatCost array)
     public enum ItemStatCostIndex : uint
     {

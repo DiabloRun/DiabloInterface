@@ -1,9 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Zutatensuppe.D2Reader.Readers;
 using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Item;
@@ -50,11 +46,20 @@ namespace Zutatensuppe.D2Reader.Models
             return Items;
         }
 
+        internal static List<ItemInfo> GetItemsByItems(D2DataReader dataReader, IEnumerable<Item> items)
+        {
+            List<ItemInfo> Items = new List<ItemInfo>();
+            dataReader.ItemAction(items, (item, player, unitReader, stringReader, inventoryReader) => {
+                Items.Add(new ItemInfo(item, player, unitReader, stringReader, inventoryReader));
+            });
+            return Items;
+        }
+
         public ItemInfo(
             Item item,
             D2Unit owner,
             UnitReader unitReader,
-            IStringLookupTable stringReader,
+            IStringReader stringReader,
             IInventoryReader inventoryReader
         )
         {

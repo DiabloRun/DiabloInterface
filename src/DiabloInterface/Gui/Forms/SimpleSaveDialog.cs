@@ -1,39 +1,58 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Windows.Forms;
 
 namespace Zutatensuppe.DiabloInterface.Gui.Forms
 {
-    public partial class SimpleSaveDialog : Form
+    public class SimpleSaveDialog : Form
     {
         const string CREATE_NEW_FILE = "Create new file";
         const string CLONE_FILE = "Clone file";
         const string ENTER_VALID_NAME = "Sorry , please enter a valid name";
 
+        private Button btnSave;
+        private TextBox txtNewFilename;
+        private Button btnCancel;
 
-        public string FileName { get; set; }
         public string NewFileName { get { return txtNewFilename.Text; } }
-        public SimpleSaveDialog()
-        {
-            InitializeComponent();
-        }
         
         public SimpleSaveDialog(string fileName)
         {
-            InitializeComponent();
+            btnSave = new Button();
+            txtNewFilename = new TextBox();
+            btnCancel = new Button();
+            SuspendLayout();
 
-            FileName = fileName;
+            btnSave.Location = new System.Drawing.Point(282, 12);
+            btnSave.Size = new System.Drawing.Size(75, 20);
+            btnSave.Text = "Save";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += new EventHandler(btnSave_Click);
+
+            txtNewFilename.Location = new System.Drawing.Point(12, 12);
+            txtNewFilename.Size = new System.Drawing.Size(264, 20);
             txtNewFilename.Text = fileName;
+            txtNewFilename.KeyPress += new KeyPressEventHandler(txtNewFilename_KeyPress);
 
-            if (FileName == String.Empty)
-            {
-                Text = CREATE_NEW_FILE;
-            }
-            else
-            {
-                Text = CLONE_FILE;
-            }
+            btnCancel.DialogResult = DialogResult.Cancel;
+            btnCancel.Location = new System.Drawing.Point(363, 12);
+            btnCancel.Size = new System.Drawing.Size(75, 20);
+            btnCancel.Text = "Cancel";
+            btnCancel.UseVisualStyleBackColor = true;
 
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(445, 42);
+            Controls.Add(btnCancel);
+            Controls.Add(txtNewFilename);
+            Controls.Add(btnSave);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            Icon = Properties.Resources.di;
+            MaximumSize = new System.Drawing.Size(461, 81);
+            MinimumSize = new System.Drawing.Size(461, 81);
+            Text = fileName == string.Empty ? CREATE_NEW_FILE : CLONE_FILE;
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         private bool CheckValidFilename()
@@ -50,7 +69,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Forms
             if (CheckValidFilename())
             {
                 DialogResult = DialogResult.OK;
-                this.Close();
+                Close();
             }
             else
             {
@@ -69,10 +88,10 @@ namespace Zutatensuppe.DiabloInterface.Gui.Forms
             {
                 // enter is pressed:
                 CheckAndCloseForm();
-            } else if ( e.KeyChar == 27)
+            } else if (e.KeyChar == 27)
             {
                 // esc is pressed
-                this.Close();
+                Close();
             }
         }
     }

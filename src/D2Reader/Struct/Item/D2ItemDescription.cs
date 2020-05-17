@@ -1,8 +1,7 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
 namespace Zutatensuppe.D2Reader.Struct.Item
 {
-
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1, Size = 0x1A8)]
     public class D2ItemDescription
     {

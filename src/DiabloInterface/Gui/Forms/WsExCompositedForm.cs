@@ -1,4 +1,4 @@
-﻿using System.Windows.Forms;
+using System.Windows.Forms;
 
 namespace Zutatensuppe.DiabloInterface.Gui.Forms
 {
@@ -10,8 +10,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Forms
             get
             {
                 CreateParams cp = base.CreateParams;
-                if (!DesignMode)
-                    cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
+                cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
                 return cp;
             }
         }

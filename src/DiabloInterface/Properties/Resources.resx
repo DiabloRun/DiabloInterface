@@ -136,9 +136,6 @@
   <data name="arrow_refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Images\Icons\arrow_refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="areas" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\areas.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="runes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Images\Runes\runes.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -147,5 +144,8 @@
   </data>
   <data name="runewords" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\runewords.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="di" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\di.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

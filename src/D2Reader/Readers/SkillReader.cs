@@ -8,7 +8,7 @@ namespace Zutatensuppe.D2Reader.Readers
     internal class SkillReader: ISkillReader
     {
         IProcessMemoryReader reader;
-        protected IStringLookupTable stringReader;
+        protected IStringReader stringReader;
         D2GlobalData globals;
 
         public SkillReader(IProcessMemoryReader reader, GameMemoryTable memory)
@@ -16,7 +16,7 @@ namespace Zutatensuppe.D2Reader.Readers
             this.reader = reader;
 
             globals = reader.Read<D2GlobalData>(reader.ReadAddress32(memory.GlobalData, AddressingMode.Relative));
-            stringReader = new StringLookupTable(reader, memory);
+            stringReader = new StringReader(reader, memory);
         }
 
         public IEnumerable<D2Skill> EnumerateSkills(D2Unit unit)

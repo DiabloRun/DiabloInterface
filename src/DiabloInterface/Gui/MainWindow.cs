@@ -1,157 +1,187 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+
+using Zutatensuppe.D2Reader.Models;
+using Zutatensuppe.DiabloInterface.Services;
+using Zutatensuppe.DiabloInterface.Core.Logging;
+using Zutatensuppe.DiabloInterface.Gui.Controls;
+using Zutatensuppe.DiabloInterface.Gui.Forms;
+using System.Reflection;
+
 namespace Zutatensuppe.DiabloInterface.Gui
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Windows.Forms;
-
-    using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Business.Services;
-    using Zutatensuppe.DiabloInterface.Business.Settings;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
-    using Zutatensuppe.DiabloInterface.Gui.Controls;
-    using Zutatensuppe.DiabloInterface.Gui.Forms;
-
-    public partial class MainWindow : WsExCompositedForm
+    public class MainWindow : WsExCompositedForm
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly DiabloInterface di;
 
-        private readonly ISettingsService settingsService;
-        private readonly IGameService gameService;
-        private readonly IAutoSplitService autoSplitService;
-        private readonly KeyService keyService;
-        private readonly ServerService serverService;
-        private readonly HttpClientService httpClientService;
+        private ToolStripMenuItem loadConfigMenuItem;
+        private Form debugWindow;
+        private AbstractLayout layout;
 
-        Form debugWindow;
-        AbstractLayout currentLayout;
-
-        public MainWindow(
-            ISettingsService settingsService,
-            IGameService gameService,
-            IAutoSplitService autoSplitService,
-            KeyService keyService,
-            ServerService serverService,
-            HttpClientService httpClientService
-        ) {
-            Logger.Info("Creating main window.");
-            this.settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-            this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
-            this.autoSplitService = autoSplitService ?? throw new ArgumentNullException(nameof(autoSplitService));
-            this.keyService = keyService ?? throw new ArgumentNullException(nameof(keyService));
-            this.serverService = serverService ?? throw new ArgumentNullException(nameof(serverService));
-            this.httpClientService = httpClientService ?? throw new ArgumentNullException(nameof(httpClientService));
+        public MainWindow(DiabloInterface di)
+        {
+            this.di = di;
             
+            Logger.Info("Creating main window.");
+
             RegisterServiceEventHandlers();
             InitializeComponent();
-            PopulateSetingsFileListContextMenu(settingsService.SettingsFileCollection);
-            SetTitleWithApplicationVersion();
-            ApplySettings(settingsService.CurrentSettings);
+            PopulateConfigFileListContextMenu(this.di.configService.ConfigFileCollection);
+            ApplyConfig(this.di.configService.CurrentConfig);
         }
 
         void RegisterServiceEventHandlers()
         {
-            settingsService.SettingsChanged += SettingsServiceOnSettingsChanged;
-            settingsService.SettingsCollectionChanged += SettingsServiceOnSettingsCollectionChanged;
+            di.configService.Changed += ConfigChanged;
+            di.configService.CollectionChanged += ConfigCollectionChanged;
         }
 
-        void SettingsServiceOnSettingsChanged(object sender, ApplicationSettingsEventArgs e)
+        void UnregisterServiceEventHandlers()
+        {
+            di.configService.Changed -= ConfigChanged;
+            di.configService.CollectionChanged -= ConfigCollectionChanged;
+        }
+
+        void ConfigChanged(object sender, ApplicationConfigEventArgs e)
         {
             if (InvokeRequired)
             {
-                Invoke((Action)(() => SettingsServiceOnSettingsChanged(sender, e)));
+                Invoke((Action)(() => ConfigChanged(sender, e)));
                 return;
             }
 
-            ApplySettings(e.Settings);
+            ApplyConfig(e.Config);
         }
 
-        void SettingsServiceOnSettingsCollectionChanged(object sender, SettingsCollectionEventArgs e)
+        void ConfigCollectionChanged(object sender, ConfigCollectionEventArgs e)
         {
             if (InvokeRequired)
             {
-                Invoke((Action)(() => SettingsServiceOnSettingsCollectionChanged(sender, e)));
+                Invoke((Action)(() => ConfigCollectionChanged(sender, e)));
                 return;
             }
 
-            PopulateSetingsFileListContextMenu(e.Collection);
+            PopulateConfigFileListContextMenu(e.Collection);
         }
 
-        void ApplySettings(ApplicationSettings settings)
+        private void InitializeComponent()
         {
-            ApplyLayoutChanges(settings);
-        }
-
-        void ApplyLayoutChanges(ApplicationSettings settings)
-        {
-            var isHorizontal = currentLayout is HorizontalLayout;
-            if (isHorizontal != settings.DisplayLayoutHorizontal || currentLayout == null)
+            var difficultyItem = new ToolStripMenuItem();
+            foreach (GameDifficulty diff in Enum.GetValues(typeof(GameDifficulty)))
             {
-                UpdateLayoutView(settings);
+                var item = new ToolStripMenuItem();
+                item.Checked = difficultyItem.DropDownItems.Count == 0;
+                item.Text = Enum.GetName(typeof(GameDifficulty), diff);
+                item.Click += (object s, EventArgs e) => GameDifficultyClick(s, diff);
+                difficultyItem.DropDownItems.Add(item);
             }
+            difficultyItem.Text = "Difficulty";
+
+            var configItem = new ToolStripMenuItem();
+            configItem.Image = Properties.Resources.wrench_orange;
+            configItem.ShortcutKeys = Keys.Control | Keys.U;
+            configItem.Text = "Config";
+            configItem.Click += new EventHandler(ConfigMenuItemOnClick);
+
+            var resetItem = new ToolStripMenuItem();
+            resetItem.Image = Properties.Resources.arrow_refresh;
+            resetItem.ShortcutKeys = Keys.Control | Keys.R;
+            resetItem.Text = "Reset";
+            resetItem.Click += new EventHandler(ResetMenuItemOnClick);
+
+            var debugItem = new ToolStripMenuItem();
+            debugItem.Image = Properties.Resources.bug;
+            debugItem.Text = "Debug";
+            debugItem.Click += new EventHandler(DebugMenuItemOnClick);
+
+            var exitItem = new ToolStripMenuItem();
+            exitItem.Image = Properties.Resources.cross;
+            exitItem.Text = "Exit";
+            exitItem.Click += new EventHandler(ExitMenuItemOnClick);
+
+            loadConfigMenuItem = new ToolStripMenuItem();
+            loadConfigMenuItem.Text = "Load Config";
+
+            var contextMenu = new ContextMenuStrip();
+            contextMenu.Items.AddRange(new ToolStripItem[] {
+                difficultyItem,
+                configItem,
+                loadConfigMenuItem,
+                resetItem,
+                debugItem,
+                exitItem
+            });
+
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            BackColor = System.Drawing.Color.Black;
+            ClientSize = new System.Drawing.Size(730, 514);
+            ContextMenuStrip = contextMenu;
+            Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 238);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+
+            Icon = Properties.Resources.di;
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Text = $@"DiabloInterface v{Application.ProductVersion}";
         }
 
-        void UpdateLayoutView(ApplicationSettings settings)
+        void ApplyConfig(ApplicationConfig config)
         {
-            var nextLayout = CreateLayout(settings.DisplayLayoutHorizontal);
-            if (currentLayout != null)
+            // nothing to do if correct layout already
+            if (layout is HorizontalLayout && config.DisplayLayoutHorizontal)
+                return;
+
+            // remove old layout
+            if (layout != null)
             {
-                Controls.Remove(currentLayout);
-                currentLayout.Dispose();
-                currentLayout = null;
+                Controls.Remove(layout);
+                layout.Dispose();
+                layout = null;
             }
+
+            // create new layout
+            var nextLayout = config.DisplayLayoutHorizontal
+                ? new HorizontalLayout(di) as AbstractLayout
+                : new VerticalLayout(di);
             Controls.Add(nextLayout);
-            currentLayout = nextLayout;
+            layout = nextLayout;
         }
 
-        AbstractLayout CreateLayout(bool horizontal)
+        void PopulateConfigFileListContextMenu(IEnumerable<FileInfo> configFileCollection)
         {
-            return horizontal
-                ? new HorizontalLayout(settingsService, gameService) as AbstractLayout
-                : new VerticalLayout(settingsService, gameService);
-        }
+            var items = configFileCollection.Select(CreateConfigToolStripMenuItem).ToArray();
 
-        void SetTitleWithApplicationVersion()
-        {
-            Text = $@"Diablo Interface v{Application.ProductVersion}";
-            Update();
-        }
-
-        void PopulateSetingsFileListContextMenu(IEnumerable<FileInfo> settingsFileCollection)
-        {
             loadConfigMenuItem.DropDownItems.Clear();
-            IEnumerable<ToolStripItem> items = settingsFileCollection.Select(CreateSettingsToolStripMenuItem);
-            loadConfigMenuItem.DropDownItems.AddRange(items.ToArray());
+            loadConfigMenuItem.DropDownItems.AddRange(items);
         }
 
-        ToolStripMenuItem CreateSettingsToolStripMenuItem(FileInfo fileInfo)
+        ToolStripMenuItem CreateConfigToolStripMenuItem(FileInfo f)
         {
-            var item = new ToolStripMenuItem
-            {
-                Text = Path.GetFileNameWithoutExtension(fileInfo.Name),
-                Tag = fileInfo.FullName
-            };
-
-            item.Click += LoadConfigFile;
-
+            var item = new ToolStripMenuItem();
+            item.Text = Path.GetFileNameWithoutExtension(f.Name);
+            item.Click += (object s, EventArgs e) => LoadConfigFile(s, f.FullName);
             return item;
         }
 
-        void LoadConfigFile(object sender, EventArgs e)
+        void LoadConfigFile(object sender, string fileName)
         {
-            var fileName = ((ToolStripMenuItem)sender).Tag.ToString();
-
             // TODO: LoadSettings should throw a custom Exception with information about why this happened.
-            if (!settingsService.LoadSettings(fileName))
+            if (!di.configService.Load(fileName))
             {
-                Logger.Error($"Failed to load settings from file: {fileName}.");
+                Logger.Error($"Failed to load config from file: {fileName}.");
                 MessageBox.Show(
-                    $@"Failed to load settings.{Environment.NewLine}See the error log for more details.",
-                    @"Settings Error",
+                    $@"Failed to load config.{Environment.NewLine}See the error log for more details.",
+                    @"Config Error",
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    MessageBoxIcon.Error
+                );
             }
         }
 
@@ -162,70 +192,40 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         void ResetMenuItemOnClick(object sender, EventArgs e)
         {
-            autoSplitService.ResetAutoSplits();
-            currentLayout?.Reset();
+            di.plugins.Reset();
+            layout?.Reset();
         }
 
-        void SettingsMenuItemOnClick(object sender, EventArgs e)
+        void ConfigMenuItemOnClick(object sender, EventArgs e)
         {
-            using (var settingsWindow = new SettingsWindow(settingsService, serverService, keyService, httpClientService))
-            {
-                settingsWindow.ShowDialog();
-            }
+            using (var window = new ConfigWindow(di))
+                window.ShowDialog();
         }
 
         void DebugMenuItemOnClick(object sender, EventArgs e)
         {
             if (debugWindow == null || debugWindow.IsDisposed)
-            {
-                debugWindow = new DebugWindow(settingsService, gameService, serverService);
-            }
+                debugWindow = new DebugWindow(di);
 
             debugWindow.Show();
-        }
-
-        void DifficultyNormalToolStripMenuItemOnClick(object sender, EventArgs e)
-        {
-            GameDifficultyClick(sender, GameDifficulty.Normal);
-        }
-
-        void NightmareToolStripMenuItemOnClick(object sender, EventArgs e)
-        {
-            GameDifficultyClick(sender, GameDifficulty.Nightmare);
-        }
-
-        void HellToolStripMenuItemOnClick(object sender, EventArgs e)
-        {
-            GameDifficultyClick(sender, GameDifficulty.Hell);
         }
 
         void GameDifficultyClick(object sender, GameDifficulty difficulty)
         {
             Logger.Info($"Setting target difficulty to {difficulty}.");
 
-            UncheckDifficultyMenuItems();
-            gameService.TargetDifficulty = difficulty;
-            ((ToolStripMenuItem)sender).Checked = true;
-        }
+            var clicked = (ToolStripMenuItem)sender;
+            var parent = (ToolStripMenuItem)clicked.OwnerItem;
+            foreach (ToolStripMenuItem item in parent.DropDownItems)
+                item.Checked = item == clicked;
 
-        void UncheckDifficultyMenuItems()
-        {
-            foreach (ToolStripMenuItem item in difficultyToolStripMenuItem.DropDownItems)
-            {
-                item.Checked = false;
-            }
+            di.game.TargetDifficulty = difficulty;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             UnregisterServiceEventHandlers();
             base.OnFormClosing(e);
-        }
-
-        void UnregisterServiceEventHandlers()
-        {
-            settingsService.SettingsChanged -= SettingsServiceOnSettingsChanged;
-            settingsService.SettingsCollectionChanged -= SettingsServiceOnSettingsCollectionChanged;
         }
     }
 }

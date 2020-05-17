@@ -1,8 +1,7 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
 namespace Zutatensuppe.D2Reader.Struct
 {
-
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 0x22)]
     class D2CharacterClassSkillIconStruct
     {

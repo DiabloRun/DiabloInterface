@@ -3,12 +3,9 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     using System;
     using System.Collections.Generic;
     using System.Drawing;
-    using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Business.Services;
-    using Zutatensuppe.DiabloInterface.Business.Settings;
     using Zutatensuppe.DiabloInterface.Core.Logging;
     
     class VerticalLayout : AbstractLayout
@@ -19,15 +16,13 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         private FlowLayoutPanel panelRuneDisplay;
         private TableLayoutPanel table;
 
-        public VerticalLayout(ISettingsService settingsService, IGameService gameService)
+        public VerticalLayout(DiabloInterface di)
         {
-            this.settingsService = settingsService;
-            this.gameService = gameService;
-
+            this.di = di;
             RegisterServiceEventHandlers();
             InitializeComponent();
 
-            Load += (sender, e) => UpdateSettings(settingsService.CurrentSettings);
+            Load += (sender, e) => UpdateConfig(di.configService.CurrentConfig);
 
             // Clean up events when disposed because services outlive us.
             Disposed += (sender, e) => UnregisterServiceEventHandlers();
@@ -38,33 +33,33 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         protected void InitializeComponent()
         {
-            Add("name", new string('W', 15), (ApplicationSettings s) => Tuple.Create(s.DisplayName, s.ColorName, s.FontSizeTitle), "{}");
-            Add("hc_sc", "HARDCORE", (ApplicationSettings s) => Tuple.Create(s.DisplayHardcoreSoftcore, s.ColorHardcoreSoftcore, s.FontSize), "{}");
-            Add("exp_classic", "EXPANSION", (ApplicationSettings s) => Tuple.Create(s.DisplayExpansionClassic, s.ColorExpansionClassic, s.FontSize), "{}");
-            Add("playersx", "8", (ApplicationSettings s) => Tuple.Create(s.DisplayPlayersX, s.ColorPlayersX, s.FontSize), "/players {}");
-            Add("deaths", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayDeathCounter, s.ColorDeaths, s.FontSize), "DEATHS: {}");
-            Add("runs", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayGameCounter, s.ColorGameCounter, s.FontSize), "RUNS: {}");
-            Add("chars", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayCharCounter, s.ColorCharCounter, s.FontSize), "CHARS: {}");
-            Add("gold", "2500000", (ApplicationSettings s) => Tuple.Create(s.DisplayGold, s.ColorGold, s.FontSize), "GOLD: {}");
-            Add("mf", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayMagicFind, s.ColorMagicFind, s.FontSize), "MF:", "{}");
-            Add("monstergold", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayMonsterGold, s.ColorMonsterGold, s.FontSize), "EMG:", "{}");
-            Add("atd", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAttackerSelfDamage, s.ColorAttackerSelfDamage, s.FontSize), "ATD:", "{}");
-            Add("lvl", "99", (ApplicationSettings s) => Tuple.Create(s.DisplayLevel, s.ColorLevel, s.FontSize), "LVL:", "{}");
-            Add("str", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "STR:", "{}");
-            Add("vit", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "VIT:", "{}");
-            Add("dex", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "DEX:", "{}");
-            Add("ene", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "ENE:", "{}");
-            Add("ias", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "IAS:", "{}");
-            Add("frw", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "FRW:", "{}");
-            Add("fcr", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "FCR:", "{}");
-            Add("fhr", "999", (ApplicationSettings s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "FHR:", "{}");
-            Add("cold", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorColdRes, s.FontSize), "COLD:", "{}");
-            Add("ligh", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorLightningRes, s.FontSize), "LIGH:", "{}");
-            Add("pois", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorPoisonRes, s.FontSize), "POIS:", "{}");
-            Add("fire", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayResistances, s.ColorFireRes, s.FontSize), "FIRE:", "{}");
-            Add("norm", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NORM:", "{}%");
-            Add("nm", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NM:", "{}%");
-            Add("hell", "100", (ApplicationSettings s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "HELL:", "{}%");
+            Add("name", new string('W', 15), (ApplicationConfig s) => Tuple.Create(s.DisplayName, s.ColorName, s.FontSizeTitle), "{}");
+            Add("hc_sc", "HARDCORE", (ApplicationConfig s) => Tuple.Create(s.DisplayHardcoreSoftcore, s.ColorHardcoreSoftcore, s.FontSize), "{}");
+            Add("exp_classic", "EXPANSION", (ApplicationConfig s) => Tuple.Create(s.DisplayExpansionClassic, s.ColorExpansionClassic, s.FontSize), "{}");
+            Add("playersx", "8", (ApplicationConfig s) => Tuple.Create(s.DisplayPlayersX, s.ColorPlayersX, s.FontSize), "/players {}");
+            Add("deaths", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayDeathCounter, s.ColorDeaths, s.FontSize), "DEATHS: {}");
+            Add("runs", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayGameCounter, s.ColorGameCounter, s.FontSize), "RUNS: {}");
+            Add("chars", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayCharCounter, s.ColorCharCounter, s.FontSize), "CHARS: {}");
+            Add("gold", "2500000", (ApplicationConfig s) => Tuple.Create(s.DisplayGold, s.ColorGold, s.FontSize), "GOLD: {}");
+            Add("mf", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayMagicFind, s.ColorMagicFind, s.FontSize), "MF:", "{}");
+            Add("monstergold", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayMonsterGold, s.ColorMonsterGold, s.FontSize), "EMG:", "{}");
+            Add("atd", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayAttackerSelfDamage, s.ColorAttackerSelfDamage, s.FontSize), "ATD:", "{}");
+            Add("lvl", "99", (ApplicationConfig s) => Tuple.Create(s.DisplayLevel, s.ColorLevel, s.FontSize), "LVL:", "{}");
+            Add("str", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "STR:", "{}");
+            Add("vit", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "VIT:", "{}");
+            Add("dex", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "DEX:", "{}");
+            Add("ene", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayBaseStats, s.ColorBaseStats, s.FontSize), "ENE:", "{}");
+            Add("ias", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "IAS:", "{}");
+            Add("frw", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "FRW:", "{}");
+            Add("fcr", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "FCR:", "{}");
+            Add("fhr", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayAdvancedStats, s.ColorAdvancedStats, s.FontSize), "FHR:", "{}");
+            Add("cold", "100", (ApplicationConfig s) => Tuple.Create(s.DisplayResistances, s.ColorColdRes, s.FontSize), "COLD:", "{}");
+            Add("ligh", "100", (ApplicationConfig s) => Tuple.Create(s.DisplayResistances, s.ColorLightningRes, s.FontSize), "LIGH:", "{}");
+            Add("pois", "100", (ApplicationConfig s) => Tuple.Create(s.DisplayResistances, s.ColorPoisonRes, s.FontSize), "POIS:", "{}");
+            Add("fire", "100", (ApplicationConfig s) => Tuple.Create(s.DisplayResistances, s.ColorFireRes, s.FontSize), "FIRE:", "{}");
+            Add("norm", "100", (ApplicationConfig s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NORM:", "{}%");
+            Add("nm", "100", (ApplicationConfig s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "NM:", "{}%");
+            Add("hell", "100", (ApplicationConfig s) => Tuple.Create(s.DisplayDifficultyPercentages, s.ColorDifficultyPercentages, s.FontSize), "HELL:", "{}%");
             
             table = new TableLayoutPanel();
             table.SuspendLayout();
@@ -160,11 +155,11 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             UpdateLabel("hell", $@"{quests.ProgressByDifficulty(GameDifficulty.Hell) * 100:0}");
         }
 
-        protected override void UpdateSettings(ApplicationSettings s)
+        protected override void UpdateConfig(ApplicationConfig config)
         {
-            var padding = new Padding(0, 0, 0, s.VerticalLayoutPadding);
-            realFrwIas = s.DisplayRealFrwIas;
-            BackColor = s.ColorBackground;
+            var padding = new Padding(0, 0, 0, config.VerticalLayoutPadding);
+            realFrwIas = config.DisplayRealFrwIas;
+            BackColor = config.ColorBackground;
 
             int w_full = 0;
             int w_left = 0;
@@ -196,8 +191,8 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
             foreach (KeyValuePair<string, Def> pair in def)
             {
-                Tuple<bool, Color, int> t = pair.Value.settings(s);
-                upd(pair.Value.labels, t.Item1, new Font(s.FontName, t.Item3), t.Item2, pair.Value.maxString, pair.Value.defaults);
+                Tuple<bool, Color, int> t = pair.Value.settings(config);
+                upd(pair.Value.labels, t.Item1, new Font(config.FontName, t.Item3), t.Item2, pair.Value.maxString, pair.Value.defaults);
             }
 
             foreach (KeyValuePair<string, Def> pair in def)
@@ -215,7 +210,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 }
             }
 
-            if (!s.DisplayRunes)
+            if (!config.DisplayRunes)
                 panelRuneDisplay.Hide();
         }
     }

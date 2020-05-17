@@ -1,16 +1,16 @@
+using System.Collections.Generic;
+using System.Linq;
+
+using Zutatensuppe.D2Reader.Models;
+
 namespace Zutatensuppe.D2Reader
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Zutatensuppe.D2Reader.Models;
-
     public static class QuestFactory
     {
         static readonly IReadOnlyDictionary<QuestId, QuestDetails> Quests = new Dictionary<QuestId, QuestDetails>()
         {
             { QuestId.Andariel, new QuestDetails { Id=QuestId.Andariel, Act=1, ActOrder=6, Name="Sisters to the Slaughter", CommonName="Andariel", IsBossQuest=true, } },
-            { QuestId.Duriel, new QuestDetails { Id=QuestId.Duriel, Act=2, ActOrder=6, Name="The Seven Tombs", CommonName="Duriel", IsBossQuest=true, AutoSplitBitMask=(1 << 5), } },
+            { QuestId.Duriel, new QuestDetails { Id=QuestId.Duriel, Act=2, ActOrder=6, Name="The Seven Tombs", CommonName="Duriel", IsBossQuest=true, CompletionBitMask=(1 << 5), } },
             { QuestId.Mephisto, new QuestDetails { Id=QuestId.Mephisto, Act=3, ActOrder=6, Name="The Guardian", CommonName="Mephisto", IsBossQuest=true, } },
             { QuestId.Diablo, new QuestDetails { Id=QuestId.Diablo, Act=4, ActOrder=3, Name="Terror's End", CommonName="Diablo", IsBossQuest=true, } },
             { QuestId.Baal, new QuestDetails { Id=QuestId.Baal, Act=5, ActOrder=6, Name="Eve of Destruction", CommonName="Baal", IsBossQuest=true, } },
@@ -42,7 +42,7 @@ namespace Zutatensuppe.D2Reader
             { QuestId.BetrayalOfHarrogath, new QuestDetails { Id=QuestId.BetrayalOfHarrogath, Act=5, ActOrder=4, Name="Betrayal of Harrogath", CommonName="Kill Nihlathak", } },
             { QuestId.RiteOfPassage, new QuestDetails { Id=QuestId.RiteOfPassage, Act=5, ActOrder=5, Name="Rite of Passage", CommonName="Ancients" } },
 
-            { QuestId.CowKing, new QuestDetails { Id=QuestId.CowKing, Act=0, ActOrder=0, Name="Cow King", CommonName="Cow King", AutoSplitBitMask=(1 << 10), CompletionBitMask=(1 << 10), } },
+            { QuestId.CowKing, new QuestDetails { Id=QuestId.CowKing, Act=0, ActOrder=0, Name="Cow King", CommonName="Cow King", CompletionBitMask=(1 << 10), FullCompletionBitMask=(1 << 10), } },
         };
 
         static readonly IReadOnlyDictionary<int, QuestId> QuestBufferIndexLookup = new Dictionary<int, QuestId>()
