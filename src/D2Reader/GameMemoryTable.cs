@@ -8,6 +8,7 @@ namespace Zutatensuppe.D2Reader
         public IntPtr PlayersX;
         public IntPtr GameId; // gameId (each time a game is started, this is increased by 1. note: doesnt start with 0/1)
         public IntPtr Area;
+        public IntPtr InventoryTab; // points to byte 0|1
         public IntPtr ItemDescriptions;
         public IntPtr MagicModifierTable;
         public IntPtr RareModifierTable;
