@@ -4,11 +4,11 @@ using System.Linq;
 using System.Reflection;
 using Zutatensuppe.D2Reader.Readers;
 using Zutatensuppe.D2Reader.Struct;
-using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.D2Reader.Struct.Skill;
 using Zutatensuppe.D2Reader.Struct.Stat;
 using Zutatensuppe.DiabloInterface.Core;
 using Zutatensuppe.DiabloInterface.Core.Logging;
+using static Zutatensuppe.D2Reader.D2Data;
 
 namespace Zutatensuppe.D2Reader.Models
 {

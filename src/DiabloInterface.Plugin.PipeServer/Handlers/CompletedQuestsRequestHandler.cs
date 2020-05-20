@@ -1,9 +1,9 @@
 namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers
 {
-    using System;
     using System.Collections.Generic;
 
     using Zutatensuppe.D2Reader;
+    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server;
 
     public class CompletedQuestsRequestHandler : IRequestHandler
@@ -17,14 +17,22 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers
 
         public Response HandleRequest(Request request, IList<string> arguments)
         {
-            var payload = dataReader.Quests.CompletedQuestIds;
+            var payload = BuildPayload(dataReader.Game);
+
             return new Response()
             {
-                Status = payload[D2Reader.Models.GameDifficulty.Normal] == null
-                    ? ResponseStatus.NotFound
-                    : ResponseStatus.Success,
-                Payload = payload
+                Payload = payload,
+                Status = payload != null ? ResponseStatus.Success : ResponseStatus.NotFound,
             };
+        }
+
+        object BuildPayload(Game game)
+        {
+            if (game == null)
+                return null;
+
+            var data = dataReader.Game.Quests.CompletedQuestIds;
+            return data[GameDifficulty.Normal] == null ? null : data;
         }
     }
 }

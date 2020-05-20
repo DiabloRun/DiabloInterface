@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Readers;
 using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.DiabloInterface.Core.Logging;
+using static Zutatensuppe.D2Reader.D2Data;
 
 namespace Zutatensuppe.D2Reader
 {
@@ -24,18 +24,14 @@ namespace Zutatensuppe.D2Reader
 
     public class DataReadEventArgs : EventArgs
     {
-        public DataReadEventArgs(
-            Character character,
-            Game game,
-            Quests quests
-        ) {
-            Character = character;
+        public DataReadEventArgs(Game game) {
+            Character = game.Character;
             Game = game;
-            Quests = quests;
+            Quests = game.Quests;
         }
 
-        public Character Character { get; }
         public Game Game { get; }
+        public Character Character { get; }
         public Quests Quests { get; }
     }
 
@@ -72,9 +68,7 @@ namespace Zutatensuppe.D2Reader
 
         private uint charCount = 0;
 
-        public Quests Quests { get; private set; } = new Quests();
         public Game Game { get; private set; }
-        public GameDifficulty Difficulty { get; private set; }
 
         public D2DataReader(
             IGameMemoryTableFactory memoryTableFactory,
@@ -94,10 +88,6 @@ namespace Zutatensuppe.D2Reader
 
         public event EventHandler<DataReadEventArgs> DataRead;
         
-        public Character ActiveCharacter { get; private set; }
-
-        public Character CurrentCharacter { get; private set; }
-
         /// <summary>
         /// Gets or sets reader polling rate.
         /// </summary>
@@ -425,27 +415,59 @@ namespace Zutatensuppe.D2Reader
 
             CreateReaders();
 
-            CurrentCharacter = ReadCharacterData(gameInfo);
+            var isNewChar = wasInTitleScreen && Character.DetermineIfNewChar(
+                gameInfo.Player,
+                unitReader,
+                inventoryReader,
+                skillReader
+            );
 
-            Quests = ReadQuests(gameInfo);
-            Game = ReadGameData(gameInfo);
-            Difficulty = Game.Difficulty;
-            OnDataRead(new DataReadEventArgs(
-                CurrentCharacter,
-                Game,
-                Quests
-            ));
-        }
+            var area = reader.ReadByte(memory.Area, AddressingMode.Relative);
+            var character = ReadCharacterData(gameInfo);
 
-        Game ReadGameData(GameInfo gameInfo)
-        {
+            // A brand new character has been started.
+            // The extra wasInTitleScreen check prevents DI from splitting
+            // when it was started AFTER Diablo 2, but the char is still a new char
+            if (isNewChar)
+            {
+                // disable IsNewChar from the other chars created so far
+                foreach (var pair in characters)
+                    pair.Value.IsNewChar = false;
+
+                character.Deaths = 0;
+                character.IsNewChar = true;
+                Logger.Info($"A new chararacter was created: {character.Name}");
+                charCount++;
+                OnCharacterCreated(new CharacterCreatedEventArgs(character));
+
+                // When a new player is created, the game area is not updated immediately.
+                // That means the game is in a kind of invalid state.
+                // Instead of waiting for the next loop, we use the area that we know
+                // the char starts in and set it manually, no matter what the game tells us
+                switch (gameInfo.Player.actNo)
+                {
+                    case 0: area = (byte)Area.ROGUE_ENCAMPMENT; break;
+                    case 1: area = (byte)Area.LUT_GHOLEIN; break;
+                    case 2: area = (byte)Area.KURAST_DOCKTOWN; break;
+                    case 3: area = (byte)Area.PANDEMONIUM_FORTRESS; break;
+                    case 4: area = (byte)Area.HARROGATH; break;
+                    default: break;
+                }
+            }
+
             var g = new Game();
-            g.Area = reader.ReadByte(memory.Area, AddressingMode.Relative);
+            g.Area = area;
             g.PlayersX = Math.Max(reader.ReadByte(memory.PlayersX, AddressingMode.Relative), (byte)1);
             g.Difficulty = (GameDifficulty)gameInfo.Game.Difficulty;
             g.GameCount = gameCount;
             g.CharCount = charCount;
-            return g;
+            g.Quests = ReadQuests(gameInfo);
+            g.Character = character;
+            Game = g;
+
+            OnDataRead(new DataReadEventArgs(Game));
+
+            wasInTitleScreen = false;
         }
 
         Quests ReadQuests(GameInfo gameInfo) => new Quests((
@@ -480,29 +502,6 @@ namespace Zutatensuppe.D2Reader
         Character ReadCharacterData(GameInfo gameInfo)
         {
             Character character = CharacterByName(gameInfo.PlayerData.PlayerName);
-
-            if (wasInTitleScreen)
-            {
-                // A brand new character has been started.
-                // The extra wasInTitleScreen check prevents DI from splitting
-                // when it was started AFTER Diablo 2, but the char is still a new char
-                if (Character.DetermineIfNewChar(gameInfo.Player, unitReader, inventoryReader, skillReader))
-                {
-                    // disable IsNewChar from the other chars created so far
-                    foreach (var pair in characters)
-                        pair.Value.IsNewChar = false;
-
-                    Logger.Info($"A new chararacter was created: {character.Name}");
-                    charCount++;
-                    character.Deaths = 0;
-                    character.IsNewChar = true;
-                    ActiveCharacter = character;
-                    OnCharacterCreated(new CharacterCreatedEventArgs(character));
-                }
-
-                // Not in title screen anymore.
-                wasInTitleScreen = false;
-            }
 
             character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
             character.IsHardcore = gameInfo.Client.IsHardcore();
