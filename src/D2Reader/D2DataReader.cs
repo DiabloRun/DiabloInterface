@@ -457,6 +457,7 @@ namespace Zutatensuppe.D2Reader
 
             var g = new Game();
             g.Area = area;
+            g.InventoryTab = reader.ReadByte(memory.InventoryTab, AddressingMode.Relative);
             g.PlayersX = Math.Max(reader.ReadByte(memory.PlayersX, AddressingMode.Relative), (byte)1);
             g.Difficulty = (GameDifficulty)gameInfo.Game.Difficulty;
             g.GameCount = gameCount;

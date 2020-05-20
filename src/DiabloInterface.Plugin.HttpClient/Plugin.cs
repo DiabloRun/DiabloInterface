@@ -38,6 +38,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
         private readonly List<string> BodyProperties = new List<string>()
         {
             "Area",
+            "InventoryTab",
             "Difficulty",
             "PlayersX",
             "Name",
@@ -86,6 +87,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
         {
             public string Headers { get; set; }
             public int? Area { get; set; }
+            public byte? InventoryTab { get; set; }
             public GameDifficulty? Difficulty { get; set; }
             public int? PlayersX { get; set; }
             public uint? GameCount { get; set; }
@@ -253,7 +255,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
             var newData = new RequestBody()
             {
-                Area = (int)e.Game.Area,
+                Area = e.Game.Area,
+                InventoryTab = e.Game.InventoryTab,
                 Difficulty = e.Game.Difficulty,
                 PlayersX = e.Game.PlayersX,
                 GameCount = e.Game.GameCount,
