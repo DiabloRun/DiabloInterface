@@ -18,15 +18,23 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers
 
         public Response HandleRequest(Request request, IList<string> arguments)
         {
-            int questId = int.Parse(arguments[0]);
+            var payload = BuildPayload(dataReader.Game, (QuestId)int.Parse(arguments[0]));
 
             return new Response()
             {
-                Status = ResponseStatus.Success,
-                Payload = new
-                {
-                    IsCompleted = dataReader.Quests.QuestCompleted(dataReader.Difficulty, (QuestId)questId)
-                }
+                Payload = payload,
+                Status = payload != null ? ResponseStatus.Success : ResponseStatus.NotFound,
+            };
+        }
+
+        object BuildPayload(Game game, QuestId questId)
+        {
+            if (game == null)
+                return null;
+
+            return new
+            {
+                IsCompleted = game.Quests.QuestCompleted(game.Difficulty, questId)
             };
         }
     }

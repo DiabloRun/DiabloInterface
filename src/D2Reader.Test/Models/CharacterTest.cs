@@ -8,6 +8,7 @@ using Zutatensuppe.D2Reader.Readers;
 using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Skill;
 using Zutatensuppe.D2Reader.Struct.Stat;
+using static Zutatensuppe.D2Reader.D2Data;
 
 namespace Zutatensuppe.DiabloInterface.D2Reader.Test.Models
 {
@@ -76,7 +77,7 @@ namespace Zutatensuppe.DiabloInterface.D2Reader.Test.Models
                 ))
                 .Returns(startingItems);
 
-            // starting sills for amazon
+            // starting skills for amazon
             var skillData = new Dictionary<D2Skill, D2SkillData>();
             skillData.Add(new D2Skill(), new D2SkillData { SkillId = (uint)Skill.UNKNOWN });
             skillData.Add(new D2Skill(), new D2SkillData { SkillId = (uint)Skill.THROW });

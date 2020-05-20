@@ -253,7 +253,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
             var newData = new RequestBody()
             {
-                Area = e.Game.Area,
+                Area = (int)e.Game.Area,
                 Difficulty = e.Game.Difficulty,
                 PlayersX = e.Game.PlayersX,
                 GameCount = e.Game.GameCount,

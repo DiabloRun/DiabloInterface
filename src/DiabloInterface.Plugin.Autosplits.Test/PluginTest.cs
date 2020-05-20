@@ -7,6 +7,7 @@ using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits;
 using Zutatensuppe.DiabloInterface.Services;
+using static Zutatensuppe.D2Reader.D2Data;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
 {
@@ -60,12 +61,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
             game.PlayersX = 1;
             game.GameCount = 0;
             game.CharCount = 0;
+            game.Character = characterMock.Object;
+            game.Quests = quests;
 
-            var args = new DataReadEventArgs(
-                characterMock.Object,
-                game,
-                quests
-            );
+            var args = new DataReadEventArgs(game);
 
             // test autosplit by level
             gameService.triggerDataRead(null, args);
@@ -106,7 +105,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
             var splitOnArea1 = new AutoSplit(
                 "area 1",
                 AutoSplit.SplitType.Area,
-                1,
+                (int)Area.ROGUE_ENCAMPMENT,
                 (short)GameDifficulty.Normal
             );
             var splitOnItem1 = new AutoSplit(
@@ -190,12 +189,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
             game.PlayersX = 1;
             game.GameCount = 0;
             game.CharCount = 0;
+            game.Character = characterMock.Object;
+            game.Quests = quests;
 
-            var args = new DataReadEventArgs(
-                characterMock.Object,
-                game,
-                quests
-            );
+            var args = new DataReadEventArgs(game);
 
             // test autosplit by game start
             Assert.AreEqual(false, splitOnGameStart.IsReached);
@@ -213,9 +210,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
 
             // test autosplit by area
             Assert.AreEqual(false, splitOnArea1.IsReached);
-            game.Area = 1;
+            game.Area = (int)Area.ROGUE_ENCAMPMENT;
             gameService.triggerDataRead(null, args);
-            game.Area = 0;
+            game.Area = (int)Area.ROGUE_ENCAMPMENT + 1;
             Assert.AreEqual(true, splitOnArea1.IsReached);
 
             // test autosplit by item

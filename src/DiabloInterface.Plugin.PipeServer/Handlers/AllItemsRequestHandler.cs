@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server;
@@ -19,7 +18,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers
             return new Response()
             {
                 Status = ResponseStatus.Success,
-                Payload = dataReader.CurrentCharacter?.Items,
+                Payload = dataReader.Game?.Character?.Items,
             };
         }
     }

@@ -8,8 +8,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers
 {
     public class CharacterRequestHandler : IRequestHandler
     {
-        const string InvalidMessage = "Character request handler must accept one argument set to either 'current' or 'active'";
-
         readonly D2DataReader dataReader;
 
         public CharacterRequestHandler(D2DataReader dataReader)
@@ -19,21 +17,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers
 
         public Response HandleRequest(Request request, IList<string> arguments)
         {
-            if (arguments.Count == 0)
-                throw new RequestHandlerInvalidException(InvalidMessage);
-
-            object payload;
-            switch (arguments[0].ToLowerInvariant())
-            {
-                case "active":
-                    payload = BuildPayload(dataReader.ActiveCharacter);
-                    break;
-                case "current":
-                    payload = BuildPayload(dataReader.CurrentCharacter);
-                    break;
-                default:
-                    throw new RequestHandlerInvalidException(InvalidMessage);
-            }
+            var payload = BuildPayload(dataReader.Game);
 
             return new Response()
             {
@@ -42,14 +26,15 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers
             };
         }
 
-        object BuildPayload(Character character)
+        object BuildPayload(Game game)
         {
-            if (character == null)
+            if (game == null || game.Character == null)
                 return null;
+
+            var character = game.Character;
 
             return new
             {
-                IsCurrentCharacter = character == dataReader.CurrentCharacter,
                 character.Name,
                 character.Created,
                 character.CharClass,
