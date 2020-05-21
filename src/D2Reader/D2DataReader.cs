@@ -333,7 +333,6 @@ namespace Zutatensuppe.D2Reader
             {
                 D2Game game = ReadActiveGameInstance();
                 if (game == null || game.Client.IsNull) return null;
-
                 D2Client client = reader.Read<D2Client>(game.Client);
                 // Make sure we are reading a player type.
                 if (client.UnitType != 0) return null;
@@ -460,6 +459,7 @@ namespace Zutatensuppe.D2Reader
             g.InventoryTab = reader.ReadByte(memory.InventoryTab, AddressingMode.Relative);
             g.PlayersX = Math.Max(reader.ReadByte(memory.PlayersX, AddressingMode.Relative), (byte)1);
             g.Difficulty = (GameDifficulty)gameInfo.Game.Difficulty;
+            g.Seed = gameInfo.Game.InitSeed;
             g.GameCount = gameCount;
             g.CharCount = charCount;
             g.Quests = ReadQuests(gameInfo);
