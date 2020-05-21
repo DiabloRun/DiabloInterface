@@ -41,6 +41,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             "InventoryTab",
             "Difficulty",
             "PlayersX",
+            "Seed",
             "Name",
             "CharClass",
             "IsHardcore",
@@ -90,6 +91,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             public byte? InventoryTab { get; set; }
             public GameDifficulty? Difficulty { get; set; }
             public int? PlayersX { get; set; }
+            public uint? Seed { get; set; }
             public uint? GameCount { get; set; }
             public uint? CharCount { get; set; }
             public bool? NewCharacter { get; set; }
@@ -259,6 +261,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 InventoryTab = e.Game.InventoryTab,
                 Difficulty = e.Game.Difficulty,
                 PlayersX = e.Game.PlayersX,
+                Seed = e.Game.Seed,
                 GameCount = e.Game.GameCount,
                 CharCount = e.Game.CharCount,
                 Name = e.Character.Name,

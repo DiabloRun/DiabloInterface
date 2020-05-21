@@ -6,6 +6,7 @@ namespace Zutatensuppe.D2Reader.Models
         public byte InventoryTab;
         public int PlayersX;
         public GameDifficulty Difficulty;
+        public uint Seed;
         public uint GameCount;
         public uint CharCount;
         public Quests Quests;

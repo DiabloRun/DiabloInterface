@@ -68,6 +68,11 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             UpdateLabel(nam, "" + value);
         }
 
+        protected void UpdateLabel(string nam, uint value)
+        {
+            UpdateLabel(nam, "" + value);
+        }
+
         protected void RegisterServiceEventHandlers()
         {
             di.configService.Changed += SettingsServiceOnSettingsChanged;

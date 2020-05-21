@@ -37,6 +37,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             Add("hc_sc", "HARDCORE", (ApplicationConfig s) => Tuple.Create(s.DisplayHardcoreSoftcore, s.ColorHardcoreSoftcore, s.FontSize), "{}");
             Add("exp_classic", "EXPANSION", (ApplicationConfig s) => Tuple.Create(s.DisplayExpansionClassic, s.ColorExpansionClassic, s.FontSize), "{}");
             Add("playersx", "8", (ApplicationConfig s) => Tuple.Create(s.DisplayPlayersX, s.ColorPlayersX, s.FontSize), "/players {}");
+            Add("seed", "4294967295", (ApplicationConfig s) => Tuple.Create(s.DisplaySeed, s.ColorSeed, s.FontSize), "SEED: {}");
             Add("deaths", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayDeathCounter, s.ColorDeaths, s.FontSize), "DEATHS: {}");
             Add("runs", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayGameCounter, s.ColorGameCounter, s.FontSize), "RUNS: {}");
             Add("chars", "999", (ApplicationConfig s) => Tuple.Create(s.DisplayCharCounter, s.ColorCharCounter, s.FontSize), "CHARS: {}");
@@ -130,6 +131,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             UpdateLabel("hc_sc", player.IsHardcore ? "HARDCORE" : "SOFTCORE");
             UpdateLabel("exp_classic", player.IsExpansion ? "EXPANSION" : "CLASSIC");
             UpdateLabel("playersx", game.PlayersX);
+            UpdateLabel("seed", game.Seed);
             UpdateLabel("deaths", player.Deaths);
             UpdateLabel("runs", (int) game.GameCount);
             UpdateLabel("chars", (int) game.CharCount);
