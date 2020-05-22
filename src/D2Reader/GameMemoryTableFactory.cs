@@ -213,31 +213,48 @@ namespace Zutatensuppe.D2Reader
             }
             catch (GameVersionUnsupportedException)
             {
-                // we try to detect version for D2SE
-                var baseAddress = GetModuleAddress("Fog.dll", reader.ModuleBaseAddresses);
-                var pointer = new Pointer() { Base = new IntPtr(baseAddress + 0x0004AFE0), Offsets = new int[] { 0x0, 0xe00 } };
-                IntPtr versionAddress = reader.ResolvePointer(pointer, AddressingMode.Relative);
-                string version = reader.ReadNullTerminatedString(versionAddress, 20, Encoding.ASCII, AddressingMode.Absolute);
                 try
                 {
-                    Logger.Info($"Check D2SE version: {version}");
-                    return CreateForVersion(version, reader.ModuleBaseAddresses);
+                    return CreateForReaderD2SEFallback1(reader);
                 }
                 catch (GameVersionUnsupportedException)
                 {
-                    // pre DiabloInterface v0.4.11 check for 1.13c in D2SE
-                    //
-                    // the check just reads the string displayed in D2SE,
-                    // so this is not a safe check, but apparently neither is the one above.
-                    // Until we can safely determine the D2 version with a single
-                    // method, we keep the legacy check...
-                    //
-                    // this should be 1.13c, but most likely isn't, in many cases
-                    version = reader.ReadNullTerminatedString(new IntPtr(0x1A049), 5, Encoding.ASCII, AddressingMode.Relative);
-                    Logger.Info($"Check D2SE version (Fallback check): {version}");
-                    return CreateForVersion(version, reader.ModuleBaseAddresses);
+                    return CreateForReaderD2SEFallback2(reader);
                 }
             }
+        }
+
+        private GameMemoryTable CreateForReaderD2SEFallback1(IProcessMemoryReader reader)
+        {
+            // we try to detect version for D2SE
+            int baseAddress;
+            try
+            {
+                baseAddress = GetModuleAddress("Fog.dll", reader.ModuleBaseAddresses);
+            } catch (ModuleNotLoadedException)
+            {
+                throw new GameVersionUnsupportedException("Unknown");
+            }
+            var pointer = new Pointer() { Base = new IntPtr(baseAddress + 0x0004AFE0), Offsets = new int[] { 0x0, 0xe00 } };
+            IntPtr versionAddress = reader.ResolvePointer(pointer, AddressingMode.Relative);
+            string version = reader.ReadNullTerminatedString(versionAddress, 20, Encoding.ASCII, AddressingMode.Absolute);
+            Logger.Info($"Check D2SE version: {version}");
+            return CreateForVersion(version, reader.ModuleBaseAddresses);
+        }
+
+        private GameMemoryTable CreateForReaderD2SEFallback2(IProcessMemoryReader reader)
+        {
+            // pre DiabloInterface v0.4.11 check for 1.13c in D2SE
+            //
+            // the check just reads the string displayed in D2SE,
+            // so this is not a safe check, but apparently neither is the one above.
+            // Until we can safely determine the D2 version with a single
+            // method, we keep the legacy check...
+            //
+            // this should be 1.13c, but most likely isn't, in many cases
+            string version = reader.ReadNullTerminatedString(new IntPtr(0x1A049), 5, Encoding.ASCII, AddressingMode.Relative);
+            Logger.Info($"Check D2SE version (Fallback check): {version}");
+            return CreateForVersion(version, reader.ModuleBaseAddresses);
         }
     }
 }
