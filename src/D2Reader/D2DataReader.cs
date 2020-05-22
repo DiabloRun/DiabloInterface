@@ -156,6 +156,10 @@ namespace Zutatensuppe.D2Reader
                 {
                     CleanUpDataReaders();
                 }
+                catch (ModuleNotLoadedException)
+                {
+                    CleanUpDataReaders();
+                }
                 if (reader != null)
                 {
                     break;
