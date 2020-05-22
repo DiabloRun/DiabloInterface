@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Reflection;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
 {
@@ -106,25 +107,25 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
 
         private void HandleClientConnection(NamedPipeServerStream pipe)
         {
-            // Read query request.
             var reader = new JsonStreamReader(pipe, Encoding.UTF8);
-            var legacyRequest = reader.ReadJson<LegacyRequest>();
-            object response = null;
-            if (!string.IsNullOrEmpty(legacyRequest.EquipmentSlot))
-            {
-                response = new LegacyResponse(HandleRequest(legacyRequest.AsRequest()));
-            } else
-            {
-                response = HandleRequest(reader.ReadJson<Request>());
-            }
-            WriteResponse(pipe, response);
-        }
-
-        private void WriteResponse(NamedPipeServerStream pipe, object response)
-        {
+            var requestJsonString = reader.ReadJsonString();
+            var response = BuildResponse(requestJsonString);
             var writer = new JsonStreamWriter(pipe);
             writer.WriteJson(response);
             writer.Flush();
+        }
+
+        private object BuildResponse(string requestJsonString)
+        {
+            var legacyRequest = JsonConvert.DeserializeObject<LegacyRequest>(requestJsonString);
+
+            if (!string.IsNullOrEmpty(legacyRequest.EquipmentSlot))
+            {
+                return new LegacyResponse(HandleRequest(legacyRequest.AsRequest()));
+            }
+
+            var request = JsonConvert.DeserializeObject<Request>(requestJsonString);
+            return HandleRequest(request);
         }
 
         Response HandleRequest(Request request)

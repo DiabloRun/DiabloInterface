@@ -1,11 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
 {
@@ -20,17 +16,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
             this.encoding = encoding;
         }
 
-        string ReadJsonString()
+        public string ReadJsonString()
         {
             int length = reader.ReadInt32();
             byte[] buffer = new byte[length];
             reader.Read(buffer, 0, length);
             return encoding.GetString(buffer);
-        }
-
-        public T ReadJson<T>()
-        {
-            return JsonConvert.DeserializeObject<T>(ReadJsonString());
         }
     }
 
