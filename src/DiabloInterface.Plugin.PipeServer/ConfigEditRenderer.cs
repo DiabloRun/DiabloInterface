@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -9,6 +10,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
         private FlowLayoutPanel control;
         private TextBox textBoxPipeName;
         private CheckBox chkPipeServerEnabled;
+        private TextBox numCacheMs;
         private RichTextBox txtPipeServer;
 
         public ConfigEditRenderer(Plugin plugin)
@@ -25,6 +27,14 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
             textBoxPipeName = new TextBox();
             textBoxPipeName.Size = new Size(288, 20);
+
+            var labelCacheMs = new Label();
+            labelCacheMs.AutoSize = true;
+            labelCacheMs.Size = new Size(288, 20);
+            labelCacheMs.Text = "Cache Lifetime (in ms, 0 to disable cache):";
+
+            numCacheMs = new TextBox();
+            numCacheMs.Size = new Size(288, 20);
 
             chkPipeServerEnabled = new CheckBox();
             chkPipeServerEnabled.AutoSize = true;
@@ -45,6 +55,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             control.FlowDirection = FlowDirection.TopDown;
             control.Controls.Add(labelPipeName);
             control.Controls.Add(textBoxPipeName);
+            control.Controls.Add(labelCacheMs);
+            control.Controls.Add(numCacheMs);
             control.Controls.Add(chkPipeServerEnabled);
             control.Controls.Add(lblPipeServerStatus);
             control.Controls.Add(txtPipeServer);
@@ -52,10 +64,22 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             return control;
         }
 
+        private uint CacheMs()
+        {
+            try
+            {
+                return Convert.ToUInt32(numCacheMs.Text);
+            } catch
+            {
+                return 0;
+            }
+        }
+
         public bool IsDirty()
         {
             return plugin.Config.PipeName != textBoxPipeName.Text
-                || plugin.Config.Enabled != chkPipeServerEnabled.Checked;
+                || plugin.Config.Enabled != chkPipeServerEnabled.Checked
+                || plugin.Config.CacheMs != CacheMs();
         }
 
         public IPluginConfig GetEditedConfig()
@@ -63,6 +87,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             var conf = new Config();
             conf.PipeName = textBoxPipeName.Text;
             conf.Enabled = chkPipeServerEnabled.Checked;
+            conf.CacheMs = CacheMs();
             return conf;
         }
 
@@ -70,6 +95,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
         {
             textBoxPipeName.Text = plugin.Config.PipeName;
             chkPipeServerEnabled.Checked = plugin.Config.Enabled;
+            numCacheMs.Text = $"{plugin.Config.CacheMs}";
         }
 
         public void ApplyChanges()

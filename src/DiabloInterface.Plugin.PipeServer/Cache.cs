@@ -9,12 +9,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
         public long Hit { get; private set; } = 0;
 
         Dictionary<string, CacheEntry> cache = new Dictionary<string, CacheEntry>();
-        public void Set(string key, object value, double timeoutMs)
+        public void Set(string key, object value, double expireMs)
         {
             cache[key] = new CacheEntry
             {
                 value = value,
-                expires = DateTime.Now.Add(TimeSpan.FromMilliseconds(timeoutMs))
+                expires = DateTime.Now.Add(TimeSpan.FromMilliseconds(expireMs))
             };
         }
 
