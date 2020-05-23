@@ -4,5 +4,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
     {
         public bool Enabled = true;
         public string PipeName = "DiabloInterfacePipe";
+        public uint CacheMs = 2000;
     }
 }

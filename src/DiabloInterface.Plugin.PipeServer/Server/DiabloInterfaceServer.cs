@@ -14,6 +14,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
 
         readonly string pipeName;
         private readonly Cache cache;
+        private readonly uint cacheMs;
         private readonly PipeSecurity ps;
         NamedPipeServerStream stream;
         public bool Running { get; private set; }
@@ -21,16 +22,17 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
         readonly Dictionary<string, Func<IRequestHandler>> requestHandlers = new Dictionary<string, Func<IRequestHandler>>();
         public IReadOnlyDictionary<string, Func<IRequestHandler>> RequestHandlers => requestHandlers;
 
-        public DiabloInterfaceServer(string pipeName)
+        public DiabloInterfaceServer(string pipeName, uint cacheMs)
         {
             Logger.Info("Initializing pipe server.");
 
             this.pipeName = pipeName;
 
             this.cache = new Cache();
+            this.cacheMs = cacheMs;
 
             ps = new PipeSecurity();
-            System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier(System.Security.Principal.WellKnownSidType.BuiltinUsersSid, null);
+            var sid = new System.Security.Principal.SecurityIdentifier(System.Security.Principal.WellKnownSidType.BuiltinUsersSid, null);
             ps.AddAccessRule(new PipeAccessRule(sid, PipeAccessRights.ReadWrite, System.Security.AccessControl.AccessControlType.Allow));
         }
 
@@ -130,17 +132,25 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
 
         Response HandleRequest(Request request)
         {
+            if (cacheMs == 0)
+                return HandleRequestUncached(request);
+
             string cacheKey = request?.Resource + "|" + request?.Payload?.ToString();
             var resp = cache.Get(cacheKey);
             if (resp == null)
             {
-                resp = new RequestProcessor().HandleRequest(
-                    requestHandlers,
-                    request
-                );
-                cache.Set(cacheKey, resp, 2000);
+                resp = HandleRequestUncached(request);
+                cache.Set(cacheKey, resp, cacheMs);
             }
             return (Response)resp;
+        }
+
+        Response HandleRequestUncached(Request request)
+        {
+            return new RequestProcessor().HandleRequest(
+                requestHandlers,
+                request
+            );
         }
     }
 }

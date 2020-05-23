@@ -33,7 +33,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             ApplyChanges();
 
             if (Config.Enabled)
-                CreateServer(Config.PipeName);
+                CreateServer(Config.PipeName, Config.CacheMs);
         }
 
         public override void Initialize(DiabloInterface di)
@@ -42,10 +42,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             SetConfig(di.configService.CurrentConfig.PluginConf(Name));
         }
         
-        private void CreateServer(string pipeName)
+        private void CreateServer(string pipeName, uint cacheMs)
         {
             Logger.Info($"Creating Server: {pipeName}");
-            var s = new DiabloInterfaceServer(pipeName);
+            var s = new DiabloInterfaceServer(pipeName, cacheMs);
             s.AddRequestHandler(@"version", () => new VersionRequestHandler(Assembly.GetEntryAssembly()));
             s.AddRequestHandler(@"game", () => new GameRequestHandler(di.game.DataReader));
             s.AddRequestHandler(@"items", () => new AllItemsRequestHandler(di.game.DataReader));
