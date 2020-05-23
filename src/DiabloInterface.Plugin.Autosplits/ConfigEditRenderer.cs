@@ -17,6 +17,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         HotkeyControl autoSplitResetHotkeyControl;
         private Button AddAutoSplitButton;
         private CheckBox EnabledCheckbox;
+        private CheckBox EnabledForExistingCharsCheckbox;
         private Label AutoSplitHotkeyLabel;
         private Label AutoSplitResetHotkeyLabel;
         private Button AutoSplitTestHotkeyButton;
@@ -33,7 +34,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         {
             AutoSplitHotkeyLabel = new Label();
             AutoSplitHotkeyLabel.AutoSize = true;
-            AutoSplitHotkeyLabel.Text = "Split-Hotkey:";
+            AutoSplitHotkeyLabel.Padding = new Padding(0, 6, 0, 0);
+            AutoSplitHotkeyLabel.Text = "Split-Key:";
 
             autoSplitHotkeyControl = new HotkeyControl();
             autoSplitHotkeyControl.Value = new Hotkey();
@@ -44,12 +46,13 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 
             AutoSplitTestHotkeyButton = new Button();
             AutoSplitTestHotkeyButton.AutoSize = true;
-            AutoSplitTestHotkeyButton.Text = "Test Split-Hotkey";
+            AutoSplitTestHotkeyButton.Text = "Test";
             AutoSplitTestHotkeyButton.Click += new EventHandler(AutoSplitTestHotkey_Click);
 
             AutoSplitResetHotkeyLabel = new Label();
             AutoSplitResetHotkeyLabel.AutoSize = true;
-            AutoSplitResetHotkeyLabel.Text = "Reset-Hotkey:";
+            AutoSplitResetHotkeyLabel.Padding = new Padding(0, 6, 0, 0);
+            AutoSplitResetHotkeyLabel.Text = "Reset-Key:";
 
             autoSplitResetHotkeyControl = new HotkeyControl();
             autoSplitResetHotkeyControl.Value = new Hotkey();
@@ -60,21 +63,18 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 
             AutoSplitTestResetHotkeyButton = new Button();
             AutoSplitTestResetHotkeyButton.AutoSize = true;
-            AutoSplitTestResetHotkeyButton.Text = "Test Reset-Hotkey";
+            AutoSplitTestResetHotkeyButton.Text = "Test";
             AutoSplitTestResetHotkeyButton.Click += new EventHandler(AutoSplitTestResetHotkey_Click);
-
-            AutoSplitToolbar2 = new FlowLayoutPanel();
-            AutoSplitToolbar2.FlowDirection = FlowDirection.LeftToRight;
-            AutoSplitToolbar2.AutoSize = true;
-            AutoSplitToolbar2.Controls.Add(AutoSplitResetHotkeyLabel);
-            AutoSplitToolbar2.Controls.Add(autoSplitResetHotkeyControl);
-            AutoSplitToolbar2.Controls.Add(AutoSplitTestResetHotkeyButton);
-            AutoSplitToolbar2.Dock = DockStyle.Fill;
-            AutoSplitToolbar2.Margin = new Padding(0);
 
             EnabledCheckbox = new CheckBox();
             EnabledCheckbox.AutoSize = true;
-            EnabledCheckbox.Text = "Enable";
+            EnabledCheckbox.Padding = new Padding(0, 2, 0, 0);
+            EnabledCheckbox.Text = "Enable autosplits";
+
+            EnabledForExistingCharsCheckbox = new CheckBox();
+            EnabledForExistingCharsCheckbox.AutoSize = true;
+            EnabledForExistingCharsCheckbox.Padding = new Padding(0, 2, 0, 0);
+            EnabledForExistingCharsCheckbox.Text = "Split for existing chars";
 
             AddAutoSplitButton = new Button();
             AddAutoSplitButton.AutoSize = true;
@@ -84,13 +84,25 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             AutoSplitToolbar = new FlowLayoutPanel();
             AutoSplitToolbar.FlowDirection = FlowDirection.LeftToRight;
             AutoSplitToolbar.AutoSize = true;
-            AutoSplitToolbar.Controls.Add(AutoSplitHotkeyLabel);
-            AutoSplitToolbar.Controls.Add(autoSplitHotkeyControl);
             AutoSplitToolbar.Controls.Add(EnabledCheckbox);
-            AutoSplitToolbar.Controls.Add(AutoSplitTestHotkeyButton);
+            AutoSplitToolbar.Controls.Add(EnabledForExistingCharsCheckbox);
             AutoSplitToolbar.Controls.Add(AddAutoSplitButton);
             AutoSplitToolbar.Dock = DockStyle.Fill;
             AutoSplitToolbar.Margin = new Padding(0);
+
+            AutoSplitToolbar2 = new FlowLayoutPanel();
+            AutoSplitToolbar2.FlowDirection = FlowDirection.LeftToRight;
+            AutoSplitToolbar2.AutoSize = true;
+
+            AutoSplitToolbar2.Controls.Add(AutoSplitHotkeyLabel);
+            AutoSplitToolbar2.Controls.Add(autoSplitHotkeyControl);
+            AutoSplitToolbar2.Controls.Add(AutoSplitTestHotkeyButton);
+
+            AutoSplitToolbar2.Controls.Add(AutoSplitResetHotkeyLabel);
+            AutoSplitToolbar2.Controls.Add(autoSplitResetHotkeyControl);
+            AutoSplitToolbar2.Controls.Add(AutoSplitTestResetHotkeyButton);
+            AutoSplitToolbar2.Dock = DockStyle.Fill;
+            AutoSplitToolbar2.Margin = new Padding(0);
 
             autoSplitTable = new AutoSplitTable(plugin.Config) { Dock = DockStyle.Fill };
 
@@ -114,6 +126,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         public void ApplyConfig()
         {
             EnabledCheckbox.Checked = plugin.Config.Enabled;
+            EnabledForExistingCharsCheckbox.Checked = plugin.Config.EnabledForExistingChars;
             autoSplitHotkeyControl.ForeColor = plugin.Config.Hotkey.ToKeys() == Keys.None ? Color.Red : Color.Black;
             autoSplitHotkeyControl.Value = plugin.Config.Hotkey;
             autoSplitResetHotkeyControl.ForeColor = plugin.Config.ResetHotkey.ToKeys() == Keys.None ? Color.Red : Color.Black;
@@ -162,6 +175,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         {
             return autoSplitTable.IsDirty
                 || plugin.Config.Enabled != EnabledCheckbox.Checked
+                || plugin.Config.EnabledForExistingChars != EnabledForExistingCharsCheckbox.Checked
                 || plugin.Config.Hotkey.ToKeys() != autoSplitHotkeyControl.Value.ToKeys()
                 || plugin.Config.ResetHotkey.ToKeys() != autoSplitResetHotkeyControl.Value.ToKeys()
             ;
@@ -171,6 +185,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         {
             var conf = new Config();
             conf.Enabled = EnabledCheckbox.Checked;
+            conf.EnabledForExistingChars = EnabledForExistingCharsCheckbox.Checked;
             conf.Hotkey = autoSplitHotkeyControl.Value;
             conf.ResetHotkey = autoSplitResetHotkeyControl.Value;
             conf.Splits = autoSplitTable.AutoSplits.ToList();

@@ -90,7 +90,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             // add another autosplit:
             // - area (stony fields)
             // should not trigger another split automatically, but does
-            if (!e.Character.IsNewChar)
+
+            var maySplit = e.Character.IsNewChar || Config.EnabledForExistingChars;
+            if (!maySplit)
                 return;
 
             int i = 0;
