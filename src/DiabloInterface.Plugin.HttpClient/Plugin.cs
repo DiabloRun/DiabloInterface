@@ -145,6 +145,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             public int? HirelingColdResist { get; set; }
             public int? HirelingLightningResist { get; set; }
             public int? HirelingPoisonResist { get; set; }
+            public List<uint> HirelingSkillIds { get; set; }
             public List<ItemInfo> HirelingItems { get; set; }
             public List<ItemInfo> HirelingAddedItems { get; set; }
             public List<BodyLocation> HirelingRemovedItems { get; set; }
@@ -194,8 +195,11 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 var property = typeof(RequestBody).GetProperty(propertyName);
                 var prevValue = property.GetValue(PrevData);
                 var newValue = property.GetValue(newData);
-
-                if (!newValue.Equals(prevValue))
+                if (prevValue == null && newValue == null)
+                {
+                    continue;
+                }
+                if (prevValue == null || newValue == null || !newValue.Equals(prevValue))
                 {
                     noChanges = false;
                     property.SetValue(diff, newValue);
@@ -217,6 +221,17 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 || diff.HirelingRemovedItems != null
             )
             {
+                noChanges = false;
+            }
+
+            if (PrevData.HirelingSkillIds == null && newData.HirelingSkillIds == null) {
+                // null == null
+            } else if (
+                PrevData.HirelingSkillIds == null
+                || newData.HirelingSkillIds == null
+                || !PrevData.HirelingSkillIds.SequenceEqual(newData.HirelingSkillIds)
+             ) {
+                diff.HirelingSkillIds = newData.HirelingSkillIds;
                 noChanges = false;
             }
 
@@ -333,6 +348,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
                 HirelingName = e.Game.Hireling?.Name,
                 HirelingClass = e.Game.Hireling?.Class,
+                HirelingSkillIds = e.Game.Hireling?.SkillIds,
                 HirelingLevel = e.Game.Hireling?.Level,
                 HirelingExperience = e.Game.Hireling?.Experience,
                 HirelingStrength = e.Game.Hireling?.Strength,

@@ -14,7 +14,7 @@ namespace Zutatensuppe.D2Reader
         public IntPtr RareModifierTable;
 
         public IntPtr? Units114; // 1.14 uses unit lists 
-        public IntPtr? Units113; // 1.13 uses unit  (linked list by pPrev)
+        public IntPtr? Units113; // 1.13 uses one unit list (idx = guid)  (linked list by pPrev)
 
         public IntPtr PlayerUnit;
         public IntPtr Pets; // not sure if the name will be final

@@ -412,7 +412,8 @@ namespace Zutatensuppe.D2Reader
             {
                 // 1.13
                 // for 1.13d see function D2Client.dll+89CE0
-                var unitAddrPointer = (IntPtr)memory.Units113 + (int)type * 4;
+                // for 1.13c see function around D2Client.QueryInterface+FB14
+                var unitAddrPointer = (IntPtr)memory.Units113 + (int)guid * 4;
                 var addr = reader.ReadAddress32(unitAddrPointer, AddressingMode.Relative);
                 return UnitByGuid(addr, guid);
             }
@@ -611,7 +612,7 @@ namespace Zutatensuppe.D2Reader
             if (unit == null) return null;
 
             var hireling = new Hireling();
-            hireling.Parse(unit, unitReader, reader, gameInfo);
+            hireling.Parse(unit, unitReader, skillReader, reader, gameInfo);
             hireling.Items = ItemInfo.GetItemsByItems(this, GetEquippedItems(unit));
             return hireling;
         }
