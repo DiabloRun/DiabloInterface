@@ -198,14 +198,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 {
                     continue;
                 }
-
-                if (prevValue == null || newValue == null)
-                {
-                    noChanges = false;
-                    property.SetValue(diff, newValue);
-                }
-
-                if (!newValue.Equals(prevValue))
+                if (prevValue == null || newValue == null || !newValue.Equals(prevValue))
                 {
                     noChanges = false;
                     property.SetValue(diff, newValue);
