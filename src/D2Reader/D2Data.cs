@@ -102,5 +102,11 @@ namespace Zutatensuppe.D2Reader
             PANDEMONIUM_FORTRESS = 103,
             HARROGATH = 109,
         }
+
+        public enum PetClass
+        {
+            SUMMONED = 4, // seen for necro skeleton
+            HIRELING = 7, 
+        }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Zutatensuppe.D2Reader.Readers;
 using Zutatensuppe.D2Reader.Struct;
@@ -29,7 +30,6 @@ namespace Zutatensuppe.D2Reader.Models
         public string ItemName { get; set; }
         public string ItemBaseName { get; set; }
         public string QualityColor { get; set; }
-        public string ImageId { get; set; }
         public List<string> Properties { get; set; }
         public BodyLocation Location { get; set; }
 
@@ -55,23 +55,23 @@ namespace Zutatensuppe.D2Reader.Models
             return Items;
         }
 
+        public ItemInfo()
+        {
+        }
+
         public ItemInfo(
             Item item,
             D2Unit owner,
             UnitReader unitReader,
             IStringReader stringReader,
             IInventoryReader inventoryReader
-        )
-        {
+        ) {
             Class = item.Unit.eClass;
             ItemName = unitReader.GetFullItemName(item);
             ItemBaseName = BaseItemName(item, unitReader);
             QualityColor = QualityColorDefault(item);
             Properties = unitReader.GetMagicalStrings(item, owner, inventoryReader);
             Location = item.ItemData.BodyLoc;
-
-            // TODO: fill with something useful
-            ImageId = "";
 
             // Backward compatibility for D2ID:
             // TODO: add Slug/Image/EnglishBaseName or something like that, D2ID currently uses ItemName/BaseItem for
@@ -89,6 +89,26 @@ namespace Zutatensuppe.D2Reader.Models
                 BaseItem = BaseItemNameFallback(item, unitReader);
                 Quality = QualityColorFallback(item);
             }
+        }
+
+        public static bool AreEqual(ItemInfo itemA, ItemInfo itemB)
+        {
+            if (itemA == null && itemB == null)
+            {
+                return true;
+            }
+
+            if (itemA == null || itemB == null)
+            {
+                return false;
+            }
+
+            return itemA.Class == itemB.Class
+                && itemA.ItemName == itemB.ItemName
+                && itemA.ItemBaseName == itemB.ItemBaseName
+                && itemA.QualityColor == itemB.QualityColor
+                && itemA.Location == itemB.Location
+                && itemA.Properties.SequenceEqual(itemB.Properties);
         }
 
         private string BaseItemName(Item item, UnitReader unitReader)

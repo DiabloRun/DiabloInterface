@@ -125,6 +125,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 
         public void ApplyConfig()
         {
+            if (control.InvokeRequired)
+            {
+                control.Invoke((Action)(() => ApplyConfig()));
+                return;
+            }
+
             EnabledCheckbox.Checked = plugin.Config.Enabled;
             EnabledForExistingCharsCheckbox.Checked = plugin.Config.EnabledForExistingChars;
             autoSplitHotkeyControl.ForeColor = plugin.Config.Hotkey.ToKeys() == Keys.None ? Color.Red : Color.Black;

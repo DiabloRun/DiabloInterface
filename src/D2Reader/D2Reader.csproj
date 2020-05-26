@@ -49,6 +49,7 @@
     <Compile Include="IProcessMemoryReader.cs" />
     <Compile Include="Models\CharacterClass.cs" />
     <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\Hireling.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\ItemInfo.cs" />
     <Compile Include="Models\Quests.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Struct\D2CharacterClassSkillIconStruct.cs" />
     <Compile Include="Struct\D2CharacterItemInfo.cs" />
     <Compile Include="Struct\D2CharacterStats.cs" />
+    <Compile Include="Struct\D2ClassDescription.cs" />
     <Compile Include="Struct\D2Client.cs" />
     <Compile Include="Struct\D2Game.cs" />
     <Compile Include="Struct\D2GameUnitList.cs" />
@@ -97,6 +99,8 @@
     <Compile Include="Struct\Item\Modifier\MagicModifier.cs" />
     <Compile Include="Struct\Item\Modifier\ModifierTable.cs" />
     <Compile Include="Struct\Item\Modifier\RareModifier.cs" />
+    <Compile Include="Struct\Monster\D2AiGeneral.cs" />
+    <Compile Include="Struct\Monster\D2MonsterData.cs" />
     <Compile Include="Struct\Skill\D2Skill.cs" />
     <Compile Include="Struct\Skill\D2SkillData.cs" />
     <Compile Include="Struct\Skill\SkillValueType.cs" />
@@ -107,6 +111,7 @@
     <Compile Include="Struct\Stat\StatCalcType.cs" />
     <Compile Include="Struct\Stat\StatIdentifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Struct\Unknown\D2UnknownUnitStruct.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiabloInterface.Core\DiabloInterface.Core.csproj">

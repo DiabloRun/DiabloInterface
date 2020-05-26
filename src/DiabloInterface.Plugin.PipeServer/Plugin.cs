@@ -51,6 +51,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             s.AddRequestHandler(@"items", () => new AllItemsRequestHandler(di.game.DataReader));
             s.AddRequestHandler(@"items/(\w+)", () => new ItemRequestHandler(di.game.DataReader));
             s.AddRequestHandler(@"characters/current", () => new CharacterRequestHandler(di.game.DataReader));
+            s.AddRequestHandler(@"hireling", () => new HirelingRequestHandler(di.game.DataReader));
             s.AddRequestHandler(@"quests/completed", () => new CompletedQuestsRequestHandler(di.game.DataReader));
             s.AddRequestHandler(@"quests/(\d+)", () => new QuestRequestHandler(di.game.DataReader));
             s.Start();

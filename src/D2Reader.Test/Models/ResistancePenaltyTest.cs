@@ -1,4 +1,3 @@
-using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct;

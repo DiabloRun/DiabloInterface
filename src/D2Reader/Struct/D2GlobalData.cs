@@ -14,6 +14,10 @@ namespace Zutatensuppe.D2Reader.Struct
 
         [FieldOffset(0x0C4)] public uint UnknownValue3; // (0xB9 => 185) related to the skill.PassiveState value (maybe it is some kind of "max" value for passive state)
 
+        // size of each ClassDescription is probably 0x1A8
+        [FieldOffset(0xA78)] public DataPointer ClassDescriptions;
+        [FieldOffset(0xA80)] public uint ClassCount;
+
         [FieldOffset(0xB8C)] public DataPointer SkillDescriptions;
         [FieldOffset(0xB94)] public uint SkillDescriptionCount;
 
@@ -33,7 +37,11 @@ namespace Zutatensuppe.D2Reader.Struct
         [FieldOffset(0xBD8)] public DataPointer OpStatNesting;
         [FieldOffset(0xBDC)] public uint OpStatNestingCount;
 
-        [FieldOffset(0xBE8)] public DataPointer unknownList1; // list items each have lenth of 0xE0
+        // 1.14D: used in game.493240
+        // 1.13D: D2Client.dll+894D0
+        // pet type infos?
+        // list items each have lenth of 0xE0
+        [FieldOffset(0xBE8)] public DataPointer unknownList1; 
         [FieldOffset(0xBF0)] public uint unknownCount1;
 
         [FieldOffset(0xC18)] public DataPointer SetItemDescriptions;

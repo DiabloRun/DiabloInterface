@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Readers;
 using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Item;
+using Zutatensuppe.D2Reader.Struct.Unknown;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using static Zutatensuppe.D2Reader.D2Data;
 
@@ -353,20 +355,95 @@ namespace Zutatensuppe.D2Reader
                 D2Unit player = reader.Read<D2Unit>(playerAddress);
 
                 // player address for reading the player (name + quests)
-                DataPointer unitAddress = game.UnitLists[0][client.UnitId & 0x7F];
-                if (unitAddress.IsNull) return null;
-                // Read player with player data.
-                var tmpPlayer = reader.Read<D2Unit>(unitAddress);
-                var playerData = tmpPlayer.UnitData.IsNull
+                var tmpPlayer = UnitByTypeAndGuid(game, D2UnitType.Player, client.UnitId);
+                var playerData = (tmpPlayer == null || tmpPlayer.UnitData.IsNull)
                     ? null
                     : reader.Read<D2PlayerData>(tmpPlayer.UnitData);
-
                 return new GameInfo(game, client, player, playerData);
             }
             catch (ProcessMemoryReadException)
             {
                 return null;
             }
+        }
+
+        // 1.14d: game.478F20
+        // 1.13c: in D2Client.QueryInterface+F2B0
+        private int GetPetGuid(D2Unit owner, int eClass, int unknown = 0)
+        {
+            IntPtr addr = reader.ReadAddress32(memory.Pets, AddressingMode.Relative);
+            if ((long)addr == 0) return -1;
+
+            D2UnknownUnitStruct u;
+            do
+            {
+                u = reader.Read<D2UnknownUnitStruct>(addr);
+                if (u == null) return -1;
+
+                if (
+                    u.eClass == eClass
+                    && u.OwnerGUID == owner.GUID
+                    && (unknown != 0 || u.unknown_20 == unknown)
+                )
+                {
+                    return u.GUID;
+                }
+
+                addr = u.pNext;
+            } while ((long)addr != 0);
+            return -1;
+        }
+
+        // get unit from the global unit list
+        private D2Unit UnitByTypeAndGuid(D2UnitType type, int guid)
+        {
+            if (memory.Units114 != null)
+            {
+                // 1.14
+                // for 1.14d see around game.463940
+                int size = Marshal.SizeOf(typeof(D2GameUnitList));
+                var addr = (IntPtr)memory.Units114 + (int)type * size;
+                var list = reader.Read<D2GameUnitList>(addr, AddressingMode.Relative);
+                DataPointer unitAddress = list[guid & 0x7F];
+                return UnitByGuid(unitAddress, guid);
+            }
+
+            if (memory.Units113 != null)
+            {
+                // 1.13
+                // for 1.13d see function D2Client.dll+89CE0
+                var unitAddrPointer = (IntPtr)memory.Units113 + (int)type * 4;
+                var addr = reader.ReadAddress32(unitAddrPointer, AddressingMode.Relative);
+                return UnitByGuid(addr, guid);
+            }
+
+            return null;
+        }
+
+        // 1.14d: see game.552F60
+        // get unit from the game unit list
+        private D2Unit UnitByTypeAndGuid(D2Game game, D2UnitType type, int guid)
+        {
+            DataPointer unitAddress = game.UnitLists[(int)type][guid & 0x7F];
+            return UnitByGuid(unitAddress, guid);
+        }
+
+        private D2Unit UnitByGuid(IntPtr unitAddress, int guid)
+        {
+            if ((long)unitAddress == 0) return null;
+
+            var unit = reader.Read<D2Unit>(unitAddress);
+            while (unit != null)
+            {
+                // note: d2 also checks the type of unit and if it doesnt
+                //       match it goes to some error
+                if (unit.GUID == guid)
+                    return unit;
+
+                if (unit.pPrevUnit.IsNull) return null;
+                unit = reader.Read<D2Unit>(unit.pPrevUnit);
+            };
+            return null;
         }
 
         D2Game ReadActiveGameInstance()
@@ -427,6 +504,7 @@ namespace Zutatensuppe.D2Reader
 
             var area = reader.ReadByte(memory.Area, AddressingMode.Relative);
             var character = ReadCharacterData(gameInfo);
+            var hireling = ReadHirelingData(gameInfo);
 
             // A brand new character has been started.
             // The extra wasInTitleScreen check prevents DI from splitting
@@ -468,6 +546,7 @@ namespace Zutatensuppe.D2Reader
             g.CharCount = charCount;
             g.Quests = ReadQuests(gameInfo);
             g.Character = character;
+            g.Hireling = hireling;
             Game = g;
 
             OnDataRead(new DataReadEventArgs(Game));
@@ -515,12 +594,26 @@ namespace Zutatensuppe.D2Reader
             // Don't update stats and items while dead.
             if (!character.IsDead)
             {
-                character.ParseStats(unitReader, gameInfo);
+                character.Parse(unitReader, gameInfo);
                 character.InventoryItemIds = ReadInventoryItemIds(gameInfo.Player);
                 character.Items = ItemInfo.GetItemsByItems(this, GetEquippedItems(gameInfo.Player));
             }
 
             return character;
+        }
+
+        Hireling ReadHirelingData(GameInfo gameInfo)
+        {
+            var guid = GetPetGuid(gameInfo.Player, (int)PetClass.HIRELING);
+            if (guid < 0) return null;
+
+            var unit = UnitByTypeAndGuid(D2UnitType.Monster, guid);
+            if (unit == null) return null;
+
+            var hireling = new Hireling();
+            hireling.Parse(unit, unitReader, reader, gameInfo);
+            hireling.Items = ItemInfo.GetItemsByItems(this, GetEquippedItems(unit));
+            return hireling;
         }
 
         protected virtual void OnCharacterCreated(CharacterCreatedEventArgs e) =>

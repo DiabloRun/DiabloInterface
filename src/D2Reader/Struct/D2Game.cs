@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 
 using UInt8 = System.Byte;
@@ -62,6 +62,7 @@ namespace Zutatensuppe.D2Reader.Struct
         [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 10)]
         [ExpectOffset(0x10F8)] public DataPointer[] UnitNodes;
         [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 5)]
+        // 5 unit lists, each type (player, monster, object, missile, item) has one (vistile is referenced by pointer)
         [ExpectOffset(0x1120)] public D2GameUnitList[] UnitLists;
         [ExpectOffset(0x1B20)] public DataPointer TileList;
         [MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.U4, SizeConst = 128)]

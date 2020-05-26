@@ -192,15 +192,12 @@ namespace Zutatensuppe.D2Reader.Models
             return IncreasedAttackSpeed + (AttackRate - 100);
         }
 
-        internal void ParseStats(UnitReader unitReader, GameInfo gameInfo)
-        {
-            ParseStats(unitReader.GetStatsMap(gameInfo.Player), gameInfo);
-        }
-
-        private void ParseStats(
-            Dictionary<StatIdentifier, D2Stat> data,
+        internal void Parse(
+            UnitReader unitReader,
             GameInfo gameInfo
         ) {
+            var data = unitReader.GetStatsMap(gameInfo.Player);
+
             CharClass = (CharacterClass)gameInfo.Player.eClass;
 
             int penalty = ResistancePenalty.GetPenaltyByGame(gameInfo.Game);

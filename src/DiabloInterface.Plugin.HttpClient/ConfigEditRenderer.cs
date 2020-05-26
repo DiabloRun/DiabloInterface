@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -86,6 +87,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
         public void ApplyConfig()
         {
+            if (control.InvokeRequired)
+            {
+                control.Invoke((Action)(() => ApplyConfig()));
+                return;
+            }
+
             textBoxHttpClientUrl.Text = plugin.Config.Url;
             chkHttpClientEnabled.Checked = plugin.Config.Enabled;
             txtHttpClientHeaders.Text = plugin.Config.Headers;
@@ -93,6 +100,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
         public void ApplyChanges()
         {
+            if (control.InvokeRequired)
+            {
+                control.Invoke((Action)(() => ApplyChanges()));
+                return;
+            }
+
             txtHttpClientStatus.Text = plugin.content;
         }
     }

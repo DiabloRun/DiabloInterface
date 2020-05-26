@@ -13,7 +13,11 @@ namespace Zutatensuppe.D2Reader
         public IntPtr MagicModifierTable;
         public IntPtr RareModifierTable;
 
+        public IntPtr? Units114; // 1.14 uses unit lists 
+        public IntPtr? Units113; // 1.13 uses unit  (linked list by pPrev)
+
         public IntPtr PlayerUnit;
+        public IntPtr Pets; // not sure if the name will be final
         public IntPtr GlobalData;
         public IntPtr LowQualityItems;
         public IntPtr StringIndexerTable;

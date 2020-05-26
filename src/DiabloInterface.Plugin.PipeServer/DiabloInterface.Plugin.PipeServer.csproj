@@ -50,6 +50,7 @@
     <Compile Include="Cache.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="DebugRenderer.cs" />
+    <Compile Include="Handlers\HirelingRequestHandler.cs" />
     <Compile Include="Server\DiabloInterfaceServer.cs" />
     <Compile Include="Handlers\AllItemsRequestHandler.cs" />
     <Compile Include="Handlers\CharacterRequestHandler.cs" />

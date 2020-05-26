@@ -11,5 +11,6 @@ namespace Zutatensuppe.D2Reader.Models
         public uint CharCount;
         public Quests Quests;
         public Character Character;
+        public Hireling Hireling;
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -27,6 +28,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
         public void ApplyChanges()
         {
+            if (control.InvokeRequired)
+            {
+                control.Invoke((Action)(() => ApplyChanges()));
+                return;
+            }
+
             control.Text = plugin.StatusTextMsg();
         }
     }

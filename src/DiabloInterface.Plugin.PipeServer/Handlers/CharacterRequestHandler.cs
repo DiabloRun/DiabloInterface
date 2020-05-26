@@ -64,7 +64,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers
                 character.FasterHitRecovery,
                 character.FasterRunWalk,
                 character.IncreasedAttackSpeed,
-                character.MagicFind
+                character.MagicFind,
+                character.MonsterGold,
+                character.AttackerSelfDamage,
             };
         }
     }
