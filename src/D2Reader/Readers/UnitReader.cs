@@ -11,6 +11,7 @@ using Zutatensuppe.D2Reader.Struct.Stat;
 using Zutatensuppe.D2Reader.Struct.Skill;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.D2Reader.Models;
+using Zutatensuppe.D2Reader.Struct.Monster;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
@@ -130,6 +131,12 @@ namespace Zutatensuppe.D2Reader.Readers
 
             cachedItemData[unit.UnitData] = itemData;
             return itemData;
+        }
+
+        public D2MonsterData GetMonsterData(D2Unit unit)
+        {
+            if (!unit.IsMonster() || unit.UnitData.IsNull) return null;
+            return reader.Read<D2MonsterData>(unit.UnitData);
         }
 
         private D2ItemDescription GetItemDescription(Item item)

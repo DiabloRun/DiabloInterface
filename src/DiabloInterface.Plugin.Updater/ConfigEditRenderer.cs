@@ -22,6 +22,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 
         public void ApplyConfig()
         {
+            if (control.InvokeRequired)
+            {
+                control.Invoke((Action)(() => ApplyConfig()));
+                return;
+            }
+
             chkEnabled.Checked = plugin.Config.Enabled;
         }
 

@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\CharacterTest.cs" />
+    <Compile Include="Models\ItemInfoTest.cs" />
     <Compile Include="Models\ResistancePenaltyTest.cs" />
     <Compile Include="QuestFactoryTest.cs" />
     <Compile Include="Struct\D2StatTest.cs" />

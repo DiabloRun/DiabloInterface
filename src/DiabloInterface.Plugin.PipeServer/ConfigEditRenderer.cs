@@ -93,6 +93,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
         public void ApplyConfig()
         {
+            if (control.InvokeRequired)
+            {
+                control.Invoke((Action)(() => ApplyConfig()));
+                return;
+            }
+
             textBoxPipeName.Text = plugin.Config.PipeName;
             chkPipeServerEnabled.Checked = plugin.Config.Enabled;
             numCacheMs.Text = $"{plugin.Config.CacheMs}";
@@ -100,6 +106,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
         public void ApplyChanges()
         {
+            if (control.InvokeRequired)
+            {
+                control.Invoke((Action)(() => ApplyChanges()));
+                return;
+            }
+
             txtPipeServer.Text = plugin.StatusTextMsg();
         }
     }

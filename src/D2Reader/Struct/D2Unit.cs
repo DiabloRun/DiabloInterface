@@ -12,6 +12,40 @@ namespace Zutatensuppe.D2Reader.Struct
         VisTile // 5
     }
 
+    // @see https://d2mods.info/forum/viewtopic.php?f=8&t=62973&p=487011&hilit=pets#p487011
+    public enum D2UnitFlags_C4 : uint
+    {
+        UPDATE_REQUIRED = 0x00000001, // - tells the game to update the unit ( set after operateFn for objects, when reinitializing a unit etc )
+        TARGETABLE = 0x00000002, // - whenever the unit can be selected as a target
+        ATTACKABLE = 0x00000004, // - whenever the unit can be attacked
+        VALID_TARGET = 0x00000008, // - used to check if the unit is a valid target, curses use this
+        UNIT_SEED_INITIALIZED = 0x00000010, // - whenever the unit seed has been initialized
+        DRAW_SHADOW = 0x00000020, // - whenever to draw a shadow or not ( client only )
+        SKILL_DO_EXECUTED = 0x00000040, // - whenever the SkillDo func has executed for the active skill
+        UNKNOWN_80 = 0x00000080, // - saw this used only with objects so far, when set the pre_operate is disabled
+        HAS_TEXT_MESSAGE = 0x00000100, // - whenever the unit has a text message attached to it ( do not set this randomly )
+        IS_HIRELING = 0x00000200, // - if this is set the unit will be treated as a hireling for certain things like lifebar display (but also for gameplay relevant aspects)
+        HAS_SOUND = 0x00000400, // - whenever the unit has a event sound specified ( server-side, do not set this randomly )
+        SUMMONER_FLAG = 0x00000800, // - this is only used for the summoner as far as I can tell, don't know what exactly for.
+        REQUIRE_REFRESH_MSG = 0x00001000, // - used by items to send a refresh message when they drop to the ground (etc)
+        IS_LINKED_TO_MSG_CHAIN = 0x00002000, // - whenever the unit is linked into a update message chain ( don't set this randomly )
+        NEW_GFX_REQUIRED = 0x00004000, // - whenever to load new graphics when using a skill sequence(ie the current sequence frame uses a different animation mode then the previous one).
+        LIFE_UPDATE_REQUIRED = 0x00008000, // - updates the client with the most recent life percentage and hitclass(used mostly by softhit attacks)
+        IS_DEAD = 0x00010000, // - the unit is dead
+        TREASURECLASS_DROP_DISABLED = 0x00020000, // - disables treasureclass drops
+        MON_MODE_CHANGED = 0x00080000, // - this is set when the MonMode changes, didn't see exact use yet
+        PREDRAW_UNIT = 0x00100000, // - whenever to predraw this unit (ie treat it as a floor tile for display purposes, client specific )
+        IS_ASYNC_UNIT = 0x00200000, // - whenever this unit is an async unit ( exists only clientside like critters )
+        IS_CLIENT_UNIT = 0x00400000, // - whenever this unit is a client unit
+        INITIALIZED = 0x01000000, // - set once the unit has been initialized, didn't check specifics
+        RESURRECTED_OR_FLOOR_ITEM = 0x02000000, // - set for resurrected units and items on the floor
+        NO_XP = 0x04000000, // - never gives experience when slain
+        AUTOMAP_FLAG1 = 0x10000000, // - automap related, not documented here
+        AUTOMAP_FLAG2 = 0x20000000, // - ditto
+        PET_AI_SHOULD_IGNORE = 0x40000000, // - units that pet ais should ignore
+        IS_REVIVED = 0x80000000, // - this is a revived monster
+    }
+
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 0xF4)]
     public class D2Unit
     {
@@ -75,14 +109,8 @@ namespace Zutatensuppe.D2Reader.Struct
         [ExpectOffset(0x00B8)] public int DropCode;        // 0xB8
         [ExpectOffset(0x00BC)] public int __unknown10;     // 0xBC
         [ExpectOffset(0x00C0)] public int __unknown11;     // 0xC0
-        [ExpectOffset(0x00C4)] public byte UnitFlag_C4;      // 0xC4
-        [ExpectOffset(0x00C5)] public byte UnitFlag_C5;      // 0xC5
-        [ExpectOffset(0x00C6)] public byte UnitFlag_C6;      // 0xC6
-        [ExpectOffset(0x00C7)] public byte UnitFlag_C7;      // 0xC7
-        [ExpectOffset(0x00C8)] public byte UnitFlag_C8;      // 0xC8
-        [ExpectOffset(0x00C9)] public byte UnitFlag_C9;      // 0xC9
-        [ExpectOffset(0x00CA)] public byte UnitFlag_CA;      // 0xCA
-        [ExpectOffset(0x00CB)] public byte UnitFlag_CB;      // 0xCB
+        [ExpectOffset(0x00C4)] public uint UnitFlags_C4;      // 0xC4
+        [ExpectOffset(0x00C8)] public uint UnitFlags_C8;      // 0xC8
         [ExpectOffset(0x00CC)] public int __unknown11c;    // 0xCC
         [ExpectOffset(0x00D0)] public int __unknown12;     // 0xD0
         [ExpectOffset(0x00D4)] public int GetTickCount;    // 0xD4
@@ -91,7 +119,7 @@ namespace Zutatensuppe.D2Reader.Struct
         // end clientside
         [ExpectOffset(0x00DC)] public int pTimer;          // 0xDC
         [ExpectOffset(0x00E0)] public int __unknown13;     // 0xE0
-        [ExpectOffset(0x00E4)] public int pPrevUnit;       // 0xE4
+        [ExpectOffset(0x00E4)] public DataPointer pPrevUnit;       // 0xE4
         [ExpectOffset(0x00E8)] public int pPrevUnitInRoom; // 0xE8
         [ExpectOffset(0x00EC)] public int pMsgFirst;       // 0xEC
         [ExpectOffset(0x00F0)] public int pMsgLast;        // 0xF0
@@ -105,6 +133,11 @@ namespace Zutatensuppe.D2Reader.Struct
         public bool IsItem()
         {
             return eType == D2UnitType.Item;
+        }
+
+        public bool IsMonster()
+        {
+            return eType == D2UnitType.Monster;
         }
     }
 }

@@ -838,17 +838,6 @@ namespace Zutatensuppe.DiabloInterface.Gui
             di.configService.CollectionChanged -= ConfigCollectionChanged;
         }
 
-        void PluginDataChanged(object sender, IPlugin e)
-        {
-            if (InvokeRequired)
-            {
-                Invoke((Action)(() => PluginDataChanged(sender, e)));
-                return;
-            }
-
-            e.GetRenderer<IPluginConfigEditRenderer>().ApplyChanges();
-        }
-
         void ConfigChanged(object sender, ApplicationConfigEventArgs e)
         {
             if (InvokeRequired)

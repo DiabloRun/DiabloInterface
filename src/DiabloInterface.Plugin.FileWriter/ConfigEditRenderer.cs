@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -24,6 +25,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
 
         public void ApplyConfig()
         {
+            if (control.InvokeRequired)
+            {
+                control.Invoke((Action)(() => ApplyConfig()));
+                return;
+            }
+
             control.Checked = plugin.Config.Enabled;
         }
 

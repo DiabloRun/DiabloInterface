@@ -64,7 +64,18 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             "FasterHitRecovery",
             "FasterRunWalk",
             "IncreasedAttackSpeed",
-            "MagicFind"
+            "MagicFind",
+
+            "HirelingName",
+            "HirelingClass",
+            "HirelingLevel",
+            "HirelingExperience",
+            "HirelingStrength",
+            "HirelingDexterity",
+            "HirelingFireResist",
+            "HirelingColdResist",
+            "HirelingLightningResist",
+            "HirelingPoisonResist",
         };
 
         public override void SetConfig(IPluginConfig c)
@@ -124,6 +135,20 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             public Dictionary<GameDifficulty, List<QuestId>> Quests { get; set; }
             public Dictionary<GameDifficulty, List<QuestId>> CompletedQuests { get; set; }
 
+            public string HirelingName { get; set; }
+            public int? HirelingClass { get; set; }
+            public int? HirelingLevel { get; set; }
+            public int? HirelingExperience { get; set; }
+            public int? HirelingStrength { get; set; }
+            public int? HirelingDexterity { get; set; }
+            public int? HirelingFireResist { get; set; }
+            public int? HirelingColdResist { get; set; }
+            public int? HirelingLightningResist { get; set; }
+            public int? HirelingPoisonResist { get; set; }
+            public List<ItemInfo> HirelingItems { get; set; }
+            public List<ItemInfo> HirelingAddedItems { get; set; }
+            public List<BodyLocation> HirelingRemovedItems { get; set; }
+
             internal string ToJson()
             {
                 return JsonConvert.SerializeObject(
@@ -132,26 +157,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                     new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }
                 );
             }
-        }
-
-        private bool IsSameItem(ItemInfo itemA, ItemInfo itemB)
-        {
-            if (itemA == null && itemB == null)
-            {
-                return true;
-            }
-
-            if (itemA == null || itemB == null)
-            {
-                return false;
-            }
-
-            return itemA.Class == itemB.Class
-                && itemA.ItemName == itemB.ItemName
-                && itemA.ItemBaseName == itemB.ItemBaseName
-                && itemA.QualityColor == itemB.QualityColor
-                && itemA.Location == itemB.Location
-                && itemA.Properties.SequenceEqual(itemB.Properties);
         }
 
         private RequestBody GetDiff(RequestBody newData)
@@ -197,22 +202,22 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 }
             }
 
-            foreach (var prevItem in PrevData.Items)
-            {
-                if (!newData.Items.Any(newItem => IsSameItem(prevItem, newItem)))
-                {
-                    noChanges = false;
-                    diff.RemovedItems.Add(prevItem.Location);
-                }
-            }
+            var itemDiff = ItemsDiff(PrevData.Items, newData.Items);
+            diff.AddedItems = itemDiff.Item1;
+            diff.RemovedItems = itemDiff.Item2;
 
-            foreach (var newItem in newData.Items)
+            var hirelingItemDiff = ItemsDiff(PrevData.HirelingItems, newData.HirelingItems);
+            diff.HirelingAddedItems = hirelingItemDiff.Item1;
+            diff.HirelingRemovedItems = hirelingItemDiff.Item2;
+
+            if (
+                diff.AddedItems != null
+                || diff.RemovedItems != null
+                || diff.HirelingAddedItems != null
+                || diff.HirelingRemovedItems != null
+            )
             {
-                if (!PrevData.Items.Any(prevItem => IsSameItem(prevItem, newItem)))
-                {
-                    noChanges = false;
-                    diff.AddedItems.Add(newItem);
-                }
+                noChanges = false;
             }
 
             foreach (var pair in Quests.DefaultCompleteQuestIds)
@@ -227,6 +232,42 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             }
 
             return noChanges ? null : diff;
+        }
+
+        private Tuple<List<ItemInfo>, List<BodyLocation>> ItemsDiff(
+            List<ItemInfo> prevItems,
+            List<ItemInfo> newItems
+        )
+        {
+            List<ItemInfo> addedItems = new List<ItemInfo>();
+            List<BodyLocation> removedItems = new List<BodyLocation>();
+
+            if (newItems != null)
+            {
+                foreach (var newItem in newItems)
+                {
+                    if (prevItems == null || !prevItems.Any(prevItem => ItemInfo.AreEqual(prevItem, newItem)))
+                    {
+                        addedItems.Add(newItem);
+                    }
+                }
+            }
+
+            if (prevItems != null)
+            {
+                foreach (var prevItem in prevItems)
+                {
+                    if (newItems == null || !newItems.Any(newItem => ItemInfo.AreEqual(prevItem, newItem)))
+                    {
+                        removedItems.Add(prevItem.Location);
+                    }
+                }
+            }
+
+            return new Tuple<List<ItemInfo>, List<BodyLocation>>(
+                addedItems.Count > 0 ? addedItems : null,
+                removedItems.Count > 0 ? removedItems : null
+            );
         }
 
         async private Task PostJson(string json)
@@ -289,6 +330,18 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 MagicFind = e.Character.MagicFind,
                 Items = e.Character.Items,
                 Quests = e.Quests.CompletedQuestIds,
+
+                HirelingName = e.Game.Hireling?.Name,
+                HirelingClass = e.Game.Hireling?.Class,
+                HirelingLevel = e.Game.Hireling?.Level,
+                HirelingExperience = e.Game.Hireling?.Experience,
+                HirelingStrength = e.Game.Hireling?.Strength,
+                HirelingDexterity = e.Game.Hireling?.Dexterity,
+                HirelingFireResist = e.Game.Hireling?.FireResist,
+                HirelingColdResist = e.Game.Hireling?.ColdResist,
+                HirelingLightningResist = e.Game.Hireling?.LightningResist,
+                HirelingPoisonResist = e.Game.Hireling?.PoisonResist,
+                HirelingItems = e.Game.Hireling?.Items,
             };
 
             var diff = GetDiff(newData);
