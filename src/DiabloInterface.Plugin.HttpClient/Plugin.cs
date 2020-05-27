@@ -35,49 +35,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             Quests = Quests.DefaultCompleteQuestIds,
         };
         
-        private readonly List<string> BodyProperties = new List<string>()
-        {
-            "Area",
-            "InventoryTab",
-            "Difficulty",
-            "PlayersX",
-            "Seed",
-            "Name",
-            "CharClass",
-            "IsHardcore",
-            "IsExpansion",
-            "IsDead",
-            "Deaths",
-            "Level",
-            "Experience",
-            "Strength",
-            "Dexterity",
-            "Vitality",
-            "Energy",
-            "FireResist",
-            "ColdResist",
-            "LightningResist",
-            "PoisonResist",
-            "Gold",
-            "GoldStash",
-            "FasterCastRate",
-            "FasterHitRecovery",
-            "FasterRunWalk",
-            "IncreasedAttackSpeed",
-            "MagicFind",
-
-            "HirelingName",
-            "HirelingClass",
-            "HirelingLevel",
-            "HirelingExperience",
-            "HirelingStrength",
-            "HirelingDexterity",
-            "HirelingFireResist",
-            "HirelingColdResist",
-            "HirelingLightningResist",
-            "HirelingPoisonResist",
-        };
-
         public override void SetConfig(IPluginConfig c)
         {
             Config = c == null ? new Config() : c as Config;
@@ -97,6 +54,37 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
         private class RequestBody
         {
+            public static readonly List<string> AutocompareProps = new List<string> {
+                "Area",
+                "InventoryTab",
+                "Difficulty",
+                "PlayersX",
+                "Seed",
+                "Name",
+                "CharClass",
+                "IsHardcore",
+                "IsExpansion",
+                "IsDead",
+                "Deaths",
+                "Level",
+                "Experience",
+                "Strength",
+                "Dexterity",
+                "Vitality",
+                "Energy",
+                "FireResist",
+                "ColdResist",
+                "LightningResist",
+                "PoisonResist",
+                "Gold",
+                "GoldStash",
+                "FasterCastRate",
+                "FasterHitRecovery",
+                "FasterRunWalk",
+                "IncreasedAttackSpeed",
+                "MagicFind",
+            };
+
             public string Headers { get; set; }
             public int? Area { get; set; }
             public byte? InventoryTab { get; set; }
@@ -135,123 +123,180 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             public Dictionary<GameDifficulty, List<QuestId>> Quests { get; set; }
             public Dictionary<GameDifficulty, List<QuestId>> CompletedQuests { get; set; }
 
-            public string HirelingName { get; set; }
-            public int? HirelingClass { get; set; }
-            public int? HirelingLevel { get; set; }
-            public int? HirelingExperience { get; set; }
-            public int? HirelingStrength { get; set; }
-            public int? HirelingDexterity { get; set; }
-            public int? HirelingFireResist { get; set; }
-            public int? HirelingColdResist { get; set; }
-            public int? HirelingLightningResist { get; set; }
-            public int? HirelingPoisonResist { get; set; }
-            public List<uint> HirelingSkillIds { get; set; }
-            public List<ItemInfo> HirelingItems { get; set; }
-            public List<ItemInfo> HirelingAddedItems { get; set; }
-            public List<BodyLocation> HirelingRemovedItems { get; set; }
-
-            internal string ToJson()
-            {
-                return JsonConvert.SerializeObject(
-                    this,
-                    Formatting.Indented,
-                    new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }
-                );
-            }
+            public HirelingDiff Hireling { get; set; }
         }
 
-        private RequestBody GetDiff(RequestBody newData)
+        private class HirelingDiff
         {
-            var noChanges = true;
+            public static readonly List<string> AutocompareProps = new List<string> {
+                "Name",
+                "Class",
+                "Level",
+                "Experience",
+                "Strength",
+                "Dexterity",
+                "FireResist",
+                "ColdResist",
+                "LightningResist",
+                "PoisonResist"
+            };
+
+            public string Name { get;  set; }
+            public int? Class { get;  set; }
+            public int? Level { get; set; }
+            public int? Experience { get; set; }
+            public int? Strength { get; set; }
+            public int? Dexterity { get; set; }
+            public int? FireResist { get; set; }
+            public int? ColdResist { get; set; }
+            public int? LightningResist { get; set; }
+            public int? PoisonResist { get; set; }
+            public List<ItemInfo> Items { get; set; }
+            public List<ItemInfo> AddedItems { get; set; }
+            public List<BodyLocation> RemovedItems { get; set; }
+            public List<uint> SkillIds { get; set; }
+        }
+
+        private RequestBody GetDiff(RequestBody newVal, RequestBody prevVal)
+        {
             var diff = new RequestBody()
             {
                 Headers = Config.Headers,
-                Name = newData.Name,
-                RemovedItems = new List<BodyLocation>(),
-                AddedItems = new List<ItemInfo>(),
-                CompletedQuests = new Dictionary<GameDifficulty, List<QuestId>>()
+                Name = newVal.Name,
             };
+            var hasDiff = false;
 
-            if (!newData.CharCount.Equals(PrevData.CharCount))
+            if (!newVal.CharCount.Equals(prevVal.CharCount))
             {
                 diff.NewCharacter = true;
             }
 
-            if (!newData.GameCount.Equals(PrevData.GameCount))
+            if (!newVal.GameCount.Equals(prevVal.GameCount))
             {
-                PrevData = new RequestBody()
-                {
-                    Items = new List<ItemInfo>(),
-                    Quests = new Dictionary<GameDifficulty, List<QuestId>>() {
-                        { GameDifficulty.Normal, new List<QuestId>() },
-                        { GameDifficulty.Nightmare, new List<QuestId>() },
-                        { GameDifficulty.Hell, new List<QuestId>() }
-                    }
-                };
+                prevVal = new RequestBody();
             }
 
-            foreach (string propertyName in BodyProperties)
+            foreach (string propertyName in RequestBody.AutocompareProps)
             {
                 var property = typeof(RequestBody).GetProperty(propertyName);
-                var prevValue = property.GetValue(PrevData);
-                var newValue = property.GetValue(newData);
-                if (prevValue == null && newValue == null)
+                var prevValue = property.GetValue(prevVal);
+                var newValue = property.GetValue(newVal);
+                if (!ObjectsEqual(prevValue, newValue))
                 {
-                    continue;
-                }
-                if (prevValue == null || newValue == null || !newValue.Equals(prevValue))
-                {
-                    noChanges = false;
+                    hasDiff = true;
                     property.SetValue(diff, newValue);
                 }
             }
 
-            var itemDiff = ItemsDiff(PrevData.Items, newData.Items);
+            var itemDiff = ItemsDiff(newVal.Items, prevVal.Items);
             diff.AddedItems = itemDiff.Item1;
             diff.RemovedItems = itemDiff.Item2;
 
-            var hirelingItemDiff = ItemsDiff(PrevData.HirelingItems, newData.HirelingItems);
-            diff.HirelingAddedItems = hirelingItemDiff.Item1;
-            diff.HirelingRemovedItems = hirelingItemDiff.Item2;
+            diff.CompletedQuests = BuildCompletedQuestsDiff(
+                newVal.CompletedQuests,
+                prevVal.CompletedQuests
+            );
 
-            if (
-                diff.AddedItems != null
+            diff.Hireling = BuildHirelingDiff(
+                newVal.Hireling,
+                prevVal.Hireling
+            );
+
+            hasDiff = hasDiff
+                || diff.AddedItems != null
                 || diff.RemovedItems != null
-                || diff.HirelingAddedItems != null
-                || diff.HirelingRemovedItems != null
-            )
-            {
-                noChanges = false;
-            }
+                || diff.CompletedQuests != null
+                || diff.Hireling != null;
 
-            if (PrevData.HirelingSkillIds == null && newData.HirelingSkillIds == null) {
-                // null == null
-            } else if (
-                PrevData.HirelingSkillIds == null
-                || newData.HirelingSkillIds == null
-                || !PrevData.HirelingSkillIds.SequenceEqual(newData.HirelingSkillIds)
-             ) {
-                diff.HirelingSkillIds = newData.HirelingSkillIds;
-                noChanges = false;
-            }
+            return hasDiff ? diff : null;
+        }
+
+        Dictionary<GameDifficulty, List<QuestId>> BuildCompletedQuestsDiff(
+            Dictionary<GameDifficulty, List<QuestId>> newVal,
+            Dictionary<GameDifficulty, List<QuestId>> prevVal
+        )
+        {
+            if (prevVal == null && newVal == null)
+                return null;
+
+            if (prevVal == null || newVal == null)
+                return newVal;
+
+            var diff = new Dictionary<GameDifficulty, List<QuestId>>();
+            var hasDiff = false;
 
             foreach (var pair in Quests.DefaultCompleteQuestIds)
             {
-                var completed = newData.Quests[pair.Key].FindAll(id => !PrevData.Quests[pair.Key].Contains(id));
+                var completed = newVal[pair.Key].FindAll(id => !prevVal[pair.Key].Contains(id));
 
                 if (completed.Count() > 0)
                 {
-                    noChanges = false;
-                    diff.CompletedQuests.Add(pair.Key, completed);
+                    hasDiff = true;
+                    diff.Add(pair.Key, completed);
+                }
+            }
+            return hasDiff ? diff : null;
+        }
+
+        HirelingDiff BuildHirelingDiff(HirelingDiff newVal, HirelingDiff prevVal)
+        {
+            if (prevVal == null && newVal == null)
+                return null;
+
+            if (prevVal == null || newVal == null)
+                return newVal;
+
+            var diff = new HirelingDiff();
+            var hasDiff = false;
+
+            var hirelingItemDiff = ItemsDiff(newVal.Items, prevVal.Items);
+            diff.AddedItems = hirelingItemDiff.Item1;
+            diff.RemovedItems = hirelingItemDiff.Item2;
+
+            if (!ListsEqual(prevVal.SkillIds, newVal.SkillIds))
+                diff.SkillIds = newVal.SkillIds;
+
+            foreach (string propertyName in HirelingDiff.AutocompareProps)
+            {
+                var property = typeof(HirelingDiff).GetProperty(propertyName);
+                var prevValue = property.GetValue(prevVal);
+                var newValue = property.GetValue(newVal);
+                if (!ObjectsEqual(prevValue, newValue))
+                {
+                    hasDiff = true;
+                    property.SetValue(diff, newValue);
                 }
             }
 
-            return noChanges ? null : diff;
+            hasDiff = hasDiff
+                || diff.AddedItems != null
+                || diff.RemovedItems != null
+                || diff.SkillIds != null;
+
+            return hasDiff ? diff : null;
+        }
+
+        private bool ListsEqual<T>(List<T> listA, List<T> listB)
+        {
+            if (listA == null && listB == null)
+                return true;
+            if (listA == null || listB == null)
+                return false;
+            return listA.SequenceEqual(listB);
+        }
+
+        private bool ObjectsEqual(object objA, object objB)
+        {
+            if (objA == null && objB == null)
+                return true;
+            if (objA == null || objB == null)
+                return false;
+            return objA.Equals(objB);
         }
 
         private Tuple<List<ItemInfo>, List<BodyLocation>> ItemsDiff(
-            List<ItemInfo> prevItems,
-            List<ItemInfo> newItems
+            List<ItemInfo> newItems,
+            List<ItemInfo> prevItems
         )
         {
             List<ItemInfo> addedItems = new List<ItemInfo>();
@@ -345,26 +390,33 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 MagicFind = e.Character.MagicFind,
                 Items = e.Character.Items,
                 Quests = e.Quests.CompletedQuestIds,
-
-                HirelingName = e.Game.Hireling?.Name,
-                HirelingClass = e.Game.Hireling?.Class,
-                HirelingSkillIds = e.Game.Hireling?.SkillIds,
-                HirelingLevel = e.Game.Hireling?.Level,
-                HirelingExperience = e.Game.Hireling?.Experience,
-                HirelingStrength = e.Game.Hireling?.Strength,
-                HirelingDexterity = e.Game.Hireling?.Dexterity,
-                HirelingFireResist = e.Game.Hireling?.FireResist,
-                HirelingColdResist = e.Game.Hireling?.ColdResist,
-                HirelingLightningResist = e.Game.Hireling?.LightningResist,
-                HirelingPoisonResist = e.Game.Hireling?.PoisonResist,
-                HirelingItems = e.Game.Hireling?.Items,
+                Hireling = new HirelingDiff
+                {
+                    Name = e.Game.Hireling?.Name,
+                    Class = e.Game.Hireling?.Class,
+                    SkillIds = e.Game.Hireling?.SkillIds,
+                    Level = e.Game.Hireling?.Level,
+                    Experience = e.Game.Hireling?.Experience,
+                    Strength = e.Game.Hireling?.Strength,
+                    Dexterity = e.Game.Hireling?.Dexterity,
+                    FireResist = e.Game.Hireling?.FireResist,
+                    ColdResist = e.Game.Hireling?.ColdResist,
+                    LightningResist = e.Game.Hireling?.LightningResist,
+                    PoisonResist = e.Game.Hireling?.PoisonResist,
+                    Items = e.Game.Hireling?.Items
+                },
             };
 
-            var diff = GetDiff(newData);
+            var diff = GetDiff(newData, PrevData);
 
             if (diff != null)
             {
-                PostJson(diff.ToJson());
+                var json = JsonConvert.SerializeObject(
+                    diff,
+                    Formatting.Indented,
+                    new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }
+                );
+                PostJson(json);
             }
 
             PrevData = newData;
