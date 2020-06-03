@@ -6,21 +6,17 @@ namespace Zutatensuppe.DiabloInterface.Gui.Forms
 {
     public class SimpleSaveDialog : Form
     {
-        const string CREATE_NEW_FILE = "Create new file";
-        const string CLONE_FILE = "Clone file";
-        const string ENTER_VALID_NAME = "Sorry , please enter a valid name";
+        const string ENTER_VALID_NAME = "Please enter a valid file name";
 
-        private Button btnSave;
         private TextBox txtNewFilename;
-        private Button btnCancel;
 
         public string NewFileName { get { return txtNewFilename.Text; } }
         
-        public SimpleSaveDialog(string fileName)
+        public SimpleSaveDialog(string title, string fileName)
         {
-            btnSave = new Button();
+            var btnSave = new Button();
             txtNewFilename = new TextBox();
-            btnCancel = new Button();
+            var btnCancel = new Button();
             SuspendLayout();
 
             btnSave.Location = new System.Drawing.Point(282, 12);
@@ -50,7 +46,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Forms
             Icon = Properties.Resources.di;
             MaximumSize = new System.Drawing.Size(461, 81);
             MinimumSize = new System.Drawing.Size(461, 81);
-            Text = fileName == string.Empty ? CREATE_NEW_FILE : CLONE_FILE;
+            Text = title;
             ResumeLayout(false);
             PerformLayout();
         }

@@ -1061,7 +1061,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         void SaveConfigAsMenuItem_Click(object sender, EventArgs e)
         {
-            using (var d = new SimpleSaveDialog(string.Empty))
+            using (var d = new SimpleSaveDialog("Save as", string.Empty))
             {
                 d.StartPosition = FormStartPosition.CenterParent;
                 if (d.ShowDialog() == DialogResult.OK)
@@ -1149,7 +1149,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         void menuNew_Click(object sender, EventArgs e)
         {
-            using (var d = new SimpleSaveDialog(string.Empty))
+            using (var d = new SimpleSaveDialog("New config", string.Empty))
                 if (d.ShowDialog() == DialogResult.OK)
                     NewConfig(Path.Combine(ConfigFilePath, d.NewFileName) + ".conf");
         }
@@ -1161,7 +1161,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         void menuClone_Click(object sender, EventArgs e)
         {
-            using (var d = new SimpleSaveDialog(string.Empty))
+            using (var d = new SimpleSaveDialog("Clone config", string.Empty))
                 if (d.ShowDialog() == DialogResult.OK)
                     Clone(
                         ((ConfigEntry)lstConfigFiles.SelectedItem).Path,
@@ -1277,7 +1277,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             string current = ((ConfigEntry)lstConfigFiles.SelectedItem).Path;
             string fileName = Path.GetFileNameWithoutExtension(current);
 
-            using (var d = new SimpleSaveDialog(fileName))
+            using (var d = new SimpleSaveDialog("Rename config", fileName))
                 if (d.ShowDialog() == DialogResult.OK)
                     Rename(current, Path.Combine(ConfigFilePath, d.NewFileName) + ".conf");
         }
