@@ -99,10 +99,7 @@ namespace Zutatensuppe.D2Reader.Struct.Item
 
         internal bool IsEquipped()
         {
-            return InvPage == InventoryPage.Equipped
-                // not handled as equipped if in secondary weapon/shield slot
-                && BodyLoc != BodyLocation.SecondaryLeft
-                && BodyLoc != BodyLocation.SecondaryRight;
+            return InvPage == InventoryPage.Equipped;
         }
 
         internal bool IsEquippedInSlot(BodyLocation loc)
