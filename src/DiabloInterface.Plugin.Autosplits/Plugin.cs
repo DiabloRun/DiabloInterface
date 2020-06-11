@@ -37,22 +37,22 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             Logger.Info("Creating auto split service.");
 
             SetConfig(di.configService.CurrentConfig.PluginConf(Name));
-            di.game.CharacterCreated += Game_CharacterCreated;
             di.game.DataRead += Game_DataRead;
         }
-
-        private void Game_CharacterCreated(object sender, CharacterCreatedEventArgs e)
-        {
-            if (!Config.Enabled) return;
-
-            Logger.Info($"A new character was created. Auto splits enabled for {e.Character.Name}");
-            ResetAutoSplits();
-            keyService.TriggerHotkey(Config.ResetHotkey.ToKeys());
-        }
-
+        
+        Guid lastGuid;
         private void Game_DataRead(object sender, DataReadEventArgs e)
         {
             if (!Config.Enabled) return;
+
+            if (lastGuid != e.Character.Guid)
+            {
+                Logger.Info($"A new character was created. Auto splits enabled for {e.Character.Name}");
+                ResetAutoSplits();
+                keyService.TriggerHotkey(Config.ResetHotkey.ToKeys());
+
+                lastGuid = e.Character.Guid;
+            }
 
             DoAutoSplits(e);
         }

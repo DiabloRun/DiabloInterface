@@ -14,16 +14,6 @@ using static Zutatensuppe.D2Reader.D2Data;
 
 namespace Zutatensuppe.D2Reader
 {
-    public class CharacterCreatedEventArgs : EventArgs
-    {
-        public CharacterCreatedEventArgs(Character character)
-        {
-            Character = character;
-        }
-
-        public Character Character { get; }
-    }
-
     public class DataReadEventArgs : EventArgs
     {
         public DataReadEventArgs(Game game) {
@@ -63,6 +53,7 @@ namespace Zutatensuppe.D2Reader
         ISkillReader skillReader;
         GameMemoryTable memory;
 
+        // set to true when d2 was running but no game is running
         bool wasInTitleScreen;
 
         private uint lastGameId = 0;
@@ -86,14 +77,12 @@ namespace Zutatensuppe.D2Reader
             Dispose(false);
         }
 
-        public event EventHandler<CharacterCreatedEventArgs> CharacterCreated;
-
         public event EventHandler<DataReadEventArgs> DataRead;
-        
-        /// <summary>
-        /// Gets or sets reader polling rate.
-        /// </summary>
-        public TimeSpan PollingRate { get; set; } = TimeSpan.FromMilliseconds(500);
+
+        static TimeSpan POLLING_RATE_FAST = TimeSpan.FromMilliseconds(50);
+        static TimeSpan POLLING_RATE_NORMAL = TimeSpan.FromMilliseconds(500);
+
+        public TimeSpan PollingRate { get; set; } = POLLING_RATE_NORMAL;
 
         bool IsProcessReaderTerminated => reader != null && !reader.IsValid;
 
@@ -269,7 +258,7 @@ namespace Zutatensuppe.D2Reader
                 }
             } catch (Exception e)
             {
-                string s = String.Join(",", from slot in slots select slot.ToString());
+                string s = string.Join(",", from slot in slots select slot.ToString());
                 Logger.Error($"Unable to execute ItemSlotAction. {s}", e);
                 
                 unitReader.ResetCache();
@@ -307,12 +296,21 @@ namespace Zutatensuppe.D2Reader
                 // "Block" here until we have a valid reader.
                 if (!ValidateGameDataReaders())
                 {
+                    PollingRate = POLLING_RATE_NORMAL;
                     continue;
                 }
 
                 try
                 {
-                    ProcessGameData();
+                    if (ProcessGameData())
+                    {
+                        wasInTitleScreen = false;
+                        PollingRate = POLLING_RATE_NORMAL;
+                    } else
+                    {
+                        wasInTitleScreen = true;
+                        PollingRate = POLLING_RATE_FAST;
+                    }
                 }
                 catch (ThreadAbortException)
                 {
@@ -337,8 +335,13 @@ namespace Zutatensuppe.D2Reader
         {
             try
             {
+                // if game is still loading, dont read further
+                var loading = reader.ReadInt32(memory.Loading, AddressingMode.Relative);
+                if (loading != 0) return null;
+
                 D2Game game = ReadActiveGameInstance();
                 if (game == null || game.Client.IsNull) return null;
+
                 D2Client client = reader.Read<D2Client>(game.Client);
                 // Make sure we are reading a player type.
                 if (client.UnitType != 0) return null;
@@ -484,58 +487,30 @@ namespace Zutatensuppe.D2Reader
             return reader.Read<D2Game>(gamePointer);
         }
 
-        void ProcessGameData()
+        bool ProcessGameData()
         {
             // Make sure the game is loaded.
             var gameInfo = ReadGameInfo();
             if (gameInfo == null)
-            {
-                wasInTitleScreen = true;
-                return;
-            }
+                return false;
 
             CreateReaders();
 
+            // A brand new character has been started.
+            // The extra wasInTitleScreen check prevents DI from splitting
+            // when it was started AFTER Diablo 2, but the char is still a new char
             var isNewChar = wasInTitleScreen && Character.DetermineIfNewChar(
                 gameInfo.Player,
                 unitReader,
                 inventoryReader,
                 skillReader
             );
-
+            
             var area = reader.ReadByte(memory.Area, AddressingMode.Relative);
-            var character = ReadCharacterData(gameInfo);
-            var hireling = ReadHirelingData(gameInfo);
 
-            // A brand new character has been started.
-            // The extra wasInTitleScreen check prevents DI from splitting
-            // when it was started AFTER Diablo 2, but the char is still a new char
-            if (isNewChar)
-            {
-                // disable IsNewChar from the other chars created so far
-                foreach (var pair in characters)
-                    pair.Value.IsNewChar = false;
-
-                character.Deaths = 0;
-                character.IsNewChar = true;
-                Logger.Info($"A new chararacter was created: {character.Name}");
-                charCount++;
-                OnCharacterCreated(new CharacterCreatedEventArgs(character));
-
-                // When a new player is created, the game area is not updated immediately.
-                // That means the game is in a kind of invalid state.
-                // Instead of waiting for the next loop, we use the area that we know
-                // the char starts in and set it manually, no matter what the game tells us
-                switch (gameInfo.Player.actNo)
-                {
-                    case 0: area = (byte)Area.ROGUE_ENCAMPMENT; break;
-                    case 1: area = (byte)Area.LUT_GHOLEIN; break;
-                    case 2: area = (byte)Area.KURAST_DOCKTOWN; break;
-                    case 3: area = (byte)Area.PANDEMONIUM_FORTRESS; break;
-                    case 4: area = (byte)Area.HARROGATH; break;
-                    default: break;
-                }
-            }
+            // Make sure game is in a valid state.
+            if (!IsValidState(isNewChar, gameInfo, area))
+                return false;
 
             var g = new Game();
             g.Area = area;
@@ -546,13 +521,33 @@ namespace Zutatensuppe.D2Reader
             g.GameCount = gameCount;
             g.CharCount = charCount;
             g.Quests = ReadQuests(gameInfo);
-            g.Character = character;
-            g.Hireling = hireling;
+            g.Character = ReadCharacterData(gameInfo, isNewChar);
+            g.Hireling = ReadHirelingData(gameInfo);
+
             Game = g;
 
             OnDataRead(new DataReadEventArgs(Game));
 
-            wasInTitleScreen = false;
+            return true;
+        }
+
+        bool IsValidState(bool isNewChar, GameInfo gameInfo, byte area)
+        {
+            // we assume that for non new chars, game state is always valid for reading (for now)
+            if (!isNewChar)
+                return true;
+
+            // When a new player is created, the game area is not updated immediately.
+            // That means the game is in a kind of invalid state.
+            switch (gameInfo.Player.actNo)
+            {
+                case 0: return area == (byte)Area.ROGUE_ENCAMPMENT;
+                case 1: return area == (byte)Area.LUT_GHOLEIN;
+                case 2: return area == (byte)Area.KURAST_DOCKTOWN; 
+                case 3: return area == (byte)Area.PANDEMONIUM_FORTRESS; 
+                case 4: return area == (byte)Area.HARROGATH; 
+                default: return false;
+            }
         }
 
         Quests ReadQuests(GameInfo gameInfo) => new Quests((
@@ -576,18 +571,29 @@ namespace Zutatensuppe.D2Reader
         static List<Quest> TransformToQuestList(IEnumerable<ushort> questBuffer) => questBuffer
             .Select((data, index) => QuestFactory.CreateFromBufferIndex(index, data))
             .Where(quest => quest != null).ToList();
-
-        Character CharacterByName(string name)
+        
+        Character ReadCharacterData(GameInfo gameInfo, bool isNewChar)
         {
-            if (!characters.ContainsKey(name))
-                characters[name] = new Character { Name = name, Created = DateTime.Now };
-            return characters[name];
-        }
+            var name = gameInfo.PlayerData.PlayerName;
 
-        Character ReadCharacterData(GameInfo gameInfo)
-        {
-            Character character = CharacterByName(gameInfo.PlayerData.PlayerName);
+            if (isNewChar)
+            {
+                // disable IsNewChar from the other chars created so far
+                foreach (var pair in characters)
+                    pair.Value.IsNewChar = false;
+            }
 
+            if (isNewChar || !characters.ContainsKey(name))
+            {
+                characters[name] = new Character {
+                    Name = name,
+                    Created = DateTime.Now,
+                    Guid = Guid.NewGuid(),
+                    IsNewChar = isNewChar,
+                };
+            }
+
+            Character character = characters[name];
             character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
             character.IsHardcore = gameInfo.Client.IsHardcore();
             character.IsExpansion = gameInfo.Client.IsExpansion();
@@ -598,6 +604,12 @@ namespace Zutatensuppe.D2Reader
                 character.Parse(unitReader, gameInfo);
                 character.InventoryItemIds = ReadInventoryItemIds(gameInfo.Player);
                 character.Items = ItemInfo.GetItemsByItems(this, GetEquippedItems(gameInfo.Player));
+            }
+
+            if (isNewChar)
+            {
+                Logger.Info($"A new chararacter was created: {character.Name}");
+                charCount++;
             }
 
             return character;
@@ -616,9 +628,6 @@ namespace Zutatensuppe.D2Reader
             hireling.Items = ItemInfo.GetItemsByItems(this, GetEquippedItems(unit));
             return hireling;
         }
-
-        protected virtual void OnCharacterCreated(CharacterCreatedEventArgs e) =>
-            CharacterCreated?.Invoke(this, e);
 
         protected virtual void OnDataRead(DataReadEventArgs e) =>
             DataRead?.Invoke(this, e);

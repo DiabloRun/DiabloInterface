@@ -76,14 +76,12 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         protected void RegisterServiceEventHandlers()
         {
             di.configService.Changed += SettingsServiceOnSettingsChanged;
-            di.game.CharacterCreated += GameServiceOnCharacterCreated;
             di.game.DataRead += GameServiceOnDataRead;
         }
 
         protected void UnregisterServiceEventHandlers()
         {
             di.configService.Changed -= SettingsServiceOnSettingsChanged;
-            di.game.CharacterCreated -= GameServiceOnCharacterCreated;
             di.game.DataRead -= GameServiceOnDataRead;
         }
 
@@ -100,23 +98,20 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             UpdateConfig(e.Config);
         }
 
-        void GameServiceOnCharacterCreated(object sender, CharacterCreatedEventArgs e)
-        {
-            if (InvokeRequired)
-            {
-                Invoke((Action)(() => GameServiceOnCharacterCreated(sender, e)));
-                return;
-            }
-
-            Reset();
-        }
-
+        Guid lastGuid;
         void GameServiceOnDataRead(object sender, DataReadEventArgs e)
         {
             if (InvokeRequired)
             {
                 Invoke((Action)(() => GameServiceOnDataRead(sender, e)));
                 return;
+            }
+
+            if (lastGuid != e.Character.Guid)
+            {
+                Reset();
+
+                lastGuid = e.Character.Guid;
             }
 
             UpdateLabels(e.Character, e.Quests, e.Game);

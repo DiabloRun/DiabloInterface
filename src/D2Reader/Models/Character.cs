@@ -132,6 +132,8 @@ namespace Zutatensuppe.D2Reader.Models
 
         public string Name { get; set; }
 
+        public Guid Guid;
+
         public CharacterClass CharClass { get; private set; }
 
         public D2Data.Mode Mode { get; private set; }
@@ -172,7 +174,7 @@ namespace Zutatensuppe.D2Reader.Models
         public int Gold { get; private set; }
         public int GoldStash { get; private set; }
 
-        public short Deaths;
+        public short Deaths = 0;
 
         public int Defense { get; private set; }
 
@@ -266,9 +268,22 @@ namespace Zutatensuppe.D2Reader.Models
             IInventoryReader inventoryReader,
             ISkillReader skillReader
         ) {
-            return MatchesStartingProps(unit, unitReader)
-                && MatchesStartingItems(unit, inventoryReader)
-                && MatchesStartingSkills(unit, skillReader);
+            if (!MatchesStartingProps(unit, unitReader))
+            {
+                Logger.Info("Starting Props don't match");
+                return false;
+            }
+            if (!MatchesStartingItems(unit, inventoryReader))
+            {
+                Logger.Info("Starting Items don't match");
+                return false;
+            }
+            if (!MatchesStartingSkills(unit, skillReader))
+            {
+                Logger.Info("Starting Skills don't match");
+                return false;
+            }
+            return true;
         }
 
         private static bool MatchesStartingProps(D2Unit p, UnitReader unitReader)

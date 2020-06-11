@@ -26,5 +26,12 @@ namespace Zutatensuppe.D2Reader
         public IntPtr PatchStringAddressTable;
         public IntPtr ExpansionStringIndexerTable;
         public IntPtr ExpansionStringAddressTable;
+
+        // states
+        public IntPtr Loading;
+        public IntPtr? Saving; // not used yet
+        public IntPtr? Saving2; // not used yet
+        public IntPtr? InGame; // not used yet
+        public IntPtr? InMenu; // not used yet
     }
 }
