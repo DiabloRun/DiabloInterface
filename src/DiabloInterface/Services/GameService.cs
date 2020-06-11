@@ -30,7 +30,6 @@ namespace Zutatensuppe.DiabloInterface.Services
                 new GameMemoryTableFactory(),
                 di.configService.CurrentConfig.ProcessDescriptions
             );
-            DataReader.CharacterCreated += OnCharacterCreated;
             DataReader.DataRead += OnDataRead;
 
             Logger.Info("Initializing data reader thread.");
@@ -43,8 +42,6 @@ namespace Zutatensuppe.DiabloInterface.Services
         }
 
         public GameDifficulty TargetDifficulty { get; set; } = GameDifficulty.Normal;
-
-        public event EventHandler<CharacterCreatedEventArgs> CharacterCreated;
 
         public event EventHandler<DataReadEventArgs> DataRead;
 
@@ -65,7 +62,6 @@ namespace Zutatensuppe.DiabloInterface.Services
                 if (DataReader != null)
                 {
                     DataReader.DataRead -= OnDataRead;
-                    DataReader.CharacterCreated -= OnCharacterCreated;
 
                     DataReader.Dispose();
                     DataReader = null;
@@ -74,9 +70,6 @@ namespace Zutatensuppe.DiabloInterface.Services
 
             isDisposed = true;
         }
-
-        void OnCharacterCreated(object sender, CharacterCreatedEventArgs e) =>
-            CharacterCreated?.Invoke(sender, e);
 
         void OnDataRead(object sender, DataReadEventArgs e) =>
             DataRead?.Invoke(sender, e);

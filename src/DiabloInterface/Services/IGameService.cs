@@ -15,11 +15,6 @@ namespace Zutatensuppe.DiabloInterface.Services
         GameDifficulty TargetDifficulty { get; set; }
 
         /// <summary>
-        ///     Occurs when a new character is created
-        /// </summary>
-        event EventHandler<CharacterCreatedEventArgs> CharacterCreated;
-
-        /// <summary>
         ///     Occurs when data has been successfully read from the game.
         /// </summary>
         event EventHandler<DataReadEventArgs> DataRead;

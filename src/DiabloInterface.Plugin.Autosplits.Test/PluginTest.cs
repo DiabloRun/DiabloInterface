@@ -260,7 +260,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
 
         public D2DataReader DataReader => throw new NotImplementedException();
 
-        public event EventHandler<CharacterCreatedEventArgs> CharacterCreated;
         public event EventHandler<DataReadEventArgs> DataRead;
 
         public void Dispose()

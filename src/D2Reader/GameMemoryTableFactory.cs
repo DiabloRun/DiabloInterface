@@ -67,6 +67,12 @@ namespace Zutatensuppe.D2Reader
         {
             return new GameMemoryTable()
             {
+                Loading = new IntPtr(0x30F2C0),
+                Saving = new IntPtr(0x3792F8),
+                Saving2 = new IntPtr(0x3786D0),
+                InGame = new IntPtr(0x30EE8C),
+                InMenu = new IntPtr(0x379970),
+
                 GlobalData = new IntPtr(0x00344304), // game.744304
                 World = new IntPtr(0x00483D38),
                 PlayersX = new IntPtr(0x483D70),
@@ -94,6 +100,12 @@ namespace Zutatensuppe.D2Reader
         {
             return new GameMemoryTable()
             {
+                Loading = new IntPtr(0x30DF7C),
+                Saving = new IntPtr(0x36F760),
+                Saving2 = new IntPtr(0x370380),
+                InGame = new IntPtr(0x30DBC4),
+                InMenu = new IntPtr(0x478884),
+
                 GlobalData = new IntPtr(0x33FD78),
                 World = new IntPtr(0x0047ACC0),
                 PlayersX = new IntPtr(0x47ACF8),
@@ -121,6 +133,12 @@ namespace Zutatensuppe.D2Reader
         {
             return new GameMemoryTable()
             {
+                Loading = new IntPtr(0x30EF7C),
+                Saving = new IntPtr(0x370760),
+                Saving2 = new IntPtr(0x371380),
+                InGame = new IntPtr(0x30EBC4),
+                InMenu = new IntPtr(0x47993C),
+
                 GlobalData = new IntPtr(0x00340D78),
                 World = new IntPtr(0x0047BD78),
                 PlayersX = new IntPtr(0x47BDB0),
@@ -155,6 +173,12 @@ namespace Zutatensuppe.D2Reader
 
             return new GameMemoryTable()
             {
+                Loading = new IntPtr(d2ClientAddress + 0x11D364),
+                Saving = null,
+                Saving2 = null,
+                InGame = null,
+                InMenu = null,
+
                 GlobalData = new IntPtr(d2CommonAddress + 0x000A33F0),
                 World = new IntPtr(d2GameAddress + 0x111C10),
                 PlayersX = new IntPtr(d2GameAddress + 0x111C44),
@@ -189,6 +213,12 @@ namespace Zutatensuppe.D2Reader
 
             return new GameMemoryTable()
             {
+                Loading = new IntPtr(d2ClientAddress + 0xFAE08),
+                Saving = null,
+                Saving2 = null,
+                InGame = null,
+                InMenu = null,
+
                 GlobalData = new IntPtr(d2CommonAddress + 0x00099E1C),
                 World = new IntPtr(d2GameAddress + 0x111C24),
                 PlayersX = new IntPtr(d2GameAddress + 0x111C1C),
