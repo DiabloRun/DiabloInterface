@@ -79,10 +79,10 @@ namespace Zutatensuppe.D2Reader
 
         public event EventHandler<DataReadEventArgs> DataRead;
 
-        static TimeSpan POLLING_RATE_FAST = TimeSpan.FromMilliseconds(50);
-        static TimeSpan POLLING_RATE_NORMAL = TimeSpan.FromMilliseconds(500);
+        static TimeSpan POLLING_RATE_OUT_OF_GAME = TimeSpan.FromMilliseconds(50);
+        static TimeSpan POLLING_RATE_INGAME = TimeSpan.FromMilliseconds(500);
 
-        public TimeSpan PollingRate { get; set; } = POLLING_RATE_NORMAL;
+        public TimeSpan PollingRate { get; set; } = POLLING_RATE_OUT_OF_GAME;
 
         bool IsProcessReaderTerminated => reader != null && !reader.IsValid;
 
@@ -296,7 +296,7 @@ namespace Zutatensuppe.D2Reader
                 // "Block" here until we have a valid reader.
                 if (!ValidateGameDataReaders())
                 {
-                    PollingRate = POLLING_RATE_NORMAL;
+                    PollingRate = POLLING_RATE_INGAME;
                     continue;
                 }
 
@@ -305,11 +305,11 @@ namespace Zutatensuppe.D2Reader
                     if (ProcessGameData())
                     {
                         wasInTitleScreen = false;
-                        PollingRate = POLLING_RATE_NORMAL;
+                        PollingRate = POLLING_RATE_INGAME;
                     } else
                     {
                         wasInTitleScreen = true;
-                        PollingRate = POLLING_RATE_FAST;
+                        PollingRate = POLLING_RATE_OUT_OF_GAME;
                     }
                 }
                 catch (ThreadAbortException)
