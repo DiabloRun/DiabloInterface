@@ -30,6 +30,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 
         public void ApplyChanges()
         {
+            if (control.InvokeRequired)
+            {
+                control.Invoke((Action)(() => ApplyChanges()));
+                return;
+            }
+            
             // Unbinds and clears the binding list.
             foreach (var binding in bindings)
                 binding.Unbind();
