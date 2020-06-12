@@ -13,6 +13,8 @@ namespace Zutatensuppe.D2Reader
 
         Dictionary<string, IntPtr> ModuleBaseAddresses { get; }
 
+        string[] CommandLineArgs { get; }
+
         T Read<T>(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute);
 
         T IndexIntoArray<T>(DataPointer array, int index, uint length) where T : class;

@@ -55,11 +55,13 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
         private class RequestBody
         {
             public static readonly List<string> AutocompareProps = new List<string> {
+                "Guid",
                 "Area",
                 "InventoryTab",
                 "Difficulty",
                 "PlayersX",
                 "Seed",
+                "SeedIsArg",
                 "Name",
                 "CharClass",
                 "IsHardcore",
@@ -91,10 +93,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             public GameDifficulty? Difficulty { get; set; }
             public int? PlayersX { get; set; }
             public uint? Seed { get; set; }
+            public bool? SeedIsArg { get; set; }
             public uint? GameCount { get; set; }
             public uint? CharCount { get; set; }
             public bool? NewCharacter { get; set; }
             public string Name { get; set; }
+            public string Guid { get; set; }
             public CharacterClass? CharClass { get; set; }
             public bool? IsHardcore { get; set; }
             public bool? IsExpansion { get; set; }
@@ -363,9 +367,11 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 Difficulty = e.Game.Difficulty,
                 PlayersX = e.Game.PlayersX,
                 Seed = e.Game.Seed,
+                SeedIsArg = e.Game.SeedIsArg,
                 GameCount = e.Game.GameCount,
                 CharCount = e.Game.CharCount,
                 Name = e.Character.Name,
+                Guid = e.Character.Guid,
                 CharClass = e.Character.CharClass,
                 IsHardcore = e.Character.IsHardcore,
                 IsExpansion = e.Character.IsExpansion,

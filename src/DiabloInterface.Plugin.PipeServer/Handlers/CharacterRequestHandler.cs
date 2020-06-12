@@ -36,6 +36,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers
             return new
             {
                 character.Name,
+                character.Guid,
                 character.Created,
                 character.CharClass,
                 character.IsHardcore,

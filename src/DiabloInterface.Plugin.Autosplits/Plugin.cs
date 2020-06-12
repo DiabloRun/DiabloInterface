@@ -40,7 +40,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             di.game.DataRead += Game_DataRead;
         }
         
-        Guid lastGuid;
+        string lastGuid;
         private void Game_DataRead(object sender, DataReadEventArgs e)
         {
             if (!Config.Enabled) return;
