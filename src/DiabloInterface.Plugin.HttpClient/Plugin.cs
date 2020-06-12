@@ -93,7 +93,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             public GameDifficulty? Difficulty { get; set; }
             public int? PlayersX { get; set; }
             public uint? Seed { get; set; }
-            public bool SeedIsArg { get; set; }
+            public bool? SeedIsArg { get; set; }
             public uint? GameCount { get; set; }
             public uint? CharCount { get; set; }
             public bool? NewCharacter { get; set; }
