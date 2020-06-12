@@ -205,6 +205,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
                 );
+                return;
             }
 
             Clipboard.SetText($"{di.game.DataReader.Game.Seed}");
