@@ -149,7 +149,14 @@ namespace Zutatensuppe.DiabloInterface.D2Reader.Test.Models
             Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
 
             statsList.FullStats.Length = 0;
-            Assert.AreEqual(false, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            try
+            {
+                Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object);
+                Assert.Fail();
+            } catch (Exception e)
+            {
+                Assert.AreEqual("Invalid level", e.Message);
+            }
             statsList.FullStats.Length = 5;
             Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
             statsList.FullStats.Length = 1;

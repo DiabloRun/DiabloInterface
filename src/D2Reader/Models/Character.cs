@@ -290,6 +290,8 @@ namespace Zutatensuppe.D2Reader.Models
         {
             // check -act2/3/4/5 level|xp
             int level = unitReader.GetStatValue(p, StatIdentifier.Level) ?? 0;
+            if (level == 0)
+                throw new Exception("Invalid level");
             int experience = unitReader.GetStatValue(p, StatIdentifier.Experience) ?? 0;
 
             // first we will check the level and XP
