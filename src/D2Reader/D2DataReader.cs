@@ -337,7 +337,11 @@ namespace Zutatensuppe.D2Reader
             {
                 // if game is still loading, dont read further
                 var loading = reader.ReadInt32(memory.Loading, AddressingMode.Relative);
-                if (loading != 0) return null;
+                if (loading != 0)
+                {
+                    Logger.Info("Game still loading");
+                    return null;
+                }
 
                 D2Game game = ReadActiveGameInstance();
                 if (game == null || game.Client.IsNull) return null;
@@ -499,18 +503,31 @@ namespace Zutatensuppe.D2Reader
             // A brand new character has been started.
             // The extra wasInTitleScreen check prevents DI from splitting
             // when it was started AFTER Diablo 2, but the char is still a new char
-            var isNewChar = wasInTitleScreen && Character.DetermineIfNewChar(
-                gameInfo.Player,
-                unitReader,
-                inventoryReader,
-                skillReader
-            );
-            
+            var isNewChar = false;
+            try
+            {
+                isNewChar = wasInTitleScreen && Character.DetermineIfNewChar(
+                    gameInfo.Player,
+                    unitReader,
+                    inventoryReader,
+                    skillReader
+                );
+
+            } catch (Exception e)
+            {
+                Logger.Info($"Unable to determine if new char {e.Message}");
+                return false;
+            }
+
+
             var area = reader.ReadByte(memory.Area, AddressingMode.Relative);
 
             // Make sure game is in a valid state.
             if (!IsValidState(isNewChar, gameInfo, area))
+            {
+                Logger.Info("Not in valid state");
                 return false;
+            }
 
             var g = new Game();
             g.Area = area;
