@@ -413,8 +413,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
             chkShowSeed.AutoSize = true;
             chkShowSeed.Location = new Point(14, 253 + 23);
-            chkShowSeed.Size = new Size(74, 17);
-            chkShowSeed.Text = "Seed";
+            chkShowSeed.Size = new Size(136, 17);
+            chkShowSeed.Text = "Seed (-seed)";
 
             btnColorAll.Location = new Point(338, 280);
             btnColorAll.Size = new Size(136, 22);

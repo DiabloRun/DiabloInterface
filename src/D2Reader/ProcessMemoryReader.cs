@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -97,6 +99,7 @@ namespace Zutatensuppe.D2Reader
 
         public string FileVersion { get; }
         public string ModuleName { get; }
+        public string[] CommandLineArgs { get; }
 
         public bool IsValid
         {
@@ -142,7 +145,7 @@ namespace Zutatensuppe.D2Reader
         {
             bool foundModule = false;
             uint foundProcessId = 0;
-            String foundFileVersion = null;
+            string foundFileVersion = null;
             IntPtr foundBaseAddress = IntPtr.Zero;
 
             Process[] processes = Process.GetProcessesByName(processName);
@@ -165,6 +168,8 @@ namespace Zutatensuppe.D2Reader
                         // the modules we are looking for are managed in the game.exe in older d2 versions.
                         // cant get them via process.Modules
                         ModuleBaseAddresses = FindModuleAddresses(process, submodules);
+
+                        CommandLineArgs = GetCommandLineArgs(foundProcessId);
                     }
                 }
             }
@@ -175,7 +180,7 @@ namespace Zutatensuppe.D2Reader
 
             // Throw if the module cannot be found.
             if (!foundModule) throw new ProcessNotFoundException(processName, moduleName);
-
+            
             // Open up handle.
             baseAddress = foundBaseAddress;
             processHandle = OpenProcess(
@@ -188,6 +193,35 @@ namespace Zutatensuppe.D2Reader
 
             // Make sure we succeeded in opening the handle.
             if (processHandle == IntPtr.Zero) throw new ProcessNotFoundException(processName, moduleName);
+        }
+
+        private string[] GetCommandLineArgs(uint processId)
+        {
+            string wmiQuery = string.Format("select CommandLine from Win32_Process where ProcessId={0}", processId);
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(wmiQuery);
+            ManagementObjectCollection retObjectCollection = searcher.Get();
+            
+            foreach (ManagementObject retObject in retObjectCollection)
+            {
+                var cmdLine = (string)retObject["CommandLine"];
+                return ParseCommandLine(cmdLine).Skip(1).ToArray();
+            }
+
+            return new string[] { };
+        }
+
+        static string[] ParseCommandLine(string commandLine)
+        {
+            char[] chars = commandLine.ToCharArray();
+            bool inQuote = false;
+            for (int index = 0; index < chars.Length; index++)
+            {
+                if (chars[index] == '"')
+                    inQuote = !inQuote;
+                if (!inQuote && chars[index] == ' ')
+                    chars[index] = '\n';
+            }
+            return new string(chars).Split('\n');
         }
 
         #region Disposable

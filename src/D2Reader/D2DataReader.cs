@@ -518,6 +518,8 @@ namespace Zutatensuppe.D2Reader
             g.PlayersX = Math.Max(reader.ReadByte(memory.PlayersX, AddressingMode.Relative), (byte)1);
             g.Difficulty = (GameDifficulty)gameInfo.Game.Difficulty;
             g.Seed = gameInfo.Game.InitSeed;
+            // todo: maybe improve the check, if needed...
+            g.SeedIsArg = reader.CommandLineArgs.Contains("-seed");
             g.GameCount = gameCount;
             g.CharCount = charCount;
             g.Quests = ReadQuests(gameInfo);
@@ -588,7 +590,7 @@ namespace Zutatensuppe.D2Reader
                 characters[name] = new Character {
                     Name = name,
                     Created = DateTime.Now,
-                    Guid = Guid.NewGuid(),
+                    Guid = Guid.NewGuid().ToString(),
                     IsNewChar = isNewChar,
                 };
             }

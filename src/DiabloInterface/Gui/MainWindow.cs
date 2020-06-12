@@ -103,12 +103,17 @@ namespace Zutatensuppe.DiabloInterface.Gui
             exitItem.Text = "Exit";
             exitItem.Click += new EventHandler(ExitMenuItemOnClick);
 
+            var copySeedItem = new ToolStripMenuItem();
+            copySeedItem.Text = "Copy current seed";
+            copySeedItem.Click += new EventHandler(CopySeedItemOnClick);
+
             loadConfigMenuItem = new ToolStripMenuItem();
             loadConfigMenuItem.Text = "Load Config";
 
             var contextMenu = new ContextMenuStrip();
             contextMenu.Items.AddRange(new ToolStripItem[] {
                 difficultyItem,
+                copySeedItem,
                 configItem,
                 loadConfigMenuItem,
                 resetItem,
@@ -188,6 +193,27 @@ namespace Zutatensuppe.DiabloInterface.Gui
         void ExitMenuItemOnClick(object sender, EventArgs e)
         {
             Close();
+        }
+
+        void CopySeedItemOnClick(object sender, EventArgs e)
+        {
+            if (di?.game?.DataReader?.Game?.Seed == null)
+            {
+                MessageBox.Show(
+                    $@"No seed available.",
+                    @"Info",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            }
+
+            Clipboard.SetText($"{di.game.DataReader.Game.Seed}");
+            MessageBox.Show(
+                $@"Seed {di.game.DataReader.Game.Seed} copied.",
+                @"Success",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
         }
 
         void ResetMenuItemOnClick(object sender, EventArgs e)

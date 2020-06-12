@@ -20,6 +20,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         public Func<ApplicationConfig, Tuple<bool, Color, int>> settings;
         public Label[] labels;
         public Dictionary<Label, string> defaults;
+        public bool enabled;
         public Def(string name, string maxString, Func<ApplicationConfig, Tuple<bool, Color, int>> settings, string[] labels)
         {
             this.name = name;
@@ -27,6 +28,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             this.settings = settings;
             this.labels = (from n in labels select new Label() { Text = n }).ToArray();
             this.defaults = new Dictionary<Label, string>();
+            this.enabled = false;
             foreach (Label l in this.labels)
             {
                 this.defaults.Add(l, l.Text);
@@ -50,27 +52,36 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         protected abstract Panel RuneLayoutPanel { get; }
 
-        protected void Add(string nam, string maxStr, Func<ApplicationConfig, Tuple<bool, Color, int>> s, params string[] names)
+        protected void Add(
+            string nam,
+            string maxStr,
+            Func<ApplicationConfig, Tuple<bool, Color, int>> s,
+            params string[] names
+        )
         {
             def.Add(nam, new Def(nam, maxStr, s, names));
         }
 
-        protected void UpdateLabel(string nam, string value)
+        protected void UpdateLabel(string nam, string value, bool visible = true)
         {
+            if (!def[nam].enabled)
+                return;
+
             foreach (Label l in def[nam].labels)
             {
+                l.Visible = visible;
                 l.Text = def[nam].defaults[l].Replace("{}", value);
             }
         }
 
-        protected void UpdateLabel(string nam, int value)
+        protected void UpdateLabel(string nam, int value, bool visible = true)
         {
-            UpdateLabel(nam, "" + value);
+            UpdateLabel(nam, "" + value, visible);
         }
 
-        protected void UpdateLabel(string nam, uint value)
+        protected void UpdateLabel(string nam, uint value, bool visible = true)
         {
-            UpdateLabel(nam, "" + value);
+            UpdateLabel(nam, "" + value, visible);
         }
 
         protected void RegisterServiceEventHandlers()
@@ -98,7 +109,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             UpdateConfig(e.Config);
         }
 
-        Guid lastGuid;
+        string lastGuid;
         void GameServiceOnDataRead(object sender, DataReadEventArgs e)
         {
             if (InvokeRequired)

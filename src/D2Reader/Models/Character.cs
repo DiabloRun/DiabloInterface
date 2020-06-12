@@ -132,11 +132,11 @@ namespace Zutatensuppe.D2Reader.Models
 
         public string Name { get; set; }
 
-        public Guid Guid;
+        public string Guid { get; set; }
 
         public CharacterClass CharClass { get; private set; }
 
-        public D2Data.Mode Mode { get; private set; }
+        public Mode Mode { get; private set; }
 
         public bool IsDead { get; private set; }
 
@@ -186,7 +186,7 @@ namespace Zutatensuppe.D2Reader.Models
 
         public int RealFRW()
         {
-            return FasterRunWalk + ((VelocityPercent - (Mode == D2Data.Mode.RUN ? 50 : 0))-100);
+            return FasterRunWalk + ((VelocityPercent - (Mode == Mode.RUN ? 50 : 0))-100);
         }
 
         public int RealIAS()
@@ -248,13 +248,13 @@ namespace Zutatensuppe.D2Reader.Models
             MonsterGold = getStat(StatIdentifier.MonsterGold);
         }
 
-        public void UpdateMode(D2Data.Mode mode)
+        public void UpdateMode(Mode mode)
         {
             Mode = mode;
 
             bool wasDead = IsDead;
 
-            IsDead = (Mode == D2Data.Mode.DEAD || Mode == D2Data.Mode.DEATH) && Level > 0;
+            IsDead = (Mode == Mode.DEAD || Mode == Mode.DEATH) && Level > 0;
 
             if (IsDead && !wasDead)
             {

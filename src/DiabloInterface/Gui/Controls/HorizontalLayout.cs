@@ -222,14 +222,16 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             foreach (KeyValuePair<string, Def> pair in def)
             {
                 var x = pair.Value.settings(config);
-                var visible = x.Item1;
-                if (visible)
+                var enabled = x.Item1;
+                pair.Value.enabled = enabled;
+
+                if (enabled)
                 {
                     var color = x.Item2;
                     var font = new Font(config.FontName, x.Item3);
                     foreach (Label l in pair.Value.labels)
                     {
-                        l.Visible = visible;
+                        l.Visible = enabled;
                         l.Margin = margin;
                         l.ForeColor = color;
                         l.Font = font;
@@ -240,7 +242,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 {
                     foreach (Label l in pair.Value.labels)
                     {
-                        l.Visible = visible;
+                        l.Visible = enabled;
                     }
                 }
             }
@@ -294,7 +296,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             UpdateLabel("hc_sc", player.IsHardcore ? "HARDCORE" : "SOFTCORE");
             UpdateLabel("exp_classic", player.IsExpansion ? "EXPANSION" : "CLASSIC");
             UpdateLabel("playersx", game.PlayersX);
-            UpdateLabel("seed", game.Seed);
+            UpdateLabel("seed", game.Seed, game.SeedIsArg);
             UpdateLabel("deaths", player.Deaths);
             UpdateLabel("runs", (int) game.GameCount);
             UpdateLabel("chars", (int) game.CharCount);

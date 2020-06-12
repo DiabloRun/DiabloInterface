@@ -131,7 +131,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             UpdateLabel("hc_sc", player.IsHardcore ? "HARDCORE" : "SOFTCORE");
             UpdateLabel("exp_classic", player.IsExpansion ? "EXPANSION" : "CLASSIC");
             UpdateLabel("playersx", game.PlayersX);
-            UpdateLabel("seed", game.Seed);
+            UpdateLabel("seed", game.Seed, game.SeedIsArg);
             UpdateLabel("deaths", player.Deaths);
             UpdateLabel("runs", (int) game.GameCount);
             UpdateLabel("chars", (int) game.CharCount);
@@ -167,20 +167,30 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             int w_left = 0;
             int w_right = 0;
 
-            void upd(Label[] ls, bool v, Font f, Color c, string mstr, Dictionary<Label, string> defaults)
+            foreach (KeyValuePair<string, Def> pair in def)
             {
+                Tuple<bool, Color, int> t = pair.Value.settings(config);
+                var enabled = t.Item1;
+                var font = new Font(config.FontName, t.Item3);
+                var labels = pair.Value.labels;
+                var color = t.Item2;
+                var mstr = pair.Value.maxString;
+                var defaults = pair.Value.defaults;
+
+                pair.Value.enabled = enabled;
+
                 int i = 0;
-                foreach (var l in ls)
+                foreach (var l in labels)
                 {
-                    l.Visible = v;
-                    if (v)
+                    l.Visible = enabled;
+                    if (enabled)
                     {
-                        l.Font = f;
-                        l.ForeColor = c;
+                        l.Font = font;
+                        l.ForeColor = color;
                         var teststr = defaults[l].Replace("{}", mstr);
                         l.Size = MeasureText(teststr, l);
                         l.Margin = padding;
-                        if (ls.Length == 1)
+                        if (labels.Length == 1)
                             w_full = Math.Max(l.Size.Width, w_full);
                         else if (i == 0)
                             w_left = Math.Max(l.Size.Width, w_left);
@@ -189,12 +199,6 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                         i++;
                     }
                 }
-            }
-
-            foreach (KeyValuePair<string, Def> pair in def)
-            {
-                Tuple<bool, Color, int> t = pair.Value.settings(config);
-                upd(pair.Value.labels, t.Item1, new Font(config.FontName, t.Item3), t.Item2, pair.Value.maxString, pair.Value.defaults);
             }
 
             foreach (KeyValuePair<string, Def> pair in def)
