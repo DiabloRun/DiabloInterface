@@ -37,8 +37,7 @@ namespace Zutatensuppe.DiabloInterface.D2Reader.Test.Models
 
             processMemoryReader
                 .Setup(x => x.Read<D2StatListEx>(
-                    It.Is<IntPtr>(p => p.Equals(unit.StatListNode.Address)),
-                    It.Is<AddressingMode>(m => m == AddressingMode.Absolute)
+                    It.Is<IntPtr>(p => p.Equals(unit.StatListNode.Address))
                 ))
                 .Returns(statsList);
 
@@ -53,10 +52,9 @@ namespace Zutatensuppe.DiabloInterface.D2Reader.Test.Models
             processMemoryReader
                 .Setup(x => x.ReadArray<D2Stat>(
                     It.Is<IntPtr>(p => p.Equals(statsList.FullStats.Address.Address)),
-                    It.IsAny<int>(),
-                    It.Is<AddressingMode>(m => m == AddressingMode.Absolute)
+                    It.IsAny<int>()
                 ))
-                .Returns<IntPtr, int, AddressingMode>((p, i, m) => i == 0 ? new D2Stat[] { } : d2StatArray);
+                .Returns<IntPtr, int>((p, i) => i == 0 ? new D2Stat[] { } : d2StatArray);
 
             // starting items for amazon
             var startingItems = new Item[] {

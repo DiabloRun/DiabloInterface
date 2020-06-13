@@ -49,11 +49,11 @@ namespace Zutatensuppe.D2Reader.Readers
             cachedItemData = new Dictionary<IntPtr, D2ItemData>();
             cachedDescriptions = new Dictionary<int, D2ItemDescription>();
 
-            globals = reader.Read<D2GlobalData>(reader.ReadAddress32(memory.GlobalData, AddressingMode.Relative));
-            lowQualityTable = reader.Read<D2SafeArray>(memory.LowQualityItems, AddressingMode.Relative);
-            descriptionTable = reader.Read<D2SafeArray>(memory.ItemDescriptions, AddressingMode.Relative);
-            magicModifiers = reader.Read<ModifierTable>(memory.MagicModifierTable, AddressingMode.Relative);
-            rareModifiers = reader.Read<ModifierTable>(memory.RareModifierTable, AddressingMode.Relative);
+            globals = reader.Read<D2GlobalData>(reader.ReadAddress32(memory.GlobalData));
+            lowQualityTable = reader.Read<D2SafeArray>(memory.LowQualityItems);
+            descriptionTable = reader.Read<D2SafeArray>(memory.ItemDescriptions);
+            magicModifiers = reader.Read<ModifierTable>(memory.MagicModifierTable);
+            rareModifiers = reader.Read<ModifierTable>(memory.RareModifierTable);
             if (globals != null)
             {
                 opNestings = reader.ReadArray<ushort>(globals.OpStatNesting, (int)globals.OpStatNestingCount);

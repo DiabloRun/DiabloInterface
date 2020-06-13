@@ -336,7 +336,7 @@ namespace Zutatensuppe.D2Reader
             try
             {
                 // if game is still loading, dont read further
-                var loading = reader.ReadInt32(memory.Loading, AddressingMode.Relative);
+                var loading = reader.ReadInt32(memory.Loading);
                 if (loading != 0)
                 {
                     Logger.Info("Game still loading");
@@ -356,8 +356,7 @@ namespace Zutatensuppe.D2Reader
                 //       the adresses may be same at the beginning but change if you make a rune word
 
                 // player address for reading the actual player unit (for inventory, skills, etc.)
-                if ((long)memory.PlayerUnit <= 0) return null;
-                IntPtr playerAddress = reader.ReadAddress32(memory.PlayerUnit, AddressingMode.Relative);
+                IntPtr playerAddress = reader.ReadAddress32(memory.PlayerUnit);
                 if ((long)playerAddress <= 0) return null;
                 D2Unit player = reader.Read<D2Unit>(playerAddress);
 
@@ -378,7 +377,7 @@ namespace Zutatensuppe.D2Reader
         // 1.13c: in D2Client.QueryInterface+F2B0
         private int GetPetGuid(D2Unit owner, int eClass, int unknown = 0)
         {
-            IntPtr addr = reader.ReadAddress32(memory.Pets, AddressingMode.Relative);
+            IntPtr addr = reader.ReadAddress32(memory.Pets);
             if ((long)addr == 0) return -1;
 
             D2UnknownUnitStruct u;
@@ -410,7 +409,7 @@ namespace Zutatensuppe.D2Reader
                 // for 1.14d see around game.463940
                 int size = Marshal.SizeOf(typeof(D2GameUnitList));
                 var addr = (IntPtr)memory.Units114 + (int)type * size;
-                var list = reader.Read<D2GameUnitList>(addr, AddressingMode.Relative);
+                var list = reader.Read<D2GameUnitList>(addr);
                 DataPointer unitAddress = list[guid & 0x7F];
                 return UnitByGuid(unitAddress, guid);
             }
@@ -421,7 +420,7 @@ namespace Zutatensuppe.D2Reader
                 // for 1.13d see function D2Client.dll+89CE0
                 // for 1.13c see function around D2Client.QueryInterface+FB14
                 var unitAddrPointer = (IntPtr)memory.Units113 + (int)guid * 4;
-                var addr = reader.ReadAddress32(unitAddrPointer, AddressingMode.Relative);
+                var addr = reader.ReadAddress32(unitAddrPointer);
                 return UnitByGuid(addr, guid);
             }
 
@@ -456,8 +455,8 @@ namespace Zutatensuppe.D2Reader
 
         D2Game ReadActiveGameInstance()
         {
-            uint gameId = reader.ReadUInt32(memory.GameId, AddressingMode.Relative);
-            IntPtr worldPointer = reader.ReadAddress32(memory.World, AddressingMode.Relative);
+            uint gameId = reader.ReadUInt32(memory.GameId);
+            IntPtr worldPointer = reader.ReadAddress32(memory.World);
 
             // Get world if game is loaded.
             if (worldPointer == IntPtr.Zero) return null;
@@ -520,7 +519,7 @@ namespace Zutatensuppe.D2Reader
             }
 
 
-            var area = reader.ReadByte(memory.Area, AddressingMode.Relative);
+            var area = reader.ReadByte(memory.Area);
 
             // Make sure game is in a valid state.
             if (!IsValidState(isNewChar, gameInfo, area))
@@ -531,8 +530,8 @@ namespace Zutatensuppe.D2Reader
 
             var g = new Game();
             g.Area = area;
-            g.InventoryTab = reader.ReadByte(memory.InventoryTab, AddressingMode.Relative);
-            g.PlayersX = Math.Max(reader.ReadByte(memory.PlayersX, AddressingMode.Relative), (byte)1);
+            g.InventoryTab = reader.ReadByte(memory.InventoryTab);
+            g.PlayersX = Math.Max(reader.ReadByte(memory.PlayersX), (byte)1);
             g.Difficulty = (GameDifficulty)gameInfo.Game.Difficulty;
             g.Seed = gameInfo.Game.InitSeed;
             // todo: maybe improve the check, if needed...

@@ -15,7 +15,7 @@ namespace Zutatensuppe.D2Reader.Readers
         {
             this.reader = reader;
 
-            globals = reader.Read<D2GlobalData>(reader.ReadAddress32(memory.GlobalData, AddressingMode.Relative));
+            globals = reader.Read<D2GlobalData>(reader.ReadAddress32(memory.GlobalData));
             stringReader = new StringReader(reader, memory);
         }
 
