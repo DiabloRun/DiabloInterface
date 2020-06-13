@@ -16,12 +16,6 @@ namespace Zutatensuppe.D2Reader
         public int[] Offsets;
     }
 
-    public enum AddressingMode
-    {
-        Absolute,
-        Relative
-    }
-
     public class ProcessNotFoundException : Exception
     {
         public ProcessNotFoundException(string processName, string moduleName) :
@@ -93,8 +87,8 @@ namespace Zutatensuppe.D2Reader
 
         const uint ProcessStillActive = 259;
 
-        IntPtr baseAddress;
         IntPtr processHandle;
+        public IntPtr BaseAddress { get; }
         public Dictionary<string, IntPtr> ModuleBaseAddresses { get; }
 
         public string FileVersion { get; }
@@ -180,9 +174,9 @@ namespace Zutatensuppe.D2Reader
 
             // Throw if the module cannot be found.
             if (!foundModule) throw new ProcessNotFoundException(processName, moduleName);
-            
+
             // Open up handle.
-            baseAddress = foundBaseAddress;
+            BaseAddress = foundBaseAddress;
             processHandle = OpenProcess(
                 ProcessAccessFlags.QueryLimitedInfo | ProcessAccessFlags.MemoryRead,
                 false,
@@ -251,24 +245,12 @@ namespace Zutatensuppe.D2Reader
 
         #region Reading
 
-        public IntPtr ResolveAddress(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
+        public IntPtr ResolvePointer(Pointer pointer)
         {
-            // Get relative address if wanted.
-            if (addressingMode == AddressingMode.Relative)
-            {
-                return new IntPtr((long)baseAddress + (long)address);
-            }
-
-            // Already in absolute form.
-            return address;
+            return ResolveAddressPath(pointer.Base, pointer.Offsets);
         }
 
-        public IntPtr ResolvePointer(Pointer pointer, AddressingMode addressing = AddressingMode.Absolute)
-        {
-            return ResolveAddressPath(pointer.Base, pointer.Offsets, addressing);
-        }
-
-        public IntPtr ResolveAddressPath(IntPtr baseAddress, int[] pathOffsets, AddressingMode addressing = AddressingMode.Absolute)
+        public IntPtr ResolveAddressPath(IntPtr baseAddress, int[] pathOffsets)
         {
             if (pathOffsets == null)
                 return baseAddress;
@@ -277,19 +259,15 @@ namespace Zutatensuppe.D2Reader
             foreach (int offset in pathOffsets)
             {
                 // Read at the current address and then offset.
-                address = IntPtr.Add(ReadAddress32(address, addressing), offset);
-
-                // Assume all subsequent addressing to be absolute.
-                addressing = AddressingMode.Absolute;
+                address = ReadAddress32(address) + offset;
             }
 
             return address;
         }
 
-        public byte[] Read(IntPtr address, int size, AddressingMode addressingMode = AddressingMode.Absolute)
+        public byte[] Read(IntPtr address, int size)
         {
             byte[] data = new byte[size];
-            address = ResolveAddress(address, addressingMode);
             bool success = ReadProcessMemory(processHandle, address, data, (uint)data.Length, out uint bytesRead);
 
             // Make sure we read successfully.
@@ -312,10 +290,10 @@ namespace Zutatensuppe.D2Reader
         /// <param name="address">Process memory address of struct.</param>
         /// <param name="addressingMode">Absolute or relative memory addressing.</param>
         /// <returns>The deserialized value or null.</returns>
-        public T Read<T>(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
+        public T Read<T>(IntPtr address)
         {
             // Read struct memory.
-            byte[] buffer = Read(address, Marshal.SizeOf<T>(), addressingMode);
+            byte[] buffer = Read(address, Marshal.SizeOf<T>());
 
             // Convert to structure.
             T data = default(T);
@@ -341,17 +319,15 @@ namespace Zutatensuppe.D2Reader
             return Read<T>(array.Address + offset);
         }
 
-        public T[] ReadArray<T>(IntPtr address, int length, AddressingMode addressingMode = AddressingMode.Absolute)
+        public T[] ReadArray<T>(IntPtr address, int length)
         {
             T[] array = new T[length];
             if (length == 0)
-            {
                 return array;
-            }
 
             // Read array memory.
             int elementSize = Marshal.SizeOf<T>();
-            byte[] buffer = Read(address, elementSize * length, addressingMode);
+            byte[] buffer = Read(address, elementSize * length);
 
             GCHandle handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
             try
@@ -371,49 +347,49 @@ namespace Zutatensuppe.D2Reader
             return array;
         }
 
-        public byte ReadByte(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
+        public byte ReadByte(IntPtr address)
         {
-            return Read(address, 1, addressingMode)[0];
+            return Read(address, 1)[0];
         }
 
-        public short ReadInt16(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
+        public short ReadInt16(IntPtr address)
         {
-            return BitConverter.ToInt16(Read(address, 2, addressingMode), 0);
+            return BitConverter.ToInt16(Read(address, 2), 0);
         }
 
-        public ushort ReadUInt16(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
+        public ushort ReadUInt16(IntPtr address)
         {
-            return BitConverter.ToUInt16(Read(address, 2, addressingMode), 0);
+            return BitConverter.ToUInt16(Read(address, 2), 0);
         }
 
-        public int ReadInt32(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
+        public int ReadInt32(IntPtr address)
         {
-            return BitConverter.ToInt32(Read(address, 4, addressingMode), 0);
+            return BitConverter.ToInt32(Read(address, 4), 0);
         }
 
-        public uint ReadUInt32(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
+        public uint ReadUInt32(IntPtr address)
         {
-            return BitConverter.ToUInt32(Read(address, 4, addressingMode), 0);
+            return BitConverter.ToUInt32(Read(address, 4), 0);
         }
 
-        public long ReadInt64(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
+        public long ReadInt64(IntPtr address)
         {
-            return BitConverter.ToInt64(Read(address, 8, addressingMode), 0);
+            return BitConverter.ToInt64(Read(address, 8), 0);
         }
 
-        public ulong ReadUInt64(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
+        public ulong ReadUInt64(IntPtr address)
         {
-            return BitConverter.ToUInt64(Read(address, 8, addressingMode), 0);
+            return BitConverter.ToUInt64(Read(address, 8), 0);
         }
 
-        public IntPtr ReadAddress32(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute)
+        public IntPtr ReadAddress32(IntPtr address)
         {
-            return new IntPtr(ReadUInt32(address, addressingMode));
+            return new IntPtr(ReadUInt32(address));
         }
 
-        public string ReadStringRaw(IntPtr address, int size, Encoding encoding, AddressingMode addressing = AddressingMode.Absolute)
+        public string ReadStringRaw(IntPtr address, int size, Encoding encoding)
         {
-            return encoding.GetString(Read(address, size, addressing));
+            return encoding.GetString(Read(address, size));
         }
 
         /// <summary>
@@ -424,16 +400,14 @@ namespace Zutatensuppe.D2Reader
         /// <param name="address">What address to read from.</param>
         /// <param name="size">Size of buffer to read string into.</param>
         /// <param name="encoding">String encoding type.</param>
-        /// <param name="addressing">Module addressing mode.</param>
         /// <returns></returns>
         public string ReadNullTerminatedString(
             IntPtr address,
             int size,
-            Encoding encoding,
-            AddressingMode addressing = AddressingMode.Absolute
+            Encoding encoding
         ) {
             // Get entire string buffer as string.
-            string value = ReadStringRaw(address, size, encoding, addressing);
+            string value = ReadStringRaw(address, size, encoding);
 
             // Find the null terminator and chop the string there.
             int nullTerminatorIndex = value.IndexOf('\0');
@@ -452,20 +426,18 @@ namespace Zutatensuppe.D2Reader
         /// <param name="size">Initial buffer size.</param>
         /// <param name="maximumSize">Maximum allowed buffer size before giving up.</param>
         /// <param name="encoding">String encoding type.</param>
-        /// <param name="addressing">Module addressing mode.</param>
         /// <returns></returns>
         public string GetNullTerminatedString(
             IntPtr address,
             int size,
             int maximumSize,
-            Encoding encoding,
-            AddressingMode addressing = AddressingMode.Absolute
+            Encoding encoding
         ) {
             string value = null;
             int nullTerminatorIndex;
             for (int bufferSize = size; bufferSize <= maximumSize; bufferSize *= 2)
             {
-                value = ReadStringRaw(address, bufferSize, encoding, addressing);
+                value = ReadStringRaw(address, bufferSize, encoding);
                 nullTerminatorIndex = value.IndexOf('\0');
                 if (nullTerminatorIndex >= 0)
                 {

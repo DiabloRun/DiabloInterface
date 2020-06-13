@@ -127,10 +127,10 @@ namespace Zutatensuppe.D2Reader.Readers
             StringTable strTable = GetStringTableByIdentifier(identifier);
             identifier -= strTable.identifierOffset;
 
-            IntPtr indexerTable = reader.ReadAddress32(strTable.indexTable, AddressingMode.Relative);
+            IntPtr indexerTable = reader.ReadAddress32(strTable.indexTable);
             if (indexerTable == IntPtr.Zero) return null;
 
-            IntPtr addressTable = reader.ReadAddress32(strTable.addressTable, AddressingMode.Relative);
+            IntPtr addressTable = reader.ReadAddress32(strTable.addressTable);
             if (addressTable == IntPtr.Zero) return null;
 
             /*
@@ -181,7 +181,7 @@ namespace Zutatensuppe.D2Reader.Readers
             if (stringAddress == IntPtr.Zero) return null;
 
             // A maximum of 0x4000 sized buffer **should** be enough to read all strings, bump if too low.
-            return reader.GetNullTerminatedString(stringAddress, 0x100, 0x4000, Encoding.Unicode, AddressingMode.Absolute);
+            return reader.GetNullTerminatedString(stringAddress, 0x100, 0x4000, Encoding.Unicode);
         }
 
         private StringTable GetStringTableByIdentifier(ushort identifier)

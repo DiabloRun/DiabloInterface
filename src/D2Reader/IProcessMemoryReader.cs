@@ -11,32 +11,33 @@ namespace Zutatensuppe.D2Reader
 
         string FileVersion { get; }
 
+        IntPtr BaseAddress { get; }
         Dictionary<string, IntPtr> ModuleBaseAddresses { get; }
 
         string[] CommandLineArgs { get; }
 
-        T Read<T>(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute);
+        T Read<T>(IntPtr address);
 
         T IndexIntoArray<T>(DataPointer array, int index, uint length) where T : class;
 
-        uint ReadUInt32(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute);
+        uint ReadUInt32(IntPtr address);
 
-        IntPtr ReadAddress32(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute);
+        IntPtr ReadAddress32(IntPtr address);
 
-        byte ReadByte(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute);
+        byte ReadByte(IntPtr address);
 
-        byte[] Read(IntPtr address, int size, AddressingMode addressingMode = AddressingMode.Absolute);
+        byte[] Read(IntPtr address, int size);
 
-        ushort ReadUInt16(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute);
+        ushort ReadUInt16(IntPtr address);
 
-        T[] ReadArray<T>(IntPtr address, int length, AddressingMode addressingMode = AddressingMode.Absolute);
+        T[] ReadArray<T>(IntPtr address, int length);
 
-        string GetNullTerminatedString(IntPtr address, int size, int maximumSize, Encoding encoding, AddressingMode addressing = AddressingMode.Absolute);
+        string GetNullTerminatedString(IntPtr address, int size, int maximumSize, Encoding encoding);
 
-        IntPtr ResolvePointer(Pointer pointer, AddressingMode addressing = AddressingMode.Absolute);
+        IntPtr ResolvePointer(Pointer pointer);
 
-        string ReadNullTerminatedString(IntPtr address, int size, Encoding encoding, AddressingMode addressing = AddressingMode.Absolute);
+        string ReadNullTerminatedString(IntPtr address, int size, Encoding encoding);
 
-        int ReadInt32(IntPtr address, AddressingMode addressingMode = AddressingMode.Absolute);
+        int ReadInt32(IntPtr address);
     }
 }
