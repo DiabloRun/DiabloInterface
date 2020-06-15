@@ -82,8 +82,6 @@ namespace Zutatensuppe.D2Reader
         static TimeSpan POLLING_RATE_OUT_OF_GAME = TimeSpan.FromMilliseconds(50);
         static TimeSpan POLLING_RATE_INGAME = TimeSpan.FromMilliseconds(500);
 
-        public TimeSpan PollingRate { get; set; } = POLLING_RATE_OUT_OF_GAME;
-
         bool IsProcessReaderTerminated => reader != null && !reader.IsValid;
 
         #region IDisposable Implementation
@@ -140,7 +138,7 @@ namespace Zutatensuppe.D2Reader
             {
                 try
                 {
-                    reader = new ProcessMemoryReader(desc.ProcessName, desc.ModuleName, desc.SubModules);
+                    reader = ProcessMemoryReader.Create(desc.ProcessName, desc.ModuleName, desc.SubModules);
                     memory = CreateGameMemoryTableForReader(reader);
                 }
                 catch (ProcessNotFoundException)
@@ -291,44 +289,46 @@ namespace Zutatensuppe.D2Reader
         {
             while (!isDisposed)
             {
-                Thread.Sleep(PollingRate);
-
-                // "Block" here until we have a valid reader.
-                if (!ValidateGameDataReaders())
+                if (Read())
                 {
-                    PollingRate = POLLING_RATE_INGAME;
-                    continue;
-                }
-
-                try
-                {
-                    if (ProcessGameData())
-                    {
-                        wasInTitleScreen = false;
-                        PollingRate = POLLING_RATE_INGAME;
-                    } else
-                    {
-                        wasInTitleScreen = true;
-                        PollingRate = POLLING_RATE_OUT_OF_GAME;
-                    }
-                }
-                catch (ThreadAbortException)
-                {
-                    Logger.Debug("ThreadAbortException");
-                    throw;
-                }
-                catch (Exception e)
-                {
-                    Logger.Debug("Other Exception");
-#if DEBUG
-                    // Print errors to console in debug builds.
-                    Console.WriteLine("Exception: {0}", e);
-#endif
-                    // cleaning up readers, so they are recreated in next loop
-                    // otherwise data reading will stop here
-                    CleanUpDataReaders();
+                    wasInTitleScreen = false;
+                    Thread.Sleep(POLLING_RATE_INGAME);
+                } else { 
+                    wasInTitleScreen = true;
+                    Thread.Sleep(POLLING_RATE_OUT_OF_GAME);
                 }
             }
+        }
+
+        private bool Read()
+        {
+            // "Block" here until we have a valid reader.
+            if (!ValidateGameDataReaders())
+            {
+                return false;
+            }
+
+            try
+            {
+                return ProcessGameData();
+            }
+            catch (ThreadAbortException)
+            {
+                Logger.Debug("ThreadAbortException");
+                throw;
+            }
+            catch (Exception e)
+            {
+                Logger.Debug("Other Exception");
+#if DEBUG
+                // Print errors to console in debug builds.
+                Console.WriteLine("Exception: {0}", e);
+#endif
+                // cleaning up readers, so they are recreated in next loop
+                // otherwise data reading will stop here
+                CleanUpDataReaders();
+            }
+            return false;
         }
 
         GameInfo ReadGameInfo()
@@ -343,8 +343,24 @@ namespace Zutatensuppe.D2Reader
                     return null;
                 }
 
-                D2Game game = ReadActiveGameInstance();
-                if (game == null || game.Client.IsNull) return null;
+                uint gameId = reader.ReadUInt32(memory.GameId);
+                IntPtr worldPointer = reader.ReadAddress32(memory.World);
+
+                // Get world if game is loaded.
+                if (worldPointer == IntPtr.Zero) return null;
+                D2World world = reader.Read<D2World>(worldPointer);
+
+                // Find the game address.
+                uint gameIndex = gameId & world.GameMask;
+                uint gameOffset = (gameIndex * 0x0C) + 0x08;
+                IntPtr gamePointer = reader.ReadAddress32(world.GameBuffer + gameOffset);
+
+                // Check for invalid pointers, this value can actually be negative during transition
+                // screens, so we need to reinterpret the pointer as a signed integer.
+                if (unchecked((int)gamePointer.ToInt64()) < 0) return null;
+
+                var game = reader.Read<D2Game>(gamePointer);
+                if (game.Client.IsNull) return null;
 
                 D2Client client = reader.Read<D2Client>(game.Client);
                 // Make sure we are reading a player type.
@@ -358,6 +374,7 @@ namespace Zutatensuppe.D2Reader
                 // player address for reading the actual player unit (for inventory, skills, etc.)
                 IntPtr playerAddress = reader.ReadAddress32(memory.PlayerUnit);
                 if ((long)playerAddress <= 0) return null;
+
                 D2Unit player = reader.Read<D2Unit>(playerAddress);
 
                 // player address for reading the player (name + quests)
@@ -365,7 +382,7 @@ namespace Zutatensuppe.D2Reader
                 var playerData = (tmpPlayer == null || tmpPlayer.UnitData.IsNull)
                     ? null
                     : reader.Read<D2PlayerData>(tmpPlayer.UnitData);
-                return new GameInfo(game, client, player, playerData);
+                return new GameInfo(game, gameId, client, player, playerData);
             }
             catch (ProcessMemoryReadException)
             {
@@ -453,43 +470,6 @@ namespace Zutatensuppe.D2Reader
             return null;
         }
 
-        D2Game ReadActiveGameInstance()
-        {
-            uint gameId = reader.ReadUInt32(memory.GameId);
-            IntPtr worldPointer = reader.ReadAddress32(memory.World);
-
-            // Get world if game is loaded.
-            if (worldPointer == IntPtr.Zero) return null;
-            D2World world = reader.Read<D2World>(worldPointer);
-
-            // Find the game address.
-            uint gameIndex = gameId & world.GameMask;
-            uint gameOffset = (gameIndex * 0x0C) + 0x08;
-            IntPtr gamePointer = reader.ReadAddress32(world.GameBuffer + gameOffset);
-
-            // Check for invalid pointers, this value can actually be negative during transition
-            // screens, so we need to reinterpret the pointer as a signed integer.
-            if (unchecked((int)gamePointer.ToInt64()) < 0)
-                return null;
-
-
-            // TODO: move this out of this function
-            // TODO: fix bug with not increasing gameCount (maybe use some more info from D2Game obj)
-            // Note: gameId can be the same across D2 restarts
-            // - launch d2
-            // - start game (counter increases)
-            // - close d2
-            // - launch d2
-            // - start game (counter doesnt increase)
-            if (gameId != 0 && (lastGameId != gameId))
-            {
-                gameCount++;
-                lastGameId = gameId;
-            }
-
-            return reader.Read<D2Game>(gamePointer);
-        }
-
         bool ProcessGameData()
         {
             // Make sure the game is loaded.
@@ -511,13 +491,11 @@ namespace Zutatensuppe.D2Reader
                     inventoryReader,
                     skillReader
                 );
-
             } catch (Exception e)
             {
                 Logger.Info($"Unable to determine if new char {e.Message}");
                 return false;
             }
-
 
             var area = reader.ReadByte(memory.Area);
 
@@ -526,6 +504,29 @@ namespace Zutatensuppe.D2Reader
             {
                 Logger.Info("Not in valid state");
                 return false;
+            }
+
+            // TODO: fix bug with not increasing gameCount (maybe use some more info from D2Game obj)
+            // Note: gameId can be the same across D2 restarts
+            // - launch d2
+            // - start game (counter increases)
+            // - close d2
+            // - launch d2
+            // - start game (counter doesnt increase)
+            if (gameInfo.GameId != 0 && (lastGameId != gameInfo.GameId))
+            {
+                gameCount++;
+                lastGameId = gameInfo.GameId;
+            }
+
+            var character = ReadCharacterData(gameInfo, isNewChar);
+            var quests = ReadQuests(gameInfo);
+            var hireling = ReadHirelingData(gameInfo);
+
+            if (isNewChar)
+            {
+                charCount++;
+                Logger.Info($"A new chararacter was created: {character.Name} (Char {charCount})");
             }
 
             var g = new Game();
@@ -538,10 +539,9 @@ namespace Zutatensuppe.D2Reader
             g.SeedIsArg = reader.CommandLineArgs.Contains("-seed");
             g.GameCount = gameCount;
             g.CharCount = charCount;
-            g.Quests = ReadQuests(gameInfo);
-            g.Character = ReadCharacterData(gameInfo, isNewChar);
-            g.Hireling = ReadHirelingData(gameInfo);
-
+            g.Quests = quests;
+            g.Character = character;
+            g.Hireling = hireling;
             Game = g;
 
             OnDataRead(new DataReadEventArgs(Game));
@@ -622,12 +622,6 @@ namespace Zutatensuppe.D2Reader
                 character.Parse(unitReader, gameInfo);
                 character.InventoryItemIds = ReadInventoryItemIds(gameInfo.Player);
                 character.Items = ItemInfo.GetItemsByItems(this, GetEquippedItems(gameInfo.Player));
-            }
-
-            if (isNewChar)
-            {
-                Logger.Info($"A new chararacter was created: {character.Name}");
-                charCount++;
             }
 
             return character;

@@ -168,11 +168,11 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 Headers = Config.Headers,
                 Name = newVal.Name,
             };
-            var hasDiff = false;
 
             if (!newVal.CharCount.Equals(prevVal.CharCount))
             {
                 diff.NewCharacter = true;
+                prevVal = new RequestBody();
             }
 
             if (!newVal.GameCount.Equals(prevVal.GameCount))
@@ -180,6 +180,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 prevVal = new RequestBody();
             }
 
+            var hasDiff = false;
             foreach (string propertyName in RequestBody.AutocompareProps)
             {
                 var property = typeof(RequestBody).GetProperty(propertyName);
