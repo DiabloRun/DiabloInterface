@@ -55,7 +55,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
         private class RequestBody
         {
             public static readonly List<string> AutocompareProps = new List<string> {
-                "Guid",
                 "Area",
                 "InventoryTab",
                 "Difficulty",
@@ -175,6 +174,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             {
                 Headers = Config.Headers,
                 Name = newVal.Name,
+                Guid = newVal.Guid,
             };
 
             if (!newVal.CharCount.Equals(prevVal.CharCount))
@@ -392,6 +392,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 Dexterity = e.Character.Dexterity,
                 Vitality = e.Character.Vitality,
                 Energy = e.Character.Energy,
+                Life = e.Character.Life,
+                LifeMax = e.Character.LifeMax,
+                Mana = e.Character.Mana,
+                ManaMax = e.Character.ManaMax,
                 FireResist = e.Character.FireResist,
                 ColdResist = e.Character.ColdResist,
                 LightningResist = e.Character.LightningResist,
