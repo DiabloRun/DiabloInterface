@@ -140,7 +140,7 @@ namespace Zutatensuppe.D2Reader
             {
                 try
                 {
-                    reader = new ProcessMemoryReader(desc.ProcessName, desc.ModuleName, desc.SubModules);
+                    reader = ProcessMemoryReader.Create(desc.ProcessName, desc.ModuleName, desc.SubModules);
                     memory = CreateGameMemoryTableForReader(reader);
                 }
                 catch (ProcessNotFoundException)
@@ -528,6 +528,14 @@ namespace Zutatensuppe.D2Reader
                 return false;
             }
 
+            var character = ReadCharacterData(gameInfo, isNewChar);
+
+            if (isNewChar)
+            {
+                charCount++;
+                Logger.Info($"A new chararacter was created: {character.Name} (Char {charCount})");
+            }
+
             var g = new Game();
             g.Area = area;
             g.InventoryTab = reader.ReadByte(memory.InventoryTab);
@@ -539,7 +547,7 @@ namespace Zutatensuppe.D2Reader
             g.GameCount = gameCount;
             g.CharCount = charCount;
             g.Quests = ReadQuests(gameInfo);
-            g.Character = ReadCharacterData(gameInfo, isNewChar);
+            g.Character = character;
             g.Hireling = ReadHirelingData(gameInfo);
 
             Game = g;
@@ -622,12 +630,6 @@ namespace Zutatensuppe.D2Reader
                 character.Parse(unitReader, gameInfo);
                 character.InventoryItemIds = ReadInventoryItemIds(gameInfo.Player);
                 character.Items = ItemInfo.GetItemsByItems(this, GetEquippedItems(gameInfo.Player));
-            }
-
-            if (isNewChar)
-            {
-                Logger.Info($"A new chararacter was created: {character.Name}");
-                charCount++;
             }
 
             return character;

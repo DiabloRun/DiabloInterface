@@ -88,12 +88,10 @@ namespace Zutatensuppe.D2Reader
         const uint ProcessStillActive = 259;
 
         IntPtr processHandle;
-        public IntPtr BaseAddress { get; }
-        public Dictionary<string, IntPtr> ModuleBaseAddresses { get; }
-
-        public string FileVersion { get; }
-        public string ModuleName { get; }
-        public string[] CommandLineArgs { get; }
+        public IntPtr BaseAddress { get; private set; }
+        public Dictionary<string, IntPtr> ModuleBaseAddresses { get; private set; }
+        public string FileVersion { get; private set; }
+        public string[] CommandLineArgs { get; private set; }
 
         public bool IsValid
         {
@@ -105,7 +103,7 @@ namespace Zutatensuppe.D2Reader
             }
         }
 
-        private Dictionary<string, IntPtr> FindModuleAddresses(Process p, string[] modules)
+        private static Dictionary<string, IntPtr> FindModuleAddresses(Process p, string[] modules)
         {
             Dictionary<string, IntPtr> addresses = new Dictionary<string, IntPtr>();
             long MaxAddress = 0x7fffffff;
@@ -135,61 +133,49 @@ namespace Zutatensuppe.D2Reader
             return addresses;
         }
 
-        public ProcessMemoryReader(string processName, string moduleName, string[] submodules)
+        private ProcessMemoryReader()
         {
-            bool foundModule = false;
-            uint foundProcessId = 0;
-            string foundFileVersion = null;
-            IntPtr foundBaseAddress = IntPtr.Zero;
+        }
 
-            Process[] processes = Process.GetProcessesByName(processName);
+        public static ProcessMemoryReader Create(string processName, string moduleName, string[] submodules)
+        {
             try
             {
+                var processes = Process.GetProcessesByName(processName);
                 foreach (var process in processes)
                 {
                     foreach (ProcessModule module in process.Modules)
                     {
                         if (module.ModuleName != moduleName)
-                        {
                             continue;
-                        }
 
-                        foundModule = true;
-                        foundProcessId = (uint)process.Id;
-                        foundBaseAddress = module.BaseAddress;
-                        foundFileVersion = module.FileVersionInfo.FileVersion;
+                        var handle = OpenProcess(
+                            ProcessAccessFlags.QueryLimitedInfo | ProcessAccessFlags.MemoryRead,
+                            false,
+                            (uint)process.Id
+                        );
 
-                        // the modules we are looking for are managed in the game.exe in older d2 versions.
-                        // cant get them via process.Modules
-                        ModuleBaseAddresses = FindModuleAddresses(process, submodules);
+                        if (handle == IntPtr.Zero)
+                            continue;
 
-                        CommandLineArgs = GetCommandLineArgs(foundProcessId);
+                        return new ProcessMemoryReader
+                        {
+                            processHandle = handle,
+                            FileVersion = module.FileVersionInfo.FileVersion,
+                            BaseAddress = module.BaseAddress,
+                            ModuleBaseAddresses = FindModuleAddresses(process, submodules),
+                            CommandLineArgs = GetCommandLineArgs((uint)process.Id)
+                        };
                     }
                 }
             }
             catch
             {
-                throw new ProcessNotFoundException(processName, moduleName);
             }
-
-            // Throw if the module cannot be found.
-            if (!foundModule) throw new ProcessNotFoundException(processName, moduleName);
-
-            // Open up handle.
-            BaseAddress = foundBaseAddress;
-            processHandle = OpenProcess(
-                ProcessAccessFlags.QueryLimitedInfo | ProcessAccessFlags.MemoryRead,
-                false,
-                foundProcessId
-            );
-            FileVersion = foundFileVersion;
-            ModuleName = moduleName;
-
-            // Make sure we succeeded in opening the handle.
-            if (processHandle == IntPtr.Zero) throw new ProcessNotFoundException(processName, moduleName);
+            throw new ProcessNotFoundException(processName, moduleName);
         }
 
-        private string[] GetCommandLineArgs(uint processId)
+        static string[] GetCommandLineArgs(uint processId)
         {
             string wmiQuery = string.Format("select CommandLine from Win32_Process where ProcessId={0}", processId);
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(wmiQuery);
