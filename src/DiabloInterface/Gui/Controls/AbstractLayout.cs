@@ -62,6 +62,31 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             def.Add(nam, new Def(nam, maxStr, s, names));
         }
 
+        public static string ReplaceFirst(string text, string search, string replace)
+        {
+            int pos = text.IndexOf(search);
+            if (pos < 0)
+                return text;
+            return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
+        }
+
+        protected void UpdateLabel(string nam, string[] values, bool visible = true)
+        {
+            if (!def[nam].enabled)
+                return;
+
+            foreach (Label l in def[nam].labels)
+            {
+                l.Visible = visible;
+                var text = def[nam].defaults[l];
+                foreach (var value in values)
+                {
+                    text = ReplaceFirst(text, "{}", value);
+                }
+                l.Text = text;
+            }
+        }
+
         protected void UpdateLabel(string nam, string value, bool visible = true)
         {
             if (!def[nam].enabled)
