@@ -34,6 +34,8 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         protected void InitializeComponent()
         {
             Add("name", new string('W', 15), (ApplicationConfig s) => Tuple.Create(s.DisplayName, s.ColorName, s.FontSizeTitle), "{}");
+            Add("life", "9999/9999", (ApplicationConfig s) => Tuple.Create(s.DisplayLife, s.ColorLife, s.FontSize), "LIFE: {}/{}");
+            Add("mana", "9999/9999", (ApplicationConfig s) => Tuple.Create(s.DisplayMana, s.ColorMana, s.FontSize), "MANA: {}/{}");
             Add("hc_sc", "HARDCORE", (ApplicationConfig s) => Tuple.Create(s.DisplayHardcoreSoftcore, s.ColorHardcoreSoftcore, s.FontSize), "{}");
             Add("exp_classic", "EXPANSION", (ApplicationConfig s) => Tuple.Create(s.DisplayExpansionClassic, s.ColorExpansionClassic, s.FontSize), "{}");
             Add("playersx", "8", (ApplicationConfig s) => Tuple.Create(s.DisplayPlayersX, s.ColorPlayersX, s.FontSize), "/players {}");
@@ -128,6 +130,8 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         protected override void UpdateLabels(Character player, Quests quests, Game game)
         {
             UpdateLabel("name", player.Name);
+            UpdateLabel("life", new string[] { "" + player.Life, "" + player.LifeMax });
+            UpdateLabel("mana", new string[] { "" + player.Mana, "" + player.ManaMax });
             UpdateLabel("hc_sc", player.IsHardcore ? "HARDCORE" : "SOFTCORE");
             UpdateLabel("exp_classic", player.IsExpansion ? "EXPANSION" : "CLASSIC");
             UpdateLabel("playersx", game.PlayersX);

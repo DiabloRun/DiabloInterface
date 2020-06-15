@@ -48,6 +48,8 @@ namespace Zutatensuppe.DiabloInterface
         public bool DisplayHardcoreSoftcore { get; set; } = false;
         public bool DisplayExpansionClassic { get; set; } = false;
         public bool DisplaySeed { get; set; } = false;
+        public bool DisplayLife { get; set; } = false;
+        public bool DisplayMana { get; set; } = false;
 
         public int VerticalLayoutPadding { get; set; } = 5;
 
@@ -72,6 +74,9 @@ namespace Zutatensuppe.DiabloInterface
         public Color ColorExpansionClassic { get; set; } = Color.Snow;
         public Color ColorSeed { get; set; } = Color.Snow;
         public Color ColorBackground { get; set; } = Color.Black;
+
+        public Color ColorLife { get; set; } = Color.Snow;
+        public Color ColorMana { get; set; } = Color.Snow;
 
         // Reader settings:
         public ProcessDescription[] ProcessDescriptions { get; set; } = new ProcessDescription[]

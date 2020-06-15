@@ -174,6 +174,12 @@ namespace Zutatensuppe.D2Reader.Models
         public int Gold { get; private set; }
         public int GoldStash { get; private set; }
 
+        public int Life { get; private set; }
+        public int LifeMax { get; private set; }
+
+        public int Mana { get; private set; }
+        public int ManaMax { get; private set; }
+
         public short Deaths = 0;
 
         public int Defense { get; private set; }
@@ -246,6 +252,12 @@ namespace Zutatensuppe.D2Reader.Models
 
             MagicFind = getStat(StatIdentifier.MagicFind);
             MonsterGold = getStat(StatIdentifier.MonsterGold);
+
+            Mana = getStat(StatIdentifier.Mana) >> 8;
+            ManaMax = getStat(StatIdentifier.ManaMax) >> 8;
+
+            Life = getStat(StatIdentifier.Hitpoints) >> 8;
+            LifeMax = getStat(StatIdentifier.HitpointsMax) >> 8;
         }
 
         public void UpdateMode(Mode mode)

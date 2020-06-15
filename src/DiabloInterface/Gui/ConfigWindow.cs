@@ -87,6 +87,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private CheckBox chkShowPlayersX;
         private Button btnSetSeedColor;
         private CheckBox chkShowSeed;
+        private Button btnSetLifeColor;
+        private CheckBox chkShowLife;
+        private Button btnSetManaColor;
+        private CheckBox chkShowMana;
         private CheckBox chkShowGameCounter;
         private CheckBox checkBoxAttackerSelfDamage;
         private CheckBox checkBoxMonsterGold;
@@ -165,6 +169,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             chkShowPlayersX = new CheckBox();
             btnSetSeedColor = new Button();
             chkShowSeed = new CheckBox();
+            btnSetLifeColor = new Button();
+            chkShowLife = new CheckBox();
+            btnSetManaColor = new Button();
+            chkShowMana = new CheckBox();
             btnSetGameCounterColor = new Button();
             chkShowGameCounter = new CheckBox();
             chkShowRealValues = new CheckBox();
@@ -405,16 +413,43 @@ namespace Zutatensuppe.DiabloInterface.Gui
             chkDisplayCharCount.Size = new Size(116, 17);
             chkDisplayCharCount.Text = "Characters created";
 
-            btnSetSeedColor.Location = new Point(155, 249 + 23);
+            var i = 1;
+            btnSetSeedColor.Location = new Point(155, 249 + i * 23);
             btnSetSeedColor.Margin = new Padding(0);
             btnSetSeedColor.Size = new Size(44, 22);
             btnSetSeedColor.Text = "Color";
             btnSetSeedColor.Click += new EventHandler(btnSelectColor);
 
             chkShowSeed.AutoSize = true;
-            chkShowSeed.Location = new Point(14, 253 + 23);
+            chkShowSeed.Location = new Point(14, 253 + i * 23);
             chkShowSeed.Size = new Size(136, 17);
             chkShowSeed.Text = "Seed (-seed)";
+
+            i++;
+
+            btnSetLifeColor.Location = new Point(155, 249 + i * 23);
+            btnSetLifeColor.Margin = new Padding(0);
+            btnSetLifeColor.Size = new Size(44, 22);
+            btnSetLifeColor.Text = "Color";
+            btnSetLifeColor.Click += new EventHandler(btnSelectColor);
+
+            chkShowLife.AutoSize = true;
+            chkShowLife.Location = new Point(14, 253 + i * 23);
+            chkShowLife.Size = new Size(136, 17);
+            chkShowLife.Text = "Life";
+
+            i++;
+
+            btnSetManaColor.Location = new Point(155, 249 + i * 23);
+            btnSetManaColor.Margin = new Padding(0);
+            btnSetManaColor.Size = new Size(44, 22);
+            btnSetManaColor.Text = "Color";
+            btnSetManaColor.Click += new EventHandler(btnSelectColor);
+
+            chkShowMana.AutoSize = true;
+            chkShowMana.Location = new Point(14, 253 + i * 23);
+            chkShowMana.Size = new Size(136, 17);
+            chkShowMana.Text = "Mana";
 
             btnColorAll.Location = new Point(338, 280);
             btnColorAll.Size = new Size(136, 22);
@@ -448,6 +483,10 @@ namespace Zutatensuppe.DiabloInterface.Gui
             groupBox1.Controls.Add(chkShowPlayersX);
             groupBox1.Controls.Add(btnSetSeedColor);
             groupBox1.Controls.Add(chkShowSeed);
+            groupBox1.Controls.Add(btnSetLifeColor);
+            groupBox1.Controls.Add(chkShowLife);
+            groupBox1.Controls.Add(btnSetManaColor);
+            groupBox1.Controls.Add(chkShowMana);
             groupBox1.Controls.Add(btnSetGameCounterColor);
             groupBox1.Controls.Add(chkShowGameCounter);
             groupBox1.Controls.Add(chkShowRealValues);
@@ -771,6 +810,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     || config.DisplayRealFrwIas != chkShowRealValues.Checked
                     || config.DisplayPlayersX != chkShowPlayersX.Checked
                     || config.DisplaySeed != chkShowSeed.Checked
+                    || config.DisplayLife != chkShowLife.Checked
+                    || config.DisplayMana != chkShowMana.Checked
                     || config.DisplayGameCounter != chkShowGameCounter.Checked
                     || config.DisplayCharCounter != chkDisplayCharCount.Checked
                     || config.DisplayMagicFind != checkBoxMagicFind.Checked
@@ -792,6 +833,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     || config.ColorPoisonRes != btnSetPoisonResColor.ForeColor
                     || config.ColorPlayersX != btnSetPlayersXColor.ForeColor
                     || config.ColorSeed != btnSetSeedColor.ForeColor
+                    || config.ColorLife != btnSetLifeColor.ForeColor
+                    || config.ColorMana != btnSetManaColor.ForeColor
                     || config.ColorGameCounter != btnSetGameCounterColor.ForeColor
                     || config.ColorCharCounter != btnColorCharCount.ForeColor
                     || config.ColorMagicFind != btnSetMFColor.ForeColor
@@ -880,6 +923,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             chkShowRealValues.Checked = config.DisplayRealFrwIas;
             chkShowPlayersX.Checked = config.DisplayPlayersX;
             chkShowSeed.Checked = config.DisplaySeed;
+            chkShowLife.Checked = config.DisplayLife;
+            chkShowMana.Checked = config.DisplayMana;
             chkShowGameCounter.Checked = config.DisplayGameCounter;
             chkDisplayCharCount.Checked = config.DisplayCharCounter;
             checkBoxMagicFind.Checked = config.DisplayMagicFind;
@@ -901,6 +946,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             btnSetPoisonResColor.ForeColor = config.ColorPoisonRes;
             btnSetPlayersXColor.ForeColor = config.ColorPlayersX;
             btnSetSeedColor.ForeColor = config.ColorSeed;
+            btnSetLifeColor.ForeColor = config.ColorLife;
+            btnSetManaColor.ForeColor = config.ColorMana;
             btnSetGameCounterColor.ForeColor = config.ColorGameCounter;
             btnColorCharCount.ForeColor = config.ColorCharCounter;
             btnSetMFColor.ForeColor = config.ColorMagicFind;
@@ -953,6 +1000,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             config.DisplayRealFrwIas = chkShowRealValues.Checked;
             config.DisplayPlayersX = chkShowPlayersX.Checked;
             config.DisplaySeed = chkShowSeed.Checked;
+            config.DisplayLife = chkShowLife.Checked;
+            config.DisplayMana = chkShowMana.Checked;
             config.DisplayGameCounter = chkShowGameCounter.Checked;
             config.DisplayCharCounter = chkDisplayCharCount.Checked;
             config.DisplayMagicFind = checkBoxMagicFind.Checked;
@@ -979,6 +1028,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             config.ColorPoisonRes = btnSetPoisonResColor.ForeColor;
             config.ColorPlayersX = btnSetPlayersXColor.ForeColor;
             config.ColorSeed = btnSetSeedColor.ForeColor;
+            config.ColorLife = btnSetLifeColor.ForeColor;
+            config.ColorMana = btnSetManaColor.ForeColor;
             config.ColorGameCounter = btnSetGameCounterColor.ForeColor;
             config.ColorCharCounter = btnColorCharCount.ForeColor;
             config.ColorMagicFind = btnSetMFColor.ForeColor;
@@ -1193,6 +1244,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             btnSetPoisonResColor.BackColor = c;
             btnSetPlayersXColor.BackColor = c;
             btnSetSeedColor.BackColor = c;
+            btnSetLifeColor.BackColor = c;
+            btnSetManaColor.BackColor = c;
             btnSetGameCounterColor.BackColor = c;
             btnColorCharCount.BackColor = c;
             btnSetAttackerSelfDamageColor.BackColor = c;
@@ -1217,6 +1270,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             btnSetPoisonResColor.ForeColor = c;
             btnSetPlayersXColor.ForeColor = c;
             btnSetSeedColor.ForeColor = c;
+            btnSetLifeColor.ForeColor = c;
+            btnSetManaColor.ForeColor = c;
             btnSetGameCounterColor.ForeColor = c;
             btnColorCharCount.ForeColor = c;
             btnSetAttackerSelfDamageColor.ForeColor = c;
@@ -1248,6 +1303,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
             btnSetPoisonResColor.ForeColor = Color.YellowGreen;
             btnSetPlayersXColor.ForeColor = Color.Snow;
             btnSetSeedColor.ForeColor = Color.Snow;
+            btnSetLifeColor.ForeColor = Color.Snow;
+            btnSetManaColor.ForeColor = Color.Snow;
             btnSetGameCounterColor.ForeColor = Color.Snow;
             btnColorCharCount.ForeColor = Color.Snow;
             btnSetAttackerSelfDamageColor.ForeColor = Color.Snow;

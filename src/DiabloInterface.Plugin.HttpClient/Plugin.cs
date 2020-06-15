@@ -74,6 +74,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 "Dexterity",
                 "Vitality",
                 "Energy",
+                "Life",
+                "LifeMax",
+                "Mana",
+                "ManaMax",
                 "FireResist",
                 "ColdResist",
                 "LightningResist",
@@ -116,6 +120,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             public int? PoisonResist { get; set; }
             public int? Gold { get; set; }
             public int? GoldStash { get; set; }
+            public int? Life { get; set; }
+            public int? LifeMax { get; set; }
+            public int? Mana { get; set; }
+            public int? ManaMax { get; set; }
             public int? FasterCastRate { get; set; }
             public int? FasterHitRecovery { get; set; }
             public int? FasterRunWalk { get; set; }
