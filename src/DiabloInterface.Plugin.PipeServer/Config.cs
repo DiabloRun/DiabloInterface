@@ -1,3 +1,5 @@
+using Zutatensuppe.DiabloInterface.Lib.Plugin;
+
 namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 {
     internal class Config : IPluginConfig

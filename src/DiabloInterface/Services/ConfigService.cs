@@ -8,6 +8,7 @@ namespace Zutatensuppe.DiabloInterface.Services
     
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Newtonsoft.Json;
+    using Zutatensuppe.DiabloInterface.Lib.Services;
 
     public class ConfigService : IConfigService
     {

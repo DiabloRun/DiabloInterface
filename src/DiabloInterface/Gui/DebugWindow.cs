@@ -11,7 +11,7 @@ using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Gui.Controls;
 using Zutatensuppe.DiabloInterface.Gui.Forms;
-using Zutatensuppe.DiabloInterface.Plugin;
+using Zutatensuppe.DiabloInterface.Lib.Plugin;
 
 namespace Zutatensuppe.DiabloInterface.Gui
 {

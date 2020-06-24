@@ -1,4 +1,4 @@
-namespace Zutatensuppe.DiabloInterface.Plugin
+namespace Zutatensuppe.DiabloInterface.Lib.Plugin
 {
     public interface IPlugin
     {
@@ -6,7 +6,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin
 
         void SetConfig(IPluginConfig config);
 
-        void Initialize(DiabloInterface di);
+        void Initialize(IDiabloInterface di);
 
         void Reset();
 

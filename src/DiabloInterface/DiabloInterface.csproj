@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationStorage.cs" />
+    <Compile Include="ClassRuneSettings.cs" />
     <Compile Include="DiabloInterface.cs" />
     <Compile Include="Framework\NetFrameworkVersion.cs" />
     <Compile Include="Framework\NetFrameworkVersionComparator.cs" />
@@ -114,21 +115,14 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Controls\RuneDisplayElement.cs" />
-    <Compile Include="Plugin\IPlugin.cs" />
-    <Compile Include="Plugin\IPluginConfig.cs" />
-    <Compile Include="Plugin\IPluginRenderer.cs" />
-    <Compile Include="Plugin\BasePlugin.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Gui\ConfigWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Services\GameService.cs" />
-    <Compile Include="Services\IGameService.cs" />
-    <Compile Include="Services\IConfigService.cs" />
     <Compile Include="Services\PluginService.cs" />
     <Compile Include="Services\ConfigService.cs" />
-    <Compile Include="ApplicationConfig.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -169,7 +163,6 @@
     <None Include="Resources\Images\Icons\cross.png" />
     <None Include="Resources\Images\Icons\wrench_orange.png" />
     <None Include="Resources\Images\Icons\arrow_refresh.png" />
-    <None Include="Resources\areas.json" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -191,6 +184,30 @@
     <ProjectReference Include="..\DiabloInterface.Core\DiabloInterface.Core.csproj">
       <Project>{4dc903b9-b02c-47d3-a695-4873fa5219ad}</Project>
       <Name>DiabloInterface.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiabloInterface.Lib\DiabloInterface.Lib.csproj">
+      <Project>{8992BB97-1DD9-4ED6-8E7A-448682EE28D5}</Project>
+      <Name>DiabloInterface.Lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiabloInterface.Plugin.Autosplits\DiabloInterface.Plugin.Autosplits.csproj">
+      <Project>{F00FFB11-A885-4D11-9839-42FF68092E93}</Project>
+      <Name>DiabloInterface.Plugin.Autosplits</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiabloInterface.Plugin.FileWriter\DiabloInterface.Plugin.FileWriter.csproj">
+      <Project>{c9ba823b-e8d6-4b46-bc89-7e9377bb1815}</Project>
+      <Name>DiabloInterface.Plugin.FileWriter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiabloInterface.Plugin.HttpClient\DiabloInterface.Plugin.HttpClient.csproj">
+      <Project>{17513a94-7271-422d-a34f-588b1d774987}</Project>
+      <Name>DiabloInterface.Plugin.HttpClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiabloInterface.Plugin.PipeServer\DiabloInterface.Plugin.PipeServer.csproj">
+      <Project>{59944b50-1a5e-4e02-b9be-0f9b499770df}</Project>
+      <Name>DiabloInterface.Plugin.PipeServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiabloInterface.Plugin.Updater\DiabloInterface.Plugin.Updater.csproj">
+      <Project>{a6eeb95a-7b80-48bb-997a-4fce9b61a563}</Project>
+      <Name>DiabloInterface.Plugin.Updater</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

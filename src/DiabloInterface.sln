@@ -34,6 +34,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D2Reader.Test", "D2Reader.T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Plugin.Updater", "DiabloInterface.Plugin.Updater\DiabloInterface.Plugin.Updater.csproj", "{A6EEB95A-7B80-48BB-997A-4FCE9B61A563}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Lib", "DiabloInterface.Lib\DiabloInterface.Lib.csproj", "{8992BB97-1DD9-4ED6-8E7A-448682EE28D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +94,10 @@ Global
 		{A6EEB95A-7B80-48BB-997A-4FCE9B61A563}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6EEB95A-7B80-48BB-997A-4FCE9B61A563}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6EEB95A-7B80-48BB-997A-4FCE9B61A563}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8992BB97-1DD9-4ED6-8E7A-448682EE28D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8992BB97-1DD9-4ED6-8E7A-448682EE28D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8992BB97-1DD9-4ED6-8E7A-448682EE28D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8992BB97-1DD9-4ED6-8E7A-448682EE28D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

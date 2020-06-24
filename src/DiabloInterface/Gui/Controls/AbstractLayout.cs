@@ -9,9 +9,10 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Services;
     using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
+    using Zutatensuppe.DiabloInterface.Lib;
+    using Zutatensuppe.DiabloInterface.Lib.Services;
 
     class Def
     {
@@ -220,9 +221,9 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         /// <param name="characterClass">Active character class.</param>
         /// <param name="targetDifficulty">Manual difficulty selection.</param>
         /// <returns>The rune settings.</returns>
-        ClassRuneSettings GetMostSpecificRuneSettings(CharacterClass characterClass, GameDifficulty targetDifficulty)
+        IClassRuneSettings GetMostSpecificRuneSettings(CharacterClass characterClass, GameDifficulty targetDifficulty)
         {
-            IEnumerable<ClassRuneSettings> runeClassSettings = di.configService.CurrentConfig.ClassRunes.ToList();
+            IEnumerable<IClassRuneSettings> runeClassSettings = di.configService.CurrentConfig.ClassRunes.ToList();
             return runeClassSettings.FirstOrDefault(rs => rs.Class == characterClass && rs.Difficulty == targetDifficulty)
                 ?? runeClassSettings.FirstOrDefault(rs => rs.Class == characterClass && rs.Difficulty == null)
                 ?? runeClassSettings.FirstOrDefault(rs => rs.Class == null && rs.Difficulty == targetDifficulty)

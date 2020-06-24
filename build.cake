@@ -62,11 +62,16 @@ Task("CopyBuiltPlugins")
 
 Task("Package")
     .IsDependentOn("CopyBuilt")
-    .IsDependentOn("CopyBuiltPlugins")
+//    .IsDependentOn("CopyBuiltPlugins")
     .Does(() =>
 {
     var assemblyInfo = ParseAssemblyInfo("./src/DiabloInterface/Properties/AssemblyInfo.cs");
     var fileName = string.Format("DiabloInterface-v{0}.zip", assemblyInfo.AssemblyInformationalVersion);
+    CreateDirectory(binDir + Directory("Libs"));
+    CreateDirectory(binDir + Directory("Plugins"));
+
+    MoveFiles("./artifacts/bin/DiabloInterface.Plugin.*.dll", binDir + Directory("Plugins"));
+    MoveFiles("./artifacts/bin/*.dll", binDir + Directory("Libs"));
     ZipCompress(binDir, buildDir + File(fileName));
 });
 

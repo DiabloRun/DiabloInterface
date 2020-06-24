@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Zutatensuppe.DiabloInterface.Plugin
+namespace Zutatensuppe.DiabloInterface.Lib.Plugin
 {
     public abstract class BasePlugin : IPlugin
     {
@@ -10,7 +10,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin
         
         public abstract string Name { get; }
         public abstract void SetConfig(IPluginConfig config);
-        public abstract void Initialize(DiabloInterface di);
+        public abstract void Initialize(IDiabloInterface di);
         public virtual void Reset() { }
         public virtual void Dispose() { }
 

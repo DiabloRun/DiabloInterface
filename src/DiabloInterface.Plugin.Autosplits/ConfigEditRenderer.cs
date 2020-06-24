@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Zutatensuppe.DiabloInterface.Lib.Plugin;
 using Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits;
 using Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys;
 

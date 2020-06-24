@@ -5,11 +5,11 @@ using System.Linq;
 using System.Windows.Forms;
 
 using Zutatensuppe.D2Reader.Models;
-using Zutatensuppe.DiabloInterface.Services;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Gui.Controls;
 using Zutatensuppe.DiabloInterface.Gui.Forms;
 using System.Reflection;
+using Zutatensuppe.DiabloInterface.Lib.Services;
 
 namespace Zutatensuppe.DiabloInterface.Gui
 {

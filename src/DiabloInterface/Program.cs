@@ -1,11 +1,12 @@
 namespace Zutatensuppe.DiabloInterface
 {
     using System;
+    using System.Collections.Generic;
     using System.Windows.Forms;
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Framework;
     using Zutatensuppe.DiabloInterface.Gui;
-
+    using Zutatensuppe.DiabloInterface.Plugin;
     using static Framework.NetFrameworkVersionComparator;
 
     internal static class Program
@@ -23,7 +24,16 @@ namespace Zutatensuppe.DiabloInterface
 
             LogApplicationInfo();
 
-            using (var di = DiabloInterface.Create())
+            var pluginTypes = new List<Type>
+            {
+                typeof(Plugin.Autosplits.Plugin),
+                typeof(Plugin.FileWriter.Plugin),
+                typeof(Plugin.HttpClient.Plugin),
+                typeof(Plugin.PipeServer.Plugin),
+                typeof(Plugin.Updater.Plugin),
+            };
+
+            using (var di = DiabloInterface.Create(pluginTypes))
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);

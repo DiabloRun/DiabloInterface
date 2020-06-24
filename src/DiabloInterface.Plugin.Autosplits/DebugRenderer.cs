@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Zutatensuppe.DiabloInterface.Lib.Plugin;
 using Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits

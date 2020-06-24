@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
+using Zutatensuppe.DiabloInterface.Lib;
+using Zutatensuppe.DiabloInterface.Lib.Plugin;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 {
@@ -21,7 +23,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
             Config = c == null ? new Config() : c as Config;
         }
 
-        public override void Initialize(DiabloInterface di)
+        public override void Initialize(IDiabloInterface di)
         {
             SetConfig(di.configService.CurrentConfig.PluginConf(Name));
             AutomaticallyCheckVersion();

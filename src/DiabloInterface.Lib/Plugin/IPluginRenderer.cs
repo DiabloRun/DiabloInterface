@@ -1,6 +1,6 @@
 using System.Windows.Forms;
 
-namespace Zutatensuppe.DiabloInterface.Plugin
+namespace Zutatensuppe.DiabloInterface.Lib.Plugin
 {
     public interface IPluginRenderer
     {
