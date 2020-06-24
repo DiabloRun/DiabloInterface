@@ -24,7 +24,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         private Button AutoSplitTestHotkeyButton;
         private Button AutoSplitTestResetHotkeyButton;
         private FlowLayoutPanel AutoSplitToolbar;
-        private FlowLayoutPanel AutoSplitToolbar2;
+        private TableLayoutPanel AutoSplitToolbar2;
 
         public ConfigEditRenderer(Plugin plugin)
         {
@@ -35,6 +35,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
         {
             AutoSplitHotkeyLabel = new Label();
             AutoSplitHotkeyLabel.AutoSize = true;
+            AutoSplitHotkeyLabel.Width = 120;
             AutoSplitHotkeyLabel.Padding = new Padding(0, 6, 0, 0);
             AutoSplitHotkeyLabel.Text = "Split-Key:";
 
@@ -52,8 +53,19 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 
             AutoSplitResetHotkeyLabel = new Label();
             AutoSplitResetHotkeyLabel.AutoSize = true;
+            AutoSplitResetHotkeyLabel.Width = 120;
             AutoSplitResetHotkeyLabel.Padding = new Padding(0, 6, 0, 0);
             AutoSplitResetHotkeyLabel.Text = "Reset-Key:";
+
+            var resetHotkeyHelp = new Label { Text = "(?)", TextAlign = ContentAlignment.MiddleLeft};
+            var resetHotkeyTooltip = new ToolTip();
+            resetHotkeyTooltip.SetToolTip(
+                resetHotkeyHelp,
+                "(Setting a reset key is optional) " + Environment.NewLine
+                + "The reset key will trigger directly before new character creation. " + Environment.NewLine
+                + "It can be used to automatically reset your Livesplit timer. " + Environment.NewLine
+                + "You may have to disable \"Double Tap Prevention\" in Livesplit."
+            );
 
             autoSplitResetHotkeyControl = new HotkeyControl();
             autoSplitResetHotkeyControl.Value = new Hotkey();
@@ -91,17 +103,26 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             AutoSplitToolbar.Dock = DockStyle.Fill;
             AutoSplitToolbar.Margin = new Padding(0);
 
-            AutoSplitToolbar2 = new FlowLayoutPanel();
-            AutoSplitToolbar2.FlowDirection = FlowDirection.LeftToRight;
+            AutoSplitToolbar2 = new TableLayoutPanel();
             AutoSplitToolbar2.AutoSize = true;
+            AutoSplitToolbar2.ColumnCount = 4;
+            AutoSplitToolbar2.ColumnStyles.Add(new ColumnStyle());
+            AutoSplitToolbar2.ColumnStyles.Add(new ColumnStyle());
+            AutoSplitToolbar2.ColumnStyles.Add(new ColumnStyle());
+            AutoSplitToolbar2.ColumnStyles.Add(new ColumnStyle());
+            AutoSplitToolbar2.RowCount = 2;
+            AutoSplitToolbar2.RowStyles.Add(new RowStyle());
+            AutoSplitToolbar2.RowStyles.Add(new RowStyle());
 
-            AutoSplitToolbar2.Controls.Add(AutoSplitHotkeyLabel);
-            AutoSplitToolbar2.Controls.Add(autoSplitHotkeyControl);
-            AutoSplitToolbar2.Controls.Add(AutoSplitTestHotkeyButton);
+            AutoSplitToolbar2.Controls.Add(AutoSplitHotkeyLabel, 0, 0);
+            AutoSplitToolbar2.Controls.Add(autoSplitHotkeyControl, 1, 0);
+            AutoSplitToolbar2.Controls.Add(AutoSplitTestHotkeyButton, 2, 0);
 
-            AutoSplitToolbar2.Controls.Add(AutoSplitResetHotkeyLabel);
-            AutoSplitToolbar2.Controls.Add(autoSplitResetHotkeyControl);
-            AutoSplitToolbar2.Controls.Add(AutoSplitTestResetHotkeyButton);
+            AutoSplitToolbar2.Controls.Add(AutoSplitResetHotkeyLabel, 0, 1);
+            AutoSplitToolbar2.Controls.Add(autoSplitResetHotkeyControl, 1, 1);
+            AutoSplitToolbar2.Controls.Add(AutoSplitTestResetHotkeyButton, 2, 1);
+            AutoSplitToolbar2.Controls.Add(resetHotkeyHelp, 3, 1);
+
             AutoSplitToolbar2.Dock = DockStyle.Fill;
             AutoSplitToolbar2.Margin = new Padding(0);
 
