@@ -70,13 +70,13 @@
       <Project>{C5F081D7-FB83-4934-908F-53CE986AB08C}</Project>
       <Name>D2Reader</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DiabloInterface.Lib\DiabloInterface.Lib.csproj">
+      <Project>{8992BB97-1DD9-4ED6-8E7A-448682EE28D5}</Project>
+      <Name>DiabloInterface.Lib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DiabloInterface.Plugin.Autosplits\DiabloInterface.Plugin.Autosplits.csproj">
       <Project>{f00ffb11-a885-4d11-9839-42ff68092e93}</Project>
       <Name>DiabloInterface.Plugin.Autosplits</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DiabloInterface\DiabloInterface.csproj">
-      <Project>{25BB3310-9BD7-4234-AF7D-9F7FB6870A20}</Project>
-      <Name>DiabloInterface</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

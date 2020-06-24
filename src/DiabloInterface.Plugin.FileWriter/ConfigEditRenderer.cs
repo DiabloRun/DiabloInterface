@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Zutatensuppe.DiabloInterface.Lib.Plugin;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
 {

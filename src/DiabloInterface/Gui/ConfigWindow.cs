@@ -8,11 +8,12 @@ namespace Zutatensuppe.DiabloInterface.Gui
     using System.Reflection;
     using System.Windows.Forms;
 
-    using Zutatensuppe.DiabloInterface.Plugin;
-    using Zutatensuppe.DiabloInterface.Services;
+    using Zutatensuppe.DiabloInterface.Lib.Plugin;
+    using Zutatensuppe.DiabloInterface.Lib.Services;
     using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
+    using Zutatensuppe.DiabloInterface.Lib;
 
     public class ConfigWindow : WsExCompositedForm
     {
@@ -850,8 +851,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         bool CompareClassRuneSettings(ApplicationConfig config)
         {
-            IReadOnlyList<ClassRuneSettings> a = config.ClassRunes;
-            IReadOnlyList<ClassRuneSettings> b = runeSettingsPage.SettingsList;
+            IReadOnlyList<IClassRuneSettings> a = config.ClassRunes;
+            IReadOnlyList<IClassRuneSettings> b = runeSettingsPage.SettingsList;
 
             if (a.Count != b.Count) return false;
 

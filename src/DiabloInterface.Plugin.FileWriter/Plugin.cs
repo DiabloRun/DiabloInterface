@@ -2,6 +2,8 @@ using System;
 using System.Reflection;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.DiabloInterface.Core.Logging;
+using Zutatensuppe.DiabloInterface.Lib;
+using Zutatensuppe.DiabloInterface.Lib.Plugin;
 using Zutatensuppe.DiabloInterface.Plugin.FileWriter.Writer;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
@@ -22,7 +24,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.FileWriter
             ApplyConfig();
         }
 
-        public override void Initialize(DiabloInterface di)
+        public override void Initialize(IDiabloInterface di)
         {
             Logger.Info("Creating character stat file writer service.");
 

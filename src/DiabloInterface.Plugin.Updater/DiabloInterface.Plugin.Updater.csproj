@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\DiabloInterface\bin\Debug\Plugins\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -56,10 +56,9 @@
       <Name>DiabloInterface.Core</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\DiabloInterface\DiabloInterface.csproj">
-      <Project>{25bb3310-9bd7-4234-af7d-9f7fb6870a20}</Project>
-      <Name>DiabloInterface</Name>
-      <Private>False</Private>
+    <ProjectReference Include="..\DiabloInterface.Lib\DiabloInterface.Lib.csproj">
+      <Project>{8992BB97-1DD9-4ED6-8E7A-448682EE28D5}</Project>
+      <Name>DiabloInterface.Lib</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

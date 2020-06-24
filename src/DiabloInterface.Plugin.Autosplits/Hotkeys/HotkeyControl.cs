@@ -35,13 +35,17 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys
                 hotkey = value;
                 OnHotkeyChanged();
                 UpdateDisplay();
+
+                // unfocus this element
+                Enabled = false;
+                Enabled = true;
             }
         }
 
         /// <summary>
         /// Use a simple whitelist, allowing only numpad keys, digits, A-Z and the function keys.
         /// </summary>
-        public bool UseKeyWhitelist { get; set; }
+        public bool UseKeyWhitelist { get; set; } = true;
 
         /// <summary>
         /// Determines whether a hotkey is assigned or not.
@@ -50,18 +54,23 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys
 
         public HotkeyControl()
         {
-            TextChanged += HotkeyControl_TextChanged;
+            ReadOnly = true;
             KeyPress += HotkeyControl_KeyPress;
             KeyUp += HotkeyControl_KeyUp;
             KeyDown += HotkeyControl_KeyDown;
             MouseUp += HotkeyControl_MouseUp;
+            GotFocus += HotkeyControl_GotFocus;
+            LostFocus += HotkeyControl_LostFocus;
         }
 
-        void HotkeyControl_TextChanged(object sender, EventArgs e)
+        private void HotkeyControl_LostFocus(object sender, EventArgs e)
         {
-            // This handles cut/paste from context menues.
-            if (Text != hotkey.ToString())
-                Text = hotkey.ToString();
+            UpdateDisplay();
+        }
+
+        private void HotkeyControl_GotFocus(object sender, EventArgs e)
+        {
+            Text = "Set Hotkey...";
         }
 
         void HotkeyControl_MouseUp(object sender, MouseEventArgs e)
@@ -74,7 +83,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys
             if (e.Button == MouseButtons.Middle)
                 // Hotkey = Keys.MButton; not working with InputSimulator, so not valid hotkey
                 return;
-            else if (e.Button == MouseButtons.XButton1)
+
+            if (e.Button == MouseButtons.XButton1)
                 Value = new Hotkey(Keys.XButton1);
             else if (e.Button == MouseButtons.XButton2)
                 Value = new Hotkey(Keys.XButton2);
@@ -117,15 +127,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys
 
         bool IsKeyWhitelisted(Keys keyCode)
         {
-            Func<Keys, Keys, Keys, bool> isKeyInRange = (code, min, max) => code >= min && code <= max;
+            bool isKeyInRange(Keys code, Keys min, Keys max) => code >= min && code <= max;
 
-            if (   isKeyInRange(keyCode, Keys.D0, Keys.D9) // this inclueds numbers
+            return isKeyInRange(keyCode, Keys.D0, Keys.D9) // this includes numbers
                 || isKeyInRange(keyCode, Keys.A, Keys.Z) // this includes letters
                 || isKeyInRange(keyCode, Keys.NumPad0, Keys.F24) // this includes: numpad0-9, math operators, F-keys
-            ){
-                return true;
-            }
-            else return false;
+            ;
         }
 
         public void ResetHotkey()
@@ -140,7 +147,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys
 
         void UpdateDisplay()
         {
-            Text = hotkey.ToString();
+            Text = hotkey.ToKeys() == Keys.None ? "None" : hotkey.ToString();
         }
     }
 }

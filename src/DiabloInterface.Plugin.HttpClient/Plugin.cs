@@ -10,6 +10,8 @@ using Zutatensuppe.D2Reader.Struct.Item;
 using Newtonsoft.Json;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using System.Reflection;
+using Zutatensuppe.DiabloInterface.Lib.Plugin;
+using Zutatensuppe.DiabloInterface.Lib;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 {
@@ -46,7 +48,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 Logger.Info("HTTP client disabled");
         }
 
-        public override void Initialize(DiabloInterface di)
+        public override void Initialize(IDiabloInterface di)
         {
             SetConfig(di.configService.CurrentConfig.PluginConf(Name));
             di.game.DataRead += Game_DataRead;

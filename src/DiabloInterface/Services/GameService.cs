@@ -7,6 +7,7 @@ namespace Zutatensuppe.DiabloInterface.Services
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Core.Logging;
+    using Zutatensuppe.DiabloInterface.Lib.Services;
 
     public class GameService : IGameService
     {

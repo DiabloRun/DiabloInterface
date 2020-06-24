@@ -5,11 +5,12 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using Zutatensuppe.DiabloInterface.Core.Logging;
-using Zutatensuppe.DiabloInterface.Plugin;
+using Zutatensuppe.DiabloInterface.Lib.Services;
+using Zutatensuppe.DiabloInterface.Lib.Plugin;
 
 namespace Zutatensuppe.DiabloInterface.Services
 {
-    public class PluginService : IDisposable
+    public class PluginService : IPluginService
     {
         private readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -17,25 +18,42 @@ namespace Zutatensuppe.DiabloInterface.Services
 
         private DiabloInterface di;
 
+        public PluginService(DiabloInterface di, List<Type> pluginTypes)
+        {
+            this.di = di;
+            plugins = PluginsByTypes(pluginTypes);
+        }
+
         public PluginService(DiabloInterface di, string pluginDir)
         {
             this.di = di;
+            plugins = PluginsByTypes(ReadTypesInDir(pluginDir));
+        }
 
-            if (!Directory.Exists(pluginDir))
-                Directory.CreateDirectory(pluginDir);
+        private List<Type> ReadTypesInDir(string pluginDir)
+        {
             List<Type> types = new List<Type>();
+            if (!Directory.Exists(pluginDir))
+                return types;
+
             foreach (FileInfo file in new DirectoryInfo(pluginDir).GetFiles("*.dll"))
             {
                 try
                 {
                     var assembly = Assembly.LoadFile(file.FullName);
                     types.AddRange(assembly.GetTypes());
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     Logger.Error($"Plugin not loaded {file.FullName} {e.Message}");
                 }
             }
-            plugins = types
+            return types;
+        }
+
+        private List<IPlugin> PluginsByTypes(List<Type> pluginTypes)
+        {
+            return pluginTypes
                 .FindAll((Type t) => new List<Type>(t.GetInterfaces())
                 .Contains(typeof(IPlugin)))
                 .ConvertAll((Type t) => Activator.CreateInstance(t) as IPlugin);

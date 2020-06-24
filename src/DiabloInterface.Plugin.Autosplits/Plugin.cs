@@ -5,6 +5,8 @@ using System.Text;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.DiabloInterface.Core.Logging;
+using Zutatensuppe.DiabloInterface.Lib;
+using Zutatensuppe.DiabloInterface.Lib.Plugin;
 using Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits;
 using Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys;
 
@@ -32,7 +34,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
             LogAutoSplits();
         }
 
-        public override void Initialize(DiabloInterface di)
+        public override void Initialize(IDiabloInterface di)
         {
             Logger.Info("Creating auto split service.");
 

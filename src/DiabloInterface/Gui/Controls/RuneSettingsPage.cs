@@ -12,6 +12,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Core.Extensions;
     using Zutatensuppe.DiabloInterface.Core.Logging;
+    using Zutatensuppe.DiabloInterface.Lib;
 
     public partial class RuneSettingsPage : UserControl
     {
@@ -47,9 +48,9 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         private ComboBox runewordComboBox;
         private Button runewordButton;
 
-        ClassRuneSettings currentSettings;
+        IClassRuneSettings currentSettings;
 
-        IReadOnlyList<ClassRuneSettings> settingsList;
+        IReadOnlyList<IClassRuneSettings> settingsList;
 
         private void InitializeComponent()
         {
@@ -259,14 +260,14 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             this.ResumeLayout(false);
         }
 
-        public IReadOnlyList<ClassRuneSettings> SettingsList
+        public IReadOnlyList<IClassRuneSettings> SettingsList
         {
             get => settingsList;
             set
             {
                 if (value == null)
                 {
-                    settingsList = new List<ClassRuneSettings>();
+                    settingsList = new List<IClassRuneSettings>();
                 } else
                 {
                     settingsList = value;
@@ -288,7 +289,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             }
         }
 
-        ClassRuneSettings CurrentSettings
+        IClassRuneSettings CurrentSettings
         {
             set
             {
@@ -460,7 +461,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             RefreshSettingsItemText(currentSettings);
         }
 
-        void RefreshSettingsItemText(ClassRuneSettings settings)
+        void RefreshSettingsItemText(IClassRuneSettings settings)
         {
             var items = characterListBox.Items;
             for (var i = 0; i < items.Count; ++i)
@@ -476,7 +477,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         void AddSettingsButtonOnClick(object sender, EventArgs e)
         {
-            List<ClassRuneSettings> settings = settingsList.ToList();
+            List<IClassRuneSettings> settings = settingsList.ToList();
             settings.Add(new ClassRuneSettings());
             SettingsList = settings;
 
@@ -510,12 +511,12 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
         class CharacterClassListItem
         {
-            public CharacterClassListItem(ClassRuneSettings settings)
+            public CharacterClassListItem(IClassRuneSettings settings)
             {
                 Settings = settings ?? throw new ArgumentNullException(nameof(settings));
             }
 
-            public ClassRuneSettings Settings { get; }
+            public IClassRuneSettings Settings { get; }
 
             public override string ToString()
             {

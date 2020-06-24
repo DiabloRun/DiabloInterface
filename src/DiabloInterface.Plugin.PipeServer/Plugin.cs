@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Zutatensuppe.DiabloInterface.Core.Logging;
+using Zutatensuppe.DiabloInterface.Lib;
+using Zutatensuppe.DiabloInterface.Lib.Plugin;
 using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers;
 using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server;
 
@@ -19,7 +21,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
         protected override Type DebugRendererType => typeof(DebugRenderer);
 
-        private DiabloInterface di;
+        private IDiabloInterface di;
 
         private Dictionary<string, DiabloInterfaceServer> Servers = new Dictionary<string, DiabloInterfaceServer>();
 
@@ -36,7 +38,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
                 CreateServer(Config.PipeName, Config.CacheMs);
         }
 
-        public override void Initialize(DiabloInterface di)
+        public override void Initialize(IDiabloInterface di)
         {
             this.di = di;
             SetConfig(di.configService.CurrentConfig.PluginConf(Name));

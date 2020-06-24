@@ -7,7 +7,8 @@ namespace Zutatensuppe.DiabloInterface
     using Newtonsoft.Json.Converters;
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Plugin;
+    using Zutatensuppe.DiabloInterface.Lib;
+    using Zutatensuppe.DiabloInterface.Lib.Plugin;
 
     public class ApplicationConfig
     {
@@ -18,7 +19,7 @@ namespace Zutatensuppe.DiabloInterface
         virtual public IPluginConfig PluginConf(string type) => Plugins.ContainsKey(type) ? Plugins[type] : null;
 
         // Rune settings (should be plugin?)
-        public IReadOnlyList<ClassRuneSettings> ClassRunes { get; set; } = new List<ClassRuneSettings>();
+        public IReadOnlyList<IClassRuneSettings> ClassRunes { get; set; } = new List<IClassRuneSettings>();
 
         // GUI settings:
         public string FontName { get; set; } = "Courier New";
@@ -94,18 +95,5 @@ namespace Zutatensuppe.DiabloInterface
                 SubModules = new string[] { "D2Common.dll", "D2Launch.dll", "D2Lang.dll", "D2Net.dll", "D2Game.dll", "D2Client.dll", "Fog.dll" }
             },
         };
-    }
-
-    [Serializable]
-    public class ClassRuneSettings
-    {
-        [JsonConverter(typeof(StringEnumConverter))]
-        public CharacterClass? Class { get; set; }
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        public GameDifficulty? Difficulty { get; set; }
-
-        [JsonProperty(ItemConverterType = typeof(StringEnumConverter))]
-        public IReadOnlyList<Rune> Runes { get; set; } = new List<Rune>();
     }
 }

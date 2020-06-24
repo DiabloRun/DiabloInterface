@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct.Item;
+using Zutatensuppe.DiabloInterface.Lib;
+using Zutatensuppe.DiabloInterface.Lib.Services;
 using Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits;
-using Zutatensuppe.DiabloInterface.Services;
 using static Zutatensuppe.D2Reader.D2Data;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
@@ -36,12 +37,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
 
             var gameService = new GameServiceMock();
 
-            var diabloInterface = new DiabloInterface();
-            diabloInterface.configService = configService.Object;
-            diabloInterface.game = gameService;
+            var diabloInterface = new Mock<IDiabloInterface>();
+            diabloInterface.Setup(x => x.configService).Returns(configService.Object);
+            diabloInterface.Setup(x => x.game).Returns(gameService);
 
             var autoSplitService = new Plugin();
-            autoSplitService.Initialize(diabloInterface);
+            autoSplitService.Initialize(diabloInterface.Object);
 
             var quests = new Quests(new List<List<Quest>>
             {
@@ -146,12 +147,12 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
 
             var gameService = new GameServiceMock();
 
-            var diabloInterface = new DiabloInterface();
-            diabloInterface.configService = configService.Object;
-            diabloInterface.game = gameService;
+            var diabloInterface = new Mock<IDiabloInterface>();
+            diabloInterface.Setup(x => x.configService).Returns(configService.Object);
+            diabloInterface.Setup(x => x.game).Returns(gameService);
 
             var autoSplitService = new Plugin();
-            autoSplitService.Initialize(diabloInterface);
+            autoSplitService.Initialize(diabloInterface.Object);
 
             var normalQuests = new List<Quest>() {
                 QuestFactory.Create(QuestId.DenOfEvil, 0),

@@ -1,4 +1,4 @@
-namespace Zutatensuppe.DiabloInterface.Services
+namespace Zutatensuppe.DiabloInterface.Lib.Services
 {
     using System;
     using System.Collections.Generic;

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Zutatensuppe.DiabloInterface.Lib.Plugin;
 using Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits;
 using Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys;
 
