@@ -7,7 +7,6 @@ using System.Threading;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Readers;
 using Zutatensuppe.D2Reader.Struct;
-using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.D2Reader.Struct.Unknown;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using static Zutatensuppe.D2Reader.D2Data;
@@ -229,60 +228,6 @@ namespace Zutatensuppe.D2Reader
             var socketedItems = baseItems.SelectMany(item => unitReader.GetSocketedItems(item, inventoryReader));
             var allItems = baseItems.Concat(socketedItems);
             return (from item in allItems select item.Unit.eClass).ToList();
-        }
-
-        private IEnumerable<Item> GetEquippedItems(D2Unit owner)
-        {
-            return GetInventoryItemsFiltered(owner, (Item i) => i.IsEquipped());
-        }
-
-        private IEnumerable<Item> GetItemsEquippedInSlot(D2Unit owner, List<BodyLocation> slots)
-        {
-            return GetInventoryItemsFiltered(owner, (Item i) => slots.FindIndex(x => i.IsEquippedInSlot(x)) >= 0);
-        }
-
-        internal void ItemSlotAction(List<BodyLocation> slots, Action<Item, D2Unit, UnitReader, IStringReader, IInventoryReader> action)
-        {
-            if (!ValidateGameDataReaders()) return;
-
-            var gameInfo = ReadGameInfo();
-            if (gameInfo == null) return;
-
-            try
-            {
-                foreach (Item item in GetItemsEquippedInSlot(gameInfo.Player, slots))
-                {
-                    action?.Invoke(item, gameInfo.Player, unitReader, stringReader, inventoryReader);
-                }
-            } catch (Exception e)
-            {
-                string s = string.Join(",", from slot in slots select slot.ToString());
-                Logger.Error($"Unable to execute ItemSlotAction. {s}", e);
-                
-                unitReader.ResetCache();
-            }
-        }
-
-        internal void ItemAction(IEnumerable<Item> items, Action<Item, D2Unit, UnitReader, IStringReader, IInventoryReader> action)
-        {
-            if (!ValidateGameDataReaders()) return;
-
-            var gameInfo = ReadGameInfo();
-            if (gameInfo == null) return;
-
-            try
-            {
-                foreach (Item item in items)
-                {
-                    action?.Invoke(item, gameInfo.Player, unitReader, stringReader, inventoryReader);
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"Unable to execute ItemAction.", e);
-
-                unitReader.ResetCache();
-            }
         }
 
         public void RunReadOperation()
@@ -621,7 +566,7 @@ namespace Zutatensuppe.D2Reader
             {
                 character.Parse(unitReader, gameInfo);
                 character.InventoryItemIds = ReadInventoryItemIds(gameInfo.Player);
-                character.Items = ItemInfo.GetItemsByItems(this, GetEquippedItems(gameInfo.Player));
+                character.Items = GetItemInfosByItems(GetEquippedItems(gameInfo.Player), gameInfo.Player);
             }
 
             return character;
@@ -637,8 +582,20 @@ namespace Zutatensuppe.D2Reader
 
             var hireling = new Hireling();
             hireling.Parse(unit, unitReader, skillReader, reader, gameInfo);
-            hireling.Items = ItemInfo.GetItemsByItems(this, GetEquippedItems(unit));
+            hireling.Items = GetItemInfosByItems(GetEquippedItems(unit), unit);
             return hireling;
+        }
+
+        private IEnumerable<Item> GetEquippedItems(D2Unit owner)
+        {
+            return GetInventoryItemsFiltered(owner, (Item i) => i.IsEquipped());
+        }
+
+        private List<ItemInfo> GetItemInfosByItems(IEnumerable<Item> items, D2Unit owner)
+        {
+            return items
+                .Select(item => new ItemInfo(item, owner, unitReader, stringReader, inventoryReader))
+                .ToList();
         }
 
         protected virtual void OnDataRead(DataReadEventArgs e) =>

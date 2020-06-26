@@ -41,7 +41,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers
             return new ItemResponsePayload()
             {
                 IsValidSlot = true,
-                Items = ItemInfo.GetItemsByLocations(dataReader, locations)
+                Items = dataReader.Game.Character.Items
+                    .FindAll(item => locations.Contains(item.Location)),
             };
         }
 

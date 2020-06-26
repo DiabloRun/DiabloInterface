@@ -37,24 +37,6 @@ namespace Zutatensuppe.D2Reader.Models
         public string BaseItem { get; set; }
         public string Quality { get; set; }
 
-        public static List<ItemInfo> GetItemsByLocations(D2DataReader dataReader, List<BodyLocation> locations)
-        {
-            List<ItemInfo> Items = new List<ItemInfo>();
-            dataReader.ItemSlotAction(locations, (item, player, unitReader, stringReader, inventoryReader) => {
-                Items.Add(new ItemInfo(item, player, unitReader, stringReader, inventoryReader));
-            });
-            return Items;
-        }
-
-        internal static List<ItemInfo> GetItemsByItems(D2DataReader dataReader, IEnumerable<Item> items)
-        {
-            List<ItemInfo> Items = new List<ItemInfo>();
-            dataReader.ItemAction(items, (item, player, unitReader, stringReader, inventoryReader) => {
-                Items.Add(new ItemInfo(item, player, unitReader, stringReader, inventoryReader));
-            });
-            return Items;
-        }
-
         public ItemInfo()
         {
         }
