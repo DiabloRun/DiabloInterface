@@ -5,7 +5,6 @@ using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Lib;
 using Zutatensuppe.DiabloInterface.Lib.Plugin;
 using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers;
-using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 {
@@ -23,19 +22,24 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 
         private IDiabloInterface di;
 
-        private Dictionary<string, DiabloInterfaceServer> Servers = new Dictionary<string, DiabloInterfaceServer>();
+        private Dictionary<string, Server.Server> Servers = new Dictionary<string, Server.Server>();
 
         public override void SetConfig(IPluginConfig c)
         {
-            Config = c == null ? new Config() : c as Config;
+            var newConf = c == null ? new Config() : c as Config;
+            var dirty = !Config.Equals(newConf);
+            Config = newConf;
+
             ApplyConfig();
 
-            Stop();
+            if (dirty)
+            {
+                Stop();
+                if (Config.Enabled)
+                    CreateServer(Config.PipeName, Config.CacheMs);
+            }
 
             ApplyChanges();
-
-            if (Config.Enabled)
-                CreateServer(Config.PipeName, Config.CacheMs);
         }
 
         public override void Initialize(IDiabloInterface di)
@@ -47,7 +51,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
         private void CreateServer(string pipeName, uint cacheMs)
         {
             Logger.Info($"Creating Server: {pipeName}");
-            var s = new DiabloInterfaceServer(pipeName, cacheMs);
+            var s = new Server.Server(pipeName, cacheMs);
             s.AddRequestHandler(@"version", () => new VersionRequestHandler(Assembly.GetEntryAssembly()));
             s.AddRequestHandler(@"game", () => new GameRequestHandler(di.game.DataReader));
             s.AddRequestHandler(@"items", () => new AllItemsRequestHandler(di.game.DataReader));
@@ -58,8 +62,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
             s.AddRequestHandler(@"quests/(\d+)", () => new QuestRequestHandler(di.game.DataReader));
             s.Start();
             Servers.Add(pipeName, s);
-
-            ApplyChanges();
         }
 
         private void Stop()

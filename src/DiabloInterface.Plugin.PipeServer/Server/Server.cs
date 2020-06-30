@@ -8,25 +8,28 @@ using Newtonsoft.Json;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
 {
-    public class DiabloInterfaceServer
+    public class Server
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        readonly string pipeName;
+        private readonly string pipeName;
+        private readonly RequestProcessor requestProcessor;
+        private readonly Dictionary<string, Func<IRequestHandler>> requestHandlers;
         private readonly Cache cache;
         private readonly uint cacheMs;
         private readonly PipeSecurity ps;
-        NamedPipeServerStream stream;
+        private NamedPipeServerStream stream;
+
         public bool Running { get; private set; }
 
-        readonly Dictionary<string, Func<IRequestHandler>> requestHandlers = new Dictionary<string, Func<IRequestHandler>>();
-        public IReadOnlyDictionary<string, Func<IRequestHandler>> RequestHandlers => requestHandlers;
-
-        public DiabloInterfaceServer(string pipeName, uint cacheMs)
+        public Server(string pipeName, uint cacheMs)
         {
             Logger.Info("Initializing pipe server.");
 
             this.pipeName = pipeName;
+
+            requestProcessor = new RequestProcessor();
+            requestHandlers = new Dictionary<string, Func<IRequestHandler>>();
 
             this.cache = new Cache();
             this.cacheMs = cacheMs;
@@ -38,16 +41,14 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
 
         public void AddRequestHandler(string resource, Func<IRequestHandler> handler)
         {
-            // Always use lower case resources.
-            resource = resource.Trim().ToLowerInvariant();
-            requestHandlers[resource] = handler;
+            requestHandlers[Request.NormalizeResource(resource)] = handler;
         }
 
         public void Start()
         {
             try
             {
-                ServerListen();
+                Listen();
                 Running = true;
             }
             catch (Exception e)
@@ -63,7 +64,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
             Running = false;
         }
 
-        private void ServerListen()
+        private void Listen()
         {
             stream = new NamedPipeServerStream(pipeName,
                 PipeDirection.InOut, 1,
@@ -90,7 +91,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
                 stream = null;
 
                 // Listen for next message
-                ServerListen();
+                Listen();
                 Running = true;
             }
             catch (ObjectDisposedException e)
@@ -130,7 +131,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
             return HandleRequest(request);
         }
 
-        Response HandleRequest(Request request)
+        private Response HandleRequest(Request request)
         {
             if (cacheMs == 0)
                 return HandleRequestUncached(request);
@@ -145,12 +146,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
             return (Response)resp;
         }
 
-        Response HandleRequestUncached(Request request)
+        private Response HandleRequestUncached(Request request)
         {
-            return new RequestProcessor().HandleRequest(
-                requestHandlers,
-                request
-            );
+            return requestProcessor.HandleRequest(requestHandlers, request);
         }
     }
 }
