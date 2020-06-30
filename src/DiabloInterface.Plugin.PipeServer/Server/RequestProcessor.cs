@@ -11,8 +11,18 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Response HandleRequest(IReadOnlyDictionary<string, Func<IRequestHandler>> handlers, Request request)
+        private List<string> ToParameters(Match match)
         {
+            var parameters = new List<string>();
+            for (var i = 1; i < match.Groups.Count; ++i)
+                parameters.Add(match.Groups[i].Value);
+            return parameters;
+        }
+
+        public Response HandleRequest(
+            IReadOnlyDictionary<string, Func<IRequestHandler>> handlers,
+            Request request
+        ) {
             if (string.IsNullOrEmpty(request?.Resource))
             {
                 return new Response()
@@ -22,16 +32,18 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
                 };
             }
 
-            // Get first matching resource.
-            string resource = request.Resource.Trim().ToLowerInvariant();
-            var resourceData = (from pair in handlers
-                                let match = Regex.Match(resource, pair.Key, RegexOptions.Singleline)
-                                where match.Success && match.Length == resource.Length
-                                select new
-                                {
-                                    Handler = pair.Value(),
-                                    Match = match
-                                }).FirstOrDefault();
+            string resource = Request.NormalizeResource(request.Resource);
+
+            var resourceData = (
+                from pair in handlers
+                let match = Regex.Match(resource, pair.Key, RegexOptions.Singleline)
+                where match.Success && match.Length == resource.Length
+                select new
+                {
+                    Handler = pair.Value(),
+                    Params = ToParameters(match),
+                }
+            ).FirstOrDefault();
 
             if (resourceData?.Handler == null)
             {
@@ -45,11 +57,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
 
             try
             {
-                var parameters = new List<string>();
-                for (var i = 1; i < resourceData.Match.Groups.Count; ++i)
-                    parameters.Add(resourceData.Match.Groups[i].Value);
-
-                var response = resourceData.Handler.HandleRequest(request, parameters);
+                var response = resourceData.Handler.HandleRequest(request, resourceData.Params);
                 if (response == null)
                     throw new RequestHandlerNullResponseException(resource, resourceData.Handler);
 

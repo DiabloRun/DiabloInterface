@@ -51,7 +51,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="DebugRenderer.cs" />
     <Compile Include="Handlers\HirelingRequestHandler.cs" />
-    <Compile Include="Server\DiabloInterfaceServer.cs" />
+    <Compile Include="Server\Server.cs" />
     <Compile Include="Handlers\AllItemsRequestHandler.cs" />
     <Compile Include="Handlers\CharacterRequestHandler.cs" />
     <Compile Include="Handlers\ItemRequestHandler.cs" />
@@ -78,7 +78,7 @@
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\DiabloInterface.Core\DiabloInterface.Core.csproj">
-      <Project>{4dc903b9-b02c-47d3-a695-4873fa5219ad}</Project>
+      <Project>{4DC903B9-B02C-47D3-A695-4873FA5219AD}</Project>
       <Name>DiabloInterface.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\DiabloInterface.Lib\DiabloInterface.Lib.csproj">

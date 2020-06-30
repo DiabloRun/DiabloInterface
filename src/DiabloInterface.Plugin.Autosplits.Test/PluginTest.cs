@@ -35,11 +35,11 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
             var configService = new Mock<IConfigService>();
             configService.SetupGet(x => x.CurrentConfig).Returns(config.Object);
 
-            var gameService = new GameServiceMock();
+            var gameService = new Mock<IGameService>();
 
             var diabloInterface = new Mock<IDiabloInterface>();
             diabloInterface.Setup(x => x.configService).Returns(configService.Object);
-            diabloInterface.Setup(x => x.game).Returns(gameService);
+            diabloInterface.Setup(x => x.game).Returns(gameService.Object);
 
             var autoSplitService = new Plugin();
             autoSplitService.Initialize(diabloInterface.Object);
@@ -51,10 +51,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
                 new List<Quest>(), // HELL
             });
             
-            var characterMock = new Mock<Character>();
-            characterMock.SetupGet(x => x.Level).Returns(9);
-            characterMock.SetupGet(x => x.IsNewChar).Returns(true);
-            characterMock.SetupGet(x => x.InventoryItemIds).Returns(new List<int>());
+            var character = new Mock<Character>();
+            character.SetupGet(x => x.Level).Returns(9);
+            character.SetupGet(x => x.IsNewChar).Returns(true);
+            character.SetupGet(x => x.InventoryItemIds).Returns(new List<int>());
 
             var game = new Game();
             game.Area = 0;
@@ -62,17 +62,17 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
             game.PlayersX = 1;
             game.GameCount = 0;
             game.CharCount = 0;
-            game.Character = characterMock.Object;
+            game.Character = character.Object;
             game.Quests = quests;
 
             var args = new DataReadEventArgs(game);
 
             // test autosplit by level
-            gameService.triggerDataRead(null, args);
+            gameService.Raise(g => g.DataRead += null, args);
             Assert.AreEqual(false, split.IsReached);
 
-            characterMock.SetupGet(x => x.Level).Returns(10);
-            gameService.triggerDataRead(null, args);
+            character.SetupGet(x => x.Level).Returns(10);
+            gameService.Raise(g => g.DataRead += null, args);
             Assert.AreEqual(false, split.IsReached);
         }
 
@@ -145,11 +145,11 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
             var configService = new Mock<IConfigService>();
             configService.SetupGet(x => x.CurrentConfig).Returns(config.Object);
 
-            var gameService = new GameServiceMock();
+            var gameService = new Mock<IGameService>();
 
             var diabloInterface = new Mock<IDiabloInterface>();
             diabloInterface.Setup(x => x.configService).Returns(configService.Object);
-            diabloInterface.Setup(x => x.game).Returns(gameService);
+            diabloInterface.Setup(x => x.game).Returns(gameService.Object);
 
             var autoSplitService = new Plugin();
             autoSplitService.Initialize(diabloInterface.Object);
@@ -197,22 +197,22 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
 
             // test autosplit by game start
             Assert.AreEqual(false, splitOnGameStart.IsReached);
-            gameService.triggerDataRead(null, args);
+            gameService.Raise(g => g.DataRead += null, args);
             Assert.AreEqual(true, splitOnGameStart.IsReached);
 
             // test autosplit by level
             Assert.AreEqual(false, splitOnCharLevel10.IsReached);
-            gameService.triggerDataRead(null, args);
+            gameService.Raise(g => g.DataRead += null, args);
             Assert.AreEqual(false, splitOnCharLevel10.IsReached);
 
             characterMock.SetupGet(x => x.Level).Returns(10);
-            gameService.triggerDataRead(null, args);
+            gameService.Raise(g => g.DataRead += null, args);
             Assert.AreEqual(true, splitOnCharLevel10.IsReached);
 
             // test autosplit by area
             Assert.AreEqual(false, splitOnArea1.IsReached);
             game.Area = (int)Area.ROGUE_ENCAMPMENT;
-            gameService.triggerDataRead(null, args);
+            gameService.Raise(g => g.DataRead += null, args);
             game.Area = (int)Area.ROGUE_ENCAMPMENT + 1;
             Assert.AreEqual(true, splitOnArea1.IsReached);
 
@@ -220,7 +220,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
             Assert.AreEqual(false, splitOnItem1.IsReached);
             Assert.AreEqual(false, splitOnGem1.IsReached);
             itemsIds.Add(1);
-            gameService.triggerDataRead(null, args);
+            gameService.Raise(g => g.DataRead += null, args);
             Assert.AreEqual(true, splitOnItem1.IsReached);
             Assert.AreEqual(true, splitOnGem1.IsReached);
 
@@ -229,7 +229,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
             normalQuests.Clear();
             normalQuests.Add(QuestFactory.Create(QuestId.DenOfEvil, 1 << 0));
             normalQuests.Add(QuestFactory.Create(QuestId.Andariel, 0));
-            gameService.triggerDataRead(null, args);
+            gameService.Raise(g => g.DataRead += null, args);
             Assert.AreEqual(true, splitOnQuest81.IsReached);
 
             // test autosplit on game clear
@@ -237,7 +237,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
             normalQuests.Clear();
             normalQuests.Add(QuestFactory.Create(QuestId.DenOfEvil, 1 << 0));
             normalQuests.Add(QuestFactory.Create(QuestId.Andariel, 1 << 0));
-            gameService.triggerDataRead(null, args);
+            gameService.Raise(g => g.DataRead += null, args);
             Assert.AreEqual(true, splitOnGameClear.IsReached);
 
             // test autosplit on game clear all difficulties
@@ -245,35 +245,13 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
             nightmareQuests.Clear();
             nightmareQuests.Add(QuestFactory.Create(QuestId.DenOfEvil, 1 << 0));
             nightmareQuests.Add(QuestFactory.Create(QuestId.Andariel, 1 << 0));
-            gameService.triggerDataRead(null, args);
+            gameService.Raise(g => g.DataRead += null, args);
             Assert.AreEqual(false, splitOnGameClearAllDifficulties.IsReached);
             hellQuests.Clear();
             hellQuests.Add(QuestFactory.Create(QuestId.DenOfEvil, 1 << 0));
             hellQuests.Add(QuestFactory.Create(QuestId.Andariel, 1 << 0));
-            gameService.triggerDataRead(null, args);
+            gameService.Raise(g => g.DataRead += null, args);
             Assert.AreEqual(true, splitOnGameClearAllDifficulties.IsReached);
-        }
-    }
-
-    class GameServiceMock : IGameService
-    {
-        public GameDifficulty TargetDifficulty { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public D2DataReader DataReader => throw new NotImplementedException();
-
-        public event EventHandler<DataReadEventArgs> DataRead;
-
-        public void Dispose()
-        {
-        }
-
-        public void Initialize()
-        {
-        }
-
-        public void triggerDataRead(object sender, DataReadEventArgs e)
-        {
-            DataRead?.Invoke(sender, e);
         }
     }
 }
