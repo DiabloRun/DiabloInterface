@@ -86,14 +86,21 @@ namespace Zutatensuppe.DiabloInterface
             new ProcessDescription{
                 ModuleName = "Game.exe",
                 ProcessName = "game",
-                SubModules = new string[] { "D2Common.dll", "D2Launch.dll", "D2Lang.dll", "D2Net.dll", "D2Game.dll", "D2Client.dll" }
+                SubModules = new string[] { "D2Common.dll", "D2Lang.dll", "D2Net.dll", "D2Game.dll", "D2Client.dll" }
             },
             // D2SE
             new ProcessDescription{
                 ModuleName = "D2SE.exe",
                 ProcessName = "d2se",
-                SubModules = new string[] { "D2Common.dll", "D2Launch.dll", "D2Lang.dll", "D2Net.dll", "D2Game.dll", "D2Client.dll", "Fog.dll" }
+                SubModules = new string[] { "D2Common.dll", "D2Lang.dll", "D2Net.dll", "D2Game.dll", "D2Client.dll", "Fog.dll" }
             },
+            // D2Loader-high
+            new ProcessDescription
+            {
+                ModuleName = "D2Loader-high.exe",
+                ProcessName = "D2Loader-high",
+                SubModules = new string[] { "D2Common.dll", "D2Lang.dll", "D2Net.dll", "D2Game.dll", "D2Client.dll" }
+            }
         };
     }
 }
