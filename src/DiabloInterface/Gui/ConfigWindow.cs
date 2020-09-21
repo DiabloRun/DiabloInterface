@@ -903,7 +903,8 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
             runeSettingsPage.SettingsList = config.ClassRunes;
 
-            fontComboBox.SelectedIndex = fontComboBox.Items.IndexOf(config.FontName);
+            if (config.FontName != null)
+                fontComboBox.SelectedIndex = fontComboBox.Items.IndexOf(config.FontName);
 
             fontSizeNumeric.Value = config.FontSize;
             titleFontSizeNumeric.Value = config.FontSizeTitle;

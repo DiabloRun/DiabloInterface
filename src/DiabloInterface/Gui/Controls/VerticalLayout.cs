@@ -175,7 +175,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             {
                 Tuple<bool, Color, int> t = pair.Value.settings(config);
                 var enabled = t.Item1;
-                var font = new Font(config.FontName, t.Item3);
+                Font font = CreateFont(config.FontName, t.Item3);
                 var labels = pair.Value.labels;
                 var color = t.Item2;
                 var mstr = pair.Value.maxString;
