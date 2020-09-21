@@ -57,6 +57,7 @@ namespace Zutatensuppe.D2Reader
                 case "1.13c":
                 case "v 1.13c":
                 case "1, 0, 13, 60":
+                case "1, 0, 0, 0": // D2Loader-high.exe
                     return CreateMemoryTableForVersion113C(moduleBaseAddresses);
                 default:
                     throw new GameVersionUnsupportedException(gameVersion);
@@ -165,7 +166,6 @@ namespace Zutatensuppe.D2Reader
         private GameMemoryTable CreateMemoryTableForVersion113D(Dictionary<string, IntPtr> moduleBaseAddresses)
         {
             IntPtr d2CommonAddress = GetModuleAddress("D2Common.dll", moduleBaseAddresses);
-            IntPtr d2LaunchAddress = GetModuleAddress("D2Launch.dll", moduleBaseAddresses);
             IntPtr d2LangAddress = GetModuleAddress("D2Lang.dll", moduleBaseAddresses);
             IntPtr d2NetAddress = GetModuleAddress("D2Net.dll", moduleBaseAddresses);
             IntPtr d2GameAddress = GetModuleAddress("D2Game.dll", moduleBaseAddresses);
@@ -205,7 +205,6 @@ namespace Zutatensuppe.D2Reader
         private GameMemoryTable CreateMemoryTableForVersion113C(Dictionary<string, IntPtr> moduleBaseAddresses)
         {
             IntPtr d2CommonAddress = GetModuleAddress("D2Common.dll", moduleBaseAddresses);
-            IntPtr d2LaunchAddress = GetModuleAddress("D2Launch.dll", moduleBaseAddresses);
             IntPtr d2LangAddress = GetModuleAddress("D2Lang.dll", moduleBaseAddresses);
             IntPtr d2NetAddress = GetModuleAddress("D2Net.dll", moduleBaseAddresses);
             IntPtr d2GameAddress = GetModuleAddress("D2Game.dll", moduleBaseAddresses);
