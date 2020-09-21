@@ -63,6 +63,18 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             def.Add(nam, new Def(nam, maxStr, s, names));
         }
 
+        protected Font CreateFont(string name, int size)
+        {
+            try
+            {
+                return new Font(name, size);
+            }
+            catch
+            {
+                return new Font(DefaultFont.FontFamily.Name, size);
+            }
+        }
+
         public static string ReplaceFirst(string text, string search, string replace)
         {
             int pos = text.IndexOf(search);

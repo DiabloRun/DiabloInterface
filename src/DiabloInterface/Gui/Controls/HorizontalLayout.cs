@@ -231,7 +231,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
                 if (enabled)
                 {
                     var color = x.Item2;
-                    var font = new Font(config.FontName, x.Item3);
+                    var font = CreateFont(config.FontName, x.Item3);
                     foreach (Label l in pair.Value.labels)
                     {
                         l.Visible = enabled;
