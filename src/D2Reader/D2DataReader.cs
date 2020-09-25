@@ -264,7 +264,7 @@ namespace Zutatensuppe.D2Reader
             }
             catch (Exception e)
             {
-                Logger.Debug("Other Exception");
+                Logger.Debug("Other Exception", e);
 #if DEBUG
                 // Print errors to console in debug builds.
                 Console.WriteLine("Exception: {0}", e);
@@ -381,7 +381,7 @@ namespace Zutatensuppe.D2Reader
                 // 1.13
                 // for 1.13d see function D2Client.dll+89CE0
                 // for 1.13c see function around D2Client.QueryInterface+FB14
-                var unitAddrPointer = (IntPtr)memory.Units113 + (int)guid * 4;
+                var unitAddrPointer = (IntPtr)memory.Units113 + (int)(guid & 0x7F) * 4;
                 var addr = reader.ReadAddress32(unitAddrPointer);
                 return UnitByGuid(addr, guid);
             }
@@ -466,7 +466,14 @@ namespace Zutatensuppe.D2Reader
 
             var character = ReadCharacterData(gameInfo, isNewChar);
             var quests = ReadQuests(gameInfo);
-            var hireling = ReadHirelingData(gameInfo);
+            Hireling hireling = null;
+            try
+            {
+                hireling = ReadHirelingData(gameInfo);
+            } catch (Exception e)
+            {
+                Logger.Error("Error reading hireling", e);
+            }
 
             if (isNewChar)
             {
