@@ -208,8 +208,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             diff.RemovedItems = itemDiff.Item2;
 
             diff.CompletedQuests = BuildCompletedQuestsDiff(
-                newVal.CompletedQuests,
-                prevVal.CompletedQuests
+                newVal.Quests,
+                prevVal.Quests
             );
 
             diff.Hireling = BuildHirelingDiff(
