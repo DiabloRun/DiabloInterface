@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationConfig.cs" />
+    <Compile Include="IApplicationInfo.cs" />
     <Compile Include="IClassRuneSettings.cs" />
     <Compile Include="IDiabloInterface.cs" />
     <Compile Include="Plugin\BasePlugin.cs" />

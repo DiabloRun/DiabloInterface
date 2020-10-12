@@ -18,6 +18,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 
         protected override Type ConfigEditRendererType => typeof(ConfigEditRenderer);
 
+        private IDiabloInterface di;
+
         public override void SetConfig(IPluginConfig c)
         {
             Config = c == null ? new Config() : c as Config;
@@ -25,6 +27,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 
         public override void Initialize(IDiabloInterface di)
         {
+            this.di = di;
             SetConfig(di.configService.CurrentConfig.PluginConf(Name));
             AutomaticallyCheckVersion();
         }
@@ -37,7 +40,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 
         internal void ManuallyCheckVersion()
         {
-            var r = versionChecker.CheckForUpdate(LastFoundVersion, true);
+            var r = versionChecker.CheckForUpdate(di.appInfo.Version, LastFoundVersion, true);
             LastFoundVersion = r.updateUrl;
             Ask(r);
         }
@@ -46,7 +49,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
         {
             if (!Config.Enabled) return;
 
-            var r = versionChecker.CheckForUpdate(LastFoundVersion, false);
+            var r = versionChecker.CheckForUpdate(di.appInfo.Version, LastFoundVersion, false);
             LastFoundVersion = r.updateUrl;
             Ask(r);
         }
