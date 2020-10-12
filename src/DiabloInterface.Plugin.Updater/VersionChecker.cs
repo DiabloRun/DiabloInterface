@@ -22,9 +22,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
         const string ReleasesUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases";
         const string ReleasesLatestUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases/latest";
 
-        internal VersionCheckerResult CheckForUpdate(string lastFoundVersion, bool userTriggered)
+        internal VersionCheckerResult CheckForUpdate(string currentVersion, string lastFoundVersion, bool userTriggered)
         {
-            string updateUrl = GetUpdateUrl();
+            string updateUrl = GetUpdateUrl(currentVersion);
 
             var r = new VersionCheckerResult();
             if (updateUrl != null)
@@ -45,9 +45,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
             return r;
         }
 
-        string GetUpdateUrl()
+        string GetUpdateUrl(string currentVersion)
         {
-            Match verMatch = Regex.Match(Application.ProductVersion, @"^(\d+)\.(\d+)\.(\d+)(?:\.PR\.(\d+))?$");
+            Match verMatch = Regex.Match(currentVersion, @"^(\d+)\.(\d+)\.(\d+)(?:\.PR\.(\d+))?$");
             if (!verMatch.Success)
                 return null;
 

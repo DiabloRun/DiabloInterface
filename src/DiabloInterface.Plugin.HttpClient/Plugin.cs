@@ -23,6 +23,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
         protected override Type ConfigEditRendererType => typeof(ConfigEditRenderer);
 
+        private IDiabloInterface di;
+
         private static readonly System.Net.Http.HttpClient Client = new System.Net.Http.HttpClient();
 
         private bool SendingData = false;
@@ -50,6 +52,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
         public override void Initialize(IDiabloInterface di)
         {
+            this.di = di;
             SetConfig(di.configService.CurrentConfig.PluginConf(Name));
             di.game.DataRead += Game_DataRead;
         }
@@ -137,6 +140,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             public Dictionary<GameDifficulty, List<QuestId>> CompletedQuests { get; set; }
 
             public HirelingDiff Hireling { get; set; }
+
+            public ProcessInfo D2ProcessInfo { get; set; }
+            public IApplicationInfo DIApplicationInfo { get; set; }
         }
 
         private class HirelingDiff
@@ -217,12 +223,17 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 prevVal.Hireling
             );
 
+            // always send application info, if something is sent
+            diff.DIApplicationInfo = newVal.DIApplicationInfo;
+
+            // always send process info, if something is sent
+            diff.D2ProcessInfo = newVal.D2ProcessInfo;
+
             hasDiff = hasDiff
                 || diff.AddedItems != null
                 || diff.RemovedItems != null
                 || diff.CompletedQuests != null
                 || diff.Hireling != null;
-
             return hasDiff ? diff : null;
         }
 
@@ -426,6 +437,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                     PoisonResist = e.Game.Hireling?.PoisonResist,
                     Items = e.Game.Hireling?.Items
                 },
+                D2ProcessInfo = e.ProcessInfo,
+                DIApplicationInfo = di.appInfo,
             };
 
             var diff = GetDiff(newData, PrevData);

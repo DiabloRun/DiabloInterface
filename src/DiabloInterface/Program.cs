@@ -22,7 +22,14 @@ namespace Zutatensuppe.DiabloInterface
 
             Log4NetLogger.Initialize();
 
-            LogApplicationInfo();
+            var appInfo = new ApplicationInfo
+            {
+                Version = Application.ProductVersion,
+                OS = Environment.OSVersion.VersionString,
+                DotNet = NetFrameworkVersionExtension.FriendlyName(NewestFrameworkVersion)
+            };
+
+            LogServiceLocator.Get(typeof(Program)).Info(appInfo);
 
             var pluginTypes = new List<Type>
             {
@@ -33,7 +40,7 @@ namespace Zutatensuppe.DiabloInterface
                 typeof(Plugin.Updater.Plugin),
             };
 
-            using (var di = DiabloInterface.Create(pluginTypes))
+            using (var di = DiabloInterface.Create(appInfo, pluginTypes))
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
@@ -66,15 +73,6 @@ namespace Zutatensuppe.DiabloInterface
                 "Do you wish to try running the application anyway?";
             var result = MessageBox.Show(message, @".NET Framework Error", MessageBoxButtons.YesNo);
             return result == DialogResult.No;
-        }
-        
-        static void LogApplicationInfo()
-        {
-            var logger = LogServiceLocator.Get(typeof(Program));
-            logger.Info($"Diablo Interface Version {Application.ProductVersion}");
-            logger.Info($"Operating system: {Environment.OSVersion}");
-            var versionName = NetFrameworkVersionExtension.FriendlyName(NewestFrameworkVersion);
-            logger.Info($".NET Framework: {versionName}");
         }
     }
 }

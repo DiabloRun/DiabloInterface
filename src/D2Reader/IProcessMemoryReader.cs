@@ -9,12 +9,7 @@ namespace Zutatensuppe.D2Reader
     {
         bool IsValid { get; }
 
-        string FileVersion { get; }
-
-        IntPtr BaseAddress { get; }
-        Dictionary<string, IntPtr> ModuleBaseAddresses { get; }
-
-        string[] CommandLineArgs { get; }
+        ProcessInfo ProcessInfo { get; }
 
         T Read<T>(IntPtr address);
 

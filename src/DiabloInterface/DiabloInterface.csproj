@@ -79,6 +79,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationInfo.cs" />
     <Compile Include="ApplicationStorage.cs" />
     <Compile Include="ClassRuneSettings.cs" />
     <Compile Include="DiabloInterface.cs" />

@@ -88,10 +88,7 @@ namespace Zutatensuppe.D2Reader
         const uint ProcessStillActive = 259;
 
         IntPtr processHandle;
-        public IntPtr BaseAddress { get; private set; }
-        public Dictionary<string, IntPtr> ModuleBaseAddresses { get; private set; }
-        public string FileVersion { get; private set; }
-        public string[] CommandLineArgs { get; private set; }
+        public ProcessInfo ProcessInfo { get; private set; }
 
         public bool IsValid
         {
@@ -158,13 +155,19 @@ namespace Zutatensuppe.D2Reader
                         if (handle == IntPtr.Zero)
                             continue;
 
-                        return new ProcessMemoryReader
+                        var processInfo = new ProcessInfo
                         {
-                            processHandle = handle,
+                            ProcessName = processName,
+                            ModuleName = moduleName,
                             FileVersion = module.FileVersionInfo.FileVersion,
                             BaseAddress = module.BaseAddress,
                             ModuleBaseAddresses = FindModuleAddresses(process, submodules),
                             CommandLineArgs = GetCommandLineArgs((uint)process.Id)
+                        };
+                        return new ProcessMemoryReader()
+                        {
+                            processHandle = handle,
+                            ProcessInfo = processInfo,
                         };
                     }
                 }

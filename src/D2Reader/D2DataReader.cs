@@ -15,12 +15,14 @@ namespace Zutatensuppe.D2Reader
 {
     public class DataReadEventArgs : EventArgs
     {
-        public DataReadEventArgs(Game game) {
+        public DataReadEventArgs(ProcessInfo processInfo, Game game) {
+            ProcessInfo = processInfo;
             Character = game.Character;
             Game = game;
             Quests = game.Quests;
         }
 
+        public ProcessInfo ProcessInfo { get; }
         public Game Game { get; }
         public Character Character { get; }
         public Quests Quests { get; }
@@ -159,7 +161,8 @@ namespace Zutatensuppe.D2Reader
                 return false;
             }
 
-            Logger.Info($"Diablo II process found, version: {reader.FileVersion}");
+            Logger.Info($"Diablo II process found:");
+            Logger.Info(reader.ProcessInfo);
 
             try
             {
@@ -488,7 +491,7 @@ namespace Zutatensuppe.D2Reader
             g.Difficulty = (GameDifficulty)gameInfo.Game.Difficulty;
             g.Seed = gameInfo.Game.InitSeed;
             // todo: maybe improve the check, if needed...
-            g.SeedIsArg = reader.CommandLineArgs.Contains("-seed");
+            g.SeedIsArg = reader.ProcessInfo.CommandLineArgs.Contains("-seed");
             g.GameCount = gameCount;
             g.CharCount = charCount;
             g.Quests = quests;
@@ -496,7 +499,7 @@ namespace Zutatensuppe.D2Reader
             g.Hireling = hireling;
             Game = g;
 
-            OnDataRead(new DataReadEventArgs(Game));
+            OnDataRead(new DataReadEventArgs(reader.ProcessInfo, Game));
 
             return true;
         }

@@ -252,8 +252,8 @@ namespace Zutatensuppe.D2Reader
         {
             try
             {
-                Logger.Info($"Check version: {reader.FileVersion}");
-                return CreateForVersion(reader.FileVersion, reader.BaseAddress, reader.ModuleBaseAddresses);
+                Logger.Info($"Check version: {reader.ProcessInfo.FileVersion}");
+                return CreateForVersion(reader.ProcessInfo.FileVersion, reader.ProcessInfo.BaseAddress, reader.ProcessInfo.ModuleBaseAddresses);
             }
             catch (GameVersionUnsupportedException)
             {
@@ -274,7 +274,7 @@ namespace Zutatensuppe.D2Reader
             IntPtr baseAddress;
             try
             {
-                baseAddress = GetModuleAddress("Fog.dll", reader.ModuleBaseAddresses);
+                baseAddress = GetModuleAddress("Fog.dll", reader.ProcessInfo.ModuleBaseAddresses);
             } catch (ModuleNotLoadedException)
             {
                 throw new GameVersionUnsupportedException("Unknown");
@@ -283,7 +283,7 @@ namespace Zutatensuppe.D2Reader
             IntPtr versionAddress = reader.ResolvePointer(pointer);
             string version = reader.ReadNullTerminatedString(versionAddress, 20, Encoding.ASCII);
             Logger.Info($"Check D2SE version: {version}");
-            return CreateForVersion(version, reader.BaseAddress, reader.ModuleBaseAddresses);
+            return CreateForVersion(version, reader.ProcessInfo.BaseAddress, reader.ProcessInfo.ModuleBaseAddresses);
         }
 
         private GameMemoryTable CreateForReaderD2SEFallback2(IProcessMemoryReader reader)
@@ -296,9 +296,9 @@ namespace Zutatensuppe.D2Reader
             // method, we keep the legacy check...
             //
             // this should be 1.13c, but most likely isn't, in many cases
-            string version = reader.ReadNullTerminatedString(reader.BaseAddress + 0x1A049, 5, Encoding.ASCII);
+            string version = reader.ReadNullTerminatedString(reader.ProcessInfo.BaseAddress + 0x1A049, 5, Encoding.ASCII);
             Logger.Info($"Check D2SE version (Fallback check): {version}");
-            return CreateForVersion(version, reader.BaseAddress, reader.ModuleBaseAddresses);
+            return CreateForVersion(version, reader.ProcessInfo.BaseAddress, reader.ProcessInfo.ModuleBaseAddresses);
         }
     }
 }
