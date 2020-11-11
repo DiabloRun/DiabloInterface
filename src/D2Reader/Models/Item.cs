@@ -17,5 +17,9 @@ namespace Zutatensuppe.D2Reader.Models
         internal bool IsIdentified() => HasFlag(ItemFlag.Identified);
         internal bool IsEthereal() => HasFlag(ItemFlag.Ethereal);
         internal bool HasRuneWord() => HasFlag(ItemFlag.Runeword);
+
+        internal bool IsInCube() => ItemData.InvPage == InventoryPage.HoradricCube;
+        internal bool IsInStash() => ItemData.InvPage == InventoryPage.Stash;
+        internal bool IsInInventory() => ItemData.InvPage == InventoryPage.Inventory;
     }
 }

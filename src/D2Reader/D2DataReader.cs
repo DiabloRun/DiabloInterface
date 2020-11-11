@@ -577,6 +577,9 @@ namespace Zutatensuppe.D2Reader
                 character.Parse(unitReader, gameInfo);
                 character.InventoryItemIds = ReadInventoryItemIds(gameInfo.Player);
                 character.Items = GetItemInfosByItems(GetEquippedItems(gameInfo.Player), gameInfo.Player);
+                character.CubeItems = GetItemInfosByItems(GetCubeItems(gameInfo.Player), gameInfo.Player);
+                character.StashItems = GetItemInfosByItems(GetStashItems(gameInfo.Player), gameInfo.Player);
+                character.InventoryItems = GetItemInfosByItems(GetInventoryItems(gameInfo.Player), gameInfo.Player);
             }
 
             return character;
@@ -599,6 +602,21 @@ namespace Zutatensuppe.D2Reader
         private IEnumerable<Item> GetEquippedItems(D2Unit owner)
         {
             return GetInventoryItemsFiltered(owner, (Item i) => i.IsEquipped());
+        }
+
+        private IEnumerable<Item> GetCubeItems(D2Unit owner)
+        {
+            return GetInventoryItemsFiltered(owner, (Item i) => !i.IsEquipped() && i.IsInCube());
+        }
+
+        private IEnumerable<Item> GetStashItems(D2Unit owner)
+        {
+            return GetInventoryItemsFiltered(owner, (Item i) => !i.IsEquipped() && i.IsInStash());
+        }
+
+        private IEnumerable<Item> GetInventoryItems(D2Unit owner)
+        {
+            return GetInventoryItemsFiltered(owner, (Item i) => !i.IsEquipped() && i.IsInInventory());
         }
 
         private List<ItemInfo> GetItemInfosByItems(IEnumerable<Item> items, D2Unit owner)
