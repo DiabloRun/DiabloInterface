@@ -4,6 +4,7 @@
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
+var platformTarget = Argument("platformTarget", "Any CPU");
 var buildNumber = Argument("buildNumber", "0");
 var buildDir = Directory("./artifacts");
 var binDir = buildDir + Directory("bin");
@@ -31,14 +32,18 @@ Task("Build")
 
         settings.SetConfiguration(configuration);
         settings.SetVerbosity(Verbosity.Minimal);
+        if (platformTarget == "x64") {
+          settings.SetPlatformTarget(PlatformTarget.x64);
+        } else if (platformTarget == "x86") {
+          settings.SetPlatformTarget(PlatformTarget.x86);
+        }
     });
-});
 
-Task("CopyBuilt")
-    .IsDependentOn("Build")
-    .Does(() =>
-{
-    var path = "./src/DiabloInterface/bin/" + configuration + "/";
+    var platformPart = "";
+    if (platformTarget == "x64" || platformTarget == "x86") {
+      platformPart = platformTarget + "/";
+    }
+    var path = "./src/DiabloInterface/bin/" + platformPart + configuration + "/";
     var allFiles =
         GetFiles(path + "*.dll") +
         GetFiles(path + "*.exe") +
@@ -49,24 +54,20 @@ Task("CopyBuilt")
     CopyFiles(files, binDir);
 });
 
-Task("CopyBuiltPlugins")
+Task("Package")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    var pluginFiles = GetFiles("./src/DiabloInterface.Plugin.*/bin/" + configuration + "/*.dll")
-        .Where(x => !x.FullPath.Contains(".Test"));
-    var pluginDir = binDir + Directory("Plugins");
-    CreateDirectory(pluginDir);
-    CopyFiles(pluginFiles, pluginDir);
-});
-
-Task("Package")
-    .IsDependentOn("CopyBuilt")
-//    .IsDependentOn("CopyBuiltPlugins")
-    .Does(() =>
-{
+    var platformPart = "";
+    if (platformTarget == "x64" || platformTarget == "x86") {
+      platformPart = "." + platformTarget;
+    }
     var assemblyInfo = ParseAssemblyInfo("./src/DiabloInterface/Properties/AssemblyInfo.cs");
-    var fileName = string.Format("DiabloInterface-v{0}.zip", assemblyInfo.AssemblyInformationalVersion);
+    var fileName = string.Format(
+      "DiabloInterface-v{0}{1}.zip", 
+      assemblyInfo.AssemblyInformationalVersion,
+      platformPart
+    );
     CreateDirectory(binDir + Directory("Libs"));
     CreateDirectory(binDir + Directory("Plugins"));
 
@@ -79,7 +80,7 @@ Task("Default")
     .IsDependentOn("Package");
 
 Task("Test")
-    .IsDependentOn("CopyBuilt")
+    .IsDependentOn("Build")
     .Does(() =>
 {
     foreach(var project in GetFiles("./src/*.Test/*.csproj"))
@@ -98,6 +99,11 @@ Task("Test")
 
             settings.SetConfiguration(configuration);
             settings.SetVerbosity(Verbosity.Minimal);
+            if (platformTarget == "x64") {
+              settings.SetPlatformTarget(PlatformTarget.x64);
+            } else if (platformTarget == "x86") {
+              settings.SetPlatformTarget(PlatformTarget.x86);
+            }
         });
 
         var s = new MSTestSettings();
