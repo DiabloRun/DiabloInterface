@@ -32,7 +32,6 @@ namespace Zutatensuppe.D2Reader
     {
         public string ProcessName;
         public string ModuleName;
-        public string[] SubModules;
     }
 
     public class D2DataReader : IDisposable
@@ -139,7 +138,7 @@ namespace Zutatensuppe.D2Reader
             {
                 try
                 {
-                    reader = ProcessMemoryReader.Create(desc.ProcessName, desc.ModuleName, desc.SubModules);
+                    reader = ProcessMemoryReader.Create(desc.ProcessName, desc.ModuleName);
                     memory = CreateGameMemoryTableForReader(reader);
                 }
                 catch (ProcessNotFoundException)

@@ -165,11 +165,11 @@ namespace Zutatensuppe.D2Reader
 
         private GameMemoryTable CreateMemoryTableForVersion113D(Dictionary<string, IntPtr> moduleBaseAddresses)
         {
-            IntPtr d2CommonAddress = GetModuleAddress("D2Common.dll", moduleBaseAddresses);
-            IntPtr d2LangAddress = GetModuleAddress("D2Lang.dll", moduleBaseAddresses);
-            IntPtr d2NetAddress = GetModuleAddress("D2Net.dll", moduleBaseAddresses);
-            IntPtr d2GameAddress = GetModuleAddress("D2Game.dll", moduleBaseAddresses);
-            IntPtr d2ClientAddress = GetModuleAddress("D2Client.dll", moduleBaseAddresses);
+            IntPtr d2CommonAddress = GetModuleAddress("d2common.dll", moduleBaseAddresses);
+            IntPtr d2LangAddress = GetModuleAddress("d2lang.dll", moduleBaseAddresses);
+            IntPtr d2NetAddress = GetModuleAddress("d2net.dll", moduleBaseAddresses);
+            IntPtr d2GameAddress = GetModuleAddress("d2game.dll", moduleBaseAddresses);
+            IntPtr d2ClientAddress = GetModuleAddress("d2client.dll", moduleBaseAddresses);
 
             return new GameMemoryTable()
             {
@@ -204,11 +204,11 @@ namespace Zutatensuppe.D2Reader
 
         private GameMemoryTable CreateMemoryTableForVersion113C(Dictionary<string, IntPtr> moduleBaseAddresses)
         {
-            IntPtr d2CommonAddress = GetModuleAddress("D2Common.dll", moduleBaseAddresses);
-            IntPtr d2LangAddress = GetModuleAddress("D2Lang.dll", moduleBaseAddresses);
-            IntPtr d2NetAddress = GetModuleAddress("D2Net.dll", moduleBaseAddresses);
-            IntPtr d2GameAddress = GetModuleAddress("D2Game.dll", moduleBaseAddresses);
-            IntPtr d2ClientAddress = GetModuleAddress("D2Client.dll", moduleBaseAddresses);
+            IntPtr d2CommonAddress = GetModuleAddress("d2common.dll", moduleBaseAddresses);
+            IntPtr d2LangAddress = GetModuleAddress("d2lang.dll", moduleBaseAddresses);
+            IntPtr d2NetAddress = GetModuleAddress("d2net.dll", moduleBaseAddresses);
+            IntPtr d2GameAddress = GetModuleAddress("d2game.dll", moduleBaseAddresses);
+            IntPtr d2ClientAddress = GetModuleAddress("d2client.dll", moduleBaseAddresses);
 
             return new GameMemoryTable()
             {
@@ -274,7 +274,7 @@ namespace Zutatensuppe.D2Reader
             IntPtr baseAddress;
             try
             {
-                baseAddress = GetModuleAddress("Fog.dll", reader.ProcessInfo.ModuleBaseAddresses);
+                baseAddress = GetModuleAddress("fog.dll", reader.ProcessInfo.ModuleBaseAddresses);
             } catch (ModuleNotLoadedException)
             {
                 throw new GameVersionUnsupportedException("Unknown");
