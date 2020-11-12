@@ -14,5 +14,16 @@ namespace Zutatensuppe.D2Reader
         public Dictionary<string, IntPtr> ModuleBaseAddresses { get; internal set; }
         public string FileVersion { get; internal set; }
         public string[] CommandLineArgs { get; internal set; }
+
+        public bool Equals(ProcessInfo other)
+        {
+            return other != null
+                && ProcessName == other.ProcessName
+                && ModuleName == other.ModuleName
+                && BaseAddress == other.BaseAddress
+                && FileVersion == other.FileVersion
+                && Enumerable.SequenceEqual(CommandLineArgs, other.CommandLineArgs)
+                && Enumerable.SequenceEqual(ModuleBaseAddresses, other.ModuleBaseAddresses);
+        }
     }
 }

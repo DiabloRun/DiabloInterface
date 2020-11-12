@@ -226,8 +226,13 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             // always send application info, if something is sent
             diff.DIApplicationInfo = newVal.DIApplicationInfo;
 
-            // always send process info, if something is sent
-            diff.D2ProcessInfo = newVal.D2ProcessInfo;
+            // send d2 process info only when it changed, but always
+            // the complete process info in that case
+            if (!newVal.D2ProcessInfo.Equals(prevVal.D2ProcessInfo))
+            {
+                diff.D2ProcessInfo = newVal.D2ProcessInfo;
+                hasDiff = true;
+            }
 
             hasDiff = hasDiff
                 || diff.AddedItems != null

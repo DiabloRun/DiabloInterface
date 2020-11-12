@@ -100,7 +100,7 @@ namespace Zutatensuppe.D2Reader
             }
         }
 
-        private static Dictionary<string, IntPtr> FindModuleAddresses(Process p, string[] modules)
+        private static Dictionary<string, IntPtr> FindModuleAddresses(Process p)
         {
             Dictionary<string, IntPtr> addresses = new Dictionary<string, IntPtr>();
             long MaxAddress = 0x7fffffff;
@@ -118,14 +118,25 @@ namespace Zutatensuppe.D2Reader
 
                 address = (long)m.BaseAddress + (long)m.RegionSize;
 
-                GetModuleFileNameEx(p.Handle, m.AllocationBase, filename, nChars);
-
-                foreach (string module in modules)
+                try
                 {
-                    if (addresses.ContainsKey(module)) continue;
-                    if (!filename.ToString().Contains(module)) continue;
-                    addresses.Add(module, m.AllocationBase);
+                    GetModuleFileNameEx(p.Handle, m.AllocationBase, filename, nChars);
+                    var fileName = filename.ToString().ToLower();
+                    // Assume that modules are always dlls
+                    // All we care about are dlls anyway
+                    // We dont need all of them, but different versions
+                    // of d2 need different dlls, so we just read
+                    // all we can get here.
+                    if (fileName.EndsWith(".dll"))
+                    {
+                        fileName = System.IO.Path.GetFileName(fileName);
+                        if (!addresses.ContainsKey(fileName))
+                        {
+                            addresses.Add(fileName, m.AllocationBase);
+                        }
+                    }
                 }
+                catch { }
             } while (address <= MaxAddress);
             return addresses;
         }
@@ -134,7 +145,7 @@ namespace Zutatensuppe.D2Reader
         {
         }
 
-        public static ProcessMemoryReader Create(string processName, string moduleName, string[] submodules)
+        public static ProcessMemoryReader Create(string processName, string moduleName)
         {
             try
             {
@@ -161,7 +172,7 @@ namespace Zutatensuppe.D2Reader
                             ModuleName = moduleName,
                             FileVersion = module.FileVersionInfo.FileVersion,
                             BaseAddress = module.BaseAddress,
-                            ModuleBaseAddresses = FindModuleAddresses(process, submodules),
+                            ModuleBaseAddresses = FindModuleAddresses(process),
                             CommandLineArgs = GetCommandLineArgs((uint)process.Id)
                         };
                         return new ProcessMemoryReader()
