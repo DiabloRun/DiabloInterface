@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -32,6 +33,7 @@ namespace Zutatensuppe.D2Reader.Models
         public string QualityColor { get; set; }
         public List<string> Properties { get; set; }
         public BodyLocation Location { get; set; }
+        public int GUID { get; set; }
 
         // backwards compatibility with D2ID
         public string BaseItem { get; set; }
@@ -54,6 +56,7 @@ namespace Zutatensuppe.D2Reader.Models
             QualityColor = QualityColorDefault(item);
             Properties = unitReader.GetMagicalStrings(item, owner, inventoryReader);
             Location = item.ItemData.BodyLoc;
+            GUID = item.Unit.GUID;
 
             // Backward compatibility for D2ID:
             // TODO: add Slug/Image/EnglishBaseName or something like that, D2ID currently uses ItemName/BaseItem for

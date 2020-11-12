@@ -136,6 +136,15 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             public List<ItemInfo> Items { get; set; }
             public List<ItemInfo> AddedItems { get; set; }
             public List<BodyLocation> RemovedItems { get; set; }
+            public List<ItemInfo> CubeItems { get; set; }
+            public List<ItemInfo> AddedCubeItems { get; set; }
+            public List<int> RemovedCubeItems { get; set; }
+            public List<ItemInfo> StashItems { get; set; }
+            public List<ItemInfo> AddedStashItems { get; set; }
+            public List<int> RemovedStashItems { get; set; }
+            public List<ItemInfo> InventoryItems { get; set; }
+            public List<ItemInfo> AddedInventoryItems { get; set; }
+            public List<int> RemovedInventoryItems { get; set; }
             public Dictionary<GameDifficulty, List<QuestId>> Quests { get; set; }
             public Dictionary<GameDifficulty, List<QuestId>> CompletedQuests { get; set; }
 
@@ -213,6 +222,18 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             diff.AddedItems = itemDiff.Item1;
             diff.RemovedItems = itemDiff.Item2;
 
+            var cubeItemDiff = UnequippedItemsDiff(newVal.CubeItems, prevVal.CubeItems);
+            diff.AddedCubeItems = cubeItemDiff.Item1;
+            diff.RemovedCubeItems = cubeItemDiff.Item2;
+
+            var stashItemDiff = UnequippedItemsDiff(newVal.StashItems, prevVal.StashItems);
+            diff.AddedStashItems = stashItemDiff.Item1;
+            diff.RemovedStashItems = stashItemDiff.Item2;
+
+            var inventoryItemDiff = UnequippedItemsDiff(newVal.InventoryItems, prevVal.InventoryItems);
+            diff.AddedInventoryItems = inventoryItemDiff.Item1;
+            diff.RemovedInventoryItems = inventoryItemDiff.Item2;
+
             diff.CompletedQuests = BuildCompletedQuestsDiff(
                 newVal.Quests,
                 prevVal.Quests
@@ -236,7 +257,13 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
             hasDiff = hasDiff
                 || diff.AddedItems != null
+                || diff.AddedCubeItems != null
+                || diff.AddedStashItems != null
+                || diff.AddedInventoryItems != null
                 || diff.RemovedItems != null
+                || diff.RemovedCubeItems != null
+                || diff.RemovedStashItems != null
+                || diff.RemovedInventoryItems != null
                 || diff.CompletedQuests != null
                 || diff.Hireling != null;
             return hasDiff ? diff : null;
@@ -361,6 +388,43 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             );
         }
 
+        // returns a list for added items and a list with the ??GUID?? of removed items
+        private Tuple<List<ItemInfo>, List<int>> UnequippedItemsDiff(
+            List<ItemInfo> newItems,
+            List<ItemInfo> prevItems
+        )
+        {
+            List<ItemInfo> addedItems = new List<ItemInfo>();
+            List<int> removedItems = new List<int>();
+
+            if (newItems != null)
+            {
+                foreach (var newItem in newItems)
+                {
+                    if (prevItems == null || !prevItems.Any(prevItem => ItemInfo.AreEqual(prevItem, newItem)))
+                    {
+                        addedItems.Add(newItem);
+                    }
+                }
+            }
+
+            if (prevItems != null)
+            {
+                foreach (var prevItem in prevItems)
+                {
+                    if (newItems == null || !newItems.Any(newItem => ItemInfo.AreEqual(prevItem, newItem)))
+                    {
+                        removedItems.Add(prevItem.GUID);
+                    }
+                }
+            }
+
+            return new Tuple<List<ItemInfo>, List<int>>(
+                addedItems.Count > 0 ? addedItems : null,
+                removedItems.Count > 0 ? removedItems : null
+            );
+        }
+
         async private Task PostJson(string json)
         {
             SendingData = true;
@@ -426,6 +490,9 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 IncreasedAttackSpeed = e.Character.IncreasedAttackSpeed,
                 MagicFind = e.Character.MagicFind,
                 Items = e.Character.Items,
+                CubeItems = e.Character.CubeItems,
+                StashItems = e.Character.StashItems,
+                InventoryItems = e.Character.InventoryItems,
                 Quests = e.Quests.CompletedQuestIds,
                 Hireling = new HirelingDiff
                 {
