@@ -194,7 +194,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 Guid = newVal.Guid,
             };
 
-            if (!newVal.CharCount.Equals(prevVal.CharCount))
+            // TODO: while this check is correct, D2DataReader should probably
+            //       provide the information about 'new char or not' directly
+            //       in a property of the DataReadEventArgs
+            if (newVal.CharCount > 0 && !newVal.CharCount.Equals(prevVal.CharCount))
             {
                 diff.NewCharacter = true;
                 prevVal = new RequestBody();
