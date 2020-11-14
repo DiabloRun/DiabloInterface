@@ -1,0 +1,46 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Zutatensuppe.D2Reader.Struct.Monster;
+using static Zutatensuppe.D2Reader.D2Data;
+
+namespace Zutatensuppe.D2Reader.Models
+{
+    public class Monster
+    {
+        public int Class; // eClass value of the unit, determines what monster this is
+                           // (Fallen, Zombie, Charsie, ...)
+
+        public MonsterTypeFlags TypeFlags; // Flags describing the monster further
+                                           // eg. Champion, Possessed, Ghostly, ...
+                                           // Determined by current Game State
+
+        public MonsterMode Mode; // mode the monster is in.
+                                 // used to determine if the monster is
+                                 // dead, walking, attacking, etc.
+                                 // Determined by current Game State
+
+        public MonsterType Type; // Type of monster (None, Demon, Undead)
+                                 // D2 stores this (differently) in monStats.
+                                 // Determined by eClass
+
+        public bool IsDemon => Type == MonsterType.Demon;
+
+        public bool IsUndead => Type == MonsterType.Undead;
+
+        public bool IsChampion => TypeFlags.HasFlag(MonsterTypeFlags.Champion);
+
+        public bool IsMinion => TypeFlags.HasFlag(MonsterTypeFlags.Minion);
+
+        public bool IsUnique => TypeFlags.HasFlag(MonsterTypeFlags.Unique);
+    }
+
+    public enum MonsterType
+    {
+        None = 0, // None, or Beast
+        Demon,
+        Undead,
+    }
+}

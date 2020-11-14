@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Readers;
 using Zutatensuppe.D2Reader.Struct;
+using Zutatensuppe.D2Reader.Struct.Monster;
 using Zutatensuppe.D2Reader.Struct.Unknown;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using static Zutatensuppe.D2Reader.D2Data;
@@ -15,17 +17,23 @@ namespace Zutatensuppe.D2Reader
 {
     public class DataReadEventArgs : EventArgs
     {
-        public DataReadEventArgs(ProcessInfo processInfo, Game game) {
+        public DataReadEventArgs(
+            ProcessInfo processInfo,
+            Game game,
+            List<Monster> killedMonsters
+        ) {
             ProcessInfo = processInfo;
             Character = game.Character;
             Game = game;
             Quests = game.Quests;
+            KilledMonsters = killedMonsters;
         }
 
         public ProcessInfo ProcessInfo { get; }
         public Game Game { get; }
         public Character Character { get; }
         public Quests Quests { get; }
+        public List<Monster> KilledMonsters { get; }
     }
 
     public class ProcessDescription
@@ -53,6 +61,10 @@ namespace Zutatensuppe.D2Reader
         ISkillReader skillReader;
         GameMemoryTable memory;
 
+        private HashSet<int> monstersKilled;
+        private HashSet<int> petsSeen;
+        private HashSet<int> monstersSeen;
+
         // set to true when d2 was running but no game is running
         bool wasInTitleScreen;
 
@@ -68,6 +80,10 @@ namespace Zutatensuppe.D2Reader
             ProcessDescription[] processDescriptions
         )
         {
+            this.monstersKilled = new HashSet<int>();
+            this.petsSeen = new HashSet<int>();
+            this.monstersSeen = new HashSet<int>();
+
             this.memoryTableFactory = memoryTableFactory ?? throw new ArgumentNullException(nameof(memoryTableFactory));
             this.processDescriptions = processDescriptions;
         }
@@ -242,6 +258,9 @@ namespace Zutatensuppe.D2Reader
                     Thread.Sleep(POLLING_RATE_INGAME);
                 } else { 
                     wasInTitleScreen = true;
+                    monstersKilled.Clear();
+                    petsSeen.Clear();
+                    monstersSeen.Clear();
                     Thread.Sleep(POLLING_RATE_OUT_OF_GAME);
                 }
             }
@@ -337,30 +356,46 @@ namespace Zutatensuppe.D2Reader
             }
         }
 
-        // 1.14d: game.478F20
-        // 1.13c: in D2Client.QueryInterface+F2B0
-        private int GetPetGuid(D2Unit owner, int eClass, int unknown = 0)
+        private IEnumerable<D2UnknownUnitStruct> IteratePets(D2Unit owner)
         {
             IntPtr addr = reader.ReadAddress32(memory.Pets);
-            if ((long)addr == 0) return -1;
+            if ((long)addr == 0)
+            {
+                yield break;
+            }
 
             D2UnknownUnitStruct u;
             do
             {
                 u = reader.Read<D2UnknownUnitStruct>(addr);
-                if (u == null) return -1;
+                if (u == null)
+                {
+                    break;
+                }
 
+                if (u.OwnerGUID == owner.GUID)
+                {
+                    yield return u;
+                }
+
+                addr = u.pNext;
+            } while ((long)addr != 0);
+        }
+
+        // 1.14d: game.478F20
+        // 1.13c: in D2Client.QueryInterface+F2B0
+        private int GetPetGuid(D2Unit owner, int eClass, int unknown = 0)
+        {
+            foreach (var u in IteratePets(owner))
+            {
                 if (
                     u.eClass == eClass
-                    && u.OwnerGUID == owner.GUID
                     && (unknown != 0 || u.unknown_20 == unknown)
                 )
                 {
                     return u.GUID;
                 }
-
-                addr = u.pNext;
-            } while ((long)addr != 0);
+            }
             return -1;
         }
 
@@ -453,6 +488,15 @@ namespace Zutatensuppe.D2Reader
                 return false;
             }
 
+            List<Monster> killedMonsters = null;
+            try
+            {
+                killedMonsters = ReadKilledMonsters(gameInfo);
+            } catch (Exception e)
+            {
+                Logger.Error("Error reading killed monsters", e);
+            }
+
             // TODO: fix bug with not increasing gameCount (maybe use some more info from D2Game obj)
             // Note: gameId can be the same across D2 restarts
             // - launch d2
@@ -498,7 +542,7 @@ namespace Zutatensuppe.D2Reader
             g.Hireling = hireling;
             Game = g;
 
-            OnDataRead(new DataReadEventArgs(reader.ProcessInfo, Game));
+            OnDataRead(new DataReadEventArgs(reader.ProcessInfo, Game, killedMonsters));
 
             return true;
         }
@@ -566,7 +610,7 @@ namespace Zutatensuppe.D2Reader
             }
 
             Character character = characters[name];
-            character.UpdateMode((D2Data.Mode)gameInfo.Player.eMode);
+            character.UpdateMode((D2Data.PlayerMode)gameInfo.Player.eMode);
             character.IsHardcore = gameInfo.Client.IsHardcore();
             character.IsExpansion = gameInfo.Client.IsExpansion();
 
@@ -596,6 +640,138 @@ namespace Zutatensuppe.D2Reader
             hireling.Parse(unit, unitReader, skillReader, reader, gameInfo);
             hireling.Items = GetItemInfosByItems(GetEquippedItems(unit), unit);
             return hireling;
+        }
+
+        private IEnumerable<D2Unit> IterateUnits(D2UnitType type)
+        {
+            if (memory.Units114 != null)
+            {
+                // 1.14
+                // for 1.14d see around game.463940
+                int size = Marshal.SizeOf(typeof(D2GameUnitList));
+                var addr = (IntPtr)memory.Units114 + (int)type * size;
+                var list = reader.Read<D2GameUnitList>(addr);
+                foreach (var unitAddr in list.Units)
+                {
+                    if (unitAddr.IsNull) continue;
+
+                    var unit = reader.Read<D2Unit>(unitAddr);
+                    while (unit != null)
+                    {
+                        if (unit.eType != type) break;
+
+                        yield return unit;
+
+                        if (unit.pPrevUnit.IsNull) break;
+                        unit = reader.Read<D2Unit>(unit.pPrevUnit);
+                    };
+                }
+            }
+
+            if (memory.Units113 != null)
+            {
+                // 1.13
+                // for 1.13d see function D2Client.dll+89CE0
+                // for 1.13c see function around D2Client.QueryInterface+FB14
+                for (var guid = 0; guid <= 0x7F; guid++)
+                {
+                    var unitAddrPointer = (IntPtr)memory.Units113 + (int)(guid & 0x7F) * 4;
+                    var unitAddr = reader.ReadAddress32(unitAddrPointer);
+                    if ((long)unitAddr == 0) continue;
+
+                    var unit = reader.Read<D2Unit>(unitAddr);
+                    while (unit != null)
+                    {
+                        if (unit.eType != type) break;
+
+                        yield return unit;
+
+                        if (unit.pPrevUnit.IsNull) break;
+                        unit = reader.Read<D2Unit>(unit.pPrevUnit);
+                    };
+                }
+            }
+        }
+
+        // Reads newly killed monsters
+        private List<Monster> ReadKilledMonsters(GameInfo gameInfo)
+        {
+            var petIds = IteratePets(gameInfo.Player).Select(pet => pet.GUID).ToArray();
+            var killed = new List<Monster>();
+            foreach (var unit in IterateUnits(D2UnitType.Monster))
+            {
+                if (petIds.Contains(unit.GUID))
+                {
+                    // register pet as seen
+                    petsSeen.Add(unit.GUID);
+
+                    // dont add to killed list
+                    continue;
+                }
+
+                if (petsSeen.Contains(unit.GUID))
+                {
+                    // dont count monsters that were pets before
+                    // (pets dont count as pets anymore when dead)
+                    continue;
+                }
+
+                bool isDead = (MonsterMode)unit.eMode == MonsterMode.DEAD
+                    || (MonsterMode)unit.eMode == MonsterMode.DEATH;
+                if (!isDead)
+                {
+                    // register monster as seen (alive)
+                    monstersSeen.Add(unit.GUID);
+
+                    // dont add if not dead
+                    continue;
+                }
+
+                if (!monstersSeen.Contains(unit.GUID))
+                {
+                    // dont count dead monsters that were never alive
+                    // eg. when starting DI after killing, or maybe somewhere
+                    // there exist corpses on the ground from the beginning, then
+                    // we dont want to count those until they come alive
+                    // and die again)
+                    continue;
+                }
+
+                if (monstersKilled.Contains(unit.GUID))
+                {
+                    // dont add if already counted
+                    continue;
+                }
+
+                var monsterData = reader.Read<D2MonsterData>(unit.UnitData);
+                // string name = reader.ReadNullTerminatedString(monsterData.szMonName, 300, Encoding.Unicode);
+                var monster = new Monster();
+                monster.Class = unit.eClass;
+                monster.TypeFlags = monsterData.TypeFlags;
+                monster.Mode = (MonsterMode) unit.eMode;
+                // Determine if the monster demon or undead
+                // 1.13C
+                // demon check: see D2Common.Ordinal10255
+                // undead check: see D2Common.Ordinal10239
+                var mStats = reader.ReadArray<byte>(monsterData.pMonStats, 128);
+                var stat = mStats[0xD];
+                if ((stat & 0x20) > 0)
+                {
+                    monster.Type = MonsterType.Demon;
+                }
+                else if ((stat & 0x08) > 0 || (stat & 0x10) > 0)
+                {
+                    monster.Type = MonsterType.Undead;
+                }
+                else
+                {
+                    monster.Type = MonsterType.None;
+                }
+
+                monstersKilled.Add(unit.GUID);
+                killed.Add(monster);
+            }
+            return killed;
         }
 
         private IEnumerable<Item> GetEquippedItems(D2Unit owner)

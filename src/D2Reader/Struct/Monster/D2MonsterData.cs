@@ -22,15 +22,7 @@ namespace Zutatensuppe.D2Reader.Struct.Monster
 
         [ExpectOffset(0x14)] public short NameSeed;
 
-        // 0x00000001 - MONTYPE_OTHER(set for some champs, uniques)
-        // 0x00000002 - MONTYPE_SUPERUNIQUE
-        // 0x00000004 - MONTYPE_CHAMPION
-        // 0x00000008 - MONTYPE_UNIQUE
-        // 0x00000010 - MONTYPE_MINION
-        // 0x00000020 - MONTYPE_POSSESSED
-        // 0x00000040 - MONTYPE_GHOSTLY
-        // 0x00000080 - MONTYPE_MULTISHOT
-        [ExpectOffset(0x16)] public byte TypeFlags;
+        [ExpectOffset(0x16)] public MonsterTypeFlags TypeFlags;
 
         [ExpectOffset(0x17)] public byte eLastMode;
         [ExpectOffset(0x18)] public int dwDuriel; // set only for duriel
@@ -58,5 +50,30 @@ namespace Zutatensuppe.D2Reader.Struct.Monster
         [ExpectOffset(0x58)] public int lvlNo; // the Id from levels.txt of the level they got spawned in (used to access pGame -> pMonsterRegion[...])
         [ExpectOffset(0x5C)] public int SummonerFlags; // used only by the summoner
         #endregion
+    }
+
+    [Flags]
+    public enum MonsterTypeFlags : byte
+    {
+        None = 0x00000000,
+        // 00000001 = 001 = 0x00000001 - MONTYPE_OTHER
+        // (set for some champs, uniques)
+        Other = 0x00000001,
+        // 00000010 = 002 = 0x00000002 - MONTYPE_SUPERUNIQUE
+        // (eg. BISHIBOSH)
+        SuperUnique = 0x00000002,
+        // 00000100 = 004 = 0x00000004 - MONTYPE_CHAMPION
+        Champion = 0x00000004,
+        // 00001000 = 008 = 0x00000008 - MONTYPE_UNIQUE
+        // (eg. BISHIBOSH, BLOODRAVEN, random bosses)
+        Unique = 0x00000008,
+        // 00010000 = 016 = 0x00000010 - MONTYPE_MINION      
+        Minion = 0x00000010,
+        // 00100000 = 032 = 0x00000020 - MONTYPE_POSSESSED
+        Possessed = 0x00000020,
+        // 01000000 = 064 = 0x00000040 - MONTYPE_GHOSTLY
+        Ghostly = 0x00000040,
+        // 10000000 = 128 = 0x00000080 - MONTYPE_MULTISHOT
+        Multishot = 0x00000080,
     }
 }

@@ -2,7 +2,9 @@ namespace Zutatensuppe.D2Reader
 {
     public class D2Data
     {
-        public enum Mode
+        // The different values mean different things for different unit types,
+        // so there are PlayerMode, MonsterMode, and maybe more in the future
+        public enum PlayerMode
         {
             DEATH = 0, // 0x00
             NEUTRAL, // 0x01
@@ -25,7 +27,16 @@ namespace Zutatensuppe.D2Reader
             SEQUENCE, // 0x12
             KNOCK_BACK, // 0x13
         };
-        
+
+        public enum MonsterMode
+        {
+            DEATH = 0x0, // 0
+            // [...]
+            DEAD  = 0xC, // 12
+            // [...]
+        }
+
+
         public enum ItemId
         {
             GIBDINN = 87,
