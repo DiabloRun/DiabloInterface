@@ -150,6 +150,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
             public HirelingDiff Hireling { get; set; }
 
+            public List<Monster> KilledMonsters { get; set; }
+
             public ProcessInfo D2ProcessInfo { get; set; }
             public IApplicationInfo DIApplicationInfo { get; set; }
         }
@@ -247,6 +249,11 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 prevVal.Hireling
             );
 
+            if (newVal.KilledMonsters != null && newVal.KilledMonsters.Count > 0)
+            {
+                diff.KilledMonsters = newVal.KilledMonsters;
+            }
+
             // always send application info, if something is sent
             diff.DIApplicationInfo = newVal.DIApplicationInfo;
 
@@ -268,7 +275,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 || diff.RemovedStashItems != null
                 || diff.RemovedInventoryItems != null
                 || diff.CompletedQuests != null
-                || diff.Hireling != null;
+                || diff.Hireling != null
+                || diff.KilledMonsters != null;
             return hasDiff ? diff : null;
         }
 
@@ -512,6 +520,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                     PoisonResist = e.Game.Hireling?.PoisonResist,
                     Items = e.Game.Hireling?.Items
                 },
+                KilledMonsters = e.KilledMonsters,
                 D2ProcessInfo = e.ProcessInfo,
                 DIApplicationInfo = di.appInfo,
             };

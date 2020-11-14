@@ -136,7 +136,7 @@ namespace Zutatensuppe.D2Reader.Models
 
         public CharacterClass CharClass { get; private set; }
 
-        public Mode Mode { get; private set; }
+        public PlayerMode Mode { get; private set; }
 
         public bool IsDead { get; private set; }
 
@@ -195,7 +195,7 @@ namespace Zutatensuppe.D2Reader.Models
 
         public int RealFRW()
         {
-            return FasterRunWalk + ((VelocityPercent - (Mode == Mode.RUN ? 50 : 0))-100);
+            return FasterRunWalk + ((VelocityPercent - (Mode == PlayerMode.RUN ? 50 : 0))-100);
         }
 
         public int RealIAS()
@@ -263,13 +263,13 @@ namespace Zutatensuppe.D2Reader.Models
             LifeMax = getStat(StatIdentifier.HitpointsMax) >> 8;
         }
 
-        public void UpdateMode(Mode mode)
+        public void UpdateMode(PlayerMode mode)
         {
             Mode = mode;
 
             bool wasDead = IsDead;
 
-            IsDead = (Mode == Mode.DEAD || Mode == Mode.DEATH) && Level > 0;
+            IsDead = (Mode == PlayerMode.DEAD || Mode == PlayerMode.DEATH) && Level > 0;
 
             if (IsDead && !wasDead)
             {

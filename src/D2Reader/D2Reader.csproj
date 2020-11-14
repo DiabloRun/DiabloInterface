@@ -89,6 +89,7 @@
     <Compile Include="Models\Hireling.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\ItemInfo.cs" />
+    <Compile Include="Models\Monster.cs" />
     <Compile Include="Models\Quests.cs" />
     <Compile Include="Models\Rune.cs" />
     <Compile Include="Models\ResistancePenalty.cs" />

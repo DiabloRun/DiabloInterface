@@ -66,7 +66,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
             game.Character = character.Object;
             game.Quests = quests;
 
-            var args = new DataReadEventArgs(processInfo, game);
+            List<Monster> killedMonsters = null;
+            var args = new DataReadEventArgs(processInfo, game, killedMonsters);
 
             // test autosplit by level
             gameService.Raise(g => g.DataRead += null, args);
@@ -196,7 +197,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Test
             game.Character = characterMock.Object;
             game.Quests = quests;
 
-            var args = new DataReadEventArgs(processInfo, game);
+            List<Monster> killedMonsters = null;
+            var args = new DataReadEventArgs(processInfo, game, killedMonsters);
 
             // test autosplit by game start
             Assert.AreEqual(false, splitOnGameStart.IsReached);
