@@ -12,6 +12,7 @@ using Zutatensuppe.DiabloInterface.Core.Logging;
 using System.Reflection;
 using Zutatensuppe.DiabloInterface.Lib.Plugin;
 using Zutatensuppe.DiabloInterface.Lib;
+using Newtonsoft.Json.Linq;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 {
@@ -152,7 +153,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
             public List<Monster> KilledMonsters { get; set; }
 
+            [JsonConverter(typeof(ProcessInfoConverter))]
             public ProcessInfo D2ProcessInfo { get; set; }
+
+            [JsonConverter(typeof(DIApplicationInfoConverter))]
             public IApplicationInfo DIApplicationInfo { get; set; }
         }
 
@@ -254,17 +258,6 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 diff.KilledMonsters = newVal.KilledMonsters;
             }
 
-            // always send application info, if something is sent
-            diff.DIApplicationInfo = newVal.DIApplicationInfo;
-
-            // send d2 process info only when it changed, but always
-            // the complete process info in that case
-            if (!newVal.D2ProcessInfo.Equals(prevVal.D2ProcessInfo))
-            {
-                diff.D2ProcessInfo = newVal.D2ProcessInfo;
-                hasDiff = true;
-            }
-
             hasDiff = hasDiff
                 || diff.AddedItems != null
                 || diff.AddedCubeItems != null
@@ -277,7 +270,19 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
                 || diff.CompletedQuests != null
                 || diff.Hireling != null
                 || diff.KilledMonsters != null;
-            return hasDiff ? diff : null;
+
+            if (hasDiff)
+            {
+                // always send application info, if something is sent
+                diff.DIApplicationInfo = newVal.DIApplicationInfo;
+
+                // always send d2 info, if something is sent
+                diff.D2ProcessInfo = newVal.D2ProcessInfo;
+
+                return diff;
+            }
+
+            return null;
         }
 
         Dictionary<GameDifficulty, List<QuestId>> BuildCompletedQuestsDiff(
@@ -538,6 +543,76 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             }
 
             PrevData = newData;
+        }
+    }
+
+    class ProcessInfoConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            JToken t = JToken.FromObject(value);
+            if (t.Type != JTokenType.Object)
+            {
+                t.WriteTo(writer);
+            }
+            else
+            {
+                var info = (ProcessInfo)value;
+                JObject o = new JObject();
+                o.Add("Type", info.ReadableType());
+                o.Add("Version", info.ReadableVersion());
+                o.Add("CommandLineArgs", new JArray(info.CommandLineArgs));
+                o.WriteTo(writer);
+            }
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(ProcessInfo);
+        }
+
+        public override bool CanRead
+        {
+            get { return false; }
+        }
+    }
+
+    class DIApplicationInfoConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            JToken t = JToken.FromObject(value);
+            if (t.Type != JTokenType.Object)
+            {
+                t.WriteTo(writer);
+            }
+            else
+            {
+                var info = (IApplicationInfo)value;
+                JObject o = new JObject();
+                o.Add("Version", info.Version);
+                o.WriteTo(writer);
+            }
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(IApplicationInfo);
+        }
+
+        public override bool CanRead
+        {
+            get { return false; }
         }
     }
 }

@@ -139,6 +139,7 @@
     <Compile Include="Struct\Item\Modifier\ModifierTable.cs" />
     <Compile Include="Struct\Item\Modifier\RareModifier.cs" />
     <Compile Include="Struct\Monster\D2AiGeneral.cs" />
+    <Compile Include="Struct\Monster\D2MonStats.cs" />
     <Compile Include="Struct\Monster\D2MonsterData.cs" />
     <Compile Include="Struct\Skill\D2Skill.cs" />
     <Compile Include="Struct\Skill\D2SkillData.cs" />

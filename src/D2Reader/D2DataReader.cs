@@ -748,18 +748,20 @@ namespace Zutatensuppe.D2Reader
                 var monster = new Monster();
                 monster.Class = unit.eClass;
                 monster.TypeFlags = monsterData.TypeFlags;
-                monster.Mode = (MonsterMode) unit.eMode;
                 // Determine if the monster demon or undead
                 // 1.13C
                 // demon check: see D2Common.Ordinal10255
                 // undead check: see D2Common.Ordinal10239
-                var mStats = reader.ReadArray<byte>(monsterData.pMonStats, 128);
-                var stat = mStats[0xD];
-                if ((stat & 0x20) > 0)
+                var mStats = reader.Read<D2MonStats>(monsterData.pMonStats);
+                if (mStats.typeFlags.HasFlag(D2MonTypeFlag.Demon))
                 {
                     monster.Type = MonsterType.Demon;
                 }
-                else if ((stat & 0x08) > 0 || (stat & 0x10) > 0)
+                else if (mStats.typeFlags.HasFlag(D2MonTypeFlag.Undead1))
+                {
+                    monster.Type = MonsterType.Undead;
+                }
+                else if (mStats.typeFlags.HasFlag(D2MonTypeFlag.Undead2))
                 {
                     monster.Type = MonsterType.Undead;
                 }
@@ -770,6 +772,7 @@ namespace Zutatensuppe.D2Reader
 
                 monstersKilled.Add(unit.GUID);
                 killed.Add(monster);
+                // Logger.Info(unit.GUID + " was killed");
             }
             return killed;
         }
