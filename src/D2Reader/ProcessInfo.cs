@@ -25,5 +25,45 @@ namespace Zutatensuppe.D2Reader
                 && Enumerable.SequenceEqual(CommandLineArgs, other.CommandLineArgs)
                 && Enumerable.SequenceEqual(ModuleBaseAddresses, other.ModuleBaseAddresses);
         }
+
+        public string ReadableType()
+        {
+            if (ModuleBaseAddresses.ContainsKey("projectdiablo.dll"))
+            {
+               return "PD2";
+            }
+            return "D2";
+        }
+
+        public string ReadableVersion()
+        {
+            switch (FileVersion)
+            {
+                case "1.14d": 
+                case "1.14.3.71":
+                    return "1.14d";
+
+                case "1.14c":
+                case "1.14.2.70":
+                    return "1.14c";
+
+                case "1.14b":
+                case "1.14.1.68":
+                    return "1.14b";
+
+                case "1.13d":
+                case "1, 0, 13, 64":
+                    return "1.13d";
+
+                case "1.13c":
+                case "v 1.13c":
+                case "1, 0, 13, 60":
+                case "1, 0, 0, 0":
+                    return "1.13c";
+
+                default:
+                    return "unknown";
+            }
+        }
     }
 }

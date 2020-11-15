@@ -17,24 +17,21 @@ namespace Zutatensuppe.D2Reader.Models
                                            // eg. Champion, Possessed, Ghostly, ...
                                            // Determined by current Game State
 
-        public MonsterMode Mode; // mode the monster is in.
-                                 // used to determine if the monster is
-                                 // dead, walking, attacking, etc.
-                                 // Determined by current Game State
-
         public MonsterType Type; // Type of monster (None, Demon, Undead)
                                  // D2 stores this (differently) in monStats.
                                  // Determined by eClass
 
-        public bool IsDemon => Type == MonsterType.Demon;
+        public bool IsDemon() => Type == MonsterType.Demon;
 
-        public bool IsUndead => Type == MonsterType.Undead;
+        public bool IsUndead() => Type == MonsterType.Undead;
 
-        public bool IsChampion => TypeFlags.HasFlag(MonsterTypeFlags.Champion);
+        public bool IsChampion() => TypeFlags.HasFlag(MonsterTypeFlags.Champion);
 
-        public bool IsMinion => TypeFlags.HasFlag(MonsterTypeFlags.Minion);
+        public bool IsMinion() => TypeFlags.HasFlag(MonsterTypeFlags.Minion);
 
-        public bool IsUnique => TypeFlags.HasFlag(MonsterTypeFlags.Unique);
+        public bool IsUnique() => TypeFlags.HasFlag(MonsterTypeFlags.Unique);
+
+        public bool IsSuperunique() => TypeFlags.HasFlag(MonsterTypeFlags.SuperUnique);
     }
 
     public enum MonsterType
