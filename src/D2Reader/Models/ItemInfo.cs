@@ -32,7 +32,7 @@ namespace Zutatensuppe.D2Reader.Models
         public string ItemBaseName { get; set; }
         public string QualityColor { get; set; }
         public List<string> Properties { get; set; }
-        public BodyLocation Location { get; set; }
+        public ItemLocation Location { get; set; }
         public int GUID { get; set; }
 
         // backwards compatibility with D2ID
@@ -55,7 +55,7 @@ namespace Zutatensuppe.D2Reader.Models
             ItemBaseName = BaseItemName(item, unitReader);
             QualityColor = QualityColorDefault(item);
             Properties = unitReader.GetMagicalStrings(item, owner, inventoryReader);
-            Location = item.ItemData.BodyLoc;
+            Location = item.Location;
             GUID = item.Unit.GUID;
 
             // Backward compatibility for D2ID:

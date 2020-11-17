@@ -42,7 +42,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers
             {
                 IsValidSlot = true,
                 Items = dataReader.Game.Character.Items
-                    .FindAll(item => locations.Contains(item.Location)),
+                    .FindAll(item => locations.Contains(item.Location.BodyLocation)),
             };
         }
 

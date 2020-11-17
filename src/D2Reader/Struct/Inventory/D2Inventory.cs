@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
 namespace Zutatensuppe.D2Reader.Struct.Inventory
 {
@@ -11,7 +11,7 @@ namespace Zutatensuppe.D2Reader.Struct.Inventory
         [ExpectOffset(0x08)] public int pOwnerUnit;      // 0x08
         [ExpectOffset(0x0C)] public DataPointer pFirstItem;      // 0x0C
         [ExpectOffset(0x10)] public DataPointer pLastItem;       // 0x10
-        [ExpectOffset(0x14)] public int pInvInfo;        // 0x14
+        [ExpectOffset(0x14)] public DataPointer pInvInfo;        // 0x14
         [ExpectOffset(0x18)] public int nInvInfo;        // 0x18
         [ExpectOffset(0x1C)] public int WeaponGUID;      // 0x1C
         [ExpectOffset(0x20)] public int pInvOwnerItem;   // 0x20

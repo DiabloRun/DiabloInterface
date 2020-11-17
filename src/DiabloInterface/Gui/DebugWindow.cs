@@ -244,7 +244,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             {
                 foreach (var item in items)
                 {
-                    if (item.Location == locs[l])
+                    if (item.Location.BodyLocation == locs[l])
                     {
                         textItemDesc.Text = ItemString(item);
                         return;

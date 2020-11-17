@@ -55,6 +55,18 @@ namespace Zutatensuppe.D2Reader.Struct.Item
         SecondaryRight      // 0xC
     }
 
+    public enum ItemContainer : byte
+    {
+        Equipment   =  0,
+        Belt        =  1,
+        Inventory   =  2,
+        __unknown_1 =  3,
+        __unknown_2 =  4,
+        Cube        =  5,
+        Stash       =  6,
+        Hireling    = 10,
+    }
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class D2ItemData
     {
