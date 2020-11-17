@@ -19,7 +19,9 @@ namespace Zutatensuppe.DiabloInterface.D2Reader.Test.Models
                 ItemName = "somename",
                 ItemBaseName = "somebasename",
                 QualityColor = "somecolor",
-                Location = BodyLocation.Gloves,
+                Location = new ItemLocation {
+                    BodyLocation = BodyLocation.Gloves
+                },
                 Properties = new List<string> { "hello", "world" },
             };
 
@@ -33,7 +35,9 @@ namespace Zutatensuppe.DiabloInterface.D2Reader.Test.Models
                 ItemName = "somename",
                 ItemBaseName = "somebasename",
                 QualityColor = "somecolor",
-                Location = BodyLocation.Gloves,
+                Location = new ItemLocation {
+                    BodyLocation = BodyLocation.Gloves
+                },
                 Properties = new List<string> { "hello", "world" },
             };
 
