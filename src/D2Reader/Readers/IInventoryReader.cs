@@ -10,5 +10,7 @@ namespace Zutatensuppe.D2Reader.Readers
         IEnumerable<Item> Filter(IEnumerable<Item> enumerable, Func<Item, bool> filter);
         IEnumerable<Item> EnumerateInventoryBackward(D2Unit unit);
         IEnumerable<Item> EnumerateInventoryForward(D2Unit unit);
+
+        List<Item> GetAllItems(D2Unit owner);
     }
 }

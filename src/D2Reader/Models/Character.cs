@@ -189,9 +189,6 @@ namespace Zutatensuppe.D2Reader.Models
         // TODO: use Item model for these:
         virtual public List<int> InventoryItemIds { get; internal set; }
         public List<ItemInfo> Items { get; internal set; }
-        public List<ItemInfo> CubeItems { get; internal set; }
-        public List<ItemInfo> StashItems { get; internal set; }
-        public List<ItemInfo> InventoryItems { get; internal set; }
 
         public int RealFRW()
         {

@@ -9,6 +9,7 @@ using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Readers;
 using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Monster;
+using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.D2Reader.Struct.Unknown;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using static Zutatensuppe.D2Reader.D2Data;
@@ -619,10 +620,7 @@ namespace Zutatensuppe.D2Reader
             {
                 character.Parse(unitReader, gameInfo);
                 character.InventoryItemIds = ReadInventoryItemIds(gameInfo.Player);
-                character.Items = GetItemInfosByItems(GetEquippedItems(gameInfo.Player), gameInfo.Player);
-                character.CubeItems = GetItemInfosByItems(GetCubeItems(gameInfo.Player), gameInfo.Player);
-                character.StashItems = GetItemInfosByItems(GetStashItems(gameInfo.Player), gameInfo.Player);
-                character.InventoryItems = GetItemInfosByItems(GetInventoryItems(gameInfo.Player), gameInfo.Player);
+                character.Items = GetItemInfosByItems(inventoryReader.GetAllItems(gameInfo.Player), gameInfo.Player);
             }
 
             return character;
@@ -638,7 +636,23 @@ namespace Zutatensuppe.D2Reader
 
             var hireling = new Hireling();
             hireling.Parse(unit, unitReader, skillReader, reader, gameInfo);
-            hireling.Items = GetItemInfosByItems(GetEquippedItems(unit), unit);
+
+            // adjust item location for hireling items
+            List<Item> hirelingItems = GetEquippedItems(unit).ToList();
+            foreach (var item in hirelingItems)
+            {
+                var itemDesc = unitReader.GetItemDescription(item.Unit);
+                item.Location = new ItemLocation
+                {
+                    X = (int)item.ItemData.BodyLoc,
+                    Y = 1,
+                    Width = itemDesc.invWidth,
+                    Height = itemDesc.invHeight,
+                    Container = ItemContainer.Hireling,
+                    BodyLocation = item.ItemData.BodyLoc,
+                };
+            }
+            hireling.Items = GetItemInfosByItems(hirelingItems, unit);
             return hireling;
         }
 
@@ -780,21 +794,6 @@ namespace Zutatensuppe.D2Reader
         private IEnumerable<Item> GetEquippedItems(D2Unit owner)
         {
             return GetInventoryItemsFiltered(owner, (Item i) => i.IsEquipped());
-        }
-
-        private IEnumerable<Item> GetCubeItems(D2Unit owner)
-        {
-            return GetInventoryItemsFiltered(owner, (Item i) => !i.IsEquipped() && i.IsInCube());
-        }
-
-        private IEnumerable<Item> GetStashItems(D2Unit owner)
-        {
-            return GetInventoryItemsFiltered(owner, (Item i) => !i.IsEquipped() && i.IsInStash());
-        }
-
-        private IEnumerable<Item> GetInventoryItems(D2Unit owner)
-        {
-            return GetInventoryItemsFiltered(owner, (Item i) => !i.IsEquipped() && i.IsInInventory());
         }
 
         private List<ItemInfo> GetItemInfosByItems(IEnumerable<Item> items, D2Unit owner)

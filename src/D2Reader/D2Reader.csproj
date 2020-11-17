@@ -127,6 +127,7 @@
     <Compile Include="Struct\DataPointer.cs" />
     <Compile Include="Struct\ExpectOffsetAttribute.cs" />
     <Compile Include="Struct\Inventory\D2Inventory.cs" />
+    <Compile Include="Struct\Inventory\D2InventoryInfo.cs" />
     <Compile Include="Struct\Item\D2ItemData.cs" />
     <Compile Include="Struct\Item\D2ItemDescription.cs" />
     <Compile Include="Struct\Item\D2ItemStatCost.cs" />

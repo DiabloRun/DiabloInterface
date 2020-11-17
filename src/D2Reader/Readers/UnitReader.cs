@@ -111,7 +111,7 @@ namespace Zutatensuppe.D2Reader.Readers
         public string GetItemName(Item item)
         {
             // The hash code for the item name lies in the description table.
-            var description = GetItemDescription(item);
+            var description = GetItemDescription(item.Unit);
             if (description == null) return null;
             return GetString(description.NameHashCode);
         }
@@ -139,9 +139,9 @@ namespace Zutatensuppe.D2Reader.Readers
             return reader.Read<D2MonsterData>(unit.UnitData);
         }
 
-        private D2ItemDescription GetItemDescription(Item item)
+        public D2ItemDescription GetItemDescription(D2Unit item)
         {
-            int eClass = item.Unit.eClass;
+            int eClass = item.eClass;
 
             // Early exit if memory already read.
             if (cachedDescriptions.ContainsKey(eClass))
