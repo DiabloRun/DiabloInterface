@@ -19,9 +19,9 @@ namespace Zutatensuppe.D2Reader.Models
         internal bool IsEthereal() => HasFlag(ItemFlag.Ethereal);
         internal bool HasRuneWord() => HasFlag(ItemFlag.Runeword);
 
-        internal bool IsInCube() => !IsEquipped() && ItemData.InvPage == InventoryPage.HoradricCube;
-        internal bool IsInStash() => !IsEquipped() && ItemData.InvPage == InventoryPage.Stash;
-        internal bool IsInInventory() => !IsEquipped() && ItemData.InvPage == InventoryPage.Inventory;
+        internal bool IsInCube() => ItemData.InvPage == InventoryPage.HoradricCube;
+        internal bool IsInStash() => ItemData.InvPage == InventoryPage.Stash;
+        internal bool IsInInventory() => ItemData.InvPage == InventoryPage.Inventory;
     }
 
     public class ItemLocation
@@ -62,7 +62,8 @@ namespace Zutatensuppe.D2Reader.Models
 
         public override int GetHashCode()
         {
-            return X.GetHashCode() ^ Y.GetHashCode() ^ Width.GetHashCode() ^ Height.GetHashCode() ^ BodyLocation.GetHashCode() ^ Container.GetHashCode();
+            return X.GetHashCode() ^ Y.GetHashCode() ^ Width.GetHashCode()
+                ^ Height.GetHashCode() ^ BodyLocation.GetHashCode() ^ Container.GetHashCode();
         }
     }
 }
