@@ -141,6 +141,8 @@ namespace Zutatensuppe.D2Reader.Readers
 
         public D2ItemDescription GetItemDescription(D2Unit item)
         {
+            if (item.eType != D2UnitType.Item)
+                throw new Exception("Wrong D2Unit type");
             int eClass = item.eClass;
 
             // Early exit if memory already read.
