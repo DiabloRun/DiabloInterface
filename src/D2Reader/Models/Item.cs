@@ -52,18 +52,22 @@ namespace Zutatensuppe.D2Reader.Models
                 return false;
 
             var other = (ItemLocation)obj;
-            return this.X            == other.X &&
-                   this.Y            == other.Y &&
-                   this.Width        == other.Width &&
-                   this.Height       == other.Height &&
-                   this.BodyLocation == other.BodyLocation &&
-                   this.Container    == other.Container;
+            return this.X            == other.X
+                && this.Y            == other.Y
+                && this.Width        == other.Width
+                && this.Height       == other.Height
+                && this.BodyLocation == other.BodyLocation
+                && this.Container    == other.Container;
         }
 
         public override int GetHashCode()
         {
-            return X.GetHashCode() ^ Y.GetHashCode() ^ Width.GetHashCode()
-                ^ Height.GetHashCode() ^ BodyLocation.GetHashCode() ^ Container.GetHashCode();
+            return X.GetHashCode()
+                 ^ Y.GetHashCode()
+                 ^ Width.GetHashCode()
+                 ^ Height.GetHashCode()
+                 ^ BodyLocation.GetHashCode()
+                 ^ Container.GetHashCode();
         }
     }
 }
