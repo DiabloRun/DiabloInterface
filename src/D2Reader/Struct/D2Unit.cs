@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 
 namespace Zutatensuppe.D2Reader.Struct
@@ -13,6 +14,7 @@ namespace Zutatensuppe.D2Reader.Struct
     }
 
     // @see https://d2mods.info/forum/viewtopic.php?f=8&t=62973&p=487011&hilit=pets#p487011
+    [Flags]
     public enum D2UnitFlags_C4 : uint
     {
         UPDATE_REQUIRED = 0x00000001, // - tells the game to update the unit ( set after operateFn for objects, when reinitializing a unit etc )
@@ -109,7 +111,7 @@ namespace Zutatensuppe.D2Reader.Struct
         [ExpectOffset(0x00B8)] public int DropCode;        // 0xB8
         [ExpectOffset(0x00BC)] public int __unknown10;     // 0xBC
         [ExpectOffset(0x00C0)] public int __unknown11;     // 0xC0
-        [ExpectOffset(0x00C4)] public uint UnitFlags_C4;      // 0xC4
+        [ExpectOffset(0x00C4)] public D2UnitFlags_C4 UnitFlags_C4;      // 0xC4
         [ExpectOffset(0x00C8)] public uint UnitFlags_C8;      // 0xC8
         [ExpectOffset(0x00CC)] public int __unknown11c;    // 0xCC
         [ExpectOffset(0x00D0)] public int __unknown12;     // 0xD0
