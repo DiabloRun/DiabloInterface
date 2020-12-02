@@ -49,6 +49,13 @@ namespace Zutatensuppe.D2Reader.Models
 
         public Dictionary<GameDifficulty, List<QuestId>> CompletedQuestIds => new Dictionary<GameDifficulty, List<QuestId>>
         {
+            {GameDifficulty.Normal, CompletedQuestIdsByDifficulty(GameDifficulty.Normal) },
+            {GameDifficulty.Nightmare, CompletedQuestIdsByDifficulty(GameDifficulty.Nightmare) },
+            {GameDifficulty.Hell, CompletedQuestIdsByDifficulty(GameDifficulty.Hell) },
+        };
+
+        public Dictionary<GameDifficulty, List<QuestId>> FullyCompletedQuestIds => new Dictionary<GameDifficulty, List<QuestId>>
+        {
             {GameDifficulty.Normal, FullyCompletedQuestIdsByDifficulty(GameDifficulty.Normal) },
             {GameDifficulty.Nightmare, FullyCompletedQuestIdsByDifficulty(GameDifficulty.Nightmare) },
             {GameDifficulty.Hell, FullyCompletedQuestIdsByDifficulty(GameDifficulty.Hell) },
@@ -61,23 +68,30 @@ namespace Zutatensuppe.D2Reader.Models
             { GameDifficulty.Hell, new List<QuestId>() }
         };
 
-        private List<QuestId> FullyCompletedQuestIdsByDifficulty(GameDifficulty difficulty)
+        private List<QuestId> CompletedQuestIdsByDifficulty(GameDifficulty difficulty)
         {
-            List<QuestId> completedIds = new List<QuestId>();
             List<Quest> quests = ByDifficulty(difficulty);
-
             if (quests == null)
                 return null;
 
-            foreach (Quest quest in quests)
-            {
-                if (quest.IsFullyCompleted)
-                {
-                    completedIds.Add(quest.Id);
-                }
-            }
+            return (
+                from quest in quests
+                where quest.IsCompleted
+                select quest.Id
+            ).ToList();
+        }
 
-            return completedIds;
+        private List<QuestId> FullyCompletedQuestIdsByDifficulty(GameDifficulty difficulty)
+        {
+            List<Quest> quests = ByDifficulty(difficulty);
+            if (quests == null)
+                return null;
+
+            return (
+                from quest in quests
+                where quest.IsFullyCompleted
+                select quest.Id
+            ).ToList();
         }
     }
 }

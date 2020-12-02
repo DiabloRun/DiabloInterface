@@ -1,6 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Zutatensuppe.D2Reader;
-using Zutatensuppe.D2Reader.Models;
 
 namespace Zutatensuppe.DiabloInterface.D2Reader.Test
 {
@@ -10,18 +9,21 @@ namespace Zutatensuppe.DiabloInterface.D2Reader.Test
         [TestMethod]
         public void BufferLookup()
         {
-            Quest q = QuestFactory.CreateFromBufferIndex(1, 0);
-            Assert.AreEqual(q.Name, "Den of Evil");
-            Assert.AreEqual(q.IsBossQuest, false);
+            ushort[] questBuffer = new ushort[256];
+            var quests = QuestFactory.CreateListFromBuffer(questBuffer);
 
-            q = QuestFactory.CreateFromBufferIndex(9, 0);
-            Assert.AreEqual(q.Name, "Radament's Lair");
+            Assert.AreEqual(28, quests.Count);
 
-            q = QuestFactory.CreateFromBufferIndex(29, 0);
-            Assert.AreEqual(q, null);
+            Assert.AreEqual("Den of Evil", quests[5].Name);
+            Assert.AreEqual(false, quests[5].IsBossQuest);
 
-            q = QuestFactory.CreateFromBufferIndex(35, 0);
-            Assert.AreEqual(q.Name, "Siege on Harrogath");
+            Assert.AreEqual("Radament's Lair", quests[10].Name);
+
+            Assert.AreEqual("Siege on Harrogath", quests[22].Name);
+
+            Assert.AreEqual("Cow King", quests[27].Name);
+
+            Assert.AreEqual(28, QuestFactory.CreateListFromBuffer(new ushort[1]).Count);
         }
     }
 }

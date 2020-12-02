@@ -571,8 +571,9 @@ namespace Zutatensuppe.D2Reader
             from address in gameInfo.PlayerData.Quests
             where !address.IsNull
             select ReadQuestBuffer(address) into questBuffer
-            select TransformToQuestList(questBuffer) into quests
-            select quests).ToList());
+            select QuestFactory.CreateListFromBuffer(questBuffer) into quests
+            select quests
+        ).ToList());
 
         ushort[] ReadQuestBuffer(DataPointer address)
         {
@@ -584,10 +585,6 @@ namespace Zutatensuppe.D2Reader
             Buffer.BlockCopy(questBytes, 0, questBuffer, 0, questBytes.Length);
             return questBuffer;
         }
-
-        static List<Quest> TransformToQuestList(IEnumerable<ushort> questBuffer) => questBuffer
-            .Select((data, index) => QuestFactory.CreateFromBufferIndex(index, data))
-            .Where(quest => quest != null).ToList();
         
         Character ReadCharacterData(GameInfo gameInfo, bool isNewChar)
         {
