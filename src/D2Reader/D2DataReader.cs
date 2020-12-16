@@ -711,23 +711,21 @@ namespace Zutatensuppe.D2Reader
             var killed = new List<Monster>();
             foreach (var unit in IterateUnits(D2UnitType.Monster))
             {
-#if DEBUG
-                var tmpIsSel = unitReader.IsUnitSelectable(unit);
-                var tmpMonsterData = reader.Read<D2MonsterData>(unit.UnitData);
-                var tmpMStats = reader.Read<D2MonStats>(tmpMonsterData.pMonStats);
-                var tmpName = (reader.ReadNullTerminatedString(tmpMonsterData.szMonName, 300, Encoding.Unicode));
-                var tmpXp = unit.UnitFlags_C4.HasFlag(D2UnitFlags_C4.NO_XP) ? false : true;
-                var tmpIsDead = (MonsterMode)unit.eMode == MonsterMode.DEAD
-                    || (MonsterMode)unit.eMode == MonsterMode.DEATH;
-                Logger.Info(""
-                    + "ID:  " + unit.GUID + " "
-                    + "CLS: " + unit.eClass + " "
-                    + "NAM: " + tmpName + " "
-                    + "SEL: " + (tmpIsSel ? "y" : "n") + " "
-                    + "EXP: " + (tmpXp ? "y" : "n") + " "
-                    + "RIP: " + (tmpIsDead ? "y" : "n") + " "
-                );
-#endif
+                // var tmpIsSel = unitReader.IsUnitSelectable(unit);
+                // var tmpMonsterData = reader.Read<D2MonsterData>(unit.UnitData);
+                // var tmpMStats = reader.Read<D2MonStats>(tmpMonsterData.pMonStats);
+                // var tmpName = (reader.ReadNullTerminatedString(tmpMonsterData.szMonName, 300, Encoding.Unicode));
+                // var tmpXp = unit.UnitFlags_C4.HasFlag(D2UnitFlags_C4.NO_XP) ? false : true;
+                // var tmpIsDead = (MonsterMode)unit.eMode == MonsterMode.DEAD
+                //     || (MonsterMode)unit.eMode == MonsterMode.DEATH;
+                // Logger.Info(""
+                //     + "ID:  " + unit.GUID + " "
+                //     + "CLS: " + unit.eClass + " "
+                //     + "NAM: " + tmpName + " "
+                //     + "SEL: " + (tmpIsSel ? "y" : "n") + " "
+                //     + "EXP: " + (tmpXp ? "y" : "n") + " "
+                //     + "RIP: " + (tmpIsDead ? "y" : "n") + " "
+                // );
 
                 if (petIds.Contains(unit.GUID))
                 {
