@@ -312,7 +312,7 @@ namespace Zutatensuppe.D2Reader
         public T IndexIntoArray<T>(DataPointer array, int index, uint length) where T : class
         {
             // Index out of range.
-            if (index >= length) return null;
+            if (index < 0 || index >= length) return null;
 
             // Indexing is just taking the size of each element added to the base.
             int offset = index * Marshal.SizeOf<T>();
