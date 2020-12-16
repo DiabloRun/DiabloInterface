@@ -12,6 +12,7 @@ using Zutatensuppe.D2Reader.Struct.Skill;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct.Monster;
+using static Zutatensuppe.D2Reader.D2Data;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
@@ -892,6 +893,82 @@ namespace Zutatensuppe.D2Reader.Readers
                     stats.Add(nodeStat);
                 }
             }
+        }
+
+        public bool IsUnitSelectable(D2Unit unit)
+        {
+            return UnitClassHasFlag(unit.eClass, UnitClassFlag.IS_SELECTABLE);
+        }
+
+        private bool UnitClassHasFlag(int eClass, UnitClassFlag flag)
+        {
+            // actually game reads this differently, not
+            // starting from globals, but actually from position in dll
+            // 1.13C: see D2Game.dll + 0x13b0
+            // 1.14D: see Game.BNGatewayAccess::CurGateway+35213
+            var desc = reader.IndexIntoArray<D2ClassDescription>(
+                globals.ClassDescriptions,
+                eClass,
+                globals.ClassCount
+            );
+            if (desc == null) return false;
+
+            // __unknown_index_18 is some index in the unknown array of unknown structs
+            // TODO: the struct could be created as a class... instead of hardcoding the size here
+            if (desc.__unknown_index_18 < 0) return false;
+            if (desc.__unknown_index_18 >= globals.UnknownCount_0A98) return false;
+            var unknownStructAddr = globals.UnknownPointer_0A90 + 0x134 * desc.__unknown_index_18;
+            if (unknownStructAddr.IsNull) return false;
+
+            int offset = ((byte)flag >> 3) + 0x04;
+            var value = (int) reader.ReadByte(unknownStructAddr + offset);
+            int flagIdx = ((byte)flag) & 0x07;
+            return HasFlagByIndex(value, flagIdx);
+        }
+
+        private bool HasFlagByIndex(int value, int flagIdx)
+        {
+            // we could read this flag index to bits array from the
+            // game, but it is probably overkill. likely no mod is changing
+            // up the flags in the game at that location. locations are:
+            // 1.14D: Game.BNGatewayAccess::UpdateGatewaysFromIni+1B5A18
+            // 1.13C: ["d2game.dll"] + 0xF8BE0
+            var flagBits = new uint[]
+            {
+                0x00000001,
+                0x00000002,
+                0x00000004,
+                0x00000008,
+                0x00000010,
+                0x00000020,
+                0x00000040,
+                0x00000080,
+                0x00000100,
+                0x00000200,
+                0x00000400,
+                0x00000800,
+                0x00001000,
+                0x00002000,
+                0x00004000,
+                0x00008000,
+                0x00010000,
+                0x00020000,
+                0x00040000,
+                0x00080000,
+                0x00100000,
+                0x00200000,
+                0x00400000,
+                0x00800000,
+                0x01000000,
+                0x02000000,
+                0x04000000,
+                0x08000000,
+                0x10000000,
+                0x20000000,
+                0x40000000,
+                0x80000000,
+            };
+            return (flagBits[flagIdx] & value) > 0;
         }
     }
 }

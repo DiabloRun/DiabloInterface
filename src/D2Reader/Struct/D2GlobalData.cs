@@ -4,7 +4,8 @@ namespace Zutatensuppe.D2Reader.Struct
 {
     // Where to find this?
     // 1.14D: [game.744304] points to this struct 
-    // 
+    //
+    // 1.13C: D2Common.sgptDataTables 0x6FDEFED8 contains address to this struct
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
     public class D2GlobalData
     {
@@ -14,7 +15,12 @@ namespace Zutatensuppe.D2Reader.Struct
 
         [FieldOffset(0x0C4)] public uint UnknownValue3; // (0xB9 => 185) related to the skill.PassiveState value (maybe it is some kind of "max" value for passive state)
 
-        // size of each ClassDescription is probably 0x1A8
+        // found used in 1.13c in D2Game.dll + 0x13B0
+        // size of each item (D2UnknownStruct for now) is 0x134 (308)
+        [FieldOffset(0xA90)] public DataPointer UnknownPointer_0A90;
+        [FieldOffset(0xA98)] public uint UnknownCount_0A98;
+
+        // size of each ClassDescription is probably 0x1A8 (424)
         [FieldOffset(0xA78)] public DataPointer ClassDescriptions;
         [FieldOffset(0xA80)] public uint ClassCount;
 
@@ -31,6 +37,7 @@ namespace Zutatensuppe.D2Reader.Struct
         [FieldOffset(0xBC4)] public DataPointer Characters; // pointer to array of D2CharacterStats
         [FieldOffset(0xBC8)] public uint CharacterCount; // how many different classes exist. D2Unit.eClass is checked against this count to see if it is valid
 
+        // D2ItemStatCost
         [FieldOffset(0xBCC)] public DataPointer ItemStatCost; 
         [FieldOffset(0xBD4)] public uint ItemStatCostCount;
 

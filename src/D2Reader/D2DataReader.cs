@@ -711,6 +711,24 @@ namespace Zutatensuppe.D2Reader
             var killed = new List<Monster>();
             foreach (var unit in IterateUnits(D2UnitType.Monster))
             {
+#if DEBUG
+                var tmpIsSel = unitReader.IsUnitSelectable(unit);
+                var tmpMonsterData = reader.Read<D2MonsterData>(unit.UnitData);
+                var tmpMStats = reader.Read<D2MonStats>(tmpMonsterData.pMonStats);
+                var tmpName = (reader.ReadNullTerminatedString(tmpMonsterData.szMonName, 300, Encoding.Unicode));
+                var tmpXp = unit.UnitFlags_C4.HasFlag(D2UnitFlags_C4.NO_XP) ? false : true;
+                var tmpIsDead = (MonsterMode)unit.eMode == MonsterMode.DEAD
+                    || (MonsterMode)unit.eMode == MonsterMode.DEATH;
+                Logger.Info(""
+                    + "ID:  " + unit.GUID + " "
+                    + "CLS: " + unit.eClass + " "
+                    + "NAM: " + tmpName + " "
+                    + "SEL: " + (tmpIsSel ? "y" : "n") + " "
+                    + "EXP: " + (tmpXp ? "y" : "n") + " "
+                    + "RIP: " + (tmpIsDead ? "y" : "n") + " "
+                );
+#endif
+
                 if (petIds.Contains(unit.GUID))
                 {
                     // register pet as seen
@@ -735,6 +753,16 @@ namespace Zutatensuppe.D2Reader
                     monstersSeen.Add(unit.GUID);
 
                     // dont add if not dead
+                    continue;
+                }
+
+                if (!unitReader.IsUnitSelectable(unit))
+                {
+                    // dont count unselectable units
+                    // (eg. hydras, chickens, ... probably npcs, didnt check)
+                    // if they are killed, it was not the player
+                    // who did it and so it does not count towards
+                    // kill counter
                     continue;
                 }
 
@@ -783,7 +811,6 @@ namespace Zutatensuppe.D2Reader
 
                 monstersKilled.Add(unit.GUID);
                 killed.Add(monster);
-                // Logger.Info(unit.GUID + " was killed");
             }
             return killed;
         }
