@@ -53,10 +53,10 @@ namespace Zutatensuppe.D2Reader.Struct
     {
         #region structure (sizeof = 0xF4)
         [ExpectOffset(0x0000)] public D2UnitType eType;    // 0x00
-        [ExpectOffset(0x0004)] public int eClass;          // 0x04
+        [ExpectOffset(0x0004)] public int eClass;          // 0x04 // aka dwTxtFileNo or dwTextFileNo
         [ExpectOffset(0x0008)] public int pMempool;        // 0x08
-        [ExpectOffset(0x000C)] public int GUID;            // 0x0C
-        [ExpectOffset(0x0010)] public int eMode;           // 0x10
+        [ExpectOffset(0x000C)] public int GUID;            // 0x0C // aka dwUnitId
+        [ExpectOffset(0x0010)] public int eMode;           // 0x10 // aka dwMode
         [ExpectOffset(0x0014)] public DataPointer UnitData; // 0x14
         [ExpectOffset(0x0018)] public byte actNo;          // 0x18
         [ExpectOffset(0x0019)] public byte __unknown1;     // 0x19

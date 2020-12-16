@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 
 namespace Zutatensuppe.D2Reader.Struct.Monster
 {
-    // the whole thing should have a length of 0x148 (424)
+    // maybe this is the same as D2ClassDescription?
+
+    // the whole thing should have a length of 0x1A8 (424)
     // it kind of represents the rows in monStats.txt
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class D2MonStats
