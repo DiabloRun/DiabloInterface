@@ -119,5 +119,11 @@ namespace Zutatensuppe.D2Reader
             SUMMONED = 4, // seen for necro skeleton
             HIRELING = 7, 
         }
+
+        public enum UnitClassFlag: byte
+        {
+            IS_SELECTABLE = 8, // if unit is selectable (for attack).
+                               // flag is not set for example for chickens, hydras or npcs in town
+        }
     }
 }
