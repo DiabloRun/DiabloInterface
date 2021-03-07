@@ -187,21 +187,21 @@ namespace Zutatensuppe.D2Reader
             }
             catch (ModuleNotLoadedException e)
             {
-                Logger.Error($"Try launching a game. Module not loaded: {e.ModuleName}");
+                Logger.Error($"Try launching a game. Module not loaded: {e.ModuleName}", e);
                 CleanUpDataReaders();
 
                 return false;
             }
             catch (GameVersionUnsupportedException e)
             {
-                Logger.Error($"Version not supported: {e.GameVersion}");
+                Logger.Error($"Version not supported: {e.GameVersion}", e);
                 CleanUpDataReaders();
 
                 return false;
             }
-            catch (ProcessMemoryReadException)
+            catch (ProcessMemoryReadException e)
             {
-                Logger.Error("Failed to read memory");
+                Logger.Error($"Failed to read memory: {e.Message}", e);
                 CleanUpDataReaders();
 
                 return false;
@@ -286,11 +286,7 @@ namespace Zutatensuppe.D2Reader
             }
             catch (Exception e)
             {
-                Logger.Debug("Other Exception", e);
-#if DEBUG
-                // Print errors to console in debug builds.
-                Console.WriteLine("Exception: {0}", e);
-#endif
+                Logger.Debug($"Other Exception: {e.Message}", e);
                 // cleaning up readers, so they are recreated in next loop
                 // otherwise data reading will stop here
                 CleanUpDataReaders();
@@ -303,8 +299,18 @@ namespace Zutatensuppe.D2Reader
             try
             {
                 // if game is still loading, dont read further
-                var loading = reader.ReadInt32(memory.Loading);
-                if (loading != 0)
+                var loading = reader.ReadInt32(memory.Loading) != 0;
+                // after start of the game, loading will be true, but
+                // we are still in menu. so we also check if we are in menu
+                // only if we are not in menu, we can be actually loading
+                // TODO: make InMenu mandatory in the memory table, so that
+                //       this works for all versions
+                bool inmenu = false;
+                if (memory.InMenu != null)
+                {
+                    inmenu = reader.ReadInt32((System.IntPtr)memory.InMenu) != 0;
+                }
+                if (loading && !inmenu)
                 {
                     Logger.Info("Game still loading");
                     return null;
@@ -465,7 +471,7 @@ namespace Zutatensuppe.D2Reader
             // A brand new character has been started.
             // The extra wasInTitleScreen check prevents DI from splitting
             // when it was started AFTER Diablo 2, but the char is still a new char
-            var isNewChar = false;
+            bool isNewChar;
             try
             {
                 isNewChar = wasInTitleScreen && Character.DetermineIfNewChar(
@@ -476,11 +482,19 @@ namespace Zutatensuppe.D2Reader
                 );
             } catch (Exception e)
             {
-                Logger.Info($"Unable to determine if new char {e.Message}");
+                Logger.Error($"Unable to determine if new char {e.Message}", e);
                 return false;
             }
 
-            var area = reader.ReadByte(memory.Area);
+            byte area;
+            try
+            {
+                area = reader.ReadByte(memory.Area);
+            } catch (Exception e)
+            {
+                Logger.Error($"Unable to read area at {memory.Area}: {e.Message}", e);
+                return false;
+            }
 
             // Make sure game is in a valid state.
             if (!IsValidState(isNewChar, gameInfo, area))
@@ -489,14 +503,49 @@ namespace Zutatensuppe.D2Reader
                 return false;
             }
 
-            List<Monster> killedMonsters = null;
+            Character character;
             try
             {
-                killedMonsters = ReadKilledMonsters(gameInfo);
+                character = ReadCharacterData(gameInfo, isNewChar);
             } catch (Exception e)
             {
-                Logger.Error("Error reading killed monsters", e);
+                Logger.Error($"Error reading character: {e.Message}", e);
+                return false;
             }
+
+            Quests quests;
+            try
+            {
+                quests = ReadQuests(gameInfo);
+            } catch (Exception e)
+            {
+                Logger.Error($"Error reading quests: {e.Message}", e);
+                return false;
+            }
+
+            byte inventoryTab;
+            try
+            {
+                inventoryTab = reader.ReadByte(memory.InventoryTab);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Error reading inventoryTab at {memory.InventoryTab}: {e.Message}", e);
+                return false;
+            }
+
+            int playersX;
+            try
+            {
+                playersX = Math.Max(reader.ReadByte(memory.PlayersX), (byte)1);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Error reading playersX at {memory.PlayersX}: {e.Message}", e);
+                return false;
+            }
+            // Finished reading all mandatory data
+
 
             // TODO: fix bug with not increasing gameCount (maybe use some more info from D2Game obj)
             // Note: gameId can be the same across D2 restarts
@@ -511,15 +560,24 @@ namespace Zutatensuppe.D2Reader
                 lastGameId = gameInfo.GameId;
             }
 
-            var character = ReadCharacterData(gameInfo, isNewChar);
-            var quests = ReadQuests(gameInfo);
+
+            List<Monster> killedMonsters = null;
+            try
+            {
+                killedMonsters = ReadKilledMonsters(gameInfo);
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"Error reading killed monsters: {e.Message}", e);
+            }
+
             Hireling hireling = null;
             try
             {
                 hireling = ReadHirelingData(gameInfo);
             } catch (Exception e)
             {
-                Logger.Error("Error reading hireling", e);
+                Logger.Error($"Error reading hireling: {e.Message}", e);
             }
 
             if (isNewChar)
@@ -530,8 +588,8 @@ namespace Zutatensuppe.D2Reader
 
             var g = new Game();
             g.Area = area;
-            g.InventoryTab = reader.ReadByte(memory.InventoryTab);
-            g.PlayersX = Math.Max(reader.ReadByte(memory.PlayersX), (byte)1);
+            g.InventoryTab = inventoryTab;
+            g.PlayersX = playersX;
             g.Difficulty = (GameDifficulty)gameInfo.Game.Difficulty;
             g.Seed = gameInfo.Game.InitSeed;
             // todo: maybe improve the check, if needed...
