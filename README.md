@@ -181,6 +181,11 @@ If there are any other problems, suggestions or requests:
 - ask in join our [Discord channel][discord-channel-link]
 - create an [issue][issues-link].
 
+## Troubleshooting (dev)
+
+If at build an error like `The underlying connection was closed: An unexpected error occurred on a send` pops up,
+try this [solution](https://stackoverflow.com/questions/20445638/nuget-fails-the-underlying-connection-was-closed-an-unexpected-error-occurred).
+
 ## Contact
 
 Feel free to join us in Discord in our [DiabloInterface Channel][discord-channel-link].
