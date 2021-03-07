@@ -525,7 +525,7 @@ namespace Zutatensuppe.D2Reader
             if (isNewChar)
             {
                 charCount++;
-                Logger.Info($"A new chararacter was created: {character.Name} (Char {charCount})");
+                Logger.Info($"A new character was created: {character.Name} (Char {charCount})");
             }
 
             var g = new Game();
