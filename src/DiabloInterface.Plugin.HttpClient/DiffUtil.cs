@@ -31,62 +31,58 @@ namespace DiabloInterface.Plugin.HttpClient
 
         // returns a list for added items and a list with the GUID of removed items
         internal static Tuple<List<ItemInfo>, List<ItemInfo>> ItemsDiff(
-            List<ItemInfo> newItems,
-            List<ItemInfo> prevItems
+            List<ItemInfo> curr,
+            List<ItemInfo> prev
         )
         {
-            var addedItems = new List<ItemInfo>();
-            var removedItems = new List<ItemInfo>();
-
-            if (newItems != null)
-            {
-                foreach (var newItem in newItems)
-                {
-                    if (
-                        prevItems == null
-                        || !prevItems.Any(prevItem => ItemInfo.AreEqual(prevItem, newItem))
-                    ) {
-                        addedItems.Add(newItem);
-                    }
-                }
-            }
-
-            if (prevItems != null)
-            {
-                foreach (var prevItem in prevItems)
-                {
-                    if (
-                        newItems == null
-                        || !newItems.Any(newItem => ItemInfo.AreEqual(prevItem, newItem))
-                    ) {
-                        removedItems.Add(prevItem);
-                    }
-                }
-            }
+            var added = ExcessiveItems(prev, curr);
+            var removed = ExcessiveItems(curr, prev);
 
             return new Tuple<List<ItemInfo>, List<ItemInfo>>(
-                addedItems.Count > 0 ? addedItems : null,
-                removedItems.Count > 0 ? removedItems : null
+                added.Count > 0 ? added : null,
+                removed.Count > 0 ? removed : null
             );
         }
 
-        internal static Dictionary<GameDifficulty, List<QuestId>> CompletedQuestsDiff(
-            Dictionary<GameDifficulty, List<QuestId>> newVal,
-            Dictionary<GameDifficulty, List<QuestId>> prevVal
+        private static List<ItemInfo> ExcessiveItems(
+            List<ItemInfo> basis,
+            List<ItemInfo> added
         )
         {
-            if (prevVal == null && newVal == null)
+            var excessive = new List<ItemInfo>();
+            if (added != null)
+            {
+                foreach (var item in added)
+                {
+                    if (
+                        basis == null
+                        || !basis.Any(basisItem => ItemInfo.AreEqual(basisItem, item))
+                    )
+                    {
+                        excessive.Add(item);
+                    }
+                }
+            }
+            return excessive;
+        }
+
+        internal static Dictionary<GameDifficulty, List<QuestId>> CompletedQuestsDiff(
+            Dictionary<GameDifficulty, List<QuestId>> curr,
+            Dictionary<GameDifficulty, List<QuestId>> prev
+        )
+        {
+            if (prev == null && curr == null)
                 return null;
 
-            if (prevVal == null || newVal == null)
-                return newVal;
+            if (prev == null || curr == null)
+                return curr;
 
             var diff = new Dictionary<GameDifficulty, List<QuestId>>();
             var hasDiff = false;
 
-            foreach (var pair in Zutatensuppe.D2Reader.Models.Quests.DefaultCompleteQuestIds)
+            foreach (var pair in Quests.DefaultCompleteQuestIds)
             {
-                var completed = newVal[pair.Key].FindAll(id => !prevVal[pair.Key].Contains(id));
+                var completed = curr[pair.Key].FindAll(id => !prev[pair.Key].Contains(id));
 
                 if (completed.Count() > 0)
                 {

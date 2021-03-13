@@ -39,29 +39,29 @@ namespace DiabloInterface.Plugin.HttpClient
         public List<ItemInfo> RemovedItems { get; set; }
         public List<uint> SkillIds { get; set; }
 
-        internal static HirelingDiff GetDiff(HirelingDiff newVal, HirelingDiff prevVal)
+        internal static HirelingDiff GetDiff(HirelingDiff curr, HirelingDiff prev)
         {
-            if (prevVal == null && newVal == null)
+            if (prev == null && curr == null)
                 return null;
 
-            if (prevVal == null || newVal == null)
-                return newVal;
+            if (prev == null || curr == null)
+                return curr;
 
             var diff = new HirelingDiff();
             var hasDiff = false;
 
-            var itemsDiff = DiffUtil.ItemsDiff(newVal.Items, prevVal.Items);
+            var itemsDiff = DiffUtil.ItemsDiff(curr.Items, prev.Items);
             diff.AddedItems = itemsDiff.Item1;
             diff.RemovedItems = itemsDiff.Item2;
 
-            if (!DiffUtil.ListsEqual(prevVal.SkillIds, newVal.SkillIds))
-                diff.SkillIds = newVal.SkillIds;
+            if (!DiffUtil.ListsEqual(prev.SkillIds, curr.SkillIds))
+                diff.SkillIds = curr.SkillIds;
 
             foreach (string propertyName in AutocompareProps)
             {
                 var property = typeof(HirelingDiff).GetProperty(propertyName);
-                var prevValue = property.GetValue(prevVal);
-                var newValue = property.GetValue(newVal);
+                var prevValue = property.GetValue(prev);
+                var newValue = property.GetValue(curr);
                 if (!DiffUtil.ObjectsEqual(prevValue, newValue))
                 {
                     hasDiff = true;
