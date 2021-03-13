@@ -127,7 +127,7 @@ namespace DiabloInterface.Plugin.HttpClient.Test
         {
             List<ItemInfo> prev = null;
             List<ItemInfo> curr = null;
-            Tuple<List<ItemInfo>, List<int>> res = null;
+            Tuple<List<ItemInfo>, List<ItemInfo>> res = null;
 
             // nothing old, nothing new (null version)
             res = DiffUtil.ItemsDiff(curr, prev);
@@ -182,7 +182,7 @@ namespace DiabloInterface.Plugin.HttpClient.Test
             Assert.AreEqual(1, res.Item1.Count);
             Assert.AreEqual(1, res.Item2.Count);
             Assert.AreEqual(true, ItemInfo.AreEqual(curr[0], res.Item1[0]));
-            Assert.AreEqual(1, res.Item2[0]);
+            Assert.AreEqual(true, ItemInfo.AreEqual(prev[0], res.Item2[0]));
 
             // one old, nothing new
             // -> one removed, nothing added
@@ -196,7 +196,7 @@ namespace DiabloInterface.Plugin.HttpClient.Test
             res = DiffUtil.ItemsDiff(curr, prev);
             Assert.AreEqual(null, res.Item1);
             Assert.AreEqual(1, res.Item2.Count);
-            Assert.AreEqual(1, res.Item2[0]);
+            Assert.AreEqual(true, ItemInfo.AreEqual(prev[0], res.Item2[0]));
         }
 
         [TestMethod]

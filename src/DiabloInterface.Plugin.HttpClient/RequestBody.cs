@@ -88,7 +88,7 @@ namespace DiabloInterface.Plugin.HttpClient
         public int? MagicFind { get; set; }
         public List<ItemInfo> Items { get; set; }
         public List<ItemInfo> AddedItems { get; set; }
-        public List<int> RemovedItems { get; set; }
+        public List<ItemInfo> RemovedItems { get; set; }
         public Dictionary<GameDifficulty, List<QuestId>> Quests { get; set; }
         public Dictionary<GameDifficulty, List<QuestId>> CompletedQuests { get; set; }
 
