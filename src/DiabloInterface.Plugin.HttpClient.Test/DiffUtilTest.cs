@@ -10,30 +10,35 @@ namespace DiabloInterface.Plugin.HttpClient.Test
         [TestMethod]
         public void TestListsEqualSimple()
         {
-            // equal (null)
-            List<int> listA = null;
-            List<int> listB = null;
-            Assert.AreEqual(true, DiffUtil.ListsEqual(listA, listB));
+            Assert.AreEqual(true, DiffUtil.ListsEqual(
+                (List<int>)null,
+                null
+            ), "equal (both null)");
 
-            // equal (values)
-            listA = new List<int> { 1, 2, 3 };
-            listB = new List<int> { 1, 2, 3 };
-            Assert.AreEqual(true, DiffUtil.ListsEqual(listA, listB));
+            Assert.AreEqual(true, DiffUtil.ListsEqual(
+                new List<int> { 1, 2, 3 },
+                new List<int> { 1, 2, 3 }
+            ), "equal (values)");
 
-            // not equal (null)
-            listA = new List<int> { 1, 2, 3 };
-            listB = null;
-            Assert.AreEqual(false, DiffUtil.ListsEqual(listA, listB));
+            Assert.AreEqual(false, DiffUtil.ListsEqual(
+                new List<int> { 1, 2, 3 },
+                null
+            ), "not equal (second null)");
 
-            // not equal (values)
-            listA = new List<int> { 1, 2, 3 };
-            listB = new List<int> { 1, 2, 4 };
-            Assert.AreEqual(false, DiffUtil.ListsEqual(listA, listB));
+            Assert.AreEqual(false, DiffUtil.ListsEqual(
+                null,
+                new List<int> { 1, 2, 3 }
+            ), "not equal (first null)");
 
-            // not equal (order)
-            listA = new List<int> { 1, 2, 3 };
-            listB = new List<int> { 1, 3, 2 };
-            Assert.AreEqual(false, DiffUtil.ListsEqual(listA, listB));
+            Assert.AreEqual(false, DiffUtil.ListsEqual(
+                new List<int> { 1, 2, 3 },
+                new List<int> { 1, 2, 4 }
+            ), "not equal (values)");
+
+            Assert.AreEqual(false, DiffUtil.ListsEqual(
+                new List<int> { 1, 2, 3 },
+                new List<int> { 1, 3, 2 }
+            ), "not equal (order)");
         }
 
         [TestMethod]
@@ -45,41 +50,75 @@ namespace DiabloInterface.Plugin.HttpClient.Test
             var z2 = new MockType{ Some = 108, Thing = "Hello_Z" };
             var a = new MockType{ Some = 108, Thing = "Hello_A" };
 
-            // equal (null)
-            List<object> listA = null;
-            List<object> listB = null;
-            Assert.AreEqual(true, DiffUtil.ListsEqual(listA, listB));
+            Assert.AreEqual(true, DiffUtil.ListsEqual(
+                (List<object>)null,
+                null
+            ), "equal (null)");
 
-            // equal (values)
-            listA = new List<object> { x, y, z };
-            listB = new List<object> { x, y, z };
-            Assert.AreEqual(true, DiffUtil.ListsEqual(listA, listB));
+            Assert.AreEqual(true, DiffUtil.ListsEqual(
+                new List<object> { x, y, z },
+                new List<object> { x, y, z }
+            ), "equal (values)");
 
-            // not equal (null)
-            listA = new List<object> { x, y, z };
-            listB = null;
-            Assert.AreEqual(false, DiffUtil.ListsEqual(listA, listB));
+            Assert.AreEqual(false, DiffUtil.ListsEqual(
+                null,
+                new List<object> { x, y, z }
+            ), "not equal (first null)");
 
-            // not equal (values)
-            listA = new List<object> { x, y, z };
-            listB = new List<object> { x, y, a };
-            Assert.AreEqual(false, DiffUtil.ListsEqual(listA, listB));
+            Assert.AreEqual(false, DiffUtil.ListsEqual(
+                new List<object> { x, y, z },
+                null
+            ), "not equal (second null)");
 
-            // not equal (order)
-            listA = new List<object> { x, y, z };
-            listB = new List<object> { x, z, y };
-            Assert.AreEqual(false, DiffUtil.ListsEqual(listA, listB));
+            Assert.AreEqual(false, DiffUtil.ListsEqual(
+                new List<object> { x, y, z },
+                new List<object> { x, y, a }
+            ), "not equal (values)");
 
-            // not equal (same value, but not same value reference)
-            listA = new List<object> { x, y, z };
-            listB = new List<object> { x, y, z2 };
-            Assert.AreEqual(false, DiffUtil.ListsEqual(listA, listB));
+            Assert.AreEqual(false, DiffUtil.ListsEqual(
+                new List<object> { x, y, z },
+                new List<object> { x, z, y }
+            ), "not equal (order)");
+
+            Assert.AreEqual(false, DiffUtil.ListsEqual(
+                new List<object> { x, y, z },
+                new List<object> { x, y, z2 }
+            ), "not equal (same value, but not same reference)");
         }
 
         [TestMethod]
         public void TestObjectsEqual()
         {
-            // TODO: implement
+            Assert.AreEqual(false, DiffUtil.ObjectsEqual(
+                null,
+                new MockType { Some = 108, Thing = "Hello_Z" }
+            ), "first is null");
+
+            Assert.AreEqual(false, DiffUtil.ObjectsEqual(
+                new MockType { Some = 108, Thing = "Hello_Z" },
+                null
+            ), "second is null");
+
+            Assert.AreEqual(true, DiffUtil.ObjectsEqual(
+                null,
+                null
+            ), "both null");
+
+            Assert.AreEqual(false, DiffUtil.ObjectsEqual(
+                new MockType { Some = 108, Thing = "Hello_Z" },
+                new MockType { Some = 108, Thing = "Hello_Z" }
+            ), "same value, but not same ref");
+
+            var obj = new MockType { Some = 108, Thing = "Hello_Z" };
+            Assert.AreEqual(false, DiffUtil.ObjectsEqual(
+                obj,
+                obj
+            ), "same value and same ref");
+
+            Assert.AreEqual(false, DiffUtil.ObjectsEqual(
+                new { Some = 108, Thing = "Hello_Z" },
+                new { Some = 108, Thing = "Hello_Z" }
+            ), "same value and (anonymous obj that doesnt use ref)");
         }
 
         [TestMethod]
