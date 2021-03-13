@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using Zutatensuppe.D2Reader.Models;
 
 namespace DiabloInterface.Plugin.HttpClient.Test
 {
@@ -124,7 +125,78 @@ namespace DiabloInterface.Plugin.HttpClient.Test
         [TestMethod]
         public void TestItemsDiff()
         {
-            // TODO: implement
+            List<ItemInfo> prev = null;
+            List<ItemInfo> curr = null;
+            Tuple<List<ItemInfo>, List<int>> res = null;
+
+            // nothing old, nothing new (null version)
+            res = DiffUtil.ItemsDiff(curr, prev);
+            Assert.AreEqual(null, res.Item1);
+            Assert.AreEqual(null, res.Item2);
+
+            // nothing old, nothing new (empty list version)
+            prev = new List<ItemInfo>();
+            curr = new List<ItemInfo>();
+            res = DiffUtil.ItemsDiff(curr, prev);
+            Assert.AreEqual(null, res.Item1);
+            Assert.AreEqual(null, res.Item2);
+
+            // nothing old, one new
+            // -> nothing removed, one added
+            curr = new List<ItemInfo>
+            {
+                new ItemInfo{GUID = 1, Class = 1},
+            };
+            res = DiffUtil.ItemsDiff(curr, prev);
+            Assert.AreEqual(1, res.Item1.Count);
+            Assert.AreEqual(null, res.Item2);
+            Assert.AreEqual(true, ItemInfo.AreEqual(curr[0], res.Item1[0]));
+
+            // one old, one new
+            // -> nothing removed, one added
+            prev = new List<ItemInfo>
+            {
+                new ItemInfo{GUID = 1, Class = 1},
+            };
+            curr = new List<ItemInfo>
+            {
+                new ItemInfo{GUID = 1, Class = 1},
+                new ItemInfo{GUID = 2, Class = 2},
+            };
+            res = DiffUtil.ItemsDiff(curr, prev);
+            Assert.AreEqual(1, res.Item1.Count);
+            Assert.AreEqual(null, res.Item2);
+            Assert.AreEqual(true, ItemInfo.AreEqual(curr[1], res.Item1[0]));
+
+            // one old, one new
+            // -> one removed, one added
+            prev = new List<ItemInfo>
+            {
+                new ItemInfo{GUID = 1, Class = 1},
+            };
+            curr = new List<ItemInfo>
+            {
+                new ItemInfo{GUID = 2, Class = 2},
+            };
+            res = DiffUtil.ItemsDiff(curr, prev);
+            Assert.AreEqual(1, res.Item1.Count);
+            Assert.AreEqual(1, res.Item2.Count);
+            Assert.AreEqual(true, ItemInfo.AreEqual(curr[0], res.Item1[0]));
+            Assert.AreEqual(1, res.Item2[0]);
+
+            // one old, nothing new
+            // -> one removed, nothing added
+            prev = new List<ItemInfo>
+            {
+                new ItemInfo{GUID = 1, Class = 1},
+            };
+            curr = new List<ItemInfo>
+            {
+            };
+            res = DiffUtil.ItemsDiff(curr, prev);
+            Assert.AreEqual(null, res.Item1);
+            Assert.AreEqual(1, res.Item2.Count);
+            Assert.AreEqual(1, res.Item2[0]);
         }
 
         [TestMethod]

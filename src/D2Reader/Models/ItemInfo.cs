@@ -93,7 +93,18 @@ namespace Zutatensuppe.D2Reader.Models
                 && itemA.ItemBaseName == itemB.ItemBaseName
                 && itemA.QualityColor == itemB.QualityColor
                 && itemA.Location == itemB.Location
-                && itemA.Properties.SequenceEqual(itemB.Properties);
+                && PropertiesEqual(itemA, itemB);
+        }
+
+        private static bool PropertiesEqual(ItemInfo itemA, ItemInfo itemB)
+        {
+            if (itemA.Properties == null && itemB.Properties == null)
+                return true;
+
+            if (itemA.Properties == null || itemB.Properties == null)
+                return false;
+
+            return itemA.Properties.SequenceEqual(itemB.Properties);
         }
 
         private string BaseItemName(Item item, UnitReader unitReader)
