@@ -11,7 +11,7 @@ namespace DiabloInterface.Plugin.HttpClient
 {
     internal class HirelingDiff
     {
-        public static readonly List<string> AutocompareProps = new List<string> {
+        private static readonly List<string> AutocompareProps = new List<string> {
             "Name",
             "Class",
             "Level",
@@ -50,9 +50,9 @@ namespace DiabloInterface.Plugin.HttpClient
             var diff = new HirelingDiff();
             var hasDiff = false;
 
-            var hirelingItemDiff = DiffUtil.ItemsDiff(newVal.Items, prevVal.Items);
-            diff.AddedItems = hirelingItemDiff.Item1;
-            diff.RemovedItems = hirelingItemDiff.Item2;
+            var itemsDiff = DiffUtil.ItemsDiff(newVal.Items, prevVal.Items);
+            diff.AddedItems = itemsDiff.Item1;
+            diff.RemovedItems = itemsDiff.Item2;
 
             if (!DiffUtil.ListsEqual(prevVal.SkillIds, newVal.SkillIds))
                 diff.SkillIds = newVal.SkillIds;
