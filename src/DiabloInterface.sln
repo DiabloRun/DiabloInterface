@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2003
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31025.194
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface", "DiabloInterface\DiabloInterface.csproj", "{25BB3310-9BD7-4234-AF7D-9F7FB6870A20}"
 EndProject
@@ -35,6 +35,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Plugin.Updater", "DiabloInterface.Plugin.Updater\DiabloInterface.Plugin.Updater.csproj", "{A6EEB95A-7B80-48BB-997A-4FCE9B61A563}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Lib", "DiabloInterface.Lib\DiabloInterface.Lib.csproj", "{8992BB97-1DD9-4ED6-8E7A-448682EE28D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Plugin.HttpClient.Test", "DiabloInterface.Plugin.HttpClient.Test\DiabloInterface.Plugin.HttpClient.Test.csproj", "{43007479-0D82-49A6-92A4-3A8386E106CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -214,6 +216,18 @@ Global
 		{8992BB97-1DD9-4ED6-8E7A-448682EE28D5}.Release|x64.Build.0 = Release|x64
 		{8992BB97-1DD9-4ED6-8E7A-448682EE28D5}.Release|x86.ActiveCfg = Release|x86
 		{8992BB97-1DD9-4ED6-8E7A-448682EE28D5}.Release|x86.Build.0 = Release|x86
+		{43007479-0D82-49A6-92A4-3A8386E106CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43007479-0D82-49A6-92A4-3A8386E106CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43007479-0D82-49A6-92A4-3A8386E106CC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{43007479-0D82-49A6-92A4-3A8386E106CC}.Debug|x64.Build.0 = Debug|Any CPU
+		{43007479-0D82-49A6-92A4-3A8386E106CC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{43007479-0D82-49A6-92A4-3A8386E106CC}.Debug|x86.Build.0 = Debug|Any CPU
+		{43007479-0D82-49A6-92A4-3A8386E106CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43007479-0D82-49A6-92A4-3A8386E106CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43007479-0D82-49A6-92A4-3A8386E106CC}.Release|x64.ActiveCfg = Release|Any CPU
+		{43007479-0D82-49A6-92A4-3A8386E106CC}.Release|x64.Build.0 = Release|Any CPU
+		{43007479-0D82-49A6-92A4-3A8386E106CC}.Release|x86.ActiveCfg = Release|Any CPU
+		{43007479-0D82-49A6-92A4-3A8386E106CC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
