@@ -110,12 +110,12 @@ namespace DiabloInterface.Plugin.HttpClient.Test
             ), "same value, but not same ref");
 
             var obj = new MockType { Some = 108, Thing = "Hello_Z" };
-            Assert.AreEqual(false, DiffUtil.ObjectsEqual(
+            Assert.AreEqual(true, DiffUtil.ObjectsEqual(
                 obj,
                 obj
             ), "same value and same ref");
 
-            Assert.AreEqual(false, DiffUtil.ObjectsEqual(
+            Assert.AreEqual(true, DiffUtil.ObjectsEqual(
                 new { Some = 108, Thing = "Hello_Z" },
                 new { Some = 108, Thing = "Hello_Z" }
             ), "same value and (anonymous obj that doesnt use ref)");
