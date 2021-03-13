@@ -165,35 +165,35 @@ namespace DiabloInterface.Plugin.HttpClient
         }
 
         public static RequestBody GetDiff(
-            RequestBody newVal,
-            RequestBody prevVal
+            RequestBody curr,
+            RequestBody prev
         ) {
             var diff = new RequestBody()
             {
-                Name = newVal.Name,
-                Guid = newVal.Guid,
+                Name = curr.Name,
+                Guid = curr.Guid,
             };
 
             // TODO: while this check is correct, D2DataReader should probably
             //       provide the information about 'new char or not' directly
             //       in a property of the DataReadEventArgs
-            if (newVal.CharCount > 0 && !newVal.CharCount.Equals(prevVal.CharCount))
+            if (curr.CharCount > 0 && !curr.CharCount.Equals(prev.CharCount))
             {
                 diff.NewCharacter = true;
-                prevVal = new RequestBody();
+                prev = new RequestBody();
             }
 
-            if (!newVal.GameCount.Equals(prevVal.GameCount))
+            if (!curr.GameCount.Equals(prev.GameCount))
             {
-                prevVal = new RequestBody();
+                prev = new RequestBody();
             }
 
             var hasDiff = false;
             foreach (string propertyName in AutocompareProps)
             {
                 var property = typeof(RequestBody).GetProperty(propertyName);
-                var prevValue = property.GetValue(prevVal);
-                var newValue = property.GetValue(newVal);
+                var prevValue = property.GetValue(prev);
+                var newValue = property.GetValue(curr);
                 if (!DiffUtil.ObjectsEqual(prevValue, newValue))
                 {
                     hasDiff = true;
@@ -201,23 +201,23 @@ namespace DiabloInterface.Plugin.HttpClient
                 }
             }
 
-            var itemsDiff = DiffUtil.ItemsDiff(newVal.Items, prevVal.Items);
+            var itemsDiff = DiffUtil.ItemsDiff(curr.Items, prev.Items);
             diff.AddedItems = itemsDiff.Item1;
             diff.RemovedItems = itemsDiff.Item2;
 
             diff.CompletedQuests = DiffUtil.CompletedQuestsDiff(
-                newVal.Quests,
-                prevVal.Quests
+                curr.Quests,
+                prev.Quests
             );
 
             diff.Hireling = HirelingDiff.GetDiff(
-                newVal.Hireling,
-                prevVal.Hireling
+                curr.Hireling,
+                prev.Hireling
             );
 
-            if (newVal.KilledMonsters != null && newVal.KilledMonsters.Count > 0)
+            if (curr.KilledMonsters != null && curr.KilledMonsters.Count > 0)
             {
-                diff.KilledMonsters = newVal.KilledMonsters;
+                diff.KilledMonsters = curr.KilledMonsters;
             }
 
             hasDiff = hasDiff
@@ -230,10 +230,10 @@ namespace DiabloInterface.Plugin.HttpClient
             if (hasDiff)
             {
                 // always send application info, if something is sent
-                diff.DIApplicationInfo = newVal.DIApplicationInfo;
+                diff.DIApplicationInfo = curr.DIApplicationInfo;
 
                 // always send d2 info, if something is sent
-                diff.D2ProcessInfo = newVal.D2ProcessInfo;
+                diff.D2ProcessInfo = curr.D2ProcessInfo;
 
                 return diff;
             }
