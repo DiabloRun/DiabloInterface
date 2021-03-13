@@ -67,6 +67,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\D2Reader\D2Reader.csproj">
+      <Project>{C5F081D7-FB83-4934-908F-53CE986AB08C}</Project>
+      <Name>D2Reader</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DiabloInterface.Plugin.HttpClient\DiabloInterface.Plugin.HttpClient.csproj">
       <Project>{17513a94-7271-422d-a34f-588b1d774987}</Project>
       <Name>DiabloInterface.Plugin.HttpClient</Name>
