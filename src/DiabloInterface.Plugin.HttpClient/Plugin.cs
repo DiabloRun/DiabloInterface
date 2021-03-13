@@ -86,10 +86,11 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             if (SendingData) return;
 
             var newData = RequestBody.FromDataReadEventArgs(e, di);
-            var diff = RequestBody.GetDiff(newData, PrevData, Config);
+            var diff = RequestBody.GetDiff(newData, PrevData);
 
             if (diff != null)
             {
+                diff.Headers = Config.Headers;
                 var json = JsonConvert.SerializeObject(
                     diff,
                     Formatting.Indented,

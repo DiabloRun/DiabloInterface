@@ -6,13 +6,12 @@ using System.Linq;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.DiabloInterface.Lib;
-using Zutatensuppe.DiabloInterface.Plugin.HttpClient;
 
 namespace DiabloInterface.Plugin.HttpClient
 {
     class RequestBody
     {
-        public static readonly List<string> AutocompareProps = new List<string> {
+        private static readonly List<string> AutocompareProps = new List<string> {
             "Area",
             "InventoryTab",
             "Difficulty",
@@ -167,12 +166,10 @@ namespace DiabloInterface.Plugin.HttpClient
 
         public static RequestBody GetDiff(
             RequestBody newVal,
-            RequestBody prevVal,
-            Config config
+            RequestBody prevVal
         ) {
             var diff = new RequestBody()
             {
-                Headers = config.Headers,
                 Name = newVal.Name,
                 Guid = newVal.Guid,
             };
@@ -204,9 +201,9 @@ namespace DiabloInterface.Plugin.HttpClient
                 }
             }
 
-            var itemDiff = DiffUtil.ItemsDiff(newVal.Items, prevVal.Items);
-            diff.AddedItems = itemDiff.Item1;
-            diff.RemovedItems = itemDiff.Item2;
+            var itemsDiff = DiffUtil.ItemsDiff(newVal.Items, prevVal.Items);
+            diff.AddedItems = itemsDiff.Item1;
+            diff.RemovedItems = itemsDiff.Item2;
 
             diff.CompletedQuests = DiffUtil.CompletedQuestsDiff(
                 newVal.Quests,
