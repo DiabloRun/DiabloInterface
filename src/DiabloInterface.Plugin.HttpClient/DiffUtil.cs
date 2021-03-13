@@ -30,13 +30,13 @@ namespace DiabloInterface.Plugin.HttpClient
         }
 
         // returns a list for added items and a list with the GUID of removed items
-        internal static Tuple<List<ItemInfo>, List<int>> ItemsDiff(
+        internal static Tuple<List<ItemInfo>, List<ItemInfo>> ItemsDiff(
             List<ItemInfo> newItems,
             List<ItemInfo> prevItems
         )
         {
-            List<ItemInfo> addedItems = new List<ItemInfo>();
-            List<int> removedItems = new List<int>();
+            var addedItems = new List<ItemInfo>();
+            var removedItems = new List<ItemInfo>();
 
             if (newItems != null)
             {
@@ -59,12 +59,12 @@ namespace DiabloInterface.Plugin.HttpClient
                         newItems == null
                         || !newItems.Any(newItem => ItemInfo.AreEqual(prevItem, newItem))
                     ) {
-                        removedItems.Add(prevItem.GUID);
+                        removedItems.Add(prevItem);
                     }
                 }
             }
 
-            return new Tuple<List<ItemInfo>, List<int>>(
+            return new Tuple<List<ItemInfo>, List<ItemInfo>>(
                 addedItems.Count > 0 ? addedItems : null,
                 removedItems.Count > 0 ? removedItems : null
             );

@@ -36,7 +36,7 @@ namespace DiabloInterface.Plugin.HttpClient
         public int? PoisonResist { get; set; }
         public List<ItemInfo> Items { get; set; }
         public List<ItemInfo> AddedItems { get; set; }
-        public List<int> RemovedItems { get; set; }
+        public List<ItemInfo> RemovedItems { get; set; }
         public List<uint> SkillIds { get; set; }
 
         internal static HirelingDiff GetDiff(HirelingDiff newVal, HirelingDiff prevVal)
