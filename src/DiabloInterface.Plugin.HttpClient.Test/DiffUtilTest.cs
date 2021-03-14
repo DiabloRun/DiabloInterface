@@ -148,9 +148,8 @@ namespace DiabloInterface.Plugin.HttpClient.Test
                 new ItemInfo{GUID = 1, Class = 1},
             };
             res = DiffUtil.ItemsDiff(curr, prev);
-            Assert.AreEqual(1, res.Item1.Count);
             Assert.IsNull(res.Item2);
-            Assert.IsTrue(ItemInfo.AreEqual(curr[0], res.Item1[0]));
+            CollectionAssert.AreEquivalent(curr, res.Item1);
 
             // one old, one new
             // -> nothing removed, one added
@@ -164,8 +163,8 @@ namespace DiabloInterface.Plugin.HttpClient.Test
                 new ItemInfo{GUID = 2, Class = 2},
             };
             res = DiffUtil.ItemsDiff(curr, prev);
-            Assert.AreEqual(1, res.Item1.Count);
             Assert.IsNull(res.Item2);
+            Assert.AreEqual(1, res.Item1.Count);
             Assert.IsTrue(ItemInfo.AreEqual(curr[1], res.Item1[0]));
 
             // one old, one new
@@ -179,10 +178,8 @@ namespace DiabloInterface.Plugin.HttpClient.Test
                 new ItemInfo{GUID = 2, Class = 2},
             };
             res = DiffUtil.ItemsDiff(curr, prev);
-            Assert.AreEqual(1, res.Item1.Count);
-            Assert.AreEqual(1, res.Item2.Count);
-            Assert.IsTrue(ItemInfo.AreEqual(curr[0], res.Item1[0]));
-            Assert.IsTrue(ItemInfo.AreEqual(prev[0], res.Item2[0]));
+            CollectionAssert.AreEquivalent(curr, res.Item1);
+            CollectionAssert.AreEquivalent(prev, res.Item2);
 
             // one old, nothing new
             // -> one removed, nothing added
@@ -195,14 +192,113 @@ namespace DiabloInterface.Plugin.HttpClient.Test
             };
             res = DiffUtil.ItemsDiff(curr, prev);
             Assert.IsNull(res.Item1);
-            Assert.AreEqual(1, res.Item2.Count);
-            Assert.IsTrue(ItemInfo.AreEqual(prev[0], res.Item2[0]));
+            CollectionAssert.AreEquivalent(prev, res.Item2);
         }
 
         [TestMethod]
         public void TestCompletedQuestsDiff()
         {
-            // TODO: implement
+            Dictionary<GameDifficulty, List<QuestId>> prev = null;
+            Dictionary<GameDifficulty, List<QuestId>> curr = null;
+            Dictionary<GameDifficulty, List<QuestId>> expected = null;
+            Dictionary<GameDifficulty, List<QuestId>> actual = null;
+
+
+            // Both null
+            Assert.IsNull(DiffUtil.CompletedQuestsDiff(curr, prev));
+
+
+            // One null (first)
+            curr = new Dictionary<GameDifficulty, List<QuestId>>
+            {
+                { GameDifficulty.Hell, new List<QuestId> { QuestId.Andariel } },
+            };
+            prev = null;
+            Assert.AreEqual(curr, DiffUtil.CompletedQuestsDiff(curr, prev));
+
+
+            // One null (second)
+            prev = new Dictionary<GameDifficulty, List<QuestId>>
+            {
+                { GameDifficulty.Hell, new List<QuestId> { QuestId.Andariel } },
+            };
+            curr = null;
+            Assert.IsNull(DiffUtil.CompletedQuestsDiff(curr, prev));
+
+
+            // Same
+            prev = new Dictionary<GameDifficulty, List<QuestId>>
+            {
+                { GameDifficulty.Hell, new List<QuestId> { QuestId.Andariel } },
+            };
+            curr = new Dictionary<GameDifficulty, List<QuestId>>
+            {
+                { GameDifficulty.Hell, new List<QuestId> { QuestId.Andariel } },
+            };
+            Assert.IsNull(DiffUtil.CompletedQuestsDiff(curr, prev));
+            Assert.IsNull(DiffUtil.CompletedQuestsDiff(prev, curr));
+
+
+            // difficulties without differences dont get added
+            prev = new Dictionary<GameDifficulty, List<QuestId>>
+            {
+                { GameDifficulty.Hell, new List<QuestId> { QuestId.Andariel } },
+            };
+            curr = new Dictionary<GameDifficulty, List<QuestId>>
+            {
+                { GameDifficulty.Normal, new List<QuestId> { QuestId.Andariel } },
+                { GameDifficulty.Hell, new List<QuestId> { QuestId.Andariel } },
+            };
+            expected = new Dictionary<GameDifficulty, List<QuestId>>
+            {
+                { GameDifficulty.Normal, new List<QuestId> { QuestId.Andariel } },
+            };
+            actual = DiffUtil.CompletedQuestsDiff(curr, prev);
+            CollectionAssert.AreEquivalent(
+                expected[GameDifficulty.Normal],
+                actual[GameDifficulty.Normal]
+            );
+            Assert.IsFalse(expected.ContainsKey(GameDifficulty.Nightmare));
+            Assert.IsFalse(expected.ContainsKey(GameDifficulty.Hell));
+
+
+            // other way around
+            actual = DiffUtil.CompletedQuestsDiff(prev, curr);
+            Assert.IsNull(actual);
+
+
+            // new quests solved for each difficulty
+            prev = new Dictionary<GameDifficulty, List<QuestId>>
+            {
+                { GameDifficulty.Normal, new List<QuestId> { QuestId.Andariel } },
+                { GameDifficulty.Nightmare, new List<QuestId> { QuestId.Andariel } },
+                { GameDifficulty.Hell, new List<QuestId> { QuestId.Andariel } },
+            };
+            curr = new Dictionary<GameDifficulty, List<QuestId>>
+            {
+                { GameDifficulty.Normal, new List<QuestId> { QuestId.Andariel, QuestId.Duriel } },
+                { GameDifficulty.Nightmare, new List<QuestId> { QuestId.Andariel, QuestId.Mephisto } },
+                { GameDifficulty.Hell, new List<QuestId> { QuestId.Andariel, QuestId.Diablo } },
+            };
+            expected = new Dictionary<GameDifficulty, List<QuestId>>
+            {
+                { GameDifficulty.Normal, new List<QuestId> { QuestId.Duriel } },
+                { GameDifficulty.Nightmare, new List<QuestId> { QuestId.Mephisto } },
+                { GameDifficulty.Hell, new List<QuestId> { QuestId.Diablo } },
+            };
+            actual = DiffUtil.CompletedQuestsDiff(curr, prev);
+            CollectionAssert.AreEquivalent(
+                expected[GameDifficulty.Normal],
+                actual[GameDifficulty.Normal]
+            );
+            CollectionAssert.AreEquivalent(
+                expected[GameDifficulty.Nightmare],
+                actual[GameDifficulty.Nightmare]
+            );
+            CollectionAssert.AreEquivalent(
+                expected[GameDifficulty.Hell],
+                actual[GameDifficulty.Hell]
+            );
         }
     }
 
