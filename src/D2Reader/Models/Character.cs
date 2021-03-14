@@ -190,6 +190,8 @@ namespace Zutatensuppe.D2Reader.Models
         virtual public List<int> InventoryItemIds { get; internal set; }
         public List<ItemInfo> Items { get; internal set; }
 
+        public List<SkillInfo> Skills{ get; internal set; }
+
         public int RealFRW()
         {
             return FasterRunWalk + ((VelocityPercent - (Mode == PlayerMode.RUN ? 50 : 0))-100);
@@ -278,7 +280,7 @@ namespace Zutatensuppe.D2Reader.Models
             D2Unit unit,
             UnitReader unitReader,
             IInventoryReader inventoryReader,
-            ISkillReader skillReader
+            List<SkillInfo> skills
         ) {
             if (!MatchesStartingProps(unit, unitReader))
             {
@@ -290,7 +292,7 @@ namespace Zutatensuppe.D2Reader.Models
                 Logger.Info("Starting Items don't match");
                 return false;
             }
-            if (!MatchesStartingSkills(unit, skillReader))
+            if (!MatchesStartingSkills(unit, skills))
             {
                 Logger.Info("Starting Skills don't match");
                 return false;
@@ -327,25 +329,23 @@ namespace Zutatensuppe.D2Reader.Models
             return list.SequenceEqual(StartingItems[(CharacterClass)p.eClass]);
         }
 
-        private static bool MatchesStartingSkills(D2Unit p, ISkillReader skillReader)
+        private static bool MatchesStartingSkills(D2Unit p, List<SkillInfo> skills)
         {
             int skillCount = 0;
-            foreach (D2Skill skill in skillReader.EnumerateSkills(p))
+            foreach (var skill in skills)
             {
-                var skillData = skillReader.ReadSkillData(skill);
-                Skill skillId = (Skill)skillData.SkillId;
+                Skill skillId = (Skill)skill.Id;
                 if (!StartingSkills[(CharacterClass)p.eClass].ContainsKey(skillId))
                 {
                     return false;
                 }
 
-                if (StartingSkills[(CharacterClass)p.eClass][skillId] != skillReader.GetTotalNumberOfSkillPoints(skill))
+                if (StartingSkills[(CharacterClass)p.eClass][skillId] != skill.Points)
                 {
                     return false;
                 }
                 skillCount++;
             }
-
             return skillCount == StartingSkills[(CharacterClass)p.eClass].Count;
         }
     }

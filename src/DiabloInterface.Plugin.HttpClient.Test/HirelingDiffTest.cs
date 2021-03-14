@@ -53,37 +53,60 @@ namespace DiabloInterface.Plugin.HttpClient.Test
             CollectionAssert.AreEqual(expected.AddedItems, actual.AddedItems);
 
             // has some new skills
-            prev = new HirelingDiff { SkillIds = new List<uint> { 1, 2 } };
-            curr = new HirelingDiff { SkillIds = new List<uint> { 1, 2, 3 } };
-            expected = new HirelingDiff
-            {
-                SkillIds = new List<uint> { 1, 2, 3 },
-            };
+            prev = new HirelingDiff { Skills = new List<SkillInfo> {
+                new SkillInfo { Id = 1 },
+                new SkillInfo { Id = 2 }
+            } };
+            curr = new HirelingDiff { Skills = new List<SkillInfo> {
+                new SkillInfo { Id = 1 },
+                new SkillInfo { Id = 2 },
+                new SkillInfo { Id = 3 }
+            } };
+            expected = new HirelingDiff { Skills = new List<SkillInfo> {
+                new SkillInfo { Id = 1 },
+                new SkillInfo { Id = 2 },
+                new SkillInfo { Id = 3 }
+            } };
             actual = HirelingDiff.GetDiff(curr, prev);
-            CollectionAssert.AreEqual(expected.SkillIds, actual.SkillIds);
+            CollectionAssert.AreEqual(expected.Skills, actual.Skills);
 
             // has lost some skills
-            prev = new HirelingDiff { SkillIds = new List<uint> { 1, 2, 3 } };
-            curr = new HirelingDiff { SkillIds = new List<uint> { 1, 2 } };
-            expected = new HirelingDiff
-            {
-                SkillIds = new List<uint> { 1, 2 },
-            };
+            prev = new HirelingDiff { Skills = new List<SkillInfo> {
+                new SkillInfo { Id = 1 },
+                new SkillInfo { Id = 2 },
+                new SkillInfo { Id = 3 }
+            } };
+            curr = new HirelingDiff { Skills = new List<SkillInfo> {
+                new SkillInfo { Id = 1 },
+                new SkillInfo { Id = 2 }
+            } };
+            expected = new HirelingDiff { Skills = new List<SkillInfo> {
+                new SkillInfo { Id = 1 },
+                new SkillInfo { Id = 2 }
+            } };
             actual = HirelingDiff.GetDiff(curr, prev);
-            CollectionAssert.AreEqual(expected.SkillIds, actual.SkillIds);
+            CollectionAssert.AreEqual(expected.Skills, actual.Skills);
 
             // no change
             prev = new HirelingDiff
             {
                 Level = 1,
                 Items = new List<ItemInfo> { new ItemInfo { GUID = 1, Class = 1 } },
-                SkillIds = new List<uint> { 1, 2, 3 },
+                Skills = new List<SkillInfo> {
+                    new SkillInfo { Id = 1 },
+                    new SkillInfo { Id = 2 },
+                    new SkillInfo { Id = 3 }
+                },
             };
             curr = new HirelingDiff
             {
                 Level = 1,
                 Items = new List<ItemInfo> { new ItemInfo { GUID = 1, Class = 1 } },
-                SkillIds = new List<uint> { 1, 2, 3 },
+                Skills = new List<SkillInfo> {
+                    new SkillInfo { Id = 1 },
+                    new SkillInfo { Id = 2 },
+                    new SkillInfo { Id = 3 }
+                },
             };
             actual = HirelingDiff.GetDiff(curr, prev);
             Assert.IsNull(actual);

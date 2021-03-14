@@ -75,47 +75,34 @@ namespace Zutatensuppe.DiabloInterface.D2Reader.Test.Models
                 ))
                 .Returns(startingItems);
 
-            // starting skills for amazon
-            var skillData = new Dictionary<D2Skill, D2SkillData>();
-            skillData.Add(new D2Skill(), new D2SkillData { SkillId = (uint)Skill.UNKNOWN });
-            skillData.Add(new D2Skill(), new D2SkillData { SkillId = (uint)Skill.THROW });
-            skillData.Add(new D2Skill(), new D2SkillData { SkillId = (uint)Skill.KICK });
-            skillData.Add(new D2Skill(), new D2SkillData { SkillId = (uint)Skill.SCROLL_IDENT });
-            skillData.Add(new D2Skill(), new D2SkillData { SkillId = (uint)Skill.TOME_IDENT });
-            skillData.Add(new D2Skill(), new D2SkillData { SkillId = (uint)Skill.SCROLL_TP });
-            skillData.Add(new D2Skill(), new D2SkillData { SkillId = (uint)Skill.TOME_TP });
-            skillData.Add(new D2Skill(), new D2SkillData { SkillId = (uint)Skill.UNSUMMON });
-
             var skillReader = new Mock<ISkillReader>();
-            skillReader
-                .Setup(x => x.EnumerateSkills(
-                    It.Is<D2Unit>(p => p.Equals(unit))
-                ))
-                .Returns(skillData.Keys);
-            skillReader
-                .Setup(x => x.ReadSkillData(
-                    It.Is<D2Skill>(s => skillData.ContainsKey(s))
-                ))
-                .Returns<D2Skill>((skill) => skillData[skill]);
-            skillReader
-                .Setup(x => x.GetTotalNumberOfSkillPoints(
-                    It.Is<D2Skill>(s => skillData.ContainsKey(s))
-                ))
-                .Returns(1); // TODO: isnt 1 for all cases. should test other values
+
+            // starting skills for amazon
+            var skills = new List<SkillInfo>
+            {
+                new SkillInfo { Id = (uint) Skill.UNKNOWN, Points = 1 },
+                new SkillInfo { Id = (uint) Skill.THROW, Points = 1 },
+                new SkillInfo { Id = (uint) Skill.KICK, Points = 1 },
+                new SkillInfo { Id = (uint) Skill.SCROLL_IDENT, Points = 1 },
+                new SkillInfo { Id = (uint) Skill.TOME_IDENT, Points = 1 },
+                new SkillInfo { Id = (uint) Skill.SCROLL_TP, Points = 1 },
+                new SkillInfo { Id = (uint) Skill.TOME_TP, Points = 1 },
+                new SkillInfo { Id = (uint) Skill.UNSUMMON, Points = 1 },
+            };
 
             var unitReader = new UnitReader(processMemoryReader.Object, gameMemoryTable, stringReader, skillReader.Object);
 
-            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skills));
 
             lvlStat.Value = 2;
-            Assert.AreEqual(false, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(false, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skills));
             lvlStat.Value = 1;
-            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skills));
 
             xpStat.Value = 1;
-            Assert.AreEqual(false, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(false, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skills));
             xpStat.Value = 0;
-            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skills));
 
             inventoryReader
                 .Setup(x => x.EnumerateInventoryForward(
@@ -132,33 +119,33 @@ namespace Zutatensuppe.DiabloInterface.D2Reader.Test.Models
                     new Item { Unit = new D2Unit { eClass = 0x24b } },
                 });
 
-            Assert.AreEqual(false, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(false, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skills));
             inventoryReader
                 .Setup(x => x.EnumerateInventoryForward(
                     It.Is<D2Unit>(p => p.Equals(unit))
                 ))
                 .Returns(startingItems);
-            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skills));
 
-            var skillRaiseSkeleton = new D2Skill();
-            skillData.Add(skillRaiseSkeleton, new D2SkillData { SkillId = (uint)Skill.RAISE_SKELETON });
-            Assert.AreEqual(false, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
-            skillData.Remove(skillRaiseSkeleton);
-            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            var skillRaiseSkeleton = new SkillInfo { Id = (uint)Skill.RAISE_SKELETON, Points = 0 };
+            skills.Add(skillRaiseSkeleton);
+            Assert.AreEqual(false, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skills));
+            skills.Remove(skillRaiseSkeleton);
+            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skills));
 
             statsList.FullStats.Length = 0;
             try
             {
-                Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object);
+                Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skills);
                 Assert.Fail();
             } catch (Exception e)
             {
                 Assert.AreEqual("Invalid level", e.Message);
             }
             statsList.FullStats.Length = 5;
-            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skills));
             statsList.FullStats.Length = 1;
-            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skillReader.Object));
+            Assert.AreEqual(true, Character.DetermineIfNewChar(unit, unitReader, inventoryReader.Object, skills));
         }
     }
 }

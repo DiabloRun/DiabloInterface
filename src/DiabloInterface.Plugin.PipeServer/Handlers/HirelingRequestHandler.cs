@@ -51,7 +51,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers
                     Poison = hireling.PoisonResist,
                 },
                 hireling.Items,
-                hireling.SkillIds,
+                hireling.Skills,
             };
         }
     }
