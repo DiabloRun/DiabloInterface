@@ -68,6 +68,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers
                 character.MagicFind,
                 character.MonsterGold,
                 character.AttackerSelfDamage,
+                character.Items,
+                character.Skills,
             };
         }
     }
