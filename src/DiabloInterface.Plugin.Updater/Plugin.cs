@@ -12,7 +12,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 
         private readonly string VersionFile = "last_found_version.txt";
 
-        private VersionChecker versionChecker = new VersionChecker();
+        private readonly VersionChecker versionChecker = new VersionChecker();
 
         internal Config Config { get; private set; } = new Config();
 
@@ -32,7 +32,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
             AutomaticallyCheckVersion();
         }
 
-        private string LastFoundVersion
+        private string LastFoundVersionUrl
         {
             get => File.Exists(VersionFile) ? File.ReadAllText(VersionFile) : null;
             set { if (value != null) { File.WriteAllText(VersionFile, value); } }
@@ -40,8 +40,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 
         internal void ManuallyCheckVersion()
         {
-            var r = versionChecker.CheckForUpdate(di.appInfo.Version, LastFoundVersion, true);
-            LastFoundVersion = r.updateUrl;
+            var r = versionChecker.CheckForUpdate(di.appInfo.Version, LastFoundVersionUrl, true);
+            LastFoundVersionUrl = r.updateUrl;
             Ask(r);
         }
 
@@ -49,8 +49,8 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
         {
             if (!Config.Enabled) return;
 
-            var r = versionChecker.CheckForUpdate(di.appInfo.Version, LastFoundVersion, false);
-            LastFoundVersion = r.updateUrl;
+            var r = versionChecker.CheckForUpdate(di.appInfo.Version, LastFoundVersionUrl, false);
+            LastFoundVersionUrl = r.updateUrl;
             Ask(r);
         }
 
@@ -62,7 +62,16 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question,
                 MessageBoxDefaultButton.Button1) == DialogResult.Yes)
             {
-                System.Diagnostics.Process.Start(r.target);
+                try
+                {
+                    System.Diagnostics.Process.Start(r.target);
+                } catch
+                {
+                    MessageBox.Show(
+                        $"Unable to open browser, please go to {r.target} manually.",
+                        "Error"
+                    );
+                }
             }
         }
     }

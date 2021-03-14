@@ -1,10 +1,12 @@
 using System;
 using System.Net;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 
+[assembly: InternalsVisibleTo("DiabloInterface.Plugin.Updater.Test")]
 namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 {
     internal class VersionCheckerResult
@@ -19,17 +21,20 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
     {
         private readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        const string ReleasesUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases";
-        const string ReleasesLatestUrl = "https://github.com/Zutatensuppe/DiabloInterface/releases/latest";
+        const string ReleasesUrl = "https://github.com/DiabloRun/DiabloInterface/releases";
+        const string ReleasesLatestUrl = ReleasesUrl + "/latest";
 
-        internal VersionCheckerResult CheckForUpdate(string currentVersion, string lastFoundVersion, bool userTriggered)
-        {
+        internal VersionCheckerResult CheckForUpdate(
+            string currentVersion,
+            string lastFoundVersionUrl,
+            bool userTriggered
+        ) {
             string updateUrl = GetUpdateUrl(currentVersion);
 
             var r = new VersionCheckerResult();
             if (updateUrl != null)
             {
-                if (updateUrl != lastFoundVersion || userTriggered)
+                if (updateUrl != lastFoundVersionUrl || userTriggered)
                 {
                     r.updateUrl = updateUrl;
                     r.question = @"A new version of DiabloInterface is available. Go to download page now?";
@@ -45,77 +50,65 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
             return r;
         }
 
-        string GetUpdateUrl(string currentVersion)
+        internal static Version TryParseVersionString(string str, string regexPrefix = "")
         {
-            Match verMatch = Regex.Match(currentVersion, @"^(\d+)\.(\d+)\.(\d+)(?:\.PR\.(\d+))?$");
-            if (!verMatch.Success)
+            if (str == null)
                 return null;
 
-            string location;
+            string regex = @"(.*)";
+            Match m = Regex.Match(str, "^" + regexPrefix + regex + "$");
 
+            if (!m.Success)
+                return null;
+
+            string v = m.Groups[m.Groups.Count - 1].Value;
+            try { return Version.Parse(v); }
+            catch { return null; }
+        }
+
+        string GetUpdateUrl(string currentVersion)
+        {
+            Version curr = TryParseVersionString(currentVersion);
+            if (curr == null)
+                return null;
+
+            string latestVersionUrl = DetermineFinalLocation(ReleasesLatestUrl);
+            if (latestVersionUrl == null)
+                return null;
+
+            Version next = TryParseVersionString(latestVersionUrl, @".*/releases/tag/v");
+            if (next == null || next <= curr)
+                return null;
+
+            return latestVersionUrl;
+        }
+
+        string DetermineFinalLocation(string url)
+        {
             try
             {
                 ServicePointManager.Expect100Continue = true;
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
-                       | SecurityProtocolType.Tls11
-                       | SecurityProtocolType.Tls12
-                       | SecurityProtocolType.Ssl3;
+                ServicePointManager.SecurityProtocol = (
+                    SecurityProtocolType.Tls
+                    | SecurityProtocolType.Tls11
+                    | SecurityProtocolType.Tls12
+                    | SecurityProtocolType.Ssl3
+                );
 
-                HttpWebRequest r = (HttpWebRequest)WebRequest.Create(ReleasesLatestUrl);
+                HttpWebRequest r = (HttpWebRequest)WebRequest.Create(url);
                 r.Method = WebRequestMethods.Http.Head;
                 r.AllowAutoRedirect = false;
 
                 using (var response = r.GetResponse() as HttpWebResponse)
                 {
-                    location = response.GetResponseHeader("Location");
+                    return response.GetResponseHeader("Location");
                 }
             }
             catch (WebException e)
             {
-                Logger.Error("Failed to retrieve latest release from Url", e);
+                Logger.Error("Failed to retrieve final location from Url", e);
                 return null;
             }
-
-            Match tagMatch = Regex.Match(location, @"/releases/tag/v(\d+)\.(\d+)\.(\d+)$");
-            if (!tagMatch.Success)
-                return null;
-
-            // version compare.
-            int major = Convert.ToInt32(verMatch.Groups[1].Value);
-            int majorNew = Convert.ToInt32(tagMatch.Groups[1].Value);
-            if (majorNew > major)
-                return location;
-
-            if (majorNew < major)
-                return null;
-
-            int minor = Convert.ToInt32(verMatch.Groups[2].Value);
-            int minorNew = Convert.ToInt32(tagMatch.Groups[2].Value);
-            if (minorNew > minor)
-                return location;
-
-            if (minorNew < minor)
-                return null;
-
-            int patch = Convert.ToInt32(verMatch.Groups[3].Value);
-            int patchNew = Convert.ToInt32(tagMatch.Groups[3].Value);
-            if (patchNew > patch)
-                return location;
-
-            if (patchNew < patch)
-                return null;
-
-            try
-            {
-                int pre = Convert.ToInt32(verMatch.Groups[4].Value);
-                if (pre > 0)
-                    return location;
-            }
-            catch
-            {
-            }
-
-            return null;
         }
     }
 }
