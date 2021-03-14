@@ -49,21 +49,13 @@ namespace DiabloInterface.Plugin.HttpClient
             List<ItemInfo> added
         )
         {
-            var excessive = new List<ItemInfo>();
-            if (added != null)
-            {
-                foreach (var item in added)
-                {
-                    if (
-                        basis == null
-                        || !basis.Any(basisItem => ItemInfo.AreEqual(basisItem, item))
-                    )
-                    {
-                        excessive.Add(item);
-                    }
-                }
-            }
-            return excessive;
+            if (added == null)
+                return new List<ItemInfo>();
+
+            if (basis == null)
+                return added;
+
+            return added.FindAll(a => !basis.Any(b => ItemInfo.AreEqual(b, a)));
         }
 
         internal static Dictionary<GameDifficulty, List<QuestId>> CompletedQuestsDiff(
@@ -78,19 +70,19 @@ namespace DiabloInterface.Plugin.HttpClient
                 return curr;
 
             var diff = new Dictionary<GameDifficulty, List<QuestId>>();
-            var hasDiff = false;
 
-            foreach (var pair in Quests.DefaultCompleteQuestIds)
+            foreach (var difficulty in Quests.DefaultCompleteQuestIds.Keys)
             {
-                var completed = curr[pair.Key].FindAll(id => !prev[pair.Key].Contains(id));
+                if (!curr.ContainsKey(difficulty))
+                    continue;
 
+                var completed = curr[difficulty].FindAll(id => !prev.ContainsKey(difficulty) || !prev[difficulty].Contains(id));
                 if (completed.Count() > 0)
                 {
-                    hasDiff = true;
-                    diff.Add(pair.Key, completed);
+                    diff.Add(difficulty, completed);
                 }
             }
-            return hasDiff ? diff : null;
+            return diff.Count > 0 ? diff : null;
         }
     }
 }
