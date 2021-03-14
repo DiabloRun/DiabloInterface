@@ -32,12 +32,11 @@ namespace Zutatensuppe.D2Reader.Models
 
         public List<ItemInfo> Items { get; internal set; }
 
-        public List<uint> SkillIds { get; private set; }
+        public List<SkillInfo> Skills { get; internal set; }
 
         internal void Parse(
             D2Unit unit,
             UnitReader unitReader,
-            ISkillReader skillReader,
             IProcessMemoryReader reader,
             GameInfo gameInfo
         ) {
@@ -46,14 +45,6 @@ namespace Zutatensuppe.D2Reader.Models
             Name = reader.ReadNullTerminatedString(monsterData.szMonName, 300, System.Text.Encoding.Unicode);
 
             Class = unit.eClass;
-
-            var skillIds = new List<uint>();
-            foreach (var skill in skillReader.EnumerateSkills(unit))
-            {
-                var d = skillReader.ReadSkillData(skill);
-                skillIds.Add(d.SkillId);
-            }
-            SkillIds = skillIds;
 
             var data = unitReader.GetStatsMap(unit);
 

@@ -478,7 +478,8 @@ namespace Zutatensuppe.D2Reader
                     gameInfo.Player,
                     unitReader,
                     inventoryReader,
-                    skillReader
+                    ReadSkillInfos(gameInfo.Player, skillReader)
+
                 );
             } catch (Exception e)
             {
@@ -676,6 +677,7 @@ namespace Zutatensuppe.D2Reader
                 character.Parse(unitReader, gameInfo);
                 character.InventoryItemIds = ReadInventoryItemIds(gameInfo.Player);
                 character.Items = GetItemInfosByItems(inventoryReader.GetAllItems(gameInfo.Player), gameInfo.Player);
+                character.Skills = ReadSkillInfos(gameInfo.Player, skillReader);
             }
 
             return character;
@@ -690,7 +692,7 @@ namespace Zutatensuppe.D2Reader
             if (unit == null) return null;
 
             var hireling = new Hireling();
-            hireling.Parse(unit, unitReader, skillReader, reader, gameInfo);
+            hireling.Parse(unit, unitReader, reader, gameInfo);
 
             // adjust item location for hireling items
             List<Item> hirelingItems = GetEquippedItems(unit).ToList();
@@ -708,6 +710,7 @@ namespace Zutatensuppe.D2Reader
                 };
             }
             hireling.Items = GetItemInfosByItems(hirelingItems, unit);
+            hireling.Skills = ReadSkillInfos(unit, skillReader);
             return hireling;
         }
 
@@ -881,6 +884,22 @@ namespace Zutatensuppe.D2Reader
             return items
                 .Select(item => new ItemInfo(item, owner, unitReader, stringReader, inventoryReader))
                 .ToList();
+        }
+
+        private static List<SkillInfo> ReadSkillInfos(D2Unit p, ISkillReader skillReader)
+        {
+            var skills = new List<SkillInfo>();
+            foreach (var skill in skillReader.EnumerateSkills(p))
+            {
+                var skillData = skillReader.ReadSkillData(skill);
+                var skillInfo = new SkillInfo
+                {
+                    Id = skillData.SkillId,
+                    Points = skillReader.GetTotalNumberOfSkillPoints(skill),
+                };
+                skills.Add(skillInfo);
+            }
+            return skills;
         }
 
         protected virtual void OnDataRead(DataReadEventArgs e) =>

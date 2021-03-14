@@ -37,7 +37,7 @@ namespace DiabloInterface.Plugin.HttpClient
         public List<ItemInfo> Items { get; set; }
         public List<ItemInfo> AddedItems { get; set; }
         public List<ItemInfo> RemovedItems { get; set; }
-        public List<uint> SkillIds { get; set; }
+        public List<SkillInfo> Skills { get; set; }
 
         internal static HirelingDiff GetDiff(HirelingDiff curr, HirelingDiff prev)
         {
@@ -54,8 +54,8 @@ namespace DiabloInterface.Plugin.HttpClient
             diff.AddedItems = itemsDiff.Item1;
             diff.RemovedItems = itemsDiff.Item2;
 
-            if (!DiffUtil.ListsEqual(prev.SkillIds, curr.SkillIds))
-                diff.SkillIds = curr.SkillIds;
+            if (!DiffUtil.ListsEqual(curr.Skills, prev.Skills))
+                diff.Skills = curr.Skills;
 
             foreach (string propertyName in AutocompareProps)
             {
@@ -72,7 +72,7 @@ namespace DiabloInterface.Plugin.HttpClient
             hasDiff = hasDiff
                 || diff.AddedItems != null
                 || diff.RemovedItems != null
-                || diff.SkillIds != null;
+                || diff.Skills != null;
 
             return hasDiff ? diff : null;
         }

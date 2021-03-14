@@ -88,6 +88,7 @@ namespace DiabloInterface.Plugin.HttpClient
         public List<ItemInfo> Items { get; set; }
         public List<ItemInfo> AddedItems { get; set; }
         public List<ItemInfo> RemovedItems { get; set; }
+        public List<SkillInfo> Skills { get; set; }
         public Dictionary<GameDifficulty, List<QuestId>> Quests { get; set; }
         public Dictionary<GameDifficulty, List<QuestId>> CompletedQuests { get; set; }
 
@@ -142,12 +143,13 @@ namespace DiabloInterface.Plugin.HttpClient
                 IncreasedAttackSpeed = e.Character.IncreasedAttackSpeed,
                 MagicFind = e.Character.MagicFind,
                 Items = e.Character.Items,
+                Skills = e.Character.Skills,
                 Quests = e.Quests.CompletedQuestIds,
                 Hireling = new HirelingDiff
                 {
                     Name = e.Game.Hireling?.Name,
                     Class = e.Game.Hireling?.Class,
-                    SkillIds = e.Game.Hireling?.SkillIds,
+                    Skills = e.Game.Hireling?.Skills,
                     Level = e.Game.Hireling?.Level,
                     Experience = e.Game.Hireling?.Experience,
                     Strength = e.Game.Hireling?.Strength,
@@ -205,6 +207,9 @@ namespace DiabloInterface.Plugin.HttpClient
             diff.AddedItems = itemsDiff.Item1;
             diff.RemovedItems = itemsDiff.Item2;
 
+            if (!DiffUtil.ListsEqual(curr.Skills, prev.Skills))
+                diff.Skills = curr.Skills;
+
             diff.CompletedQuests = DiffUtil.CompletedQuestsDiff(
                 curr.Quests,
                 prev.Quests
@@ -223,6 +228,7 @@ namespace DiabloInterface.Plugin.HttpClient
             hasDiff = hasDiff
                 || diff.AddedItems != null
                 || diff.RemovedItems != null
+                || diff.Skills != null
                 || diff.CompletedQuests != null
                 || diff.Hireling != null
                 || diff.KilledMonsters != null;

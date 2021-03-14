@@ -93,6 +93,7 @@
     <Compile Include="Models\Quests.cs" />
     <Compile Include="Models\Rune.cs" />
     <Compile Include="Models\ResistancePenalty.cs" />
+    <Compile Include="Models\SkillInfo.cs" />
     <Compile Include="ProcessInfo.cs" />
     <Compile Include="QuestFactory.cs" />
     <Compile Include="GameMemoryTableFactory.cs" />
