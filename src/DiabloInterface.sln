@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Lib", "Diab
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Plugin.HttpClient.Test", "DiabloInterface.Plugin.HttpClient.Test\DiabloInterface.Plugin.HttpClient.Test.csproj", "{43007479-0D82-49A6-92A4-3A8386E106CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Plugin.Updater.Test", "DiabloInterface.Plugin.Updater.Test\DiabloInterface.Plugin.Updater.Test.csproj", "{E15910D6-F465-4E85-A135-D1986A953F36}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -228,6 +230,18 @@ Global
 		{43007479-0D82-49A6-92A4-3A8386E106CC}.Release|x64.Build.0 = Release|Any CPU
 		{43007479-0D82-49A6-92A4-3A8386E106CC}.Release|x86.ActiveCfg = Release|Any CPU
 		{43007479-0D82-49A6-92A4-3A8386E106CC}.Release|x86.Build.0 = Release|Any CPU
+		{E15910D6-F465-4E85-A135-D1986A953F36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E15910D6-F465-4E85-A135-D1986A953F36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E15910D6-F465-4E85-A135-D1986A953F36}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E15910D6-F465-4E85-A135-D1986A953F36}.Debug|x64.Build.0 = Debug|Any CPU
+		{E15910D6-F465-4E85-A135-D1986A953F36}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E15910D6-F465-4E85-A135-D1986A953F36}.Debug|x86.Build.0 = Debug|Any CPU
+		{E15910D6-F465-4E85-A135-D1986A953F36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E15910D6-F465-4E85-A135-D1986A953F36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E15910D6-F465-4E85-A135-D1986A953F36}.Release|x64.ActiveCfg = Release|Any CPU
+		{E15910D6-F465-4E85-A135-D1986A953F36}.Release|x64.Build.0 = Release|Any CPU
+		{E15910D6-F465-4E85-A135-D1986A953F36}.Release|x86.ActiveCfg = Release|Any CPU
+		{E15910D6-F465-4E85-A135-D1986A953F36}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
