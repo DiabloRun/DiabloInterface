@@ -9,7 +9,10 @@ namespace Zutatensuppe.D2Reader.Models
     public class SkillInfo
     {
         public uint Id = 0;
-        public int Points = 0; // points invested
+
+        // hard points put into the skill (skills from items not included)
+        public int Points = 0;
+
         public override bool Equals(object obj)
         {
             SkillInfo other = obj as SkillInfo;
