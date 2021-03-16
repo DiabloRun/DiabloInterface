@@ -26,7 +26,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
         private static readonly System.Net.Http.HttpClient Client = new System.Net.Http.HttpClient();
 
-        private bool SendingData = false;
+        private bool SendingDataRead = false;
 
         internal string content;
 
@@ -57,17 +57,10 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             di.game.DataRead += Game_DataRead;
         }
 
-        async private Task PostJson(RequestBody body)
+        async private Task PostJson(string json)
         {
             try
             {
-                body.Headers = Config.Headers;
-                var json = JsonConvert.SerializeObject(
-                    body,
-                    Formatting.None,
-                    new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }
-                );
-
                 var response = await Client.PostAsync(
                     Config.Url,
                     new StringContent(json, Encoding.UTF8, "application/json")
@@ -84,34 +77,51 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             }
         }
 
-        private void Game_ProcessFound(object sender, ProcessFoundEventArgs e)
+        private string RequestBodyToJsonString(RequestBody body)
         {
-            if (!Config.Enabled) return;
-
-            // always send complete information for this kind of event
-            var body = RequestBody.FromProcessFoundEventArgs(e, di);
-            PostJson(body).Wait();
+            return JsonConvert.SerializeObject(
+                body,
+                Formatting.None,
+                new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }
+            );
         }
 
         private void Game_DataRead(object sender, DataReadEventArgs e)
         {
             if (!Config.Enabled) return;
+            _ = SendDataReadAsync(e);
+        }
 
-            if (SendingData) return;
+        async private Task SendDataReadAsync(DataReadEventArgs e)
+        {
+            if (SendingDataRead) return;
 
-            SendingData = true;
+            var newData = RequestBody.FromDataReadEventArgs(e, di);
+            var diff = RequestBody.GetDiff(newData, PrevData);
 
-            var body = RequestBody.FromDataReadEventArgs(e, di);
-            var bodyDiff = RequestBody.GetDiff(body, PrevData);
-
-            if (bodyDiff != null)
+            if (diff != null)
             {
-                PostJson(bodyDiff).Wait();
+                diff.Headers = Config.Headers;
+                SendingDataRead = true;
+                await PostJson(RequestBodyToJsonString(diff));
+                SendingDataRead = false;
             }
 
-            PrevData = body;
+            PrevData = newData;
+        }
 
-            SendingData = false;
+        private void Game_ProcessFound(object sender, ProcessFoundEventArgs e)
+        {
+            if (!Config.Enabled) return;
+            _ = SendProcessFoundAsync(e);
+        }
+
+        async private Task SendProcessFoundAsync(ProcessFoundEventArgs e)
+        {
+            // always send complete information for this kind of event
+            var body = RequestBody.FromProcessFoundEventArgs(e, di);
+            body.Headers = Config.Headers;
+            await PostJson(RequestBodyToJsonString(body));
         }
     }
 }
