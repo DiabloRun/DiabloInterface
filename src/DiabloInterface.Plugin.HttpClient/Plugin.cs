@@ -53,15 +53,21 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
         {
             this.di = di;
             SetConfig(di.configService.CurrentConfig.PluginConf(Name));
+            di.game.ProcessFound += Game_ProcessFound;
             di.game.DataRead += Game_DataRead;
         }
 
-        async private Task PostJson(string json)
+        async private Task PostJson(RequestBody body)
         {
-            SendingData = true;
-
             try
             {
+                body.Headers = Config.Headers;
+                var json = JsonConvert.SerializeObject(
+                    body,
+                    Formatting.None,
+                    new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }
+                );
+
                 var response = await Client.PostAsync(
                     Config.Url,
                     new StringContent(json, Encoding.UTF8, "application/json")
@@ -75,8 +81,16 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
             finally
             {
                 ApplyChanges();
-                SendingData = false;
             }
+        }
+
+        private void Game_ProcessFound(object sender, ProcessFoundEventArgs e)
+        {
+            if (!Config.Enabled) return;
+
+            // always send complete information for this kind of event
+            var body = RequestBody.FromProcessFoundEventArgs(e, di);
+            PostJson(body).Wait();
         }
 
         private void Game_DataRead(object sender, DataReadEventArgs e)
@@ -85,21 +99,19 @@ namespace Zutatensuppe.DiabloInterface.Plugin.HttpClient
 
             if (SendingData) return;
 
-            var newData = RequestBody.FromDataReadEventArgs(e, di);
-            var diff = RequestBody.GetDiff(newData, PrevData);
+            SendingData = true;
 
-            if (diff != null)
+            var body = RequestBody.FromDataReadEventArgs(e, di);
+            var bodyDiff = RequestBody.GetDiff(body, PrevData);
+
+            if (bodyDiff != null)
             {
-                diff.Headers = Config.Headers;
-                var json = JsonConvert.SerializeObject(
-                    diff,
-                    Formatting.Indented,
-                    new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }
-                );
-                PostJson(json);
+                PostJson(bodyDiff).Wait();
             }
 
-            PrevData = newData;
+            PrevData = body;
+
+            SendingData = false;
         }
     }
 }

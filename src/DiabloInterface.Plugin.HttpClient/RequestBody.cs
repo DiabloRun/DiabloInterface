@@ -47,6 +47,8 @@ namespace DiabloInterface.Plugin.HttpClient
             "MagicFind",
         };
 
+        public string Event { get; private set; }
+
         public string Headers { get; set; }
         public int? Area { get; set; }
         public byte? InventoryTab { get; set; }
@@ -106,6 +108,7 @@ namespace DiabloInterface.Plugin.HttpClient
         {
             return new RequestBody()
             {
+                Event = "DataRead",
                 Area = e.Game.Area,
                 InventoryTab = e.Game.InventoryTab,
                 Difficulty = e.Game.Difficulty,
@@ -166,15 +169,21 @@ namespace DiabloInterface.Plugin.HttpClient
             };
         }
 
+        public static RequestBody FromProcessFoundEventArgs(ProcessFoundEventArgs e, IDiabloInterface di)
+        {
+            return new RequestBody()
+            {
+                Event = "ProcessFound",
+                D2ProcessInfo = e.ProcessInfo,
+                DIApplicationInfo = di.appInfo,
+            };
+        }
+
         public static RequestBody GetDiff(
             RequestBody curr,
             RequestBody prev
         ) {
-            var diff = new RequestBody()
-            {
-                Name = curr.Name,
-                Guid = curr.Guid,
-            };
+            var diff = new RequestBody();
 
             // TODO: while this check is correct, D2DataReader should probably
             //       provide the information about 'new char or not' directly
@@ -235,6 +244,10 @@ namespace DiabloInterface.Plugin.HttpClient
 
             if (hasDiff)
             {
+                diff.Event = curr.Event;
+                diff.Name = curr.Name;
+                diff.Guid = curr.Guid;
+
                 // always send application info, if something is sent
                 diff.DIApplicationInfo = curr.DIApplicationInfo;
 
