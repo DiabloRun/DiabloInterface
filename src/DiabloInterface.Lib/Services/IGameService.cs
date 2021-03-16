@@ -15,6 +15,11 @@ namespace Zutatensuppe.DiabloInterface.Lib.Services
         GameDifficulty TargetDifficulty { get; set; }
 
         /// <summary>
+        ///     Occurs when a game process has been found
+        /// </summary>
+        event EventHandler<ProcessFoundEventArgs> ProcessFound;
+
+        /// <summary>
         ///     Occurs when data has been successfully read from the game.
         /// </summary>
         event EventHandler<DataReadEventArgs> DataRead;

@@ -31,6 +31,7 @@ namespace Zutatensuppe.DiabloInterface.Services
                 new GameMemoryTableFactory(),
                 di.configService.CurrentConfig.ProcessDescriptions
             );
+            DataReader.ProcessFound += OnProcessFound;
             DataReader.DataRead += OnDataRead;
 
             Logger.Info("Initializing data reader thread.");
@@ -44,6 +45,7 @@ namespace Zutatensuppe.DiabloInterface.Services
 
         public GameDifficulty TargetDifficulty { get; set; } = GameDifficulty.Normal;
 
+        public event EventHandler<ProcessFoundEventArgs> ProcessFound;
         public event EventHandler<DataReadEventArgs> DataRead;
 
         public void Dispose()
@@ -62,6 +64,7 @@ namespace Zutatensuppe.DiabloInterface.Services
             {
                 if (DataReader != null)
                 {
+                    DataReader.ProcessFound -= OnProcessFound;
                     DataReader.DataRead -= OnDataRead;
 
                     DataReader.Dispose();
@@ -71,6 +74,9 @@ namespace Zutatensuppe.DiabloInterface.Services
 
             isDisposed = true;
         }
+
+        void OnProcessFound(object sender, ProcessFoundEventArgs e) =>
+            ProcessFound?.Invoke(sender, e);
 
         void OnDataRead(object sender, DataReadEventArgs e) =>
             DataRead?.Invoke(sender, e);

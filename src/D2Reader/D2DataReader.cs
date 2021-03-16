@@ -16,6 +16,17 @@ using static Zutatensuppe.D2Reader.D2Data;
 
 namespace Zutatensuppe.D2Reader
 {
+    public class ProcessFoundEventArgs : EventArgs
+    {
+        public ProcessFoundEventArgs(
+            ProcessInfo processInfo
+        )
+        {
+            ProcessInfo = processInfo;
+        }
+        public ProcessInfo ProcessInfo { get; }
+    }
+
     public class DataReadEventArgs : EventArgs
     {
         public DataReadEventArgs(
@@ -95,6 +106,7 @@ namespace Zutatensuppe.D2Reader
         }
 
         public event EventHandler<DataReadEventArgs> DataRead;
+        public event EventHandler<ProcessFoundEventArgs> ProcessFound;
 
         static TimeSpan POLLING_RATE_OUT_OF_GAME = TimeSpan.FromMilliseconds(50);
         static TimeSpan POLLING_RATE_INGAME = TimeSpan.FromMilliseconds(500);
@@ -179,6 +191,7 @@ namespace Zutatensuppe.D2Reader
 
             Logger.Info($"Diablo II process found:");
             Logger.Info(reader.ProcessInfo);
+            OnProcessFound(new ProcessFoundEventArgs(reader.ProcessInfo));
 
             try
             {
@@ -904,5 +917,8 @@ namespace Zutatensuppe.D2Reader
 
         protected virtual void OnDataRead(DataReadEventArgs e) =>
             DataRead?.Invoke(this, e);
+
+        protected virtual void OnProcessFound(ProcessFoundEventArgs e) =>
+            ProcessFound?.Invoke(this, e);
     }
 }
