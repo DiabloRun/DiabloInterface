@@ -184,7 +184,7 @@ If there are any other problems, suggestions or requests:
 ## Troubleshooting (dev)
 
 If at build an error like `The underlying connection was closed: An unexpected error occurred on a send` pops up,
-try this [solution](https://stackoverflow.com/questions/20445638/nuget-fails-the-underlying-connection-was-closed-an-unexpected-error-occurred).
+try this [solution](https://stackoverflow.com/a/53677845/392905).
 
 ## Contact
 
