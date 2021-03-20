@@ -1,4 +1,3 @@
-using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Stat;
 using System;
 using System.Collections.Generic;

@@ -4,16 +4,12 @@ using Zutatensuppe.D2Reader.Struct.Item;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Zutatensuppe.DiabloInterface.Core.Logging;
-using System.Reflection;
 using Zutatensuppe.D2Reader.Models;
 
 namespace Zutatensuppe.D2Reader.Readers
 {
     public class InventoryReader : IInventoryReader
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
-
         private IProcessMemoryReader processReader;
 
         private UnitReader unitReader { get; }

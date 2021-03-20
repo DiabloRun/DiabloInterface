@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Zutatensuppe.D2Reader.Readers;
 using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Stat;
-using Zutatensuppe.DiabloInterface.Core;
 
 namespace Zutatensuppe.D2Reader.Models
 {
