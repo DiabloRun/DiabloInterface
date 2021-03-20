@@ -21,7 +21,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
         static readonly string ConfigFilePath = Application.StartupPath + @"\Settings";
 
-        private readonly DiabloInterface di;
+        private readonly IDiabloInterface di;
 
         bool dirty;
 
@@ -107,7 +107,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private Button btnColorCharCount;
         private CheckBox chkDisplayCharCount;
 
-        public ConfigWindow(DiabloInterface di)
+        public ConfigWindow(IDiabloInterface di)
         {
             Logger.Info("Creating config window.");
 

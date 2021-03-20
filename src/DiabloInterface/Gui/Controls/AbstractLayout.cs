@@ -41,7 +41,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        protected DiabloInterface di;
+        protected IDiabloInterface di;
 
         protected Dictionary<string, Def> def = new Dictionary<string, Def>();
 

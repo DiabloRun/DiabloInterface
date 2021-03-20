@@ -7,6 +7,7 @@ namespace Zutatensuppe.DiabloInterface.Services
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Core.Logging;
+    using Zutatensuppe.DiabloInterface.Lib;
     using Zutatensuppe.DiabloInterface.Lib.Services;
 
     public class GameService : IGameService
@@ -16,9 +17,9 @@ namespace Zutatensuppe.DiabloInterface.Services
         bool isDisposed;
         public D2DataReader DataReader { get; private set; }
 
-        private DiabloInterface di;
+        private IDiabloInterface di;
 
-        public GameService(DiabloInterface di)
+        public GameService(IDiabloInterface di)
         {
             this.di = di;
         }

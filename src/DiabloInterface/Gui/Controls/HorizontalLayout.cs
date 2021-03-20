@@ -7,6 +7,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     using System.Windows.Forms;
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Core.Logging;
+    using Zutatensuppe.DiabloInterface.Lib;
 
     class HorizontalLayout : AbstractLayout
     {
@@ -199,7 +200,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             };
         }
 
-        public HorizontalLayout(DiabloInterface di)
+        public HorizontalLayout(IDiabloInterface di)
         {
             this.di = di;
             RegisterServiceEventHandlers();
