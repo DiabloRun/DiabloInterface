@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Zutatensuppe.D2Reader.Readers;
 using Zutatensuppe.D2Reader.Struct;
-using Zutatensuppe.D2Reader.Struct.Skill;
 using Zutatensuppe.D2Reader.Struct.Stat;
 using Zutatensuppe.DiabloInterface.Core;
 using Zutatensuppe.DiabloInterface.Core.Logging;

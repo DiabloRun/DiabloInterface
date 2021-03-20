@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Zutatensuppe.D2Reader.Readers;
 using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Item;
-using Zutatensuppe.DiabloInterface.Core.Logging;
 
 namespace Zutatensuppe.D2Reader.Models
 {
@@ -14,8 +11,6 @@ namespace Zutatensuppe.D2Reader.Models
     //       because all the info SHOULD be available through that class already
     public class ItemInfo
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
-
         // array of item base names in english so they can
         // be used like ids in the outside world
         // the index in the array is the item's eClass
