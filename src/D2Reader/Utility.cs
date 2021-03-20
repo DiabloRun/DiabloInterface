@@ -1,8 +1,8 @@
 using System;
 
-namespace Zutatensuppe.DiabloInterface.Core
+namespace Zutatensuppe.D2Reader
 {
-    public class Utility
+    class Utility
     {
         public static T Clamp<T>(T value, T min, T max) where T : IComparable<T>
         {

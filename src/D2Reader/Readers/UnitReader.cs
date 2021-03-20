@@ -4,12 +4,10 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Reflection;
 using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.D2Reader.Struct.Item.Modifier;
 using Zutatensuppe.D2Reader.Struct.Stat;
 using Zutatensuppe.D2Reader.Struct.Skill;
-using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct.Monster;
 using static Zutatensuppe.D2Reader.D2Data;
@@ -18,8 +16,6 @@ namespace Zutatensuppe.D2Reader.Readers
 {
     public class UnitReader
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
-
         static D2ItemStatCost[] ItemStatCost = null;
 
         Dictionary<IntPtr, D2ItemData> cachedItemData;
