@@ -3,10 +3,7 @@ namespace Zutatensuppe.DiabloInterface
     using System;
     using System.Collections.Generic;
     using System.Drawing;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
     using Zutatensuppe.D2Reader;
-    using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Lib;
     using Zutatensuppe.DiabloInterface.Lib.Plugin;
 
