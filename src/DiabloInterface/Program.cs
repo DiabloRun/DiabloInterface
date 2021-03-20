@@ -6,7 +6,6 @@ namespace Zutatensuppe.DiabloInterface
     using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Framework;
     using Zutatensuppe.DiabloInterface.Gui;
-    using Zutatensuppe.DiabloInterface.Plugin;
     using static Framework.NetFrameworkVersionComparator;
 
     internal static class Program
