@@ -10,19 +10,20 @@ using Zutatensuppe.DiabloInterface.Gui.Controls;
 using Zutatensuppe.DiabloInterface.Gui.Forms;
 using System.Reflection;
 using Zutatensuppe.DiabloInterface.Lib.Services;
+using Zutatensuppe.DiabloInterface.Lib;
 
 namespace Zutatensuppe.DiabloInterface.Gui
 {
     public class MainWindow : WsExCompositedForm
     {
         private readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly DiabloInterface di;
+        private readonly IDiabloInterface di;
 
         private ToolStripMenuItem loadConfigMenuItem;
         private Form debugWindow;
         private AbstractLayout layout;
 
-        public MainWindow(DiabloInterface di)
+        public MainWindow(IDiabloInterface di)
         {
             this.di = di;
             

@@ -11,6 +11,7 @@ using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Gui.Controls;
 using Zutatensuppe.DiabloInterface.Gui.Forms;
+using Zutatensuppe.DiabloInterface.Lib;
 using Zutatensuppe.DiabloInterface.Lib.Plugin;
 
 namespace Zutatensuppe.DiabloInterface.Gui
@@ -19,7 +20,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly DiabloInterface di;
+        private readonly IDiabloInterface di;
 
         readonly Dictionary<GameDifficulty, QuestDebugRow[,]> questRows =
             new Dictionary<GameDifficulty, QuestDebugRow[,]>();
@@ -32,7 +33,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private Dictionary<Label, BodyLocation> locs;
         private RichTextBox textItemDesc;
 
-        public DebugWindow(DiabloInterface di)
+        public DebugWindow(IDiabloInterface di)
         {
             Logger.Info("Creating debug window.");
 

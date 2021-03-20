@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Lib.Services;
 using Zutatensuppe.DiabloInterface.Lib.Plugin;
+using Zutatensuppe.DiabloInterface.Lib;
 
 namespace Zutatensuppe.DiabloInterface.Services
 {
@@ -16,15 +17,15 @@ namespace Zutatensuppe.DiabloInterface.Services
 
         private List<IPlugin> plugins;
 
-        private DiabloInterface di;
+        private IDiabloInterface di;
 
-        public PluginService(DiabloInterface di, List<Type> pluginTypes)
+        public PluginService(IDiabloInterface di, List<Type> pluginTypes)
         {
             this.di = di;
             plugins = PluginsByTypes(pluginTypes);
         }
 
-        public PluginService(DiabloInterface di, string pluginDir)
+        public PluginService(IDiabloInterface di, string pluginDir)
         {
             this.di = di;
             plugins = PluginsByTypes(ReadTypesInDir(pluginDir));

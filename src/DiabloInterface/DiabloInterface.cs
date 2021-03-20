@@ -14,7 +14,7 @@ namespace Zutatensuppe.DiabloInterface
         public IConfigService configService { get; private set; }
         public IPluginService plugins { get; private set; }
 
-        internal static DiabloInterface Create(ApplicationInfo appInfo, List<Type> pluginTypes)
+        internal static DiabloInterface Create(IApplicationInfo appInfo, List<Type> pluginTypes)
         {
             var di = new DiabloInterface();
             di.appInfo = appInfo;

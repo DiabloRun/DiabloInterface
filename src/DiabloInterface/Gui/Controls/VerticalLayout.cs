@@ -7,7 +7,8 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     using System.Windows.Forms;
     using Zutatensuppe.D2Reader.Models;
     using Zutatensuppe.DiabloInterface.Core.Logging;
-    
+    using Zutatensuppe.DiabloInterface.Lib;
+
     class VerticalLayout : AbstractLayout
     {
         static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
@@ -16,7 +17,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         private FlowLayoutPanel panelRuneDisplay;
         private TableLayoutPanel table;
 
-        public VerticalLayout(DiabloInterface di)
+        public VerticalLayout(IDiabloInterface di)
         {
             this.di = di;
             RegisterServiceEventHandlers();
