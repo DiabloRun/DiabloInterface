@@ -1,6 +1,8 @@
 #tool nuget:?package=vswhere
 #addin nuget:?package=Cake.Compression&version=0.1.1
 #addin nuget:?package=SharpZipLib&version=0.86.0
+    
+ICSharpCode.SharpZipLib.Zip.ZipConstants.DefaultCodePage = 437;
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
