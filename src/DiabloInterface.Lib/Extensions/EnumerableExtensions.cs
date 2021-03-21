@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Zutatensuppe.DiabloInterface.Core.Extensions
+namespace Zutatensuppe.DiabloInterface.Lib.Extensions
 {
     public static class EnumerableExtensions
     {

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows.Forms;
 
 using Zutatensuppe.D2Reader.Models;
-using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Gui.Controls;
 using Zutatensuppe.DiabloInterface.Gui.Forms;
 using System.Reflection;
@@ -16,7 +15,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 {
     public class MainWindow : WsExCompositedForm
     {
-        private readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly Lib.ILogger Logger = Lib.Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IDiabloInterface di;
 
         private ToolStripMenuItem loadConfigMenuItem;

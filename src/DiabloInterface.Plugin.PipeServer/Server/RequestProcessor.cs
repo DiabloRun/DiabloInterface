@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Zutatensuppe.DiabloInterface.Core.Logging;
+using Zutatensuppe.DiabloInterface.Lib;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
 {
     public class RequestProcessor
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly ILogger Logger = Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private List<string> ToParameters(Match match)
         {

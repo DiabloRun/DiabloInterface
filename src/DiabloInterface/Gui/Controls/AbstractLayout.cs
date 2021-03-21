@@ -9,9 +9,8 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Core.Extensions;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Lib;
+    using Zutatensuppe.DiabloInterface.Lib.Extensions;
     using Zutatensuppe.DiabloInterface.Lib.Services;
 
     class Def
@@ -39,7 +38,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
     abstract class AbstractLayout : UserControl
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly Lib.ILogger Logger = Lib.Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         protected IDiabloInterface di;
 

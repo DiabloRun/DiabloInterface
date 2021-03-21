@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Lib.Services;
 using Zutatensuppe.DiabloInterface.Lib.Plugin;
 using Zutatensuppe.DiabloInterface.Lib;
@@ -13,7 +12,7 @@ namespace Zutatensuppe.DiabloInterface.Services
 {
     public class PluginService : IPluginService
     {
-        private readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly Lib.ILogger Logger = Lib.Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private List<IPlugin> plugins;
 

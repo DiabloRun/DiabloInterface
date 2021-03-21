@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D2Reader", "D2Reader\D2Read
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Plugin.PipeServer", "DiabloInterface.Plugin.PipeServer\DiabloInterface.Plugin.PipeServer.csproj", "{59944B50-1A5E-4E02-B9BE-0F9B499770DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Core", "DiabloInterface.Core\DiabloInterface.Core.csproj", "{4DC903B9-B02C-47D3-A695-4873FA5219AD}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2059508E-639D-478E-85C7-B7B5EA25624E}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -25,8 +23,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Plugin.Autosplits.Test", "DiabloInterface.Plugin.Autosplits.Test\DiabloInterface.Plugin.Autosplits.Test.csproj", "{6EA6B43B-B3CF-427E-9B28-C8736496CB9E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Plugin.FileWriter.Test", "DiabloInterface.Plugin.FileWriter.Test\DiabloInterface.Plugin.FileWriter.Test.csproj", "{30DA147B-6D77-406E-8C08-0137105D1AED}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Core.Test", "DiabloInterface.Core.Test\DiabloInterface.Core.Test.csproj", "{C35E86F3-1281-4E85-BD8B-3BCB5EE9B7B1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiabloInterface.Plugin.PipeServer.Test", "DiabloInterface.Plugin.PipeServer.Test\DiabloInterface.Plugin.PipeServer.Test.csproj", "{7095BFA3-857A-4491-879F-B7D863E327E1}"
 EndProject
@@ -86,18 +82,6 @@ Global
 		{59944B50-1A5E-4E02-B9BE-0F9B499770DF}.Release|x64.Build.0 = Release|x64
 		{59944B50-1A5E-4E02-B9BE-0F9B499770DF}.Release|x86.ActiveCfg = Release|x86
 		{59944B50-1A5E-4E02-B9BE-0F9B499770DF}.Release|x86.Build.0 = Release|x86
-		{4DC903B9-B02C-47D3-A695-4873FA5219AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4DC903B9-B02C-47D3-A695-4873FA5219AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4DC903B9-B02C-47D3-A695-4873FA5219AD}.Debug|x64.ActiveCfg = Debug|x64
-		{4DC903B9-B02C-47D3-A695-4873FA5219AD}.Debug|x64.Build.0 = Debug|x64
-		{4DC903B9-B02C-47D3-A695-4873FA5219AD}.Debug|x86.ActiveCfg = Debug|x86
-		{4DC903B9-B02C-47D3-A695-4873FA5219AD}.Debug|x86.Build.0 = Debug|x86
-		{4DC903B9-B02C-47D3-A695-4873FA5219AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4DC903B9-B02C-47D3-A695-4873FA5219AD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4DC903B9-B02C-47D3-A695-4873FA5219AD}.Release|x64.ActiveCfg = Release|x64
-		{4DC903B9-B02C-47D3-A695-4873FA5219AD}.Release|x64.Build.0 = Release|x64
-		{4DC903B9-B02C-47D3-A695-4873FA5219AD}.Release|x86.ActiveCfg = Release|x86
-		{4DC903B9-B02C-47D3-A695-4873FA5219AD}.Release|x86.Build.0 = Release|x86
 		{17513A94-7271-422D-A34F-588B1D774987}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{17513A94-7271-422D-A34F-588B1D774987}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17513A94-7271-422D-A34F-588B1D774987}.Debug|x64.ActiveCfg = Debug|x64
@@ -158,18 +142,6 @@ Global
 		{30DA147B-6D77-406E-8C08-0137105D1AED}.Release|x64.Build.0 = Release|x64
 		{30DA147B-6D77-406E-8C08-0137105D1AED}.Release|x86.ActiveCfg = Release|x86
 		{30DA147B-6D77-406E-8C08-0137105D1AED}.Release|x86.Build.0 = Release|x86
-		{C35E86F3-1281-4E85-BD8B-3BCB5EE9B7B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C35E86F3-1281-4E85-BD8B-3BCB5EE9B7B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C35E86F3-1281-4E85-BD8B-3BCB5EE9B7B1}.Debug|x64.ActiveCfg = Debug|x64
-		{C35E86F3-1281-4E85-BD8B-3BCB5EE9B7B1}.Debug|x64.Build.0 = Debug|x64
-		{C35E86F3-1281-4E85-BD8B-3BCB5EE9B7B1}.Debug|x86.ActiveCfg = Debug|x86
-		{C35E86F3-1281-4E85-BD8B-3BCB5EE9B7B1}.Debug|x86.Build.0 = Debug|x86
-		{C35E86F3-1281-4E85-BD8B-3BCB5EE9B7B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C35E86F3-1281-4E85-BD8B-3BCB5EE9B7B1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C35E86F3-1281-4E85-BD8B-3BCB5EE9B7B1}.Release|x64.ActiveCfg = Release|x64
-		{C35E86F3-1281-4E85-BD8B-3BCB5EE9B7B1}.Release|x64.Build.0 = Release|x64
-		{C35E86F3-1281-4E85-BD8B-3BCB5EE9B7B1}.Release|x86.ActiveCfg = Release|x86
-		{C35E86F3-1281-4E85-BD8B-3BCB5EE9B7B1}.Release|x86.Build.0 = Release|x86
 		{7095BFA3-857A-4491-879F-B7D863E327E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7095BFA3-857A-4491-879F-B7D863E327E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7095BFA3-857A-4491-879F-B7D863E327E1}.Debug|x64.ActiveCfg = Debug|x64

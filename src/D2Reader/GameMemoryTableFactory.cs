@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using Zutatensuppe.DiabloInterface.Core.Logging;
 
 namespace Zutatensuppe.D2Reader
 {
@@ -33,7 +32,7 @@ namespace Zutatensuppe.D2Reader
 
     public class GameMemoryTableFactory : IGameMemoryTableFactory
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly ILogger Logger = Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private GameMemoryTable CreateForVersion(
             string gameVersion,

@@ -3,7 +3,6 @@ namespace Zutatensuppe.DiabloInterface
     using System;
     using System.Collections.Generic;
     using System.Windows.Forms;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Framework;
     using Zutatensuppe.DiabloInterface.Gui;
     using static Framework.NetFrameworkVersionComparator;
@@ -19,7 +18,7 @@ namespace Zutatensuppe.DiabloInterface
                 return;
             }
 
-            Log4NetLogger.Initialize();
+            Logger.Initialize();
 
             var appInfo = new ApplicationInfo
             {
@@ -28,7 +27,7 @@ namespace Zutatensuppe.DiabloInterface
                 DotNet = NetFrameworkVersionExtension.FriendlyName(NewestFrameworkVersion)
             };
 
-            LogServiceLocator.Get(typeof(Program)).Info(appInfo);
+            Lib.Logging.CreateLogger(typeof(Program)).Info(appInfo);
 
             var pluginTypes = new List<Type>
             {
@@ -56,7 +55,7 @@ namespace Zutatensuppe.DiabloInterface
         {
             MessageBox.Show(e.ExceptionObject.ToString(), @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-            var logger = LogServiceLocator.Get(typeof(Program));
+            var logger = Lib.Logging.CreateLogger(typeof(Program));
             logger?.Fatal("Unhandled Exception", (Exception)e.ExceptionObject);
         }
 

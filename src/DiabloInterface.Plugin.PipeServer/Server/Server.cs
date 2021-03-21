@@ -1,16 +1,16 @@
-using Zutatensuppe.DiabloInterface.Core.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Reflection;
 using System.Text;
 using Newtonsoft.Json;
+using Zutatensuppe.DiabloInterface.Lib;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer.Server
 {
     public class Server
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly ILogger Logger = Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly string pipeName;
         private readonly RequestProcessor requestProcessor;

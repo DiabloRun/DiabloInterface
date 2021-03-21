@@ -78,6 +78,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Log.cs" />
     <Compile Include="Models\Character.cs" />
     <Compile Include="D2Data.cs" />
     <Compile Include="D2DataReader.cs" />
@@ -155,12 +156,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Struct\Unknown\D2UnknownUnitStruct.cs" />
     <Compile Include="Utility.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DiabloInterface.Core\DiabloInterface.Core.csproj">
-      <Project>{4dc903b9-b02c-47d3-a695-4873fa5219ad}</Project>
-      <Name>DiabloInterface.Core</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

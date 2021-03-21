@@ -4,13 +4,13 @@ using System.Reflection;
 using System.Windows.Forms;
 using WindowsInput;
 using WindowsInput.Native;
-using Zutatensuppe.DiabloInterface.Core.Logging;
+using Zutatensuppe.DiabloInterface.Lib;
 
 namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.Hotkeys
 {
     public class KeyService
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly ILogger Logger = Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly IInputSimulator Simulator;
 
