@@ -8,7 +8,6 @@ using System.Windows.Forms;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.D2Reader.Models;
 using Zutatensuppe.D2Reader.Struct.Item;
-using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Gui.Controls;
 using Zutatensuppe.DiabloInterface.Gui.Forms;
 using Zutatensuppe.DiabloInterface.Lib;
@@ -18,7 +17,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
 {
     public class DebugWindow : WsExCompositedForm
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly Lib.ILogger Logger = Lib.Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly IDiabloInterface di;
 

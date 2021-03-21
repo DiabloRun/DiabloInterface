@@ -1,16 +1,16 @@
-using System;
 using log4net;
 using log4net.Config;
 using Newtonsoft.Json;
+using System;
 
-namespace Zutatensuppe.DiabloInterface.Core.Logging
+namespace Zutatensuppe.DiabloInterface
 {
-    public class Log4NetLogger : ILogger
+    class Logger : D2Reader.ILogger, Lib.ILogger
     {
         readonly ILog logger;
 
-        public Log4NetLogger(Type type) => logger = LogManager.GetLogger(type);
-        public Log4NetLogger(string name) => logger = LogManager.GetLogger(name);
+        public Logger(Type type) => logger = LogManager.GetLogger(type);
+        public Logger(string name) => logger = LogManager.GetLogger(name);
 
         public void Debug(object message) => logger.Debug(Conv(message));
         public void Info(object message) => logger.Info(Conv(message));
@@ -23,10 +23,25 @@ namespace Zutatensuppe.DiabloInterface.Core.Logging
         public void Warn(object message, Exception e) => logger.Warn(Conv(message), e);
         public void Error(object message, Exception e) => logger.Error(Conv(message), e);
         public void Fatal(object message, Exception e) => logger.Fatal(Conv(message), e);
-        
+
         private string Conv(string message) => message;
         private string Conv(object message) => JsonConvert.SerializeObject(message, Formatting.Indented);
 
-        public static void Initialize() => XmlConfigurator.Configure();
+        public static void Initialize()
+        {
+            XmlConfigurator.Configure();
+            Lib.Logging.SetLogService(new LibLogService());
+            D2Reader.Logging.SetLogService(new D2ReaderLogService());
+        }
+    }
+
+    class D2ReaderLogService : D2Reader.ILogService
+    {
+        public D2Reader.ILogger CreateLogger(Type type) => new Logger(type);
+    }
+
+    class LibLogService : Lib.ILogService
+    {
+        public Lib.ILogger CreateLogger(Type type) => new Logger(type);
     }
 }

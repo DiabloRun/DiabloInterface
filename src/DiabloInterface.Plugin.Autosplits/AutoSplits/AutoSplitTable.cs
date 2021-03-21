@@ -5,8 +5,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits
     using System.Drawing;
     using System.Linq;
     using System.Windows.Forms;
-
-    using Zutatensuppe.DiabloInterface.Core.Extensions;
+    using Zutatensuppe.DiabloInterface.Lib.Extensions;
 
     public class AutoSplitTable : UserControl
     {

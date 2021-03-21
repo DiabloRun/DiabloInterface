@@ -8,16 +8,15 @@ namespace Zutatensuppe.DiabloInterface.Gui
     using System.Reflection;
     using System.Windows.Forms;
 
+    using Zutatensuppe.DiabloInterface.Lib.Extensions;
     using Zutatensuppe.DiabloInterface.Lib.Plugin;
     using Zutatensuppe.DiabloInterface.Lib.Services;
-    using Zutatensuppe.DiabloInterface.Core.Extensions;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Gui.Forms;
     using Zutatensuppe.DiabloInterface.Lib;
 
     public class ConfigWindow : WsExCompositedForm
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly ILogger Logger = Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         static readonly string ConfigFilePath = Application.StartupPath + @"\Settings";
 

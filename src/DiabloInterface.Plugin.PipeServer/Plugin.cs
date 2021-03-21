@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Lib;
 using Zutatensuppe.DiabloInterface.Lib.Plugin;
 using Zutatensuppe.DiabloInterface.Plugin.PipeServer.Handlers;
@@ -10,7 +9,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.PipeServer
 {
     public class Plugin : BasePlugin
     {
-        private readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly ILogger Logger = Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public override string Name => "PipeServer";
 

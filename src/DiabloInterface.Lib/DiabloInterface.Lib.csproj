@@ -83,9 +83,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationConfig.cs" />
+    <Compile Include="Extensions\DeepCopyExtension.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="IApplicationInfo.cs" />
     <Compile Include="IClassRuneSettings.cs" />
     <Compile Include="IDiabloInterface.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="Plugin\BasePlugin.cs" />
     <Compile Include="Plugin\IPlugin.cs" />
     <Compile Include="Plugin\IPluginConfig.cs" />

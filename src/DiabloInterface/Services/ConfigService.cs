@@ -6,7 +6,6 @@ namespace Zutatensuppe.DiabloInterface.Services
     using System.IO;
     using System.Reflection;
     
-    using Zutatensuppe.DiabloInterface.Core.Logging;
     using Newtonsoft.Json;
     using Zutatensuppe.DiabloInterface.Lib.Services;
 
@@ -15,7 +14,7 @@ namespace Zutatensuppe.DiabloInterface.Services
         const string ConfDirPath = @".\Settings";
         const string ConfExtPattern = "*.conf";
 
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly Lib.ILogger Logger = Lib.Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         readonly string appPropertyConfigPath = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
         readonly ApplicationStorage appStorage;

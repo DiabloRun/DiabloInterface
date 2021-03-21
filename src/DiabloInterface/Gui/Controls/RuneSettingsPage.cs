@@ -10,13 +10,12 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
     using Newtonsoft.Json;
 
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Core.Extensions;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Lib;
+    using Zutatensuppe.DiabloInterface.Lib.Extensions;
 
     public partial class RuneSettingsPage : UserControl
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly ILogger Logger = Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public RuneSettingsPage()
         {

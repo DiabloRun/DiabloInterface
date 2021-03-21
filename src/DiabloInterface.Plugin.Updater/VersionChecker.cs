@@ -3,8 +3,7 @@ using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using Zutatensuppe.DiabloInterface.Core.Logging;
+using Zutatensuppe.DiabloInterface.Lib;
 
 [assembly: InternalsVisibleTo("DiabloInterface.Plugin.Updater.Test")]
 namespace Zutatensuppe.DiabloInterface.Plugin.Updater
@@ -19,7 +18,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Updater
 
     internal class VersionChecker
     {
-        private readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly ILogger Logger = Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         const string ReleasesUrl = "https://github.com/DiabloRun/DiabloInterface/releases";
         const string ReleasesLatestUrl = ReleasesUrl + "/latest";

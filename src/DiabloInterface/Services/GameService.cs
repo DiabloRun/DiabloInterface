@@ -6,13 +6,12 @@ namespace Zutatensuppe.DiabloInterface.Services
 
     using Zutatensuppe.D2Reader;
     using Zutatensuppe.D2Reader.Models;
-    using Zutatensuppe.DiabloInterface.Core.Logging;
     using Zutatensuppe.DiabloInterface.Lib;
     using Zutatensuppe.DiabloInterface.Lib.Services;
 
     public class GameService : IGameService
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly Lib.ILogger Logger = Lib.Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         bool isDisposed;
         public D2DataReader DataReader { get; private set; }

@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Zutatensuppe.D2Reader;
 using Zutatensuppe.D2Reader.Models;
-using Zutatensuppe.DiabloInterface.Core.Logging;
 using Zutatensuppe.DiabloInterface.Lib;
 using Zutatensuppe.DiabloInterface.Lib.Plugin;
 using Zutatensuppe.DiabloInterface.Plugin.Autosplits.AutoSplits;
@@ -15,7 +14,7 @@ namespace Zutatensuppe.DiabloInterface.Plugin.Autosplits
 {
     public class Plugin : BasePlugin
     {
-        private readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly Lib.ILogger Logger = Lib.Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public override string Name => "Autosplit";
 

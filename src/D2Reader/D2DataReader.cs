@@ -11,7 +11,6 @@ using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Monster;
 using Zutatensuppe.D2Reader.Struct.Item;
 using Zutatensuppe.D2Reader.Struct.Unknown;
-using Zutatensuppe.DiabloInterface.Core.Logging;
 using static Zutatensuppe.D2Reader.D2Data;
 
 namespace Zutatensuppe.D2Reader
@@ -58,7 +57,7 @@ namespace Zutatensuppe.D2Reader
     {
         readonly ProcessDescription[] processDescriptions;
 
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly ILogger Logger = Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         readonly IGameMemoryTableFactory memoryTableFactory;
 

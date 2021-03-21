@@ -5,14 +5,13 @@ using System.Reflection;
 using Zutatensuppe.D2Reader.Readers;
 using Zutatensuppe.D2Reader.Struct;
 using Zutatensuppe.D2Reader.Struct.Stat;
-using Zutatensuppe.DiabloInterface.Core.Logging;
 using static Zutatensuppe.D2Reader.D2Data;
 
 namespace Zutatensuppe.D2Reader.Models
 {
     public class Character
     {
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly ILogger Logger = Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         // every class starts with:
         // 4 potions (0x24b)

@@ -2,13 +2,11 @@ namespace Zutatensuppe.DiabloInterface
 {
     using System.Reflection;
 
-    using Zutatensuppe.DiabloInterface.Core.Logging;
-
     public class ApplicationStorage
     {
         const string DefaultConfigFile = @".\Settings\DefaultSettings.conf";
 
-        static readonly ILogger Logger = LogServiceLocator.Get(MethodBase.GetCurrentMethod().DeclaringType);
+        static readonly Lib.ILogger Logger = Lib.Logging.CreateLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public string CurrentConfigPath
         {

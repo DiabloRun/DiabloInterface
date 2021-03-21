@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Zutatensuppe.DiabloInterface.Core.Extensions
+namespace Zutatensuppe.DiabloInterface.Lib.Extensions
 {
     public static class DeepCopyExtension
     {
