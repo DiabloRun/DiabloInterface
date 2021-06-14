@@ -8,6 +8,9 @@ namespace Zutatensuppe.D2Reader.Readers
 {
     public static class StringConstants
     {
+        public const ushort SPACE = 0xF9B; // " "
+        public const ushort EOL = 0xF9E; // "\n"
+
         public const ushort SinglePlayer = 0x13F2; // 5106
 
         public const ushort Superior = 0x06BF;
@@ -121,7 +124,7 @@ namespace Zutatensuppe.D2Reader.Readers
         //     14D0 => "K"
         //     14D1 => "M"
         //     14D2 => "B"
-        // 
+        //
         private string LookupStringTable(ushort identifier)
         {
             StringTable strTable = GetStringTableByIdentifier(identifier);
