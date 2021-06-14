@@ -75,7 +75,8 @@ namespace Zutatensuppe.D2Reader
                 InGame                      = BaseAddress + 0x30EE8C,
                 InMenu                      = BaseAddress + 0x379970,
                 GlobalData                  = BaseAddress + 0x344304, // game.744304
-                World                       = BaseAddress + 0x483D38,
+                World                       = BaseAddress + 0x483D38, // set to something in Game.exe + 12C0A4
+                                                                      // set to 0 in Game.exe + 12C030
                 PlayersX                    = BaseAddress + 0x483D70,
                 GameId                      = BaseAddress + 0x482D0C,
                 LowQualityItems             = BaseAddress + 0x56CC58,
@@ -215,8 +216,11 @@ namespace Zutatensuppe.D2Reader
                 InGame                      = null,
                 InMenu                      = null,
                 GlobalData                  = d2CommonAddress + 0x099E1C,
+
+                // world + players x dont work for closed bnet
                 World                       = d2GameAddress   + 0x111C24,
                 PlayersX                    = d2GameAddress   + 0x111C1C,
+
                 GameId                      = d2NetAddress    + 0x00B428,
                 LowQualityItems             = d2CommonAddress + 0x09FD98,
                 ItemDescriptions            = d2CommonAddress + 0x09FB94,
