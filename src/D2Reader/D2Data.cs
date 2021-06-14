@@ -103,6 +103,9 @@ namespace Zutatensuppe.D2Reader
             TOME_IDENT, // 0xda
             SCROLL_TP, // 0xdb
             TOME_TP, // 0xdc
+
+            // hacky PD2 only. TODO: separate this better
+            PD2_MOVE_ONLY = 0x18a,
         }
 
         public enum Area
