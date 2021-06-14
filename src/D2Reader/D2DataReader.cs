@@ -306,6 +306,7 @@ namespace Zutatensuppe.D2Reader
             return false;
         }
 
+        // 1.14d: Game.exe + 130820
         GameInfo ReadGameInfo()
         {
             try
@@ -328,21 +329,19 @@ namespace Zutatensuppe.D2Reader
                     return null;
                 }
 
-                uint gameId = reader.ReadUInt32(memory.GameId);
                 IntPtr worldPointer = reader.ReadAddress32(memory.World);
 
                 // Get world if game is loaded.
                 if (worldPointer == IntPtr.Zero) return null;
                 D2World world = reader.Read<D2World>(worldPointer);
-
                 // Find the game address.
-                uint gameIndex = gameId & world.GameMask;
+                uint gameIndex = world.GameId & world.GameMask;
                 uint gameOffset = (gameIndex * 0x0C) + 0x08;
                 IntPtr gamePointer = reader.ReadAddress32(world.GameBuffer + gameOffset);
-
+                int gamePointerInt = unchecked((int)gamePointer.ToInt64());
                 // Check for invalid pointers, this value can actually be negative during transition
                 // screens, so we need to reinterpret the pointer as a signed integer.
-                if (unchecked((int)gamePointer.ToInt64()) < 0) return null;
+                if (gamePointerInt < 0) return null;
 
                 var game = reader.Read<D2Game>(gamePointer);
                 if (game.Client.IsNull) return null;
@@ -367,7 +366,7 @@ namespace Zutatensuppe.D2Reader
                 var playerData = (tmpPlayer == null || tmpPlayer.UnitData.IsNull)
                     ? null
                     : reader.Read<D2PlayerData>(tmpPlayer.UnitData);
-                return new GameInfo(game, gameId, client, player, playerData);
+                return new GameInfo(game, world.GameId, client, player, playerData);
             }
             catch (ProcessMemoryReadException)
             {
@@ -476,7 +475,9 @@ namespace Zutatensuppe.D2Reader
             // Make sure the game is loaded.
             var gameInfo = ReadGameInfo();
             if (gameInfo == null)
+            {
                 return false;
+            }
 
             CreateReaders();
 
