@@ -195,6 +195,12 @@ namespace Zutatensuppe.DiabloInterface.Gui
 
             foreach (var quest in q)
             {
+                if (quest.Act <= 0 || quest.ActOrder <= 0)
+                {
+                    // cow king quest is set to act 0 act order 0 atm
+                    continue;
+                }
+
                 try
                 {
                     rows[quest.Act - 1, quest.ActOrder - 1].Update(quest);
