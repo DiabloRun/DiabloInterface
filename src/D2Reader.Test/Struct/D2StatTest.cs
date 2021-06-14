@@ -13,7 +13,7 @@ namespace Zutatensuppe.DiabloInterface.D2Reader.Test.Struct
             stat.HiStatID = 140;
             stat.Value = 4999;
 
-            stat.LoStatID = 140;
+            stat.LoStatID = 0x140; // must be some value not defined in StatIdentifier
             Assert.AreEqual(false, stat.HasValidLoStatIdentifier());
 
             stat.LoStatID = (ushort)StatIdentifier.PoisonDivisor;
@@ -22,7 +22,7 @@ namespace Zutatensuppe.DiabloInterface.D2Reader.Test.Struct
             stat.LoStatID = (ushort)StatIdentifier.CannotBeFrozen;
             Assert.AreEqual(true, stat.HasValidLoStatIdentifier());
 
-            stat.LoStatID = 300;
+            stat.LoStatID = 0x300; // must be some value not defined in StatIdentifier
             Assert.AreEqual(false, stat.HasValidLoStatIdentifier());
         }
     }
