@@ -124,6 +124,93 @@ namespace Zutatensuppe.D2Reader.Models
             } },
         };
 
+        // same as above, but for PD2
+        public static readonly Dictionary<CharacterClass, Dictionary<Skill, int>> StartingSkillsPD2 = new Dictionary<CharacterClass, Dictionary<Skill, int>>
+        {
+            { CharacterClass.Amazon, new Dictionary<Skill, int> {
+                { Skill.UNKNOWN, 1 }, // unknown
+                { Skill.THROW, 1 }, // throw
+                { Skill.KICK, 1 }, // kick
+                { Skill.SCROLL_IDENT, 1 }, // scroll ident
+                { Skill.TOME_IDENT, 1 }, // tome ident
+                { Skill.SCROLL_TP, 1 }, // scroll tp
+                { Skill.TOME_TP, 1 }, // tome tp
+                { Skill.UNSUMMON, 1 }, // unsummon
+                { Skill.PD2_MOVE_ONLY, 1}, 
+            } },
+            { CharacterClass.Assassin, new Dictionary<Skill, int> {
+                { Skill.UNKNOWN, 1 }, // unknown
+                { Skill.THROW, 1 }, // throw
+                { Skill.KICK, 1 }, // kick
+                { Skill.SCROLL_IDENT, 1 }, // scroll ident
+                { Skill.TOME_IDENT, 1 }, // tome ident
+                { Skill.SCROLL_TP, 1 }, // scroll tp
+                { Skill.TOME_TP, 1 }, // tome tp
+                { Skill.LEFT_HAND_SWING, 1 }, // left hand swing
+                { Skill.UNSUMMON, 1 }, // unsummon
+                { Skill.PD2_MOVE_ONLY, 1},
+            } },
+            { CharacterClass.Necromancer, new Dictionary<Skill, int> {
+                { Skill.UNKNOWN, 1 }, // unknown
+                { Skill.THROW, 1 }, // throw
+                { Skill.KICK, 1 }, // kick
+                { Skill.SCROLL_IDENT, 1 }, // scroll ident
+                { Skill.TOME_IDENT, 1 }, // tome ident
+                { Skill.SCROLL_TP, 1 }, // scroll tp
+                { Skill.TOME_TP, 1 }, // tome tp
+                { Skill.UNSUMMON, 1 }, // unsummon
+                { Skill.RAISE_SKELETON, 0 }, // raise skeleton
+                { Skill.PD2_MOVE_ONLY, 1},
+            } },
+            { CharacterClass.Barbarian, new Dictionary<Skill, int> {
+                { Skill.UNKNOWN, 1 }, // unknown
+                { Skill.THROW, 1 }, // throw
+                { Skill.KICK, 1 }, // kick
+                { Skill.SCROLL_IDENT, 1 }, // scroll ident
+                { Skill.TOME_IDENT, 1 }, // tome ident
+                { Skill.SCROLL_TP, 1 }, // scroll tp
+                { Skill.TOME_TP, 1 }, // tome tp
+                { Skill.LEFT_HAND_THROW, 1 }, // left hand throw
+                { Skill.LEFT_HAND_SWING, 1 }, // left hand swing
+                { Skill.UNSUMMON, 1 }, // unsummon
+                { Skill.PD2_MOVE_ONLY, 1},
+            } },
+            { CharacterClass.Paladin, new Dictionary<Skill, int> {
+                { Skill.UNKNOWN, 1 }, // unknown
+                { Skill.THROW, 1 }, // throw
+                { Skill.KICK, 1 }, // kick
+                { Skill.SCROLL_IDENT, 1 }, // scroll ident
+                { Skill.TOME_IDENT, 1 }, // tome ident
+                { Skill.SCROLL_TP, 1 }, // scroll tp
+                { Skill.TOME_TP, 1 }, // tome tp
+                { Skill.UNSUMMON, 1 }, // unsummon
+                { Skill.PD2_MOVE_ONLY, 1},
+            } },
+            { CharacterClass.Sorceress, new Dictionary<Skill, int> {
+                { Skill.UNKNOWN, 1 }, // unknown
+                { Skill.THROW, 1 }, // throw
+                { Skill.KICK, 1 }, // kick
+                { Skill.SCROLL_IDENT, 1 }, // scroll ident
+                { Skill.TOME_IDENT, 1 }, // tome ident
+                { Skill.SCROLL_TP, 1 }, // scroll tp
+                { Skill.TOME_TP, 1 }, // tome tp
+                { Skill.UNSUMMON, 1 }, // unsummon
+                { Skill.FIREBOLT, 0 }, // firebolt
+                { Skill.PD2_MOVE_ONLY, 1},
+            } },
+            { CharacterClass.Druid, new Dictionary<Skill, int> {
+                { Skill.UNKNOWN, 1 }, // unknown
+                { Skill.THROW, 1 }, // throw
+                { Skill.KICK, 1 }, // kick
+                { Skill.SCROLL_IDENT, 1 }, // scroll ident
+                { Skill.TOME_IDENT, 1 }, // tome ident
+                { Skill.SCROLL_TP, 1 }, // scroll tp
+                { Skill.TOME_TP, 1 }, // tome tp
+                { Skill.UNSUMMON, 1 }, // unsummon
+                { Skill.PD2_MOVE_ONLY, 1},
+            } },
+        };
+
         const int MIN_RESIST = -100;
         const int BASE_MAX_RESIST = 75;
 
@@ -328,6 +415,16 @@ namespace Zutatensuppe.D2Reader.Models
 
         private static bool MatchesStartingSkills(D2Unit p, List<SkillInfo> skills)
         {
+            return MatchesStartingSkillList(p, skills, StartingSkills)
+                || MatchesStartingSkillList(p, skills, StartingSkillsPD2);
+        }
+
+        private static bool MatchesStartingSkillList(
+            D2Unit p,
+            List<SkillInfo> skills,
+            Dictionary<CharacterClass, Dictionary<Skill, int>> StartingSkills
+        ) {
+
             int skillCount = 0;
             foreach (var skill in skills)
             {
