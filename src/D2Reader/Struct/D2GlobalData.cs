@@ -3,13 +3,13 @@ using System.Runtime.InteropServices;
 namespace Zutatensuppe.D2Reader.Struct
 {
     // Where to find this?
-    // 1.14D: [game.744304] points to this struct 
+    // 1.14D: [game.744304] points to this struct
     //
     // 1.13C: D2Common.sgptDataTables 0x6FDEFED8 contains address to this struct
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
     public class D2GlobalData
     {
-        // list of calculation modes for all the stat stuff? 
+        // list of calculation modes for all the stat stuff?
         [FieldOffset(0x040)] public DataPointer StatCalcList; // maybe (Aura)StatCalcList .. array of StatCalcType bytes
         [FieldOffset(0x044)] public uint StatCalcCount; // maybe (Aura)StatCalcCount
 
@@ -29,7 +29,7 @@ namespace Zutatensuppe.D2Reader.Struct
 
         [FieldOffset(0xB98)] public DataPointer Skills;
         [FieldOffset(0xBA0)] public uint SkillCount;
-        
+
         [FieldOffset(0xBB0)] public uint PassiveSkillsCount; // UnknownCount2
         [FieldOffset(0xBB4)] public DataPointer PassiveSkillIds; // UnknownThing2 seems like an address that points to a byte array of length PassiveSkillsCount
                                                                  // the items in that array are somehow related to SkillCount (maybe they are skill ids too?..)
@@ -38,7 +38,8 @@ namespace Zutatensuppe.D2Reader.Struct
         [FieldOffset(0xBC8)] public uint CharacterCount; // how many different classes exist. D2Unit.eClass is checked against this count to see if it is valid
 
         // D2ItemStatCost
-        [FieldOffset(0xBCC)] public DataPointer ItemStatCost; 
+        // list items have a length of 0x144 (for layout see D2ItemStatCost)
+        [FieldOffset(0xBCC)] public DataPointer ItemStatCost;
         [FieldOffset(0xBD4)] public uint ItemStatCostCount;
 
         [FieldOffset(0xBD8)] public DataPointer OpStatNesting;
@@ -47,9 +48,15 @@ namespace Zutatensuppe.D2Reader.Struct
         // 1.14D: used in game.493240
         // 1.13D: D2Client.dll+894D0
         // pet type infos?
-        // list items each have lenth of 0xE0
-        [FieldOffset(0xBE8)] public DataPointer unknownList1; 
+        // list items each have a length of 0xE0
+        [FieldOffset(0xBE8)] public DataPointer unknownList1;
         [FieldOffset(0xBF0)] public uint unknownCount1;
+
+        // 1.14D: used in game.62C0B0
+        // it has something to do with items
+        // list items each have a length of 0xE4
+        [FieldOffset(0xBF8)] public DataPointer unknownList2;
+        [FieldOffset(0xBFC)] public uint unknownCount2;
 
         [FieldOffset(0xC18)] public DataPointer SetItemDescriptions;
         [FieldOffset(0xC1C)] public uint SetItemDescriptionCount;
