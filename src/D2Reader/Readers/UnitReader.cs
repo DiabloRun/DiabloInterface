@@ -85,10 +85,11 @@ namespace Zutatensuppe.D2Reader.Readers
 
         public Dictionary<StatIdentifier, D2Stat> GetStatsMap(D2Unit unit)
         {
-            return (from stat in GetStats(unit)
-                    where stat.HasValidLoStatIdentifier()
-                    group stat by (StatIdentifier)stat.LoStatID into g
-                    select g).ToDictionary(x => x.Key, x => x.Single());
+            var tmp = (from stat in GetStats(unit)
+                       where stat.HasValidLoStatIdentifier()
+                       group stat by (StatIdentifier)stat.LoStatID into g
+                       select g);
+            return tmp.ToDictionary(x => x.Key, x => x.First());
         }
 
         public int? GetStatValue(D2Unit unit, ushort statId)
