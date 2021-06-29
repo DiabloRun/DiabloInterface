@@ -31,6 +31,7 @@ namespace Zutatensuppe.DiabloInterface
         public bool DisplayResistances { get; set; } = true;
         public bool DisplayBaseStats { get; set; } = true;
         public bool DisplayRunes { get; set; }
+        public bool PossibleRuneUpg { get; set; }
         public bool DisplayRunesHorizontal { get; set; } = true;
         public bool DisplayRunesHighContrast { get; set; } = false;
         public bool DisplayAdvancedStats { get; set; }

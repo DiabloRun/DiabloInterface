@@ -80,6 +80,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
         private ComboBox comboBoxRunesOrientation;
         private CheckBox chkHighContrastRunes;
         private CheckBox chkDisplayRunes;
+        private CheckBox chkUpgRunes;
         private CheckBox chkShowRealValues;
         private Controls.RuneSettingsPage runeSettingsPage;
         private Button btnSetPlayersXColor;
@@ -178,6 +179,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             chkShowRealValues = new CheckBox();
             chkHighContrastRunes = new CheckBox();
             chkDisplayRunes = new CheckBox();
+            chkUpgRunes = new CheckBox();
             btnSetBackgroundColor = new Button();
             button1 = new Button();
             btnSetLevelColor = new Button();
@@ -492,6 +494,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             groupBox1.Controls.Add(chkShowRealValues);
             groupBox1.Controls.Add(chkHighContrastRunes);
             groupBox1.Controls.Add(chkDisplayRunes);
+            groupBox1.Controls.Add(chkUpgRunes);
             groupBox1.Controls.Add(btnSetBackgroundColor);
             groupBox1.Controls.Add(button1);
             groupBox1.Controls.Add(btnSetLevelColor);
@@ -597,6 +600,11 @@ namespace Zutatensuppe.DiabloInterface.Gui
             chkDisplayRunes.Location = new Point(14, 341);
             chkDisplayRunes.Size = new Size(57, 17);
             chkDisplayRunes.Text = "Runes";
+
+            chkUpgRunes.AutoSize = true;
+            chkUpgRunes.Location = new Point(175, 341);
+            chkUpgRunes.Size = new Size(57, 17);
+            chkUpgRunes.Text = "Possible rune upgrades";
 
             btnSetBackgroundColor.Location = new Point(339, 308);
             btnSetBackgroundColor.Size = new Size(136, 22);
@@ -802,6 +810,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
                     || config.DisplayBaseStats != chkDisplayBaseStats.Checked
                     || config.DisplayAdvancedStats != chkDisplayAdvancedStats.Checked
                     || config.DisplayRunes != chkDisplayRunes.Checked
+                    || config.PossibleRuneUpg != chkUpgRunes.Checked
                     || config.DisplayRunesHorizontal != (comboBoxRunesOrientation.SelectedIndex == 0)
                     || config.DisplayRunesHighContrast != chkHighContrastRunes.Checked
                     || config.DisplayDifficultyPercentages != chkDisplayDifficultyPercents.Checked
@@ -917,6 +926,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             chkDisplayBaseStats.Checked = config.DisplayBaseStats;
             chkDisplayAdvancedStats.Checked = config.DisplayAdvancedStats;
             chkDisplayRunes.Checked = config.DisplayRunes;
+            chkUpgRunes.Checked = config.PossibleRuneUpg;
             comboBoxRunesOrientation.SelectedIndex = config.DisplayRunesHorizontal ? 0 : 1;
             chkDisplayDifficultyPercents.Checked = config.DisplayDifficultyPercentages;
             chkHighContrastRunes.Checked = config.DisplayRunesHighContrast;
@@ -1012,6 +1022,7 @@ namespace Zutatensuppe.DiabloInterface.Gui
             config.DisplayExpansionClassic = chkDisplayExpansionClassic.Checked;
 
             config.DisplayRunes = chkDisplayRunes.Checked;
+            config.PossibleRuneUpg = chkUpgRunes.Checked;
             config.DisplayRunesHorizontal = comboBoxRunesOrientation.SelectedIndex == 0;
             config.DisplayRunesHighContrast = chkHighContrastRunes.Checked;
             config.DisplayLayoutHorizontal = comboBoxLayout.SelectedIndex == 0;
