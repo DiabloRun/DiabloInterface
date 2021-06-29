@@ -30,10 +30,11 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
         
         public Rune Rune { get; private set; }
 
-        private bool haveRune = false;
+        public bool haveRune { get; private set; } = false;
 
         Bitmap image;
         Bitmap imageRed;
+        Bitmap imageMake;
 
         private PictureBox pictureBox1;
 
@@ -48,6 +49,7 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
             {
                 image = sprite.Clone(new Rectangle(0, (int)Rune * RuneSize, RuneSize, RuneSize), sprite.PixelFormat);
                 imageRed = sprite.Clone(new Rectangle(RuneSize, (int)Rune * RuneSize, RuneSize, RuneSize), sprite.PixelFormat);
+                imageMake = sprite.Clone(new Rectangle(RuneSize*2, (int)Rune * RuneSize, RuneSize, RuneSize), sprite.PixelFormat);
             }
 
             pictureBox1 = new PictureBox();
@@ -81,12 +83,18 @@ namespace Zutatensuppe.DiabloInterface.Gui.Controls
 
             image?.Dispose();
             imageRed?.Dispose();
+            imageMake?.Dispose();
         }
 
         internal void SetHaveRune(bool haveRune)
         {
             this.haveRune = haveRune;
             pictureBox1.BackgroundImage = haveRune ? image : imageRed;
+        }
+
+        internal void SetCanMakeRune(bool canMk)
+        {
+            pictureBox1.BackgroundImage = canMk ? imageMake : imageRed;
         }
     }
 }
